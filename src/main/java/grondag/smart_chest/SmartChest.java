@@ -22,20 +22,10 @@ import org.apache.logging.log4j.Logger;
 import net.fabricmc.api.ModInitializer;
 
 public class SmartChest implements ModInitializer {
-    public static SmartChest INSTANCE = new SmartChest();
 
     @Override
     public void onInitialize() {
     }
 
-    private static Logger log;
-
-    public Logger getLog() {
-        Logger result = log;
-        if (result == null) {
-            result = LogManager.getLogger("SmartChest2K");
-            log = result;
-        }
-        return result;
-    }
+    public static Logger LOG = LogManager.getLogger("SmartChest2K");
 }
