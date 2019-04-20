@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "smart_chest",
+  "version": "${version}",
+  "name": "SmartChest 2000",
+  "description": "It's smart. It holds 2000 things. It's the SmartChest 2000!",
+  "authors": [
+    "Grondag"
+  ],
+  "contact": {
+    "homepage": "https://minecraft.curseforge.com/projects/smartchest-2000",
+    "sources": "https://github.com/grondag/smart_chest"
+  },
+  "license": "Apache-2.0",
+  "icon": "assets/smart_chest/smart_chest_2k_icon.png",
+  
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "grondag.smart_chest.SmartChest"
+    ]
+  },
+  
+  "mixins": [
+  ],
+  
+  "requires": {
+    "fabricloader": ">=0.4.0",
+    "fabric": "*"
+  },
+  "custom": {
+    "modmenu:api": true,
+    "modmenu:clientsideOnly": false
+  }
+}
