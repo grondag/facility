@@ -68,13 +68,13 @@ repositories {
     }
 }
 
-def mcVersion = "1.14 Pre-Release 5"
+def mcVersion = "1.14"
 
 dependencies {
 	minecraft "com.mojang:minecraft:$mcVersion"
-	mappings "net.fabricmc:yarn:$mcVersion+build.3"
-	modCompile "net.fabricmc:fabric-loader:0.4.1+build.128"
-	modCompile "net.fabricmc:fabric:0.2.7+build.126"
+	mappings "net.fabricmc:yarn:$mcVersion+build.1"
+	modCompile "net.fabricmc:fabric-loader:0.4.2+build.132"
+	modCompile "net.fabricmc:fabric:0.2.7+build.127"
 	
 	//compile "org.apiguardian:apiguardian-api:1.0.0"
 	compile "com.google.code.findbugs:jsr305:3.0.2"
@@ -83,11 +83,11 @@ dependencies {
 	modCompile "alexiil.mc.lib:libblockattributes:0.3.1"
 	modCompile "alexiil.mc.mod:simple_pipes:0.1.3"
 	modCompile "grondag:frex:0.4.+"
-	modCompile "grondag:canvas:0.4.+"
+	modCompile "grondag:canvas:0.5.2"
 	modCompile "io.github.prospector.modmenu:ModMenu:1.4.0-71"
 	modCompile "roughly-enough-items:RoughlyEnoughItems:2.7.11.97"
 	modCompile "cloth:ClothEvents:0.3.1.23"
-    modCompile "cloth-config:ClothConfig:0.1.3.7"
+    modCompile "cloth-config:ClothConfig:0.2.0.12"
     
 	modCompile "grondag:fermion:0.4.+"
 	include "grondag:fermion:0.4.+"
