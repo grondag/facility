@@ -22,7 +22,7 @@ public class CornerJoinBlockState {
     void setFaceJoinState(Direction face, CornerJoinFaceState state) {
         faceJoinIndex[face.ordinal()] = (byte) state.ordinal();
     }
-
+    //PERF: values()
     public CornerJoinFaceState getFaceJoinState(Direction face) {
         return CornerJoinFaceState.values()[faceJoinIndex[face.ordinal()]];
     }

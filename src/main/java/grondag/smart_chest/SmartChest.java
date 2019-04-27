@@ -21,12 +21,16 @@ import java.util.function.Function;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import grondag.brocade.painting.TextureLayout;
+import grondag.brocade.painting.TextureLayoutHelper;
+import grondag.brocade.painting.TextureSet;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.model.ModelLoadingRegistry;
 import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.texture.Sprite;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -39,14 +43,79 @@ public class SmartChest implements ModInitializer {
     
     public static final BlockEntityType<SmartChestBlockEntity> SMART_CHEST_BLOCK_ENTITY_TYPE = BlockEntityType.Builder.create(SmartChestBlockEntity::new).build(null);
     public static final SmartChestBlock SMART_CHEST_BLOCK = new SmartChestBlock();
- 
+    private static final Identifier TEX_ID = new Identifier(MODID, "border");
+    public static final TextureSet BORDER_TEX = new TextureSet() {
+
+        @Override
+        public Identifier id() {
+            return TEX_ID;
+        }
+
+        @Override
+        public int index() {
+            return 0;
+        }
+
+        @Override
+        public String sampleTextureName() {
+            return TextureLayoutHelper.BORDER_13_HELPER.sampleTextureName(this);
+        }
+        
+        private Sprite sampleSprite;
+        
+        @Override
+        public Sprite sampleSprite() {
+            Sprite result = sampleSprite;
+            if (result == null) {
+                result = MinecraftClient.getInstance().getSpriteAtlas().getSprite(sampleTextureName());
+                sampleSprite = result;
+            }
+            return result;
+        }
+
+        @Override
+        public String textureName(int version) {
+            return TextureLayoutHelper.BORDER_13_HELPER.buildTextureName(this, version & versionMask(), 0);
+        }
+
+        @Override
+        public String textureName(int version, int index) {
+            return TextureLayoutHelper.BORDER_13_HELPER.buildTextureName(this, version & versionMask(), index);
+        }
+        
+        @Override
+        public int versionMask() {
+            return 1;
+        }
+
+        @Override
+        public TextureLayout layout() {
+            return TextureLayout.BORDER_13;
+        }
+
+        @Override
+        public int versionCount() {
+            return 1;
+        }
+
+        @Override
+        public String baseTextureName() {
+            return "border_signal";//"border_inset_dots_1";
+        }
+
+        @Override
+        public boolean renderNoBorderAsTile() {
+            return false;
+        }
+    };
+    
     @Override
     public void onInitialize() {
         initTextures();
         
         register(SMART_CHEST_BLOCK, MODID, ITEM_FUNCTION_STANDARD);
         
-        Registry.register(Registry.BLOCK_ENTITY, new Identifier(MODID, "be_test"), SMART_CHEST_BLOCK_ENTITY_TYPE);
+        Registry.register(Registry.BLOCK_ENTITY, new Identifier(MODID, "smart_chest"), SMART_CHEST_BLOCK_ENTITY_TYPE);
         
         ModelLoadingRegistry.INSTANCE.registerVariantProvider(manager -> ((modelId, context) -> {
             return modelId.getNamespace().equals(MODID) ? new SimpleUnbakedModel(new SmartChestModel()) : null;
@@ -57,19 +126,32 @@ public class SmartChest implements ModInitializer {
     private static void initTextures() {
         ClientSpriteRegistryCallback.EVENT.register((atlas, registry) -> {
             if(atlas == MinecraftClient.getInstance().getSpriteAtlas()) {
-                registry.register(new Identifier(MODID, "block/border_filmstrip_0_0"));
-                registry.register(new Identifier(MODID, "block/border_filmstrip_0_1"));
-                registry.register(new Identifier(MODID, "block/border_filmstrip_0_2"));
-                registry.register(new Identifier(MODID, "block/border_filmstrip_0_3"));
-                registry.register(new Identifier(MODID, "block/border_filmstrip_0_4"));
-                registry.register(new Identifier(MODID, "block/border_filmstrip_0_5"));
-                registry.register(new Identifier(MODID, "block/border_filmstrip_0_6"));
-                registry.register(new Identifier(MODID, "block/border_filmstrip_0_7"));
-                registry.register(new Identifier(MODID, "block/border_filmstrip_1_0"));
-                registry.register(new Identifier(MODID, "block/border_filmstrip_1_1"));
-                registry.register(new Identifier(MODID, "block/border_filmstrip_1_2"));
-                registry.register(new Identifier(MODID, "block/border_filmstrip_1_3"));
-                registry.register(new Identifier(MODID, "block/border_filmstrip_1_4"));
+                registry.register(new Identifier(MODID, "block/border_inset_dots_1_0_0"));
+                registry.register(new Identifier(MODID, "block/border_inset_dots_1_0_1"));
+                registry.register(new Identifier(MODID, "block/border_inset_dots_1_0_2"));
+                registry.register(new Identifier(MODID, "block/border_inset_dots_1_0_3"));
+                registry.register(new Identifier(MODID, "block/border_inset_dots_1_0_4"));
+                registry.register(new Identifier(MODID, "block/border_inset_dots_1_0_5"));
+                registry.register(new Identifier(MODID, "block/border_inset_dots_1_0_6"));
+                registry.register(new Identifier(MODID, "block/border_inset_dots_1_0_7"));
+                registry.register(new Identifier(MODID, "block/border_inset_dots_1_1_0"));
+                registry.register(new Identifier(MODID, "block/border_inset_dots_1_1_1"));
+                registry.register(new Identifier(MODID, "block/border_inset_dots_1_1_2"));
+                registry.register(new Identifier(MODID, "block/border_inset_dots_1_1_3"));
+                registry.register(new Identifier(MODID, "block/border_inset_dots_1_1_4"));
+                registry.register(new Identifier(MODID, "block/border_signal_0_0"));
+                registry.register(new Identifier(MODID, "block/border_signal_0_1"));
+                registry.register(new Identifier(MODID, "block/border_signal_0_2"));
+                registry.register(new Identifier(MODID, "block/border_signal_0_3"));
+                registry.register(new Identifier(MODID, "block/border_signal_0_4"));
+                registry.register(new Identifier(MODID, "block/border_signal_0_5"));
+                registry.register(new Identifier(MODID, "block/border_signal_0_6"));
+                registry.register(new Identifier(MODID, "block/border_signal_0_7"));
+                registry.register(new Identifier(MODID, "block/border_signal_1_0"));
+                registry.register(new Identifier(MODID, "block/border_signal_1_1"));
+                registry.register(new Identifier(MODID, "block/border_signal_1_2"));
+                registry.register(new Identifier(MODID, "block/border_signal_1_3"));
+                registry.register(new Identifier(MODID, "block/border_signal_1_4"));
                 registry.register(new Identifier(MODID, "block/noise_moderate_0_0"));
                 registry.register(new Identifier(MODID, "block/noise_moderate_0_1"));
                 registry.register(new Identifier(MODID, "block/noise_moderate_0_2"));

@@ -28,17 +28,17 @@ public class NeighborBlocks<V> {
     private final int x;
     private final int y;
     private final int z;
-    private final ExtraStateFactory factory;
+    private final ModelStateFunction<V> factory;
     private final BlockPos.Mutable mutablePos = new BlockPos.Mutable();
 
     /**
      * Gathers blockstates for adjacent positions as needed.
      */
     public NeighborBlocks(BlockView worldIn, BlockPos pos) {
-        this(worldIn, pos, ExtraStateFactory::NONE);
+        this(worldIn, pos, ModelStateFunction::NONE);
     }
 
-    public NeighborBlocks(BlockView worldIn, BlockPos pos, ExtraStateFactory factory) {
+    public NeighborBlocks(BlockView worldIn, BlockPos pos, ModelStateFunction<V> factory) {
         this.world = worldIn;
         this.x = pos.getX();
         this.y = pos.getY();

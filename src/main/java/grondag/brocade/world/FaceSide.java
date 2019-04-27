@@ -3,10 +3,10 @@ package grondag.brocade.world;
 import net.minecraft.util.math.Direction;
 
 public enum FaceSide {
-    TOP(Direction.NORTH, Direction.NORTH, Direction.UP, Direction.UP, Direction.UP, Direction.UP),
-    BOTTOM(Direction.SOUTH, Direction.SOUTH, Direction.DOWN, Direction.DOWN, Direction.DOWN, Direction.DOWN),
-    LEFT(Direction.WEST, Direction.EAST, Direction.SOUTH, Direction.NORTH, Direction.EAST, Direction.WEST),
-    RIGHT(Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST);
+    TOP(Direction.SOUTH, Direction.SOUTH, Direction.UP, Direction.UP, Direction.UP, Direction.UP),
+    BOTTOM(Direction.NORTH, Direction.NORTH, Direction.DOWN, Direction.DOWN, Direction.DOWN, Direction.DOWN),
+    LEFT(Direction.EAST, Direction.WEST, Direction.SOUTH, Direction.NORTH, Direction.EAST, Direction.WEST),
+    RIGHT(Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST);
 
     public static final FaceSide[] VALUES = FaceSide.values();
     public static final int COUNT = VALUES.length;

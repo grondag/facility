@@ -1,12 +1,21 @@
 package grondag.brocade.painting;
 
+import static grondag.frex.api.mesh.MutableQuadView.BAKE_FLIP_U;
+import static grondag.frex.api.mesh.MutableQuadView.BAKE_FLIP_V;
+import static grondag.frex.api.mesh.MutableQuadView.BAKE_LOCK_UV;
+import static grondag.frex.api.mesh.MutableQuadView.BAKE_NORMALIZED;
+import static grondag.frex.api.mesh.MutableQuadView.BAKE_ROTATE_180;
+import static grondag.frex.api.mesh.MutableQuadView.BAKE_ROTATE_270;
+import static grondag.frex.api.mesh.MutableQuadView.BAKE_ROTATE_90;
+import static grondag.frex.api.mesh.MutableQuadView.BAKE_ROTATE_NONE;
+
 import grondag.brocade.world.CornerJoinBlockState;
 import grondag.brocade.world.CornerJoinFaceState;
-import grondag.canvas.apiimpl.util.TextureHelper;
-import grondag.fermion.world.Rotation;
 import grondag.frex.api.mesh.MutableQuadView;
-import grondag.frex.api.mesh.QuadView;
+import grondag.smart_chest.SmartChest;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.Sprite;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
 public abstract class CubicQuadPainterBorders  {
@@ -35,158 +44,164 @@ public abstract class CubicQuadPainterBorders  {
      * level so that we can check for it.
      */
     private final static FaceQuadInputs NO_BORDER = new FaceQuadInputs(TEXTURE_JOIN_ALL_NO_CORNERS,
-            Rotation.ROTATE_NONE, false, false);
+            BAKE_ROTATE_NONE, false, false);
 
+    // PERF - really only need two instances of the array - up and others
     static {
         for (Direction face : Direction.values()) {
             // First one will only be used if we are rendering in solid layer.
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_NO_CORNERS.ordinal()] = NO_BORDER;
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.NO_FACE.ordinal()] = null; // NULL FACE
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.NONE.ordinal()] = new FaceQuadInputs(TEXTURE_JOIN_NONE,
-                    Rotation.ROTATE_NONE, false, false);
+                    BAKE_ROTATE_NONE, false, false);
 
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.BOTTOM.ordinal()] = new FaceQuadInputs(TEXTURE_BOTTOM,
-                    Rotation.ROTATE_NONE, false, false);
+                    BAKE_ROTATE_NONE, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.LEFT.ordinal()] = new FaceQuadInputs(TEXTURE_BOTTOM,
-                    Rotation.ROTATE_90, false, false);
+                    BAKE_ROTATE_90, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP.ordinal()] = new FaceQuadInputs(TEXTURE_BOTTOM,
-                    Rotation.ROTATE_180, false, false);
+                    BAKE_ROTATE_180, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.RIGHT.ordinal()] = new FaceQuadInputs(TEXTURE_BOTTOM,
-                    Rotation.ROTATE_270, false, false);
+                    BAKE_ROTATE_270, false, false);
 
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.BOTTOM_LEFT_NO_CORNER.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT, Rotation.ROTATE_NONE, false, false);
+                    TEXTURE_BOTTOM_LEFT, BAKE_ROTATE_NONE, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_LEFT_NO_CORNER.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT, Rotation.ROTATE_90, false, false);
+                    TEXTURE_BOTTOM_LEFT, BAKE_ROTATE_90, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_RIGHT_NO_CORNER.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT, Rotation.ROTATE_180, false, false);
+                    TEXTURE_BOTTOM_LEFT, BAKE_ROTATE_180, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.BOTTOM_RIGHT_NO_CORNER.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT, Rotation.ROTATE_270, false, false);
+                    TEXTURE_BOTTOM_LEFT, BAKE_ROTATE_270, false, false);
 
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.BOTTOM_LEFT_RIGHT_NO_CORNERS
-                    .ordinal()] = new FaceQuadInputs(TEXTURE_BOTTOM_LEFT_RIGHT, Rotation.ROTATE_NONE, false, false);
+                    .ordinal()] = new FaceQuadInputs(TEXTURE_BOTTOM_LEFT_RIGHT, BAKE_ROTATE_NONE, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_BOTTOM_LEFT_NO_CORNERS.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT, Rotation.ROTATE_90, false, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT, BAKE_ROTATE_90, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_LEFT_RIGHT_NO_CORNERS.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT, Rotation.ROTATE_180, false, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT, BAKE_ROTATE_180, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_BOTTOM_RIGHT_NO_CORNERS.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT, Rotation.ROTATE_270, false, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT, BAKE_ROTATE_270, false, false);
 
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.LEFT_RIGHT.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_LEFT_RIGHT, Rotation.ROTATE_NONE, false, false);
+                    TEXTURE_LEFT_RIGHT, BAKE_ROTATE_NONE, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_BOTTOM.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_LEFT_RIGHT, Rotation.ROTATE_90, false, false);
+                    TEXTURE_LEFT_RIGHT, BAKE_ROTATE_90, false, false);
 
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.BOTTOM_LEFT_RIGHT_BR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, Rotation.ROTATE_NONE, false, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, BAKE_ROTATE_NONE, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.BOTTOM_LEFT_RIGHT_BL.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, Rotation.ROTATE_NONE, true, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, BAKE_ROTATE_NONE, true, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_BOTTOM_LEFT_BL.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, Rotation.ROTATE_90, false, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, BAKE_ROTATE_90, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_BOTTOM_LEFT_TL.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, Rotation.ROTATE_90, true, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, BAKE_ROTATE_90, true, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_LEFT_RIGHT_TL.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, Rotation.ROTATE_180, false, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, BAKE_ROTATE_180, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_LEFT_RIGHT_TR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, Rotation.ROTATE_180, true, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, BAKE_ROTATE_180, true, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_BOTTOM_RIGHT_TR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, Rotation.ROTATE_270, false, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, BAKE_ROTATE_270, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_BOTTOM_RIGHT_BR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, Rotation.ROTATE_270, true, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT_BR, BAKE_ROTATE_270, true, false);
 
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.BOTTOM_LEFT_RIGHT_BL_BR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT_BL_BR, Rotation.ROTATE_NONE, false, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT_BL_BR, BAKE_ROTATE_NONE, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_BOTTOM_LEFT_TL_BL.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT_BL_BR, Rotation.ROTATE_90, false, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT_BL_BR, BAKE_ROTATE_90, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_LEFT_RIGHT_TL_TR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT_BL_BR, Rotation.ROTATE_180, false, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT_BL_BR, BAKE_ROTATE_180, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_BOTTOM_RIGHT_TR_BR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_RIGHT_BL_BR, Rotation.ROTATE_270, false, false);
+                    TEXTURE_BOTTOM_LEFT_RIGHT_BL_BR, BAKE_ROTATE_270, false, false);
 
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.BOTTOM_LEFT_BL.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_BL, Rotation.ROTATE_NONE, false, false);
+                    TEXTURE_BOTTOM_LEFT_BL, BAKE_ROTATE_NONE, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_LEFT_TL.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_BL, Rotation.ROTATE_90, false, false);
+                    TEXTURE_BOTTOM_LEFT_BL, BAKE_ROTATE_90, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.TOP_RIGHT_TR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_BL, Rotation.ROTATE_180, false, false);
+                    TEXTURE_BOTTOM_LEFT_BL, BAKE_ROTATE_180, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.BOTTOM_RIGHT_BR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_BOTTOM_LEFT_BL, Rotation.ROTATE_270, false, false);
+                    TEXTURE_BOTTOM_LEFT_BL, BAKE_ROTATE_270, false, false);
 
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_TR.ordinal()] = new FaceQuadInputs(TEXTURE_JOIN_ALL_TR,
-                    Rotation.ROTATE_NONE, false, false);
+                    BAKE_ROTATE_NONE, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_BR.ordinal()] = new FaceQuadInputs(TEXTURE_JOIN_ALL_TR,
-                    Rotation.ROTATE_90, false, false);
+                    BAKE_ROTATE_90, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_BL.ordinal()] = new FaceQuadInputs(TEXTURE_JOIN_ALL_TR,
-                    Rotation.ROTATE_180, false, false);
+                    BAKE_ROTATE_180, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_TL.ordinal()] = new FaceQuadInputs(TEXTURE_JOIN_ALL_TR,
-                    Rotation.ROTATE_270, false, false);
+                    BAKE_ROTATE_270, false, false);
 
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_TL_TR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_JOIN_ALL_TL_TR, Rotation.ROTATE_NONE, false, false);
+                    TEXTURE_JOIN_ALL_TL_TR, BAKE_ROTATE_NONE, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_TR_BR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_JOIN_ALL_TL_TR, Rotation.ROTATE_90, false, false);
+                    TEXTURE_JOIN_ALL_TL_TR, BAKE_ROTATE_90, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_BL_BR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_JOIN_ALL_TL_TR, Rotation.ROTATE_180, false, false);
+                    TEXTURE_JOIN_ALL_TL_TR, BAKE_ROTATE_180, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_TL_BL.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_JOIN_ALL_TL_TR, Rotation.ROTATE_270, false, false);
+                    TEXTURE_JOIN_ALL_TL_TR, BAKE_ROTATE_270, false, false);
 
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_TR_BL.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_JOIN_ALL_TR_BL, Rotation.ROTATE_NONE, false, false);
+                    TEXTURE_JOIN_ALL_TR_BL, BAKE_ROTATE_NONE, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_TL_BR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_JOIN_ALL_TR_BL, Rotation.ROTATE_90, false, false);
+                    TEXTURE_JOIN_ALL_TR_BL, BAKE_ROTATE_90, false, false);
 
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_TR_BL_BR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_JOIN_ALL_TR_BL_BR, Rotation.ROTATE_NONE, false, false);
+                    TEXTURE_JOIN_ALL_TR_BL_BR, BAKE_ROTATE_NONE, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_TL_BL_BR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_JOIN_ALL_TR_BL_BR, Rotation.ROTATE_90, false, false);
+                    TEXTURE_JOIN_ALL_TR_BL_BR, BAKE_ROTATE_90, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_TL_TR_BL.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_JOIN_ALL_TR_BL_BR, Rotation.ROTATE_180, false, false);
+                    TEXTURE_JOIN_ALL_TR_BL_BR, BAKE_ROTATE_180, false, false);
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_TL_TR_BR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_JOIN_ALL_TR_BL_BR, Rotation.ROTATE_270, false, false);
+                    TEXTURE_JOIN_ALL_TR_BL_BR, BAKE_ROTATE_270, false, false);
 
             FACE_INPUTS[face.ordinal()][CornerJoinFaceState.ALL_TL_TR_BL_BR.ordinal()] = new FaceQuadInputs(
-                    TEXTURE_JOIN_ALL_ALL_CORNERS, Rotation.ROTATE_NONE, false, false);
+                    TEXTURE_JOIN_ALL_ALL_CORNERS, BAKE_ROTATE_NONE, false, false);
 
-            // rotate bottom face 180 so that it works - bottom face orientation is
-            // different from others
-            if (face == Direction.DOWN) {
-                for (int i = 0; i < FACE_INPUTS[Direction.DOWN.ordinal()].length; i++) {
-                    FaceQuadInputs fqi = FACE_INPUTS[Direction.DOWN.ordinal()][i];
+            // rotate top face so they work - orientation is different from others
+            if (face == Direction.UP) {
+                for (int i = 0; i < FACE_INPUTS[face.ordinal()].length; i++) {
+                    FaceQuadInputs fqi = FACE_INPUTS[face.ordinal()][i];
                     if (fqi != null && fqi != NO_BORDER) {
-                        FACE_INPUTS[Direction.DOWN.ordinal()][i] = new FaceQuadInputs(fqi.textureOffset,
-                                fqi.rotation.clockwise().clockwise(), fqi.flipU, fqi.flipV);
+                        FACE_INPUTS[face.ordinal()][i] = new FaceQuadInputs(fqi.textureOffset, 
+                                (fqi.rotation + 2) % 4, fqi.flipU, fqi.flipV);
                     }
                 }
-            }
+            } 
         }
     }
 
     public static boolean bakeBorderSprite(MutableQuadView quad, int spriteIndex, CornerJoinBlockState bjs) {
         Direction face = quad.nominalFace();
+        CornerJoinFaceState cjfs = bjs.getFaceJoinState(face);
         FaceQuadInputs inputs = FACE_INPUTS[face.ordinal()][bjs.getFaceJoinState(face).ordinal()];
     
         // if can't identify a face, skip texturing
-        if (inputs == null)
+        // don't render the "no border" texture unless this is a tile of some kind
+        if (inputs == null || inputs == NO_BORDER) {
+            quad.sprite(0, spriteIndex, 0, 0)
+                .sprite(1, spriteIndex, 0, 0)
+                .sprite(2, spriteIndex, 0, 0)
+                .sprite(3, spriteIndex, 0, 0);
             return false;
-
-//            final ITexturePalette tex = getTexture(modelState, paintLayer);
-
-            // don't render the "no border" texture unless this is a tile of some kind
-            if (inputs == NO_BORDER && !tex.renderNoBorderAsTile())
-                return false;
-            int bakeFlags = MutableQuadView.BAKE_NORMALIZED | MutableQuadView.BAKE_LOCK_UV;
-            bakeFlags |= MutableQuadView.
-            quad.setRotation(spriteIndex, inputs.rotation);
-//            cubeInputs.rotateBottom = false;
-            quad.setMinU(spriteIndex, inputs.flipU ? 1 : 0);
-            quad.setMinV(spriteIndex, inputs.flipV ? 1 : 0);
-            quad.setMaxU(spriteIndex, inputs.flipU ? 0 : 1);
-            quad.setMaxV(spriteIndex, inputs.flipV ? 0 : 1);
-            quad.setTextureName(spriteIndex,
-                    tex.textureName(textureVersionForFace(face, tex, modelState), inputs.textureOffset));
-
-            commonPostPaint(quad, spriteIndex, modelState, paintLayer);
-
-        } while (stream.editorNext());
+        }
+        
+        int bakeFlags = BAKE_NORMALIZED | BAKE_LOCK_UV | inputs.rotation;
+        if(inputs.flipU) {
+            bakeFlags |= BAKE_FLIP_U;
+        }
+        if(inputs.flipV ) {
+            bakeFlags |= BAKE_FLIP_V;
+        }
+        
+        //TODO: remove
+//        if(face == Direction.UP)
+//            System.out.println(bakeFlags);
+        
+        String textureName = "block/" + SmartChest.BORDER_TEX.textureName(0, inputs.textureOffset);
+        Sprite sprite = MinecraftClient.getInstance().getSpriteAtlas().getSprite(new Identifier(SmartChest.MODID, textureName));
+//        quad.sprite(0, 1, 0, 0).sprite(1, 1, 0, 1).sprite(2, 1, 1, 1).sprite(3, 1, 1, 0);
+        
+        quad.spriteBake(spriteIndex, sprite, bakeFlags);
+        return true;
     }
 }

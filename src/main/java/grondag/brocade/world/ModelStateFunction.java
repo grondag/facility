@@ -7,10 +7,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 
 @FunctionalInterface
-public interface ExtraStateFactory {
+public interface ModelStateFunction<V> {
     public static <T> T NONE(BlockView worldIn, BlockPos pos, BlockState state) {
         return null;
     }
     
-    public <V> V get(BlockView worldIn, BlockPos pos, BlockState state);
+    public static BlockState BLOCKSTATE(BlockView worldIn, BlockPos pos, BlockState state) {
+        return state;
+    }
+    
+    public V get(BlockView worldIn, BlockPos pos, BlockState state);
 }
