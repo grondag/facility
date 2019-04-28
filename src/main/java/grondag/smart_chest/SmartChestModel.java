@@ -5,15 +5,12 @@ import static net.minecraft.block.BlockRenderLayer.SOLID;
 import static net.minecraft.block.BlockRenderLayer.TRANSLUCENT;
 
 import java.util.Random;
-import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 
+import grondag.brocade.connect.api.block.BlockTest;
+import grondag.brocade.connect.api.block.NeighborBlocks;
+import grondag.brocade.connect.api.state.CornerJoinBlockState;
 import grondag.brocade.painting.CubicQuadPainterBorders;
-import grondag.brocade.world.CornerJoinBlockState;
-import grondag.brocade.world.CornerJoinBlockStateSelector;
-import grondag.brocade.world.ModelStateFunction;
-import grondag.brocade.world.NeighborBlocks;
-import grondag.brocade.world.SuperBlockBorderMatch;
 import grondag.frex.api.Renderer;
 import grondag.frex.api.RendererAccess;
 import grondag.frex.api.material.MaterialFinder;
@@ -145,15 +142,11 @@ public class SmartChestModel implements Supplier<BakedModel> {
             return true;
         }
 
-        static final BiPredicate<BlockState, BlockState> MATCHER = (a, b) -> a != null && a.equals(b);
+        static final BlockTest MATCHER = (a, b, c, d) -> a != null && a.equals(c);
         
         @Override
         public MeshTransformer prepare(TerrainBlockView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier) {
-            NeighborBlocks<BlockState> nb = new NeighborBlocks<BlockState>(blockView, pos, ModelStateFunction::BLOCKSTATE);
-            SuperBlockBorderMatch<BlockState> matcher = new SuperBlockBorderMatch<BlockState>(blockView, state, pos, 
-                    ModelStateFunction::BLOCKSTATE, MATCHER);
-            NeighborBlocks<BlockState>.NeighborTestResults tr = nb.getNeighborTestResults(matcher);
-            cjbs = CornerJoinBlockStateSelector.getJoinState(CornerJoinBlockStateSelector.findIndex(tr));
+            cjbs = CornerJoinBlockState.get(NeighborBlocks.threadLocal(blockView, pos, MATCHER));
             return this;
         }
 
