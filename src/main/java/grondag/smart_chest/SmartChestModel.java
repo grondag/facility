@@ -8,7 +8,7 @@ import java.util.Random;
 import java.util.function.Supplier;
 
 import grondag.brocade.connect.api.block.BlockTest;
-import grondag.brocade.connect.api.block.NeighborBlocks;
+import grondag.brocade.connect.api.block.BlockNeighbors;
 import grondag.brocade.connect.api.state.CornerJoinBlockState;
 import grondag.brocade.painting.CubicQuadPainterBorders;
 import grondag.frex.api.Renderer;
@@ -146,7 +146,7 @@ public class SmartChestModel implements Supplier<BakedModel> {
         
         @Override
         public MeshTransformer prepare(TerrainBlockView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier) {
-            cjbs = CornerJoinBlockState.get(NeighborBlocks.threadLocal(blockView, pos, MATCHER));
+            cjbs = CornerJoinBlockState.get(BlockNeighbors.threadLocal(blockView, pos, MATCHER));
             return this;
         }
 
