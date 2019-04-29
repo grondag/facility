@@ -7,9 +7,9 @@ import static net.minecraft.block.BlockRenderLayer.TRANSLUCENT;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import grondag.brocade.connect.api.block.BlockTest;
-import grondag.brocade.connect.api.block.BlockNeighbors;
-import grondag.brocade.connect.api.state.CornerJoinBlockState;
+import grondag.brocade.connect.api.state.CornerJoinState;
+import grondag.brocade.connect.api.world.BlockNeighbors;
+import grondag.brocade.connect.api.world.BlockTest;
 import grondag.brocade.painting.CubicQuadPainterBorders;
 import grondag.frex.api.Renderer;
 import grondag.frex.api.RendererAccess;
@@ -124,12 +124,12 @@ public class SmartChestModel implements Supplier<BakedModel> {
     private static final ThreadLocal<Transformer> transformers = ThreadLocal.withInitial(Transformer::new);
     
     public static class Transformer implements MeshTransformer {
-        private CornerJoinBlockState cjbs;
+        private CornerJoinState cjs;
         
         @Override
         public boolean transform(MutableQuadView quad) {
-            if(cjbs != null) {
-                CubicQuadPainterBorders.bakeBorderSprite(quad, 1, cjbs);
+            if(cjs != null) {
+                CubicQuadPainterBorders.bakeBorderSprite(quad, 1, cjs);
 //                if(!CubicQuadPainterBorders.bakeBorderSprite(quad, 1, cjbs)) {
 //                    quad.sprite(0, 1, quad.spriteU(0, 2), quad.spriteV(0, 2))
 //                    .sprite(1, 1, quad.spriteU(1, 2), quad.spriteV(1, 2))
@@ -146,13 +146,13 @@ public class SmartChestModel implements Supplier<BakedModel> {
         
         @Override
         public MeshTransformer prepare(TerrainBlockView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier) {
-            cjbs = CornerJoinBlockState.get(BlockNeighbors.threadLocal(blockView, pos, MATCHER));
+            cjs = CornerJoinState.fromWorld(BlockNeighbors.threadLocal(blockView, pos, MATCHER));
             return this;
         }
 
         @Override
         public MeshTransformer prepare(ItemStack stack, Supplier<Random> randomSupplier) {
-            cjbs = null;
+            cjs = null;
             return this;
         }
         

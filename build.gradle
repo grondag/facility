@@ -92,6 +92,9 @@ dependencies {
 	modCompile "grondag:fermion:0.4.+"
 	include "grondag:fermion:0.4.+"
 	
+	modCompile "grondag:brocade-connect:1.0.1"
+	include "grondag:brocade-connect:1.0.1"
+	
 	compile "blue.endless:jankson:1.1.0"
 	compile "org.joml:joml:1.9.14"
 }

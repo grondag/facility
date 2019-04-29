@@ -9,7 +9,7 @@ import static grondag.frex.api.mesh.MutableQuadView.BAKE_ROTATE_270;
 import static grondag.frex.api.mesh.MutableQuadView.BAKE_ROTATE_90;
 import static grondag.frex.api.mesh.MutableQuadView.BAKE_ROTATE_NONE;
 
-import grondag.brocade.connect.api.state.CornerJoinBlockState;
+import grondag.brocade.connect.api.state.CornerJoinState;
 import grondag.brocade.connect.api.state.CornerJoinFaceStates;
 import grondag.frex.api.mesh.MutableQuadView;
 import grondag.smart_chest.SmartChest;
@@ -170,9 +170,9 @@ public abstract class CubicQuadPainterBorders  {
         }
     }
 
-    public static boolean bakeBorderSprite(MutableQuadView quad, int spriteIndex, CornerJoinBlockState bjs) {
+    public static boolean bakeBorderSprite(MutableQuadView quad, int spriteIndex, CornerJoinState bjs) {
         Direction face = quad.nominalFace();
-        FaceQuadInputs inputs = FACE_INPUTS[face.ordinal()][bjs.getFaceJoinState(face).ordinal()];
+        FaceQuadInputs inputs = FACE_INPUTS[face.ordinal()][bjs.faceState(face).ordinal()];
     
         // if can't identify a face, skip texturing
         // don't render the "no border" texture unless this is a tile of some kind
