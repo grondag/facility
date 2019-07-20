@@ -7,19 +7,18 @@ import static net.minecraft.block.BlockRenderLayer.TRANSLUCENT;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import grondag.brocade.connect.api.state.CornerJoinState;
-import grondag.brocade.connect.api.world.BlockNeighbors;
-import grondag.brocade.connect.api.world.BlockTest;
 import grondag.brocade.painting.CubicQuadPainterBorders;
 import grondag.frex.api.Renderer;
-import grondag.frex.api.RendererAccess;
 import grondag.frex.api.material.MaterialFinder;
-import grondag.frex.api.material.RenderMaterial;
-import grondag.frex.api.mesh.MeshBuilder;
-import grondag.frex.api.mesh.MutableQuadView;
-import grondag.frex.api.mesh.QuadEmitter;
-import grondag.frex.api.model.ModelHelper;
-import grondag.frex.api.render.TerrainBlockView;
+import grondag.xm2.api.connect.state.CornerJoinState;
+import grondag.xm2.api.connect.world.BlockNeighbors;
+import grondag.xm2.api.connect.world.BlockTest;
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
+import net.fabricmc.fabric.api.renderer.v1.material.RenderMaterial;
+import net.fabricmc.fabric.api.renderer.v1.mesh.MeshBuilder;
+import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
+import net.fabricmc.fabric.api.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.renderer.v1.model.ModelHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.model.BakedModel;
@@ -29,6 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.ExtendedBlockView;
 
 public class SmartChestModel implements Supplier<BakedModel> {
 
@@ -36,11 +36,11 @@ public class SmartChestModel implements Supplier<BakedModel> {
     private static RenderMaterial mat3;
     private static final int baseColor = 0xFF50565D;
     private static final int borderColor = 0xFFF12D3A; //0xFF5C6570;
-    private static final int chestColor = 0xFFD4DFF1;
+//    private static final int chestColor = 0xFFD4DFF1;
     
     @Override
     public BakedModel get() {
-        final Renderer renderer = RendererAccess.INSTANCE.getRenderer();
+        final Renderer renderer = (Renderer) RendererAccess.INSTANCE.getRenderer();
         final MeshBuilder mb = renderer.meshBuilder();
         final QuadEmitter qe = mb.getEmitter();
         final MaterialFinder finder = renderer.materialFinder();
@@ -55,7 +55,7 @@ public class SmartChestModel implements Supplier<BakedModel> {
         SpriteAtlasTexture atlas = MinecraftClient.getInstance().getSpriteAtlas();
         final Sprite spriteBase = atlas.getSprite(new Identifier(MODID, "block/noise_moderate_0_0"));
         final Sprite spriteBorder = atlas.getSprite(new Identifier(MODID, "block/border_signal_0_4"));
-        final Sprite spriteChest = atlas.getSprite(new Identifier(MODID, "block/symbol_chest"));
+//        final Sprite spriteChest = atlas.getSprite(new Identifier(MODID, "block/symbol_chest"));
         
         qe.material(mat2)
                 .square(Direction.UP,  0, 0, 1, 1, 0)
@@ -142,10 +142,10 @@ public class SmartChestModel implements Supplier<BakedModel> {
             return true;
         }
 
-        static final BlockTest MATCHER = (a, b, c, d) -> a != null && a.equals(c);
+        static final BlockTest MATCHER = (c) -> c.fromBlockState() != null && c.fromBlockState().equals(c.toBlockState());
         
         @Override
-        public MeshTransformer prepare(TerrainBlockView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier) {
+        public MeshTransformer prepare(ExtendedBlockView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier) {
             cjs = CornerJoinState.fromWorld(BlockNeighbors.threadLocal(blockView, pos, MATCHER));
             return this;
         }

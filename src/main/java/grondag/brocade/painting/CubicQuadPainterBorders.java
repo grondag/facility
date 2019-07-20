@@ -1,18 +1,18 @@
 package grondag.brocade.painting;
 
-import static grondag.frex.api.mesh.MutableQuadView.BAKE_FLIP_U;
-import static grondag.frex.api.mesh.MutableQuadView.BAKE_FLIP_V;
-import static grondag.frex.api.mesh.MutableQuadView.BAKE_LOCK_UV;
-import static grondag.frex.api.mesh.MutableQuadView.BAKE_NORMALIZED;
-import static grondag.frex.api.mesh.MutableQuadView.BAKE_ROTATE_180;
-import static grondag.frex.api.mesh.MutableQuadView.BAKE_ROTATE_270;
-import static grondag.frex.api.mesh.MutableQuadView.BAKE_ROTATE_90;
-import static grondag.frex.api.mesh.MutableQuadView.BAKE_ROTATE_NONE;
+import static net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView.BAKE_FLIP_U;
+import static net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView.BAKE_FLIP_V;
+import static net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView.BAKE_LOCK_UV;
+import static net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView.BAKE_NORMALIZED;
+import static net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView.BAKE_ROTATE_180;
+import static net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView.BAKE_ROTATE_270;
+import static net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView.BAKE_ROTATE_90;
+import static net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView.BAKE_ROTATE_NONE;
 
-import grondag.brocade.connect.api.state.CornerJoinState;
-import grondag.brocade.connect.api.state.CornerJoinFaceStates;
-import grondag.frex.api.mesh.MutableQuadView;
+import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import grondag.smart_chest.SmartChest;
+import grondag.xm2.api.connect.state.CornerJoinFaceStates;
+import grondag.xm2.api.connect.state.CornerJoinState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.Identifier;

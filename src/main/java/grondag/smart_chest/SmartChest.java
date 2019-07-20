@@ -171,7 +171,7 @@ public class SmartChest implements ModInitializer {
     
     private static final Function<Block, Item> ITEM_FUNCTION_STANDARD = block -> {
         return new BlockItem(block, new Item.Settings()
-                .stackSize(64)
-                .itemGroup(ItemGroup.MISC));
+                .maxCount(64)
+                .group(ItemGroup.MISC));
     };
 }

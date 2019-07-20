@@ -17,8 +17,8 @@
 package grondag.smart_chest;
 
 import grondag.frex.api.model.DynamicBakedModel;
-import grondag.frex.api.Renderer;
-import grondag.frex.api.RendererAccess;
+import net.fabricmc.fabric.api.renderer.v1.Renderer;
+import net.fabricmc.fabric.api.renderer.v1.RendererAccess;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.texture.Sprite;

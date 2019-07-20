@@ -19,10 +19,10 @@ package grondag.smart_chest;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import grondag.frex.api.render.RenderContext;
-import grondag.frex.api.render.TerrainBlockView;
+import net.fabricmc.fabric.api.renderer.v1.render.RenderContext;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.BlockView;
 
 /**
  * Encapsulates parts of baked models that can't be pre-baked and
@@ -31,5 +31,5 @@ import net.minecraft.util.math.BlockPos;
  */
 @FunctionalInterface
 public interface DynamicRenderer {
-    void render(TerrainBlockView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context);
+    void render(BlockView blockView, BlockState state, BlockPos pos, Supplier<Random> randomSupplier, RenderContext context);
 }
