@@ -11,8 +11,8 @@ import static net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView.BAKE_ROTA
 
 import net.fabricmc.fabric.api.renderer.v1.mesh.MutableQuadView;
 import grondag.smart_chest.SmartChest;
-import grondag.xm2.api.connect.state.CornerJoinFaceStates;
-import grondag.xm2.api.connect.state.CornerJoinState;
+import grondag.xm.api.connect.state.CornerJoinFaceStates;
+import grondag.xm.api.connect.state.CornerJoinState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.Sprite;
 import net.minecraft.util.Identifier;
