@@ -142,6 +142,7 @@ public class SmartChestModel implements Supplier<BakedModel> {
             return true;
         }
 
+        @SuppressWarnings("rawtypes")
         static final BlockTest MATCHER = (c) -> c.fromBlockState() != null && c.fromBlockState().equals(c.toBlockState());
         
         @Override
