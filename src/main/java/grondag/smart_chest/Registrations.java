@@ -5,6 +5,7 @@ import static grondag.smart_chest.SmartChest.REG;
 import net.minecraft.block.entity.BlockEntityType;
 
 import grondag.xm.api.block.XmBlockRegistry;
+import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.modelstate.primitive.PrimitiveStateFunction;
 import grondag.xm.api.paint.PaintBlendMode;
@@ -12,6 +13,7 @@ import grondag.xm.api.paint.XmPaint;
 import grondag.xm.api.primitive.simple.CubeWithFace;
 import grondag.xm.api.texture.XmTextures;
 
+@SuppressWarnings("unchecked")
 public enum Registrations {
 	;
 
@@ -35,15 +37,15 @@ public enum Registrations {
 				.textureColor(1, 0xFF808090)
 				.find();
 
-
 		XmBlockRegistry.addBlockStates(SMART_CHEST_BLOCK, bs -> PrimitiveStateFunction.builder()
-				.withJoin(SpeciesProperty.matchBlockAndSpecies())
+				.withJoin(SmartChestBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
-				.withDefaultState(SpeciesProperty.SPECIES_MODIFIER.mutate(
+				.withUpdate(XmProperties.FACE_MODIFIER)
+				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
 						CubeWithFace.INSTANCE.newState()
 						.paint(CubeWithFace.SURFACE_TOP, frontPaint)
 						.paint(CubeWithFace.SURFACE_BOTTOM, sidePaint)
-						.paint(CubeWithFace.SURFACE_SIDES, sidePaint), bs))
+						.paint(CubeWithFace.SURFACE_SIDES, sidePaint), bs), bs))
 				.build());
 	}
 }

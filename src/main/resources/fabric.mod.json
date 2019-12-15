@@ -18,18 +18,21 @@
   "entrypoints": {
     "main": [
       "grondag.smart_chest.SmartChest"
+    ],
+    "client": [
+      "grondag.smart_chest.SmartChestClient"
     ]
   },
-  
   "mixins": [
   ],
-  
-  "requires": {
-    "fabricloader": ">=0.4.0",
-    "fabric": "*"
+  "depends": {
+    "fabricloader": ">=0.7.1",
+    "minecraft": "~1.15-pre6",
+    "fabric": "*",
+    "fluidity": "*"
   },
   "custom": {
-    "modmenu:api": true,
+    "modmenu:api": false,
     "modmenu:clientsideOnly": false
   }
 }
