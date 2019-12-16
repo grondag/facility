@@ -5,14 +5,21 @@ import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager.Builder;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
 
+import grondag.smart_chest.screen.SmartChestScreen;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.Species;
 import grondag.xm.api.connect.species.SpeciesFunction;
@@ -46,12 +53,12 @@ public class SmartChestBlock extends Block implements BlockEntityProvider {
 
 	@Override
 	public BlockState getPlacementState(ItemPlacementContext context) {
-		final Direction onFace = context.getSide();
-		final BlockPos onPos = context.getBlockPos().offset(onFace.getOpposite());
+		final Direction face = context.getPlayerLookDirection();
+		final BlockPos onPos = context.getBlockPos().offset(context.getSide().getOpposite());
 		final SpeciesMode mode = context.getPlayer().isSneaking()
 				? SpeciesMode.COUNTER_MOST : SpeciesMode.MATCH_MOST;
-		final int species = Species.speciesForPlacement(context.getWorld(), onPos, onFace, mode, speciesFunc);
-		return getDefaultState().with(SpeciesProperty.SPECIES, species).with(XmProperties.FACE, onFace.getOpposite());
+		final int species = Species.speciesForPlacement(context.getWorld(), onPos, face.getOpposite(), mode, speciesFunc);
+		return getDefaultState().with(SpeciesProperty.SPECIES, species).with(XmProperties.FACE, face);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -62,4 +69,15 @@ public class SmartChestBlock extends Block implements BlockEntityProvider {
 				&& ctx.fromBlockState().contains(XmProperties.FACE)
 				&& ctx.fromBlockState().get(XmProperties.FACE) == ctx.toBlockState().get(XmProperties.FACE);
 	};
+
+	@Override
+	public ActionResult onUse(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockHitResult blockHitResult) {
+		if (world.isClient) {
+			MinecraftClient.getInstance().openScreen(new SmartChestScreen());
+		}
+
+		return ActionResult.SUCCESS;
+	}
+
+
 }
