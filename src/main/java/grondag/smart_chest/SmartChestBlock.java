@@ -9,6 +9,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager.Builder;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -73,11 +74,9 @@ public class SmartChestBlock extends Block implements BlockEntityProvider {
 	@Override
 	public ActionResult onUse(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockHitResult blockHitResult) {
 		if (world.isClient) {
-			MinecraftClient.getInstance().openScreen(new SmartChestScreen());
+			MinecraftClient.getInstance().openScreen(new SmartChestScreen(playerEntity.playerContainer, playerEntity.inventory, new TranslatableText("Smart Chest 2000")));
 		}
 
 		return ActionResult.SUCCESS;
 	}
-
-
 }
