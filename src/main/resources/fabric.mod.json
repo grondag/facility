@@ -21,6 +21,9 @@
     ],
     "client": [
       "grondag.smart_chest.SmartChestClient"
+    ],
+    "rei_plugins_v0": [
+      "grondag.smart_chest.compat.rei.SmartChestReiPlugin"
     ]
   },
   "mixins": [

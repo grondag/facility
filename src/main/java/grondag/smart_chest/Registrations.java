@@ -4,6 +4,8 @@ import static grondag.smart_chest.SmartChest.REG;
 
 import net.minecraft.block.entity.BlockEntityType;
 
+import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
+
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
@@ -47,5 +49,9 @@ public enum Registrations {
 						.paint(CubeWithFace.SURFACE_BOTTOM, sidePaint)
 						.paint(CubeWithFace.SURFACE_SIDES, sidePaint), bs), bs))
 				.build());
+
+		ContainerProviderRegistry.INSTANCE.registerFactory(SmartChestContainer.ID, (syncId, identifier, player, buf) ->  {
+			return new SmartChestContainer(player.inventory, syncId);
+		});
 	}
 }

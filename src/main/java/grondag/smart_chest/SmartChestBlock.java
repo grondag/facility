@@ -5,11 +5,9 @@ import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager.Builder;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -19,8 +17,8 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
-import grondag.smart_chest.screen.SmartChestScreen;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.Species;
 import grondag.xm.api.connect.species.SpeciesFunction;
@@ -72,9 +70,9 @@ public class SmartChestBlock extends Block implements BlockEntityProvider {
 	};
 
 	@Override
-	public ActionResult onUse(BlockState blockState, World world, BlockPos blockPos, PlayerEntity playerEntity, Hand hand, BlockHitResult blockHitResult) {
-		if (world.isClient) {
-			MinecraftClient.getInstance().openScreen(new SmartChestScreen(playerEntity.playerContainer, playerEntity.inventory, new TranslatableText("Smart Chest 2000")));
+	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+		if (!world.isClient) {
+			ContainerProviderRegistry.INSTANCE.openContainer(SmartChestContainer.ID, player, p -> {});
 		}
 
 		return ActionResult.SUCCESS;
