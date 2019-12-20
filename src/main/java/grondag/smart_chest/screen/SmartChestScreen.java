@@ -22,18 +22,10 @@
 
 package grondag.smart_chest.screen;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import io.netty.util.internal.ThreadLocalRandom;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.ContainerProvider;
 import net.minecraft.container.Slot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.registry.Registry;
 
 import grondag.fermion.gui.AbstractSimpleContainerScreen;
 import grondag.fermion.gui.ContainerLayout;
@@ -41,13 +33,14 @@ import grondag.fermion.gui.control.AbstractControl;
 import grondag.fermion.gui.control.Button;
 import grondag.fermion.gui.control.ItemStackPicker;
 import grondag.fermion.gui.control.TabBar;
+import grondag.fermion.gui.control.TextField;
 import grondag.fonthack.FontHackClient;
 import grondag.smart_chest.SmartChestContainer;
 import grondag.smart_chest.delegate.ItemDelegate;
+import grondag.smart_chest.delegate.ItemStorageClientDelegate;
 
 public class SmartChestScreen extends AbstractSimpleContainerScreen<SmartChestContainer> implements ContainerProvider<SmartChestContainer> {
 
-	public static final int BUTTON_ID_SORT = 123;
 	public static final int CAPACITY_BAR_WIDTH = 4;
 
 	private static final int PLAYER_SLOT_SPACING = ItemStackPicker.ITEM_SIZE + ItemStackPicker.ITEM_SPACING;
@@ -98,8 +91,8 @@ public class SmartChestScreen extends AbstractSimpleContainerScreen<SmartChestCo
 		return result;
 	}
 
-
 	protected ItemStackPicker<ItemDelegate> stackPicker;
+	protected TextField filterField;
 	protected int capacityBarLeft;
 	protected int itemPickerTop;
 
@@ -127,62 +120,63 @@ public class SmartChestScreen extends AbstractSimpleContainerScreen<SmartChestCo
 
 	@Override
 	public void addControls() {
-		final List<ItemDelegate> items = new ArrayList<>();
-		final Random rand = ThreadLocalRandom.current();
-		final int[] dummy  = new int[1];
-
-		Registry.ITEM.forEach(i -> {
-			final ItemStack stack = i.getStackForRender();
-			if(!stack.isEmpty() && dummy[0] < 2000) {
-				items.add(new ItemDelegate(stack.copy(), rand.nextInt(2000), dummy[0]++));
-			}
-		});
-
-		//		items.sort((a, b) -> Integer.compare(a.handle(), b.handle()));
-
-		//		for(int i = 0; i < items.size(); i++) {
-		//			items.get(i).handle = i;
-		//		}
-
 		capacityBarLeft = x + ((Layout) layout).externalMargin;
 		itemPickerTop = y + ((Layout) layout).headerHeight;
-		stackPicker = new ItemStackPicker<>(this, items, null);
+		stackPicker = new ItemStackPicker<>(this, ItemStorageClientDelegate.LIST, null);
 		stackPicker.setItemsPerRow(9);
 
-		// TODO: remove
-		//		stackPanel = new Panel(this, true);
-		//		stackPanel.setVerticalLayout(Layout.FIXED);
-		//		stackPanel.setHorizontalLayout(Layout.FIXED);
-		//		stackPanel.setBackgroundColor(0xFF777777);
-		//		stackPanel.setOuterMarginWidth((LAYOUT.slotSpacing - 16) / 2);
 		stackPicker.setLeft(x + layout.playerInventoryLeft);
 		stackPicker.setWidth(layout.slotSpacing * 9 + stackPicker.getTabWidth());
 		stackPicker.setTop(itemPickerTop);
 		stackPicker.setHeight(((Layout) layout).storageHeight);
 		children.add(stackPicker);
 
-		final Button butt = new Button(BUTTON_ID_SORT,
+		final Button butt = new Button(this,
 				x + screenWidth - 40 - layout.externalMargin, y + layout.externalMargin - 2,
 				40, fontRenderer().fontHeight + 2,
-				"123");
-		butt.textColor = 0xFF444444;
-		this.addButton(butt);
-	}
+				ItemDelegate.SORT_LABELS[ItemStorageClientDelegate.getSortIndex()]) {
 
-	@Override
-	public void renderBackground() {
-		// TODO Auto-generated method stub
-		super.renderBackground();
+			@Override
+			public void onClick(double d, double e) {
+				final int oldSort = ItemStorageClientDelegate.getSortIndex();
+				final int newSort = (oldSort + 1) % ItemDelegate.SORT_COUNT;
+				ItemStorageClientDelegate.setSortIndex(newSort);
+				setMessage(ItemDelegate.SORT_LABELS[newSort]);
+				ItemStorageClientDelegate.refreshListIfNeeded();
+			}
+		};
+
+		this.addButton(butt);
+
+		filterField = new TextField(this,
+				x + layout.externalMargin, y + layout.externalMargin - 2,
+				80, fontRenderer().fontHeight + 2, "");
+		filterField.setMaxLength(32);
+		filterField.setSelected(true);
+		filterField.setText(ItemStorageClientDelegate.getFilter());
+		filterField.setChangedListener(s -> ItemStorageClientDelegate.setFilter(s));
+
+		children.add(filterField);
+
+		setInitialFocus(filterField);
 	}
 
 	@Override
 	protected void drawControls(int mouseX, int mouseY, float partialTicks) {
+		//PERF: do less frequently
+		ItemStorageClientDelegate.refreshListIfNeeded();
 		stackPicker.drawControl(mouseX, mouseY, partialTicks);
+		filterField.render(mouseX, mouseY, partialTicks);
 	}
 
 	// Specific to containers - defined by vanilla
 	@Override
 	protected void drawBackground(float partialTicks, int mouseX, int mouseY) {
 		super.drawBackground(partialTicks, mouseX, mouseY);
+	}
+
+	@Override
+	public boolean keyPressed(int i, int j, int k) {
+		return super.keyPressed(i, j, k);
 	}
 }
