@@ -32,10 +32,11 @@ import grondag.fermion.gui.GuiUtil;
 import grondag.fermion.gui.control.Button;
 import grondag.fermion.gui.control.ItemStackPicker;
 import grondag.fermion.gui.control.TextField;
+import grondag.fluidity.api.client.ItemDisplayDelegate;
+import grondag.fluidity.api.client.ItemStorageClientDelegate;
+import grondag.fluidity.impl.ItemDisplayDelegateImpl;
 import grondag.fonthack.FontHackClient;
 import grondag.smart_chest.SmartChestContainer;
-import grondag.smart_chest.delegate.ItemDelegate;
-import grondag.smart_chest.delegate.ItemStorageClientDelegate;
 
 public class SmartChestScreen extends AbstractSimpleContainerScreen<SmartChestContainer> implements ContainerProvider<SmartChestContainer> {
 
@@ -43,7 +44,7 @@ public class SmartChestScreen extends AbstractSimpleContainerScreen<SmartChestCo
 	protected int headerHeight;
 	protected int storageHeight;
 
-	protected ItemStackPicker<ItemDelegate> stackPicker;
+	protected ItemStackPicker<ItemDisplayDelegate> stackPicker;
 	protected TextField filterField;
 	protected int capacityBarLeft;
 	protected int itemPickerTop;
@@ -109,7 +110,7 @@ public class SmartChestScreen extends AbstractSimpleContainerScreen<SmartChestCo
 	public void addControls() {
 		capacityBarLeft = x + theme.externalMargin;
 		itemPickerTop = y + headerHeight;
-		stackPicker = new ItemStackPicker<>(this, ItemStorageClientDelegate.LIST, null);
+		stackPicker = new ItemStackPicker<>(this, ItemStorageClientDelegate.LIST, null, ItemDisplayDelegate::displayStack, ItemDisplayDelegate::count);
 		stackPicker.setItemsPerRow(9);
 
 		stackPicker.setLeft(x + inventoryLeft);
@@ -121,14 +122,14 @@ public class SmartChestScreen extends AbstractSimpleContainerScreen<SmartChestCo
 		final Button butt = new Button(this,
 				x + containerWidth - 40 - theme.externalMargin, y + theme.externalMargin,
 				40, theme.singleLineWidgetHeight,
-				ItemDelegate.SORT_LABELS[ItemStorageClientDelegate.getSortIndex()]) {
+				ItemDisplayDelegate.getSortLabel(ItemStorageClientDelegate.getSortIndex())) {
 
 			@Override
 			public void onClick(double d, double e) {
 				final int oldSort = ItemStorageClientDelegate.getSortIndex();
-				final int newSort = (oldSort + 1) % ItemDelegate.SORT_COUNT;
+				final int newSort = (oldSort + 1) % ItemDisplayDelegateImpl.SORT_COUNT;
 				ItemStorageClientDelegate.setSortIndex(newSort);
-				setMessage(ItemDelegate.SORT_LABELS[newSort]);
+				setMessage(ItemDisplayDelegate.getSortLabel(newSort));
 				ItemStorageClientDelegate.refreshListIfNeeded();
 			}
 		};
