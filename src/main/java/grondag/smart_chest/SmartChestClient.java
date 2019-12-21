@@ -39,11 +39,11 @@ public class SmartChestClient implements ClientModInitializer {
 				if(size > 0 && rand.nextInt(200) < size) {
 					final ItemDelegate d = DUMMY.get(rand.nextInt(size));
 					d.count++;
-					ItemStorageClientDelegate.handleStorageRefresh(ImmutableList.of(d), 2000, false);
+					ItemStorageClientDelegate.handleStorageRefresh(ImmutableList.of(d.clone()), 2000, false);
 				} else {
 					final ItemDelegate d = new ItemDelegate(Registry.ITEM.getRandom(rand).getStackForRender(), 1, size);
 					DUMMY.add(d);
-					ItemStorageClientDelegate.handleStorageRefresh(ImmutableList.of(d), 2000, false);
+					ItemStorageClientDelegate.handleStorageRefresh(ImmutableList.of(d.clone()), 2000, false);
 				}
 			}
 		});

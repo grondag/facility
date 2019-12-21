@@ -26,6 +26,11 @@ public class ItemDelegate implements ItemDisplayDelegate {
 	}
 
 	@Override
+	public ItemDelegate clone() {
+		return new ItemDelegate(stack, count, handle);
+	}
+
+	@Override
 	public int handle() {
 		return handle;
 	}
