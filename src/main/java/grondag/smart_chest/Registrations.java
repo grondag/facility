@@ -2,7 +2,10 @@ package grondag.smart_chest;
 
 import static grondag.smart_chest.SmartChest.REG;
 
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
@@ -51,7 +54,17 @@ public enum Registrations {
 				.build());
 
 		ContainerProviderRegistry.INSTANCE.registerFactory(SmartChestContainer.ID, (syncId, identifier, player, buf) ->  {
-			return new SmartChestContainer(player.inventory, syncId);
+			final BlockPos pos = buf.readBlockPos();
+			final String label = buf.readString();
+			final World world = player.getEntityWorld();
+			final BlockEntity be = world.getBlockEntity(pos);
+
+			if (be instanceof SmartChestBlockEntity) {
+				final SmartChestBlockEntity myBe = (SmartChestBlockEntity) be;
+				return new SmartChestContainer(player, syncId, world.isClient ? null : myBe.getDiscreteStorage(), label);
+			}
+
+			return null;
 		});
 	}
 }

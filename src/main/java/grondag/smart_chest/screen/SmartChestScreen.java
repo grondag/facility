@@ -32,8 +32,8 @@ import grondag.fermion.gui.GuiUtil;
 import grondag.fermion.gui.control.Button;
 import grondag.fermion.gui.control.ItemStackPicker;
 import grondag.fermion.gui.control.TextField;
-import grondag.fluidity.api.client.ItemDisplayDelegate;
-import grondag.fluidity.api.client.ItemStorageClientDelegate;
+import grondag.fluidity.api.synch.ItemDisplayDelegate;
+import grondag.fluidity.api.synch.ItemStorageClientDelegate;
 import grondag.fluidity.impl.ItemDisplayDelegateImpl;
 import grondag.fonthack.FontHackClient;
 import grondag.smart_chest.SmartChestContainer;
@@ -110,7 +110,7 @@ public class SmartChestScreen extends AbstractSimpleContainerScreen<SmartChestCo
 	public void addControls() {
 		capacityBarLeft = x + theme.externalMargin;
 		itemPickerTop = y + headerHeight;
-		stackPicker = new ItemStackPicker<>(this, ItemStorageClientDelegate.LIST, null, ItemDisplayDelegate::displayStack, ItemDisplayDelegate::count);
+		stackPicker = new ItemStackPicker<>(this, ItemStorageClientDelegate.LIST, null, ItemDisplayDelegate::displayStack, ItemDisplayDelegate::getCount);
 		stackPicker.setItemsPerRow(9);
 
 		stackPicker.setLeft(x + inventoryLeft);

@@ -72,7 +72,16 @@ public class SmartChestBlock extends Block implements BlockEntityProvider {
 	@Override
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
 		if (!world.isClient) {
-			ContainerProviderRegistry.INSTANCE.openContainer(SmartChestContainer.ID, player, p -> {});
+			final BlockEntity be = world.getBlockEntity(pos);
+
+			if(be instanceof SmartChestBlockEntity) {
+				final String label = ((SmartChestBlockEntity) be).label;
+
+				ContainerProviderRegistry.INSTANCE.openContainer(SmartChestContainer.ID, player, p -> {
+					p.writeBlockPos(pos);
+					p.writeString(label);
+				});
+			}
 		}
 
 		return ActionResult.SUCCESS;
