@@ -74,7 +74,7 @@ public enum ItemStorageClientDelegate {
 
 		if (prior == null) {
 			MAP.put(update.handle, update);
-			LIST.add(update);
+			addToListIfIncluded(update);
 			usedCapacity += update.count;
 		} else if (update.count == 0) {
 			MAP.remove(update.handle());
