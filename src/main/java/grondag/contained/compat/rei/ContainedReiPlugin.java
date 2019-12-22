@@ -36,7 +36,7 @@ import net.fabricmc.loader.util.version.VersionParsingException;
 import grondag.contained.Contained;
 import grondag.contained.client.ItemStorageScreen;
 
-public class SmartChestReiPlugin implements REIPluginV0 {
+public class ContainedReiPlugin implements REIPluginV0 {
 	public static final Identifier ID = Contained.REG.id("rei_plugin");
 
 	@Override

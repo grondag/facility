@@ -20,7 +20,7 @@
       "grondag.contained.Contained"
     ],
     "client": [
-      "grondag.contained.ContainedClient"
+      "grondag.contained.client.ContainedClient"
     ],
     "rei_plugins_v0": [
       "grondag.contained.compat.rei.ContainedReiPlugin"
@@ -30,7 +30,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.7.1",
-    "minecraft": ">=1.15.1",
+    "minecraft": ">=1.15",
     "fabric": "*",
     "fluidity": "*"
   },
