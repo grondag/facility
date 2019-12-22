@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package grondag.smart_chest.compat.rei;
+package grondag.contained.compat.rei;
 
 import me.shedaniel.math.api.Rectangle;
 import me.shedaniel.rei.api.DisplayHelper;
@@ -33,11 +33,11 @@ import net.minecraft.util.Identifier;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.util.version.VersionParsingException;
 
-import grondag.smart_chest.SmartChest;
-import grondag.smart_chest.screen.SmartChestScreen;
+import grondag.contained.Contained;
+import grondag.contained.client.ItemStorageScreen;
 
 public class SmartChestReiPlugin implements REIPluginV0 {
-	public static final Identifier ID = SmartChest.REG.id("rei_plugin");
+	public static final Identifier ID = Contained.REG.id("rei_plugin");
 
 	@Override
 	public Identifier getPluginIdentifier() {
@@ -51,22 +51,22 @@ public class SmartChestReiPlugin implements REIPluginV0 {
 
 	@Override
 	public void registerBounds(DisplayHelper displayHelper) {
-		final DisplayBoundsHandler<SmartChestScreen> handler = new DisplayBoundsHandler<SmartChestScreen>() {
+		final DisplayBoundsHandler<ItemStorageScreen> handler = new DisplayBoundsHandler<ItemStorageScreen>() {
 
 			@Override
 			public Class<?> getBaseSupportedClass() {
-				return SmartChestScreen.class;
+				return ItemStorageScreen.class;
 			}
 
 			//TODO: make these right or remove them
 			@Override
-			public Rectangle getLeftBounds(SmartChestScreen screen) {
+			public Rectangle getLeftBounds(ItemStorageScreen screen) {
 				//return new Rectangle(screen.screenLeft(), screen.screenTop(), screen.width, screen.height);
 				return new Rectangle(0, 0, 100, 400);
 			}
 
 			@Override
-			public Rectangle getRightBounds(SmartChestScreen screen) {
+			public Rectangle getRightBounds(ItemStorageScreen screen) {
 				final Window window = MinecraftClient.getInstance().getWindow();
 				final int left = screen.screenLeft() + screen.screenWidth();
 				return new Rectangle(left, 0, window.getScaledWidth() - left + 10, window.getScaledHeight());

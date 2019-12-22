@@ -1,6 +1,6 @@
-package grondag.smart_chest;
+package grondag.contained;
 
-import static grondag.smart_chest.SmartChest.REG;
+import static grondag.contained.Contained.REG;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -9,6 +9,10 @@ import net.minecraft.world.World;
 
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
+import grondag.contained.block.AbstractStorageBlock;
+import grondag.contained.block.ItemStorageContainer;
+import grondag.contained.block.ItemStorageBlock;
+import grondag.contained.block.ItemStorageBlockEntity;
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
@@ -22,8 +26,8 @@ import grondag.xm.api.texture.XmTextures;
 public enum Registrations {
 	;
 
-	public static final SmartChestBlock SMART_CHEST_BLOCK = REG.block("smart_chest", new SmartChestBlock());
-	public static final BlockEntityType<SmartChestBlockEntity> SMART_CHEST_BLOCK_ENTITY_TYPE = REG.blockEntityType("smart_chest", SmartChestBlockEntity::new, SMART_CHEST_BLOCK);
+	public static final ItemStorageBlock SMART_CHEST_BLOCK = REG.block("smart_chest", new ItemStorageBlock());
+	public static final BlockEntityType<ItemStorageBlockEntity> SMART_CHEST_BLOCK_ENTITY_TYPE = REG.blockEntityType("smart_chest", ItemStorageBlockEntity::new, SMART_CHEST_BLOCK);
 
 	static {
 		final XmPaint frontPaint = XmPaint.finder()
@@ -43,7 +47,7 @@ public enum Registrations {
 				.find();
 
 		XmBlockRegistry.addBlockStates(SMART_CHEST_BLOCK, bs -> PrimitiveStateFunction.builder()
-				.withJoin(SmartChestBlock.JOIN_TEST)
+				.withJoin(AbstractStorageBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
@@ -53,15 +57,15 @@ public enum Registrations {
 						.paint(CubeWithFace.SURFACE_SIDES, sidePaint), bs), bs))
 				.build());
 
-		ContainerProviderRegistry.INSTANCE.registerFactory(SmartChestContainer.ID, (syncId, identifier, player, buf) ->  {
+		ContainerProviderRegistry.INSTANCE.registerFactory(ItemStorageContainer.ID, (syncId, identifier, player, buf) ->  {
 			final BlockPos pos = buf.readBlockPos();
 			final String label = buf.readString();
 			final World world = player.getEntityWorld();
 			final BlockEntity be = world.getBlockEntity(pos);
 
-			if (be instanceof SmartChestBlockEntity) {
-				final SmartChestBlockEntity myBe = (SmartChestBlockEntity) be;
-				return new SmartChestContainer(player, syncId, world.isClient ? null : myBe.getDiscreteStorage(), label);
+			if (be instanceof ItemStorageBlockEntity) {
+				final ItemStorageBlockEntity myBe = (ItemStorageBlockEntity) be;
+				return new ItemStorageContainer(player, syncId, world.isClient ? null : myBe.getDiscreteStorage(), label);
 			}
 
 			return null;

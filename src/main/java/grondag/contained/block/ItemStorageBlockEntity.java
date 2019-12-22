@@ -1,4 +1,4 @@
-package grondag.smart_chest;
+package grondag.contained.block;
 
 import io.netty.util.internal.ThreadLocalRandom;
 
@@ -10,16 +10,17 @@ import net.minecraft.util.registry.Registry;
 
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
+import grondag.contained.Registrations;
 import grondag.fluidity.api.storage.DiscreteStorage;
 import grondag.fluidity.api.storage.DiscreteStorageSupplier;
 import grondag.fluidity.base.storage.SimpleItemStorage;
 
-public class SmartChestBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, DiscreteStorageSupplier, Tickable {
+public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, DiscreteStorageSupplier, Tickable {
 
 	protected SimpleItemStorage storage = new SimpleItemStorage(32);
-	protected String label = "SmartChest 2000";
+	public String label = "SmartChest 2000";
 
-	public SmartChestBlockEntity() {
+	public ItemStorageBlockEntity() {
 		super(Registrations.SMART_CHEST_BLOCK_ENTITY_TYPE);
 	}
 

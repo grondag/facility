@@ -1,36 +1,36 @@
 {
   "schemaVersion": 1,
-  "id": "smart_chest",
+  "id": "contained",
   "version": "${version}",
-  "name": "SmartChest 2000",
-  "description": "It's smart. It holds 2000 things. It's the SmartChest 2000!",
+  "name": "Contained",
+  "description": "Intermodal storage and transport",
   "authors": [
     "Grondag"
   ],
   "contact": {
-    "homepage": "https://minecraft.curseforge.com/projects/smartchest-2000",
-    "sources": "https://github.com/grondag/smart_chest"
+    "homepage": "https://minecraft.curseforge.com/projects/contained",
+    "sources": "https://github.com/grondag/contained"
   },
   "license": "Apache-2.0",
-  "icon": "assets/smart_chest/smart_chest_2k_icon.png",
+  "icon": "assets/contained/contained_icon.png",
   
   "environment": "*",
   "entrypoints": {
     "main": [
-      "grondag.smart_chest.SmartChest"
+      "grondag.contained.Contained"
     ],
     "client": [
-      "grondag.smart_chest.SmartChestClient"
+      "grondag.contained.ContainedClient"
     ],
     "rei_plugins_v0": [
-      "grondag.smart_chest.compat.rei.SmartChestReiPlugin"
+      "grondag.contained.compat.rei.ContainedReiPlugin"
     ]
   },
   "mixins": [
   ],
   "depends": {
     "fabricloader": ">=0.7.1",
-    "minecraft": "~1.15-pre6",
+    "minecraft": ">=1.15.1",
     "fabric": "*",
     "fluidity": "*"
   },

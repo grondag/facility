@@ -14,7 +14,7 @@
  * the License.
  ******************************************************************************/
 
-package grondag.smart_chest;
+package grondag.contained;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,10 +23,10 @@ import net.fabricmc.api.ModInitializer;
 
 import grondag.fermion.registrar.Registrar;
 
-public class SmartChest implements ModInitializer {
-	public static final Logger LOG = LogManager.getLogger("SmartChest2K");
-	public static final String MODID = "smart_chest";
-	public static Registrar REG  = new Registrar(MODID, "smart_chest");
+public class Contained implements ModInitializer {
+	public static final Logger LOG = LogManager.getLogger("Contained");
+	public static final String MODID = "contained";
+	public static Registrar REG  = new Registrar(MODID, "contained");
 
 	@Override
 	public void onInitialize() {

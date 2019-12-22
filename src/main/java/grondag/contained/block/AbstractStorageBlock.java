@@ -1,9 +1,8 @@
-package grondag.smart_chest;
+package grondag.contained.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
@@ -13,10 +12,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
-import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
 import grondag.xm.api.block.XmProperties;
@@ -26,11 +23,11 @@ import grondag.xm.api.connect.species.SpeciesMode;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.connect.world.BlockTest;
 
-public class SmartChestBlock extends Block implements BlockEntityProvider {
+public abstract class AbstractStorageBlock extends Block implements BlockEntityProvider {
 	public final SpeciesFunction speciesFunc = SpeciesProperty.speciesForBlock(this);
 
-	public SmartChestBlock() {
-		super(FabricBlockSettings.of(Material.STONE).dynamicBounds().strength(1, 1).build());
+	public AbstractStorageBlock(Settings settings) {
+		super(settings);
 	}
 
 	@Override
@@ -39,25 +36,10 @@ public class SmartChestBlock extends Block implements BlockEntityProvider {
 	}
 
 	@Override
-	public BlockEntity createBlockEntity(BlockView blockView) {
-		return new SmartChestBlockEntity();
-	}
-
-	@Override
 	protected void appendProperties(Builder<Block, BlockState> builder) {
 		super.appendProperties(builder);
 		builder.add(SpeciesProperty.SPECIES);
 		builder.add(XmProperties.FACE);
-	}
-
-	@Override
-	public BlockState getPlacementState(ItemPlacementContext context) {
-		final Direction face = context.getPlayerLookDirection();
-		final BlockPos onPos = context.getBlockPos().offset(context.getSide().getOpposite());
-		final SpeciesMode mode = context.getPlayer().isSneaking()
-				? SpeciesMode.COUNTER_MOST : SpeciesMode.MATCH_MOST;
-		final int species = Species.speciesForPlacement(context.getWorld(), onPos, face.getOpposite(), mode, speciesFunc);
-		return getDefaultState().with(SpeciesProperty.SPECIES, species).with(XmProperties.FACE, face);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -70,14 +52,24 @@ public class SmartChestBlock extends Block implements BlockEntityProvider {
 	};
 
 	@Override
+	public BlockState getPlacementState(ItemPlacementContext context) {
+		final Direction face = context.getPlayerLookDirection();
+		final BlockPos onPos = context.getBlockPos().offset(context.getSide().getOpposite());
+		final SpeciesMode mode = context.getPlayer().isSneaking()
+				? SpeciesMode.COUNTER_MOST : SpeciesMode.MATCH_MOST;
+		final int species = Species.speciesForPlacement(context.getWorld(), onPos, face.getOpposite(), mode, speciesFunc);
+		return getDefaultState().with(SpeciesProperty.SPECIES, species).with(XmProperties.FACE, face);
+	}
+
+	@Override
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
 		if (!world.isClient) {
 			final BlockEntity be = world.getBlockEntity(pos);
 
-			if(be instanceof SmartChestBlockEntity) {
-				final String label = ((SmartChestBlockEntity) be).label;
+			if(be instanceof ItemStorageBlockEntity) {
+				final String label = ((ItemStorageBlockEntity) be).label;
 
-				ContainerProviderRegistry.INSTANCE.openContainer(SmartChestContainer.ID, player, p -> {
+				ContainerProviderRegistry.INSTANCE.openContainer(ItemStorageContainer.ID, player, p -> {
 					p.writeBlockPos(pos);
 					p.writeString(label);
 				});
@@ -86,4 +78,5 @@ public class SmartChestBlock extends Block implements BlockEntityProvider {
 
 		return ActionResult.SUCCESS;
 	}
+
 }

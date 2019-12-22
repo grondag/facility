@@ -20,13 +20,14 @@
  * SOFTWARE.
  ******************************************************************************/
 
-package grondag.smart_chest.screen;
+package grondag.contained.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.ContainerProvider;
 import net.minecraft.container.Slot;
 import net.minecraft.text.TranslatableText;
 
+import grondag.contained.block.ItemStorageContainer;
 import grondag.fermion.gui.AbstractSimpleContainerScreen;
 import grondag.fermion.gui.GuiUtil;
 import grondag.fermion.gui.control.Button;
@@ -36,9 +37,8 @@ import grondag.fluidity.api.synch.ItemDisplayDelegate;
 import grondag.fluidity.api.synch.ItemStorageClientDelegate;
 import grondag.fluidity.impl.ItemDisplayDelegateImpl;
 import grondag.fonthack.FontHackClient;
-import grondag.smart_chest.SmartChestContainer;
 
-public class SmartChestScreen extends AbstractSimpleContainerScreen<SmartChestContainer> implements ContainerProvider<SmartChestContainer> {
+public class ItemStorageScreen extends AbstractSimpleContainerScreen<ItemStorageContainer> implements ContainerProvider<ItemStorageContainer> {
 
 
 	protected int headerHeight;
@@ -50,7 +50,7 @@ public class SmartChestScreen extends AbstractSimpleContainerScreen<SmartChestCo
 	protected int itemPickerTop;
 	protected int inventoryLeft;
 
-	public SmartChestScreen(SmartChestContainer container) {
+	public ItemStorageScreen(ItemStorageContainer container) {
 		super(container, MinecraftClient.getInstance().player.inventory, new TranslatableText("Smart Chest"));
 	}
 

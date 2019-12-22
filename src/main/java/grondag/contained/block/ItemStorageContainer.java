@@ -1,4 +1,4 @@
-package grondag.smart_chest;
+package grondag.contained.block;
 
 import javax.annotation.Nullable;
 
@@ -9,18 +9,19 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
+import grondag.contained.Contained;
 import grondag.fluidity.api.storage.DiscreteStorage;
 import grondag.fluidity.api.storage.DiscreteStorageSupplier;
 import grondag.fluidity.api.synch.ItemStorageServerDelegate;
 
-public class SmartChestContainer extends Container implements DiscreteStorageSupplier {
-	public static Identifier ID = SmartChest.REG.id("smart_chest");
+public class ItemStorageContainer extends Container implements DiscreteStorageSupplier {
+	public static Identifier ID = Contained.REG.id("smart_chest");
 
 	protected final @Nullable DiscreteStorage storage;
 	protected String label;
 	protected ItemStorageServerDelegate delegate;
 
-	protected SmartChestContainer(PlayerEntity player, int synchId, @Nullable DiscreteStorage storage, String label) {
+	public ItemStorageContainer(PlayerEntity player, int synchId, @Nullable DiscreteStorage storage, String label) {
 		super(null, synchId);
 		this.storage = storage;
 		this.label = label;
