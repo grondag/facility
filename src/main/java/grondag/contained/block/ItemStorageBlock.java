@@ -146,13 +146,16 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 
 			if (!world.isClient) {
 				final ItemStack stack = new ItemStack(this);
-				final CompoundTag tag = myBlockEntity.toContainerTag(new CompoundTag());
 
-				if (!tag.isEmpty()) {
-					stack.putSubTag("BlockEntityTag", tag);
+				if(!myBlockEntity.getDiscreteStorage().isEmpty()) {
+					final CompoundTag tag = myBlockEntity.toContainerTag(new CompoundTag());
+
+					if (!tag.isEmpty()) {
+						stack.putSubTag("BlockEntityTag", tag);
+					}
+
+					stack.setCustomName(new LiteralText(myBlockEntity.getLabel()));
 				}
-
-				stack.setCustomName(new LiteralText(myBlockEntity.getLabel()));
 
 				final ItemEntity itemEntity = new ItemEntity(world, blockPos.getX(), blockPos.getY(), blockPos.getZ(), stack);
 				itemEntity.setToDefaultPickupDelay();

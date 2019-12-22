@@ -24,7 +24,7 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	public ItemStorageBlockEntity(BlockEntityType<ItemStorageBlockEntity> type, DiscreteStorage storage, String labelRoot) {
 		super(type);
 		this.storage = storage;
-		label = labelRoot + " " + Base32Namer.makeFilteredName(ThreadLocalRandom.current().nextLong());
+		label = labelRoot + Base32Namer.makeFilteredName(ThreadLocalRandom.current().nextLong());
 	}
 
 	@Override
