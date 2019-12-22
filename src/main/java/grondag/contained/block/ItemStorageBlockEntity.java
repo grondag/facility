@@ -2,6 +2,7 @@ package grondag.contained.block;
 
 import io.netty.util.internal.ThreadLocalRandom;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -17,11 +18,11 @@ import grondag.fluidity.base.storage.SimpleItemStorage;
 
 public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, DiscreteStorageSupplier, Tickable {
 
-	protected SimpleItemStorage storage = new SimpleItemStorage(32);
+	protected DiscreteStorage storage;
 	public String label = "SmartChest 2000";
 
 	public ItemStorageBlockEntity() {
-		super(Registrations.SMART_CHEST_BLOCK_ENTITY_TYPE);
+		super(Registrations.ITEM_STORAGE_BLOCK_ENTITY_TYPE);
 	}
 
 	@Override
@@ -31,23 +32,51 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 
 	@Override
 	public DiscreteStorage getDiscreteStorage() {
-		return storage;
+		DiscreteStorage result = storage;
+
+		if(result == null) {
+			final Block block = getCachedState().getBlock();
+
+			if(block instanceof ItemStorageBlock) {
+				result = ((ItemStorageBlock) block).storageFactory.get();
+				storage = result;
+			}
+		}
+
+		return result;
 	}
 
 	@Override
 	public void tick() {
+		final DiscreteStorage storage = getDiscreteStorage();
+
+		if(storage == null) {
+			return;
+		}
+
 		if(storage.count() >= storage.capacity()) {
 			storage.clear();
-		} else {
+		} else if(storage instanceof SimpleItemStorage){
+			final SimpleItemStorage myStorage = (SimpleItemStorage) storage;
 			final ThreadLocalRandom rand = ThreadLocalRandom.current();
 
-			final ItemStack stack = storage.getInvStack(rand.nextInt(storage.getInvSize()));
+			final ItemStack stack = myStorage.getInvStack(rand.nextInt(myStorage.getInvSize()));
 
 			if(stack.isEmpty()) {
 				final Item item = Registry.ITEM.getRandom(rand);
 				storage.accept(item, 1, false);
 			} else {
 				storage.accept(stack.getItem(), 1, false);
+			}
+		} else {
+			final ThreadLocalRandom rand = ThreadLocalRandom.current();
+			final int handle = rand.nextInt(200);
+
+			if(handle < storage.handleCount()) {
+				storage.accept(storage.view(handle).item(), 1, false);
+			} else {
+				final Item item = Registry.ITEM.getRandom(rand);
+				storage.accept(item, 1, false);
 			}
 		}
 	}

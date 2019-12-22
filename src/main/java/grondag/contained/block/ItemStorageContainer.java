@@ -15,7 +15,7 @@ import grondag.fluidity.api.storage.DiscreteStorageSupplier;
 import grondag.fluidity.api.synch.ItemStorageServerDelegate;
 
 public class ItemStorageContainer extends Container implements DiscreteStorageSupplier {
-	public static Identifier ID = Contained.REG.id("smart_chest");
+	public static Identifier ID = Contained.REG.id("item_storage");
 
 	protected final @Nullable DiscreteStorage storage;
 	protected String label;

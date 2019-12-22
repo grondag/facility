@@ -9,10 +9,11 @@ import net.minecraft.world.World;
 
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
-import grondag.contained.block.AbstractStorageBlock;
-import grondag.contained.block.ItemStorageContainer;
 import grondag.contained.block.ItemStorageBlock;
 import grondag.contained.block.ItemStorageBlockEntity;
+import grondag.contained.block.ItemStorageContainer;
+import grondag.fluidity.base.storage.FlexibleItemStorage;
+import grondag.fluidity.base.storage.SimpleItemStorage;
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
@@ -26,8 +27,10 @@ import grondag.xm.api.texture.XmTextures;
 public enum Registrations {
 	;
 
-	public static final ItemStorageBlock SMART_CHEST_BLOCK = REG.block("smart_chest", new ItemStorageBlock());
-	public static final BlockEntityType<ItemStorageBlockEntity> SMART_CHEST_BLOCK_ENTITY_TYPE = REG.blockEntityType("smart_chest", ItemStorageBlockEntity::new, SMART_CHEST_BLOCK);
+	public static final ItemStorageBlock COMPATIBLE_CRATE = REG.block("compatible_crate", new ItemStorageBlock(() -> new SimpleItemStorage(32)));
+	public static final ItemStorageBlock FLEXIBLE_CRATE = REG.block("flexible_crate", new ItemStorageBlock(() -> new FlexibleItemStorage(2048)));
+
+	public static final BlockEntityType<ItemStorageBlockEntity> ITEM_STORAGE_BLOCK_ENTITY_TYPE = REG.blockEntityType("item_storage", ItemStorageBlockEntity::new, COMPATIBLE_CRATE, FLEXIBLE_CRATE);
 
 	static {
 		final XmPaint frontPaint = XmPaint.finder()
@@ -46,8 +49,19 @@ public enum Registrations {
 				.textureColor(1, 0xFF808090)
 				.find();
 
-		XmBlockRegistry.addBlockStates(SMART_CHEST_BLOCK, bs -> PrimitiveStateFunction.builder()
-				.withJoin(AbstractStorageBlock.JOIN_TEST)
+		XmBlockRegistry.addBlockStates(COMPATIBLE_CRATE, bs -> PrimitiveStateFunction.builder()
+				.withJoin(ItemStorageBlock.JOIN_TEST)
+				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
+				.withUpdate(XmProperties.FACE_MODIFIER)
+				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
+						CubeWithFace.INSTANCE.newState()
+						.paint(CubeWithFace.SURFACE_TOP, frontPaint)
+						.paint(CubeWithFace.SURFACE_BOTTOM, sidePaint)
+						.paint(CubeWithFace.SURFACE_SIDES, sidePaint), bs), bs))
+				.build());
+
+		XmBlockRegistry.addBlockStates(FLEXIBLE_CRATE, bs -> PrimitiveStateFunction.builder()
+				.withJoin(ItemStorageBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
