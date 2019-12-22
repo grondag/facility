@@ -10,7 +10,8 @@ public enum ClientRegistrations {
 	;
 
 	static {
-		BlockEntityRendererRegistry.INSTANCE.register(Registrations.ITEM_STORAGE_BLOCK_ENTITY_TYPE, d -> new StorageBlockRenderer(d));
+		BlockEntityRendererRegistry.INSTANCE.register(Registrations.BARREL_BLOCK_ENTITY_TYPE, d -> new StorageBlockRenderer(d));
+		BlockEntityRendererRegistry.INSTANCE.register(Registrations.CRATE_BLOCK_ENTITY_TYPE, d -> new StorageBlockRenderer(d));
 
 		ScreenProviderRegistry.INSTANCE.registerFactory(ItemStorageContainer.ID, ItemStorageScreen::new);
 	}

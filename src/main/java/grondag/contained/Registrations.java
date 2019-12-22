@@ -27,10 +27,19 @@ import grondag.xm.api.texture.XmTextures;
 public enum Registrations {
 	;
 
-	public static final ItemStorageBlock COMPATIBLE_CRATE = REG.block("compatible_crate", new ItemStorageBlock(() -> new SimpleItemStorage(32)));
-	public static final ItemStorageBlock FLEXIBLE_CRATE = REG.block("flexible_crate", new ItemStorageBlock(() -> new FlexibleItemStorage(2048)));
+	public static final ItemStorageBlock CRATE = REG.block("crate", new ItemStorageBlock(Registrations::crateBe));
+	public static final ItemStorageBlock BARREL = REG.block("barrel", new ItemStorageBlock(Registrations::barrelBe));
 
-	public static final BlockEntityType<ItemStorageBlockEntity> ITEM_STORAGE_BLOCK_ENTITY_TYPE = REG.blockEntityType("item_storage", ItemStorageBlockEntity::new, COMPATIBLE_CRATE, FLEXIBLE_CRATE);
+	public static final BlockEntityType<ItemStorageBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", Registrations::crateBe, CRATE);
+	public static final BlockEntityType<ItemStorageBlockEntity> BARREL_BLOCK_ENTITY_TYPE = REG.blockEntityType("barrel", Registrations::barrelBe, BARREL);
+
+	static ItemStorageBlockEntity crateBe() {
+		return new ItemStorageBlockEntity(CRATE_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048), "CRATE ");
+	}
+
+	static ItemStorageBlockEntity barrelBe() {
+		return new ItemStorageBlockEntity(BARREL_BLOCK_ENTITY_TYPE, new SimpleItemStorage(32), "BARREL ");
+	}
 
 	static {
 		final XmPaint frontPaint = XmPaint.finder()
@@ -49,7 +58,7 @@ public enum Registrations {
 				.textureColor(1, 0xFF808090)
 				.find();
 
-		XmBlockRegistry.addBlockStates(COMPATIBLE_CRATE, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(BARREL, bs -> PrimitiveStateFunction.builder()
 				.withJoin(ItemStorageBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
@@ -60,7 +69,7 @@ public enum Registrations {
 						.paint(CubeWithFace.SURFACE_SIDES, sidePaint), bs), bs))
 				.build());
 
-		XmBlockRegistry.addBlockStates(FLEXIBLE_CRATE, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(CRATE, bs -> PrimitiveStateFunction.builder()
 				.withJoin(ItemStorageBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)

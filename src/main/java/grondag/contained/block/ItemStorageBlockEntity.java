@@ -1,22 +1,30 @@
 package grondag.contained.block;
 
-import net.minecraft.block.Block;
+import io.netty.util.internal.ThreadLocalRandom;
+
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Tickable;
 
+import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
-import grondag.contained.Registrations;
+import grondag.fermion.varia.Base32Namer;
 import grondag.fluidity.api.storage.DiscreteStorage;
 import grondag.fluidity.api.storage.DiscreteStorageSupplier;
 
-public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, DiscreteStorageSupplier, Tickable {
+public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, DiscreteStorageSupplier, Tickable, BlockEntityClientSerializable {
+	public static String TAG_STORAGE = "storage";
+	public static String TAG_LABEL = "label";
 
 	protected DiscreteStorage storage;
-	public String label = "SmartChest 2000";
+	protected String label = "UNKNOWN";
 
-	public ItemStorageBlockEntity() {
-		super(Registrations.ITEM_STORAGE_BLOCK_ENTITY_TYPE);
+	public ItemStorageBlockEntity(BlockEntityType<ItemStorageBlockEntity> type, DiscreteStorage storage, String labelRoot) {
+		super(type);
+		this.storage = storage;
+		label = labelRoot + " " + Base32Namer.makeFilteredName(ThreadLocalRandom.current().nextLong());
 	}
 
 	@Override
@@ -26,18 +34,40 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 
 	@Override
 	public DiscreteStorage getDiscreteStorage() {
-		DiscreteStorage result = storage;
+		return storage;
+	}
 
-		if(result == null) {
-			final Block block = getCachedState().getBlock();
+	public String getLabel() {
+		return label;
+	}
 
-			if(block instanceof ItemStorageBlock) {
-				result = ((ItemStorageBlock) block).storageFactory.get();
-				storage = result;
-			}
-		}
+	public void setLabel(String label) {
+		this.label = label;
+		markDirty();
+		sync();
+	}
 
-		return result;
+	@Override
+	public CompoundTag toTag(CompoundTag tag) {
+		super.toTag(tag);
+		return toContainerTag(tag);
+	}
+
+	@Override
+	public void fromTag(CompoundTag tag) {
+		super.fromTag(tag);
+		fromContainerTag(tag);
+	}
+
+	public CompoundTag toContainerTag(CompoundTag tag) {
+		tag.put(TAG_STORAGE, getDiscreteStorage().writeTag());
+		tag.putString(TAG_LABEL, label);
+		return tag;
+	}
+
+	public void fromContainerTag(CompoundTag tag) {
+		label = tag.getString(TAG_LABEL);
+		getDiscreteStorage().readTag(tag.getCompound(TAG_STORAGE));
 	}
 
 	@Override
@@ -73,5 +103,16 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 		//				storage.accept(item, 1, false);
 		//			}
 		//		}
+	}
+
+	@Override
+	public void fromClientTag(CompoundTag tag) {
+		label = tag.getString(TAG_LABEL);
+	}
+
+	@Override
+	public CompoundTag toClientTag(CompoundTag tag) {
+		tag.putString(TAG_LABEL, label);
+		return tag;
 	}
 }
