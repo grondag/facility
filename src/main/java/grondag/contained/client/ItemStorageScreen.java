@@ -200,10 +200,15 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<ItemStorage
 	}
 
 	@Override
-	public boolean mouseDragged(double d, double e, int i, double f, double g) {
-		//TODO: remove
-		System.out.println("ItemStorageScreen.mouseDragged");
-		return super.mouseDragged(d, e, i, f, g);
+	public boolean mouseDragged(double onX, double onY, int mouseButton, double fromX, double fromY) {
+		final Slot slot = getSlotAt(onX, onY);
+
+		if (!minecraft.options.touchscreen && !isCursorDragging && slot != null && slot.hasStack() && hasShiftDown() && minecraft.player.inventory.getCursorStack().isEmpty()) {
+			onMouseClick(slot, slot.id, mouseButton, SlotActionType.QUICK_MOVE);
+			return true;
+		}
+
+		return super.mouseDragged(onX, onY, mouseButton, fromX, fromY);
 	}
 
 	@Override
@@ -215,8 +220,13 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<ItemStorage
 
 	@Override
 	protected void onMouseClick(Slot slot, int slotId, int mouseButton, SlotActionType slotActionType) {
+		if(slotActionType == SlotActionType.QUICK_MOVE) {
+			//System.out.println("boop");
+		}
+
 		//TODO: remove
-		System.out.println("ItemStorageScreen.onMouseClick");
+		System.out.println("ItemStorageScreen.onMouseClick: " + slotActionType.name());
+
 		super.onMouseClick(slot, slotId, mouseButton, slotActionType);
 	}
 

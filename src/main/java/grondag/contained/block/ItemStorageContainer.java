@@ -83,16 +83,33 @@ public class ItemStorageContainer extends Container implements DiscreteStorageSu
 	}
 
 	@Override
-	public ItemStack transferSlot(PlayerEntity playerEntity, int i) {
-		//TODO: remove
-		System.out.println("ItemStorageContainer.transferSlot");
-		return super.transferSlot(playerEntity, i);
+	public ItemStack transferSlot(PlayerEntity playerEntity, int slotId) {
+		final Slot slot = slotList.get(slotId);
+
+		if (slot != null && slot.hasStack()) {
+			final ItemStack sourceStack = slot.getStack();
+
+			slot.setStack(ItemStack.EMPTY);
+			slot.markDirty();
+
+			if(playerEntity instanceof ServerPlayerEntity) {
+				final int qty = (int) storage.accept(sourceStack, false);
+
+				if(qty < sourceStack.getCount()) {
+					final ItemStack giveBack = sourceStack.copy();
+					giveBack.decrement(qty);
+					playerEntity.inventory.offerOrDrop(playerEntity.world, giveBack);
+				}
+			}
+		}
+
+		return ItemStack.EMPTY;
 	}
 
 	@Override
 	public ItemStack onSlotClick(int slotId, int mouseButton, SlotActionType slotActionType, PlayerEntity playerEntity) {
 		//TODO: remove
-		System.out.println("ItemStorageContainer.onSlotClick");
+		System.out.println("ItemStorageContainer.onSlotClick: " + slotActionType.name());
 		return super.onSlotClick(slotId, mouseButton, slotActionType, playerEntity);
 	}
 
