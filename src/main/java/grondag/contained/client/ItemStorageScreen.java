@@ -25,6 +25,7 @@ package grondag.contained.client;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.ContainerProvider;
 import net.minecraft.container.Slot;
+import net.minecraft.container.SlotActionType;
 import net.minecraft.text.TranslatableText;
 
 import grondag.contained.block.ItemStorageContainer;
@@ -81,10 +82,13 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<ItemStorage
 		final int playerInventoryTop = containerHeight - theme.externalMargin - theme.itemSlotSpacing * 4 - theme.itemSpacing;
 
 		int i = 0;
+
 		for(int p = 0; p < 3; ++p) {
 			for(int o = 0; o < 9; ++o) {
 				final Slot oldSlot = container.getSlot(i);
-				container.slotList.set(i++, new Slot(oldSlot.inventory, o + p * 9 + 9, inventoryLeft + o * theme.itemSlotSpacing, playerInventoryTop + p * theme.itemSlotSpacing));
+				final Slot newSlot = new Slot(oldSlot.inventory, o + p * 9 + 9, inventoryLeft + o * theme.itemSlotSpacing, playerInventoryTop + p * theme.itemSlotSpacing);
+				newSlot.id = oldSlot.id;
+				container.slotList.set(i++, newSlot);
 			}
 		}
 
@@ -92,7 +96,9 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<ItemStorage
 
 		for(int p = 0; p < 9; ++p) {
 			final Slot oldSlot = container.getSlot(i);
-			container.slotList.set(i++, new Slot(oldSlot.inventory, p, inventoryLeft + p * theme.itemSlotSpacing, rowTop));
+			final Slot newSlot = new Slot(oldSlot.inventory, p, inventoryLeft + p * theme.itemSlotSpacing, rowTop);
+			newSlot.id = oldSlot.id;
+			container.slotList.set(i++, newSlot);
 		}
 	}
 
@@ -185,4 +191,41 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<ItemStorage
 	protected void drawForeground(int mouseX, int mouseY) {
 		super.drawForeground(mouseX, mouseY);
 	}
+
+	@Override
+	public boolean mouseClicked(double x, double y, int mouseButton) {
+		//TODO: remove
+		System.out.println("ItemStorageScreen.mouseClicked");
+		return super.mouseClicked(x, y, mouseButton);
+	}
+
+	@Override
+	public boolean mouseDragged(double d, double e, int i, double f, double g) {
+		//TODO: remove
+		System.out.println("ItemStorageScreen.mouseDragged");
+		return super.mouseDragged(d, e, i, f, g);
+	}
+
+	@Override
+	public boolean mouseReleased(double d, double e, int i) {
+		//TODO: remove
+		System.out.println("ItemStorageScreen.mouseReleased");
+		return super.mouseReleased(d, e, i);
+	}
+
+	@Override
+	protected void onMouseClick(Slot slot, int slotId, int mouseButton, SlotActionType slotActionType) {
+		//TODO: remove
+		System.out.println("ItemStorageScreen.onMouseClick");
+		super.onMouseClick(slot, slotId, mouseButton, slotActionType);
+	}
+
+	@Override
+	public boolean keyPressed(int i, int j, int k) {
+		//TODO: remove
+		System.out.println("ItemStorageScreen.keyPressed");
+		return super.keyPressed(i, j, k);
+	}
+
+
 }

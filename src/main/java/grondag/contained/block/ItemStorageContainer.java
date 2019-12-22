@@ -1,11 +1,15 @@
 package grondag.contained.block;
 
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.container.Container;
 import net.minecraft.container.Slot;
+import net.minecraft.container.SlotActionType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
@@ -70,4 +74,51 @@ public class ItemStorageContainer extends Container implements DiscreteStorageSu
 			delegate.close(playerEntity);
 		}
 	}
+
+	@Override
+	public boolean onButtonClick(PlayerEntity playerEntity, int i) {
+		//TODO: remove
+		System.out.println("ItemStorageContainer.onButtonClick");
+		return super.onButtonClick(playerEntity, i);
+	}
+
+	@Override
+	public ItemStack transferSlot(PlayerEntity playerEntity, int i) {
+		//TODO: remove
+		System.out.println("ItemStorageContainer.transferSlot");
+		return super.transferSlot(playerEntity, i);
+	}
+
+	@Override
+	public ItemStack onSlotClick(int slotId, int mouseButton, SlotActionType slotActionType, PlayerEntity playerEntity) {
+		//TODO: remove
+		System.out.println("ItemStorageContainer.onSlotClick");
+		return super.onSlotClick(slotId, mouseButton, slotActionType, playerEntity);
+	}
+
+	@Override
+	public void onContentChanged(Inventory inventory) {
+		// TODO Auto-generated method stub
+		super.onContentChanged(inventory);
+	}
+
+	@Override
+	public void setStackInSlot(int i, ItemStack itemStack) {
+		// TODO Auto-generated method stub
+		super.setStackInSlot(i, itemStack);
+	}
+
+	@Override
+	public void updateSlotStacks(List<ItemStack> list) {
+		// TODO Auto-generated method stub
+		super.updateSlotStacks(list);
+	}
+
+	@Override
+	protected boolean insertItem(ItemStack itemStack, int i, int j, boolean bl) {
+		// TODO Auto-generated method stub
+		return super.insertItem(itemStack, i, j, bl);
+	}
+
+
 }
