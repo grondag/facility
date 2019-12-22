@@ -36,12 +36,11 @@ import grondag.fermion.gui.control.ItemStackPicker;
 import grondag.fermion.gui.control.TextField;
 import grondag.fluidity.api.synch.ItemDisplayDelegate;
 import grondag.fluidity.api.synch.ItemStorageClientDelegate;
+import grondag.fluidity.api.synch.StorageAction;
 import grondag.fluidity.impl.ItemDisplayDelegateImpl;
 import grondag.fonthack.FontHackClient;
 
 public class ItemStorageScreen extends AbstractSimpleContainerScreen<ItemStorageContainer> implements ContainerProvider<ItemStorageContainer> {
-
-
 	protected int headerHeight;
 	protected int storageHeight;
 
@@ -116,7 +115,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<ItemStorage
 	public void addControls() {
 		capacityBarLeft = x + theme.externalMargin;
 		itemPickerTop = y + headerHeight;
-		stackPicker = new ItemStackPicker<>(this, ItemStorageClientDelegate.LIST, null, ItemDisplayDelegate::displayStack, ItemDisplayDelegate::getCount);
+		stackPicker = new ItemStackPicker<>(this, ItemStorageClientDelegate.LIST, StorageAction::selectAndSend, ItemDisplayDelegate::displayStack, ItemDisplayDelegate::getCount);
 		stackPicker.setItemsPerRow(9);
 
 		stackPicker.setLeft(x + inventoryLeft);
