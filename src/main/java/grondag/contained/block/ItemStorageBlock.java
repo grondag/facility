@@ -36,6 +36,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
+import grondag.fermion.modkeys.api.ModKeys;
 import grondag.fluidity.api.storage.DiscreteStorage;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.article.DiscreteArticle;
@@ -76,19 +77,16 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 
 	@SuppressWarnings("rawtypes")
 	public static final BlockTest JOIN_TEST = ctx -> {
-		return ctx.fromBlockState().getBlock() == ctx.toBlockState().getBlock()
-				&& ctx.fromBlockState().contains(SpeciesProperty.SPECIES)
-				&& ctx.fromBlockState().get(SpeciesProperty.SPECIES) == ctx.toBlockState().get(SpeciesProperty.SPECIES)
-				&& ctx.fromBlockState().contains(XmProperties.FACE)
-				&& ctx.fromBlockState().get(XmProperties.FACE) == ctx.toBlockState().get(XmProperties.FACE);
+		return ctx.fromBlockState().getBlock() instanceof ItemStorageBlock
+				&& ctx.toBlockState().getBlock() instanceof ItemStorageBlock
+				&& ctx.fromBlockState().get(SpeciesProperty.SPECIES) == ctx.toBlockState().get(SpeciesProperty.SPECIES);
 	};
 
 	@Override
 	public BlockState getPlacementState(ItemPlacementContext context) {
 		final Direction face = context.getPlayerLookDirection();
 		final BlockPos onPos = context.getBlockPos().offset(context.getSide().getOpposite());
-		final SpeciesMode mode = context.getPlayer().isSneaking()
-				? SpeciesMode.COUNTER_MOST : SpeciesMode.MATCH_MOST;
+		final SpeciesMode mode = ModKeys.isPrimaryPressed(context.getPlayer()) ? SpeciesMode.COUNTER_MOST : SpeciesMode.MATCH_MOST;
 		final int species = Species.speciesForPlacement(context.getWorld(), onPos, face.getOpposite(), mode, speciesFunc);
 		return getDefaultState().with(SpeciesProperty.SPECIES, species).with(XmProperties.FACE, face);
 	}

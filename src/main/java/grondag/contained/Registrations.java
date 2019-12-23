@@ -1,6 +1,11 @@
 package grondag.contained;
 
 import static grondag.contained.Contained.REG;
+import static grondag.xm.api.texture.TextureGroup.STATIC_TILES;
+import static grondag.xm.api.texture.TextureRenderIntent.BASE_ONLY;
+import static grondag.xm.api.texture.TextureScale.SINGLE;
+import static grondag.xm.api.texture.TextureTransform.ROTATE_RANDOM;
+import static grondag.xm.api.texture.TextureTransform.STONE_LIKE;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -20,8 +25,12 @@ import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.modelstate.primitive.PrimitiveStateFunction;
 import grondag.xm.api.paint.PaintBlendMode;
 import grondag.xm.api.paint.XmPaint;
+import grondag.xm.api.paint.XmPaintFinder;
 import grondag.xm.api.primitive.simple.CubeWithFace;
+import grondag.xm.api.texture.TextureLayoutMap;
+import grondag.xm.api.texture.TextureSet;
 import grondag.xm.api.texture.XmTextures;
+import grondag.xm.texture.TextureSetHelper;
 
 @SuppressWarnings("unchecked")
 public enum Registrations {
@@ -29,9 +38,15 @@ public enum Registrations {
 
 	public static final ItemStorageBlock CRATE = REG.block("crate", new ItemStorageBlock(Registrations::crateBe));
 	public static final ItemStorageBlock BARREL = REG.block("barrel", new ItemStorageBlock(Registrations::barrelBe));
+	public static final ItemStorageBlock BIN_X1 = REG.block("bin_x1", new ItemStorageBlock(Registrations::binX1Be));
+	public static final ItemStorageBlock BIN_X2 = REG.block("bin_x2", new ItemStorageBlock(Registrations::binX2Be));
+	public static final ItemStorageBlock BIN_X4 = REG.block("bin_x4", new ItemStorageBlock(Registrations::binX4Be));
 
 	public static final BlockEntityType<ItemStorageBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", Registrations::crateBe, CRATE);
 	public static final BlockEntityType<ItemStorageBlockEntity> BARREL_BLOCK_ENTITY_TYPE = REG.blockEntityType("barrel", Registrations::barrelBe, BARREL);
+	public static final BlockEntityType<ItemStorageBlockEntity> BIN_X1_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x1", Registrations::binX1Be, BIN_X1);
+	public static final BlockEntityType<ItemStorageBlockEntity> BIN_X2_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x2", Registrations::binX2Be, BIN_X2);
+	public static final BlockEntityType<ItemStorageBlockEntity> BIN_X4_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x4", Registrations::binX4Be, BIN_X4);
 
 	static ItemStorageBlockEntity crateBe() {
 		return new ItemStorageBlockEntity(CRATE_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048), "CRATE ");
@@ -41,32 +56,37 @@ public enum Registrations {
 		return new ItemStorageBlockEntity(BARREL_BLOCK_ENTITY_TYPE, new SimpleItemStorage(32), "BARREL ");
 	}
 
+	static ItemStorageBlockEntity binX1Be() {
+		return new ItemStorageBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048), "BINx1 ");
+	}
+
+	static ItemStorageBlockEntity binX2Be() {
+		return new ItemStorageBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048), "BINx2 ");
+	}
+
+	static ItemStorageBlockEntity binX4Be() {
+		return new ItemStorageBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048), "BINx4 ");
+	}
+
+	public static final TextureSet CRATE_BASE = TextureSet.builder()
+			.displayNameToken("crate_base").baseTextureName("contained:block/crate_base")
+			.versionCount(4).scale(SINGLE).layout(TextureLayoutMap.VERSIONED).transform(STONE_LIKE)
+			.renderIntent(BASE_ONLY).groups(STATIC_TILES).build("contained:crate_base");
+
+	public static final TextureSet OPEN_BOX = TextureSetHelper.addDecal(Contained.MODID, "open_box", "open_box", ROTATE_RANDOM);
+	public static final TextureSet FILLED_BOX = TextureSetHelper.addDecal(Contained.MODID, "filled_box", "filled_box", ROTATE_RANDOM);
+	public static final TextureSet HALF_DIVIDER = TextureSetHelper.addDecal(Contained.MODID, "half_divider", "half_divider", STONE_LIKE);
+	public static final TextureSet QUARTER_DIVIDER = TextureSetHelper.addDecal(Contained.MODID, "quarter_divider", "quarter_divider", STONE_LIKE);
+
 	static {
-		final XmPaint frontPaint = XmPaint.finder()
-				.textureDepth(1)
-				.texture(0, XmTextures.TILE_NOISE_SUBTLE)
-				.textureColor(0, 0xFF101015)
-
-				.find();
-
-		final XmPaint sidePaint = XmPaint.finder()
-				.textureDepth(2)
-				.texture(0, XmTextures.TILE_NOISE_MODERATE)
-				.textureColor(0, 0xFF505060)
-				.texture(1, XmTextures.BORDER_DOUBLE_PINSTRIPES)
-				.blendMode(1, PaintBlendMode.TRANSLUCENT)
-				.textureColor(1, 0xFF808090)
-				.find();
+		final XmPaint basePaint = crateBaseFinder(2).find();
 
 		XmBlockRegistry.addBlockStates(BARREL, bs -> PrimitiveStateFunction.builder()
 				.withJoin(ItemStorageBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
-						CubeWithFace.INSTANCE.newState()
-						.paint(CubeWithFace.SURFACE_TOP, frontPaint)
-						.paint(CubeWithFace.SURFACE_BOTTOM, sidePaint)
-						.paint(CubeWithFace.SURFACE_SIDES, sidePaint), bs), bs))
+						CubeWithFace.INSTANCE.newState().paintAll(cratePaintWithDecal(OPEN_BOX, 0xA0402918)), bs), bs))
 				.build());
 
 		XmBlockRegistry.addBlockStates(CRATE, bs -> PrimitiveStateFunction.builder()
@@ -74,10 +94,35 @@ public enum Registrations {
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
+						CubeWithFace.INSTANCE.newState().paintAll(basePaint), bs), bs))
+				.build());
+
+		XmBlockRegistry.addBlockStates(BIN_X1, bs -> PrimitiveStateFunction.builder()
+				.withJoin(ItemStorageBlock.JOIN_TEST)
+				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
+				.withUpdate(XmProperties.FACE_MODIFIER)
+				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
+						CubeWithFace.INSTANCE.newState().paintAll(basePaint), bs), bs))
+				.build());
+
+		XmBlockRegistry.addBlockStates(BIN_X2, bs -> PrimitiveStateFunction.builder()
+				.withJoin(ItemStorageBlock.JOIN_TEST)
+				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
+				.withUpdate(XmProperties.FACE_MODIFIER)
+				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
 						CubeWithFace.INSTANCE.newState()
-						.paint(CubeWithFace.SURFACE_TOP, frontPaint)
-						.paint(CubeWithFace.SURFACE_BOTTOM, sidePaint)
-						.paint(CubeWithFace.SURFACE_SIDES, sidePaint), bs), bs))
+						.paintAll(basePaint)
+						.paint(CubeWithFace.SURFACE_TOP, cratePaintWithDecal(HALF_DIVIDER, 0xFFFFFFFF)), bs), bs))
+				.build());
+
+		XmBlockRegistry.addBlockStates(BIN_X4, bs -> PrimitiveStateFunction.builder()
+				.withJoin(ItemStorageBlock.JOIN_TEST)
+				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
+				.withUpdate(XmProperties.FACE_MODIFIER)
+				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
+						CubeWithFace.INSTANCE.newState()
+						.paintAll(basePaint)
+						.paint(CubeWithFace.SURFACE_TOP, cratePaintWithDecal(QUARTER_DIVIDER, 0xFFFFFFFF)), bs), bs))
 				.build());
 
 		ContainerProviderRegistry.INSTANCE.registerFactory(ItemStorageContainer.ID, (syncId, identifier, player, buf) ->  {
@@ -95,5 +140,23 @@ public enum Registrations {
 		});
 
 
+	}
+
+	static XmPaint cratePaintWithDecal(TextureSet decal, int color) {
+		return crateBaseFinder(3)
+				.texture(2, decal)
+				.blendMode(2, PaintBlendMode.TRANSLUCENT)
+				.textureColor(2, color)
+				.find();
+	}
+
+	static XmPaintFinder crateBaseFinder(int depth) {
+		return XmPaint.finder()
+				.textureDepth(depth)
+				.texture(0, CRATE_BASE)
+				.textureColor(0, 0xFFFFFFFF)
+				.texture(1, XmTextures.BORDER_WEATHERED_LINE)
+				.blendMode(1, PaintBlendMode.TRANSLUCENT)
+				.textureColor(1, 0xA0000000);
 	}
 }
