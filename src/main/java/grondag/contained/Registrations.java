@@ -4,9 +4,13 @@ import static grondag.contained.Contained.REG;
 import static grondag.xm.api.texture.TextureGroup.STATIC_TILES;
 import static grondag.xm.api.texture.TextureRenderIntent.BASE_ONLY;
 import static grondag.xm.api.texture.TextureScale.SINGLE;
+import static grondag.xm.api.texture.TextureTransform.IDENTITY;
 import static grondag.xm.api.texture.TextureTransform.ROTATE_RANDOM;
 import static grondag.xm.api.texture.TextureTransform.STONE_LIKE;
 
+import java.util.function.Predicate;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
@@ -17,6 +21,7 @@ import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 import grondag.contained.block.ItemStorageBlock;
 import grondag.contained.block.ItemStorageBlockEntity;
 import grondag.contained.block.ItemStorageContainer;
+import grondag.fluidity.api.item.DiscreteItem;
 import grondag.fluidity.base.storage.FlexibleItemStorage;
 import grondag.fluidity.base.storage.SimpleItemStorage;
 import grondag.xm.api.block.XmBlockRegistry;
@@ -48,24 +53,26 @@ public enum Registrations {
 	public static final BlockEntityType<ItemStorageBlockEntity> BIN_X2_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x2", Registrations::binX2Be, BIN_X2);
 	public static final BlockEntityType<ItemStorageBlockEntity> BIN_X4_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x4", Registrations::binX4Be, BIN_X4);
 
+	public static final Predicate<DiscreteItem> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.getItem()).getClass() != ItemStorageBlock.class;
+
 	static ItemStorageBlockEntity crateBe() {
-		return new ItemStorageBlockEntity(CRATE_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048), "CRATE ");
+		return new ItemStorageBlockEntity(CRATE_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048).filter(FILTER_NESTING), "CRATE ");
 	}
 
 	static ItemStorageBlockEntity barrelBe() {
-		return new ItemStorageBlockEntity(BARREL_BLOCK_ENTITY_TYPE, new SimpleItemStorage(32), "BARREL ");
+		return new ItemStorageBlockEntity(BARREL_BLOCK_ENTITY_TYPE, new SimpleItemStorage(32).filter(FILTER_NESTING), "BARREL ");
 	}
 
 	static ItemStorageBlockEntity binX1Be() {
-		return new ItemStorageBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048), "BINx1 ");
+		return new ItemStorageBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048).filter(FILTER_NESTING), "BINx1 ");
 	}
 
 	static ItemStorageBlockEntity binX2Be() {
-		return new ItemStorageBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048), "BINx2 ");
+		return new ItemStorageBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048).filter(FILTER_NESTING), "BINx2 ");
 	}
 
 	static ItemStorageBlockEntity binX4Be() {
-		return new ItemStorageBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048), "BINx4 ");
+		return new ItemStorageBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048).filter(FILTER_NESTING), "BINx4 ");
 	}
 
 	public static final TextureSet CRATE_BASE = TextureSet.builder()
@@ -75,6 +82,7 @@ public enum Registrations {
 
 	public static final TextureSet OPEN_BOX = TextureSetHelper.addDecal(Contained.MODID, "open_box", "open_box", ROTATE_RANDOM);
 	public static final TextureSet FILLED_BOX = TextureSetHelper.addDecal(Contained.MODID, "filled_box", "filled_box", ROTATE_RANDOM);
+	public static final TextureSet BIN_FACE = TextureSetHelper.addDecal(Contained.MODID, "bin_face", "bin_face", IDENTITY);
 	public static final TextureSet HALF_DIVIDER = TextureSetHelper.addDecal(Contained.MODID, "half_divider", "half_divider", STONE_LIKE);
 	public static final TextureSet QUARTER_DIVIDER = TextureSetHelper.addDecal(Contained.MODID, "quarter_divider", "quarter_divider", STONE_LIKE);
 
@@ -102,7 +110,9 @@ public enum Registrations {
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
-						CubeWithFace.INSTANCE.newState().paintAll(basePaint), bs), bs))
+						CubeWithFace.INSTANCE.newState()
+						.paintAll(basePaint)
+						.paint(CubeWithFace.SURFACE_TOP, cratePaintWithDecal(BIN_FACE, 0xFFFFFFFF)), bs), bs))
 				.build());
 
 		XmBlockRegistry.addBlockStates(BIN_X2, bs -> PrimitiveStateFunction.builder()

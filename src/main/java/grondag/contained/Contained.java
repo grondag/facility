@@ -16,6 +16,11 @@
 
 package grondag.contained;
 
+/**
+ * TODO: fix semantic key config in mod keys
+ * TODO: rename again
+ * TODO: wood tar process
+ */
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
