@@ -22,8 +22,9 @@ import grondag.contained.block.ItemStorageBlock;
 import grondag.contained.block.ItemStorageBlockEntity;
 import grondag.contained.block.ItemStorageContainer;
 import grondag.fluidity.api.item.DiscreteItem;
-import grondag.fluidity.base.storage.FlexibleItemStorage;
-import grondag.fluidity.base.storage.SimpleItemStorage;
+import grondag.fluidity.base.storage.discrete.DividedItemStorage;
+import grondag.fluidity.base.storage.discrete.FlexibleItemStorage;
+import grondag.fluidity.base.storage.discrete.SimpleItemStorage;
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
@@ -64,15 +65,15 @@ public enum Registrations {
 	}
 
 	static ItemStorageBlockEntity binX1Be() {
-		return new ItemStorageBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048).filter(FILTER_NESTING), "BINx1 ");
+		return new ItemStorageBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, new DividedItemStorage(1, 2048).filter(FILTER_NESTING), "BINx1 ");
 	}
 
 	static ItemStorageBlockEntity binX2Be() {
-		return new ItemStorageBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048).filter(FILTER_NESTING), "BINx2 ");
+		return new ItemStorageBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, new DividedItemStorage(2, 1024).filter(FILTER_NESTING), "BINx2 ");
 	}
 
 	static ItemStorageBlockEntity binX4Be() {
-		return new ItemStorageBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048).filter(FILTER_NESTING), "BINx4 ");
+		return new ItemStorageBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, new DividedItemStorage(4, 512).filter(FILTER_NESTING), "BINx4 ");
 	}
 
 	public static final TextureSet CRATE_BASE = TextureSet.builder()

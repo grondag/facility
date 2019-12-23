@@ -21,20 +21,14 @@
  ******************************************************************************/
 package grondag.contained.compat.rei;
 
-import me.shedaniel.math.api.Rectangle;
-import me.shedaniel.rei.api.DisplayHelper;
-import me.shedaniel.rei.api.DisplayHelper.DisplayBoundsHandler;
 import me.shedaniel.rei.api.plugins.REIPluginV0;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.Window;
 import net.minecraft.util.Identifier;
 
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.util.version.VersionParsingException;
 
 import grondag.contained.Contained;
-import grondag.contained.client.ItemStorageScreen;
 
 public class ContainedReiPlugin implements REIPluginV0 {
 	public static final Identifier ID = Contained.REG.id("rei_plugin");
@@ -48,33 +42,4 @@ public class ContainedReiPlugin implements REIPluginV0 {
 	public SemanticVersion getMinimumVersion() throws VersionParsingException {
 		return SemanticVersion.parse("3.0");
 	}
-
-	@Override
-	public void registerBounds(DisplayHelper displayHelper) {
-		final DisplayBoundsHandler<ItemStorageScreen> handler = new DisplayBoundsHandler<ItemStorageScreen>() {
-
-			@Override
-			public Class<?> getBaseSupportedClass() {
-				return ItemStorageScreen.class;
-			}
-
-			//TODO: make these right or remove them
-			@Override
-			public Rectangle getLeftBounds(ItemStorageScreen screen) {
-				//return new Rectangle(screen.screenLeft(), screen.screenTop(), screen.width, screen.height);
-				return new Rectangle(0, 0, 100, 400);
-			}
-
-			@Override
-			public Rectangle getRightBounds(ItemStorageScreen screen) {
-				final Window window = MinecraftClient.getInstance().getWindow();
-				final int left = screen.screenLeft() + screen.screenWidth();
-				return new Rectangle(left, 0, window.getScaledWidth() - left + 10, window.getScaledHeight());
-				//return new Rectangle(screen.screenLeft(), screen.screenTop(), screen.width, screen.height);
-			}
-		};
-
-		displayHelper.registerBoundsHandler(handler);
-	}
-
 }

@@ -77,8 +77,6 @@ public class ItemStorageContainer extends Container implements DiscreteStorageSu
 
 	@Override
 	public boolean onButtonClick(PlayerEntity playerEntity, int i) {
-		//TODO: remove
-		System.out.println("ItemStorageContainer.onButtonClick");
 		return super.onButtonClick(playerEntity, i);
 	}
 
@@ -108,34 +106,26 @@ public class ItemStorageContainer extends Container implements DiscreteStorageSu
 
 	@Override
 	public ItemStack onSlotClick(int slotId, int mouseButton, SlotActionType slotActionType, PlayerEntity playerEntity) {
-		//TODO: remove
-		System.out.println("ItemStorageContainer.onSlotClick: " + slotActionType.name());
 		return super.onSlotClick(slotId, mouseButton, slotActionType, playerEntity);
 	}
 
 	@Override
 	public void onContentChanged(Inventory inventory) {
-		// TODO Auto-generated method stub
 		super.onContentChanged(inventory);
 	}
 
 	@Override
 	public void setStackInSlot(int i, ItemStack itemStack) {
-		// TODO Auto-generated method stub
 		super.setStackInSlot(i, itemStack);
 	}
 
 	@Override
 	public void updateSlotStacks(List<ItemStack> list) {
-		// TODO Auto-generated method stub
 		super.updateSlotStacks(list);
 	}
 
 	@Override
 	protected boolean insertItem(ItemStack itemStack, int i, int j, boolean bl) {
-		// TODO Auto-generated method stub
 		return super.insertItem(itemStack, i, j, bl);
 	}
-
-
 }

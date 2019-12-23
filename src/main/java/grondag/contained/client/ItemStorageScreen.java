@@ -193,8 +193,6 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<ItemStorage
 
 	@Override
 	public boolean mouseClicked(double x, double y, int mouseButton) {
-		//TODO: remove
-		System.out.println("ItemStorageScreen.mouseClicked");
 		return super.mouseClicked(x, y, mouseButton);
 	}
 
@@ -212,29 +210,16 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<ItemStorage
 
 	@Override
 	public boolean mouseReleased(double d, double e, int i) {
-		//TODO: remove
-		System.out.println("ItemStorageScreen.mouseReleased");
 		return super.mouseReleased(d, e, i);
 	}
 
 	@Override
 	protected void onMouseClick(Slot slot, int slotId, int mouseButton, SlotActionType slotActionType) {
-		if(slotActionType == SlotActionType.QUICK_MOVE) {
-			//System.out.println("boop");
-		}
-
-		//TODO: remove
-		System.out.println("ItemStorageScreen.onMouseClick: " + slotActionType.name());
-
 		super.onMouseClick(slot, slotId, mouseButton, slotActionType);
 	}
 
 	@Override
 	public boolean keyPressed(int i, int j, int k) {
-		//TODO: remove
-		System.out.println("ItemStorageScreen.keyPressed");
 		return super.keyPressed(i, j, k);
 	}
-
-
 }

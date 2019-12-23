@@ -20,6 +20,7 @@ package grondag.contained;
  * TODO: fix semantic key config in mod keys
  * TODO: rename again
  * TODO: wood tar process
+ * TODO: implement rollback for flexible storage
  */
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
