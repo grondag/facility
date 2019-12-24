@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "grondag.contained.client.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+  	"MixinItemRenderer"
+      ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

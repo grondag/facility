@@ -18,13 +18,15 @@ import net.minecraft.world.World;
 
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
+import grondag.contained.block.BinBlockEntity;
+import grondag.contained.block.BinStorageBlock;
 import grondag.contained.block.ItemStorageBlock;
 import grondag.contained.block.ItemStorageBlockEntity;
 import grondag.contained.block.ItemStorageContainer;
 import grondag.fluidity.api.item.DiscreteItem;
 import grondag.fluidity.base.storage.discrete.DividedItemStorage;
 import grondag.fluidity.base.storage.discrete.FlexibleItemStorage;
-import grondag.fluidity.base.storage.discrete.SimpleItemStorage;
+import grondag.fluidity.base.storage.discrete.SlottedItemStorage;
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
@@ -44,36 +46,36 @@ public enum Registrations {
 
 	public static final ItemStorageBlock CRATE = REG.block("crate", new ItemStorageBlock(Registrations::crateBe));
 	public static final ItemStorageBlock BARREL = REG.block("barrel", new ItemStorageBlock(Registrations::barrelBe));
-	public static final ItemStorageBlock BIN_X1 = REG.block("bin_x1", new ItemStorageBlock(Registrations::binX1Be));
-	public static final ItemStorageBlock BIN_X2 = REG.block("bin_x2", new ItemStorageBlock(Registrations::binX2Be));
-	public static final ItemStorageBlock BIN_X4 = REG.block("bin_x4", new ItemStorageBlock(Registrations::binX4Be));
+	public static final BinStorageBlock BIN_X1 = REG.block("bin_x1", new BinStorageBlock(Registrations::binX1Be));
+	public static final BinStorageBlock BIN_X2 = REG.block("bin_x2", new BinStorageBlock(Registrations::binX2Be));
+	public static final BinStorageBlock BIN_X4 = REG.block("bin_x4", new BinStorageBlock(Registrations::binX4Be));
 
 	public static final BlockEntityType<ItemStorageBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", Registrations::crateBe, CRATE);
 	public static final BlockEntityType<ItemStorageBlockEntity> BARREL_BLOCK_ENTITY_TYPE = REG.blockEntityType("barrel", Registrations::barrelBe, BARREL);
-	public static final BlockEntityType<ItemStorageBlockEntity> BIN_X1_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x1", Registrations::binX1Be, BIN_X1);
-	public static final BlockEntityType<ItemStorageBlockEntity> BIN_X2_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x2", Registrations::binX2Be, BIN_X2);
-	public static final BlockEntityType<ItemStorageBlockEntity> BIN_X4_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x4", Registrations::binX4Be, BIN_X4);
+	public static final BlockEntityType<BinBlockEntity> BIN_X1_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x1", Registrations::binX1Be, BIN_X1);
+	public static final BlockEntityType<BinBlockEntity> BIN_X2_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x2", Registrations::binX2Be, BIN_X2);
+	public static final BlockEntityType<BinBlockEntity> BIN_X4_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x4", Registrations::binX4Be, BIN_X4);
 
 	public static final Predicate<DiscreteItem> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.getItem()).getClass() != ItemStorageBlock.class;
 
 	static ItemStorageBlockEntity crateBe() {
-		return new ItemStorageBlockEntity(CRATE_BLOCK_ENTITY_TYPE, new FlexibleItemStorage(2048).filter(FILTER_NESTING), "CRATE ");
+		return new ItemStorageBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleItemStorage(2048).filter(FILTER_NESTING), "CRATE ");
 	}
 
 	static ItemStorageBlockEntity barrelBe() {
-		return new ItemStorageBlockEntity(BARREL_BLOCK_ENTITY_TYPE, new SimpleItemStorage(32).filter(FILTER_NESTING), "BARREL ");
+		return new ItemStorageBlockEntity(BARREL_BLOCK_ENTITY_TYPE, () -> new SlottedItemStorage(32).filter(FILTER_NESTING), "BARREL ");
 	}
 
-	static ItemStorageBlockEntity binX1Be() {
-		return new ItemStorageBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, new DividedItemStorage(1, 2048).filter(FILTER_NESTING), "BINx1 ");
+	static BinBlockEntity binX1Be() {
+		return new BinBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, () -> new DividedItemStorage(1, 2048).filter(FILTER_NESTING), "BINx1 ", 1);
 	}
 
-	static ItemStorageBlockEntity binX2Be() {
-		return new ItemStorageBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, new DividedItemStorage(2, 1024).filter(FILTER_NESTING), "BINx2 ");
+	static BinBlockEntity binX2Be() {
+		return new BinBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, () -> new DividedItemStorage(2, 1024).filter(FILTER_NESTING), "BINx2 ", 2);
 	}
 
-	static ItemStorageBlockEntity binX4Be() {
-		return new ItemStorageBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, new DividedItemStorage(4, 512).filter(FILTER_NESTING), "BINx4 ");
+	static BinBlockEntity binX4Be() {
+		return new BinBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, () -> new DividedItemStorage(4, 512).filter(FILTER_NESTING), "BINx4 ", 4);
 	}
 
 	public static final TextureSet CRATE_BASE = TextureSet.builder()
