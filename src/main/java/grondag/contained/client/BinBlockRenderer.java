@@ -54,7 +54,7 @@ public class BinBlockRenderer extends StorageBlockRenderer<BinBlockEntity> {
 		// PERF - save this in render state
 		final Direction face = bin.getCachedState().get(XmProperties.FACE);
 		final World world = bin.getWorld();
-		final BlockPos occludingPos = bin.getPos().offset(face);
+		final BlockPos occludingPos = bin.getPos().offset(face.getOpposite());
 		final BlockState occludingState = world.getBlockState(occludingPos);
 
 		if(occludingState.isFullOpaque(world, occludingPos)) {
@@ -98,14 +98,14 @@ public class BinBlockRenderer extends StorageBlockRenderer<BinBlockEntity> {
 		matrixStack.peek().getModel().multiply(Matrix4f.method_24019(0.36f, 0.36f, 0.001f + d * 0.2f));
 
 		matrixStack.translate(0, 0.23 / 0.36, 0);
-		ItemStack stack = stacks[1];
+		ItemStack stack = stacks[0];
 
 		if(stack != null && !stack.isEmpty()) {
 			ir.renderItem(stack, Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
 		}
 
 		matrixStack.translate(0, -0.46 / 0.36, 0);
-		stack = stacks[0];
+		stack = stacks[1];
 
 		if(stack != null && !stack.isEmpty()) {
 			ir.renderItem(stack, Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
@@ -116,28 +116,28 @@ public class BinBlockRenderer extends StorageBlockRenderer<BinBlockEntity> {
 		matrixStack.peek().getModel().multiply(Matrix4f.method_24019(0.32f, 0.32f, 0.001f + d * 0.2f));
 
 		matrixStack.translate(-0.23 / 0.32, 0.23 / 0.32, 0);
-		ItemStack stack = stacks[3];
+		ItemStack stack = stacks[0];
 
 		if(stack != null && !stack.isEmpty()) {
 			ir.renderItem(stack, Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
 		}
 
 		matrixStack.translate(0.46 / 0.32, 0, 0);
-		stack = stacks[2];
-
-		if(stack != null && !stack.isEmpty()) {
-			ir.renderItem(stack, Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
-		}
-
-		matrixStack.translate(-0.46 / 0.32, -0.46 / 0.32, 0);
 		stack = stacks[1];
 
 		if(stack != null && !stack.isEmpty()) {
 			ir.renderItem(stack, Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
 		}
 
+		matrixStack.translate(-0.46 / 0.32, -0.46 / 0.32, 0);
+		stack = stacks[2];
+
+		if(stack != null && !stack.isEmpty()) {
+			ir.renderItem(stack, Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+		}
+
 		matrixStack.translate(0.46 / 0.32, 0, 0);
-		stack = stacks[0];
+		stack = stacks[3];
 
 		if(stack != null && !stack.isEmpty()) {
 			ir.renderItem(stack, Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);

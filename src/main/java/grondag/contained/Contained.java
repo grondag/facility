@@ -26,7 +26,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 
+import grondag.contained.packet.BinActionC2S;
 import grondag.fermion.registrar.Registrar;
 
 public class Contained implements ModInitializer {
@@ -37,5 +39,7 @@ public class Contained implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		Registrations.values();
+
+		ServerSidePacketRegistry.INSTANCE.register(BinActionC2S.ID, BinActionC2S::accept);
 	}
 }
