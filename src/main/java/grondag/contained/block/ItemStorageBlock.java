@@ -37,9 +37,9 @@ import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
 import grondag.fermion.modkeys.api.ModKeys;
-import grondag.fluidity.api.storage.DiscreteStorage;
 import grondag.fluidity.api.storage.Storage;
-import grondag.fluidity.base.article.DiscreteArticle;
+import grondag.fluidity.api.storage.discrete.DiscreteStorage;
+import grondag.fluidity.base.article.DiscreteStoredArticle;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.Species;
 import grondag.xm.api.connect.species.SpeciesFunction;
@@ -174,7 +174,7 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 		if (beTag != null && beTag.contains(ItemStorageBlockEntity.TAG_STORAGE)) {
 			final ListTag tagList = beTag.getCompound(ItemStorageBlockEntity.TAG_STORAGE).getList(Storage.TAG_ITEMS, 10);
 			final int limit = Math.min(32,tagList.size());
-			final DiscreteArticle lookup = new DiscreteArticle();
+			final DiscreteStoredArticle lookup = new DiscreteStoredArticle();
 
 			for(int i = 0; i < limit; i++) {
 				lookup.readTag(tagList.getCompound(i));

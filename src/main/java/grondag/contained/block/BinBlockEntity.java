@@ -11,15 +11,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import grondag.fluidity.api.article.DiscreteArticleView;
-import grondag.fluidity.api.item.CommonItem;
-import grondag.fluidity.api.storage.CommonStorage;
-import grondag.fluidity.api.storage.DiscreteStorage;
+import grondag.fluidity.api.storage.discrete.DiscreteStorage;
+import grondag.fluidity.impl.CommonItem;
 
 public class BinBlockEntity extends ItemStorageBlockEntity {
 	protected final int divisionLevel;
 	protected final CommonItem[] items;
 
-	public BinBlockEntity(BlockEntityType<BinBlockEntity> type, Supplier<CommonStorage> storageSupplier, String labelRoot, int divisionLevel) {
+	public BinBlockEntity(BlockEntityType<BinBlockEntity> type, Supplier<DiscreteStorage> storageSupplier, String labelRoot, int divisionLevel) {
 		super(type, storageSupplier, labelRoot);
 		this.divisionLevel = divisionLevel;
 		items = new CommonItem[divisionLevel];

@@ -20,8 +20,8 @@ import net.fabricmc.fabric.api.network.PacketContext;
 import grondag.contained.Contained;
 import grondag.contained.block.BinBlockEntity;
 import grondag.fluidity.api.article.DiscreteArticleView;
-import grondag.fluidity.api.item.CommonItem;
-import grondag.fluidity.api.storage.FixedCommonStorage;
+import grondag.fluidity.api.storage.discrete.FixedDiscreteStorage;
+import grondag.fluidity.impl.CommonItem;
 
 public enum BinActionC2S {
 	;
@@ -66,7 +66,7 @@ public enum BinActionC2S {
 			return;
 		}
 
-		final FixedCommonStorage storage = (FixedCommonStorage) ((BinBlockEntity) be).getStorage();
+		final FixedDiscreteStorage storage = (FixedDiscreteStorage) ((BinBlockEntity) be).getStorage();
 		final DiscreteArticleView view = storage.view(handle);
 
 		if(view == null) {
