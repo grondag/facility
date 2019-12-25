@@ -11,18 +11,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import grondag.fluidity.api.article.DiscreteArticleView;
-import grondag.fluidity.api.item.DiscreteItem;
+import grondag.fluidity.api.item.CommonItem;
+import grondag.fluidity.api.storage.CommonStorage;
 import grondag.fluidity.api.storage.DiscreteStorage;
 
 public class BinBlockEntity extends ItemStorageBlockEntity {
 	protected final int divisionLevel;
-	protected final DiscreteItem[] items;
+	protected final CommonItem[] items;
 
-	public BinBlockEntity(BlockEntityType<BinBlockEntity> type, Supplier<DiscreteStorage> storageSupplier, String labelRoot, int divisionLevel) {
+	public BinBlockEntity(BlockEntityType<BinBlockEntity> type, Supplier<CommonStorage> storageSupplier, String labelRoot, int divisionLevel) {
 		super(type, storageSupplier, labelRoot);
 		this.divisionLevel = divisionLevel;
-		items = new DiscreteItem[divisionLevel];
-		Arrays.fill(items, DiscreteItem.NOTHING);
+		items = new CommonItem[divisionLevel];
+		Arrays.fill(items, CommonItem.NOTHING);
 	}
 
 	@Override
@@ -35,7 +36,7 @@ public class BinBlockEntity extends ItemStorageBlockEntity {
 
 		for(int i = 0; i < divisionLevel; i++) {
 
-			final DiscreteItem newItem =  DiscreteItem.fromTag(tag, "i" + i);
+			final CommonItem newItem =  CommonItem.fromTag(tag, "i" + i);
 
 			if(!Objects.equals(newItem, items[i])) {
 				items[i] = newItem;
@@ -83,11 +84,11 @@ public class BinBlockEntity extends ItemStorageBlockEntity {
 
 	protected void refreshClient() {
 		boolean clientRefresh = false;
-		final DiscreteStorage storage = getDiscreteStorage();
+		final DiscreteStorage storage = getStorage();
 
 		for(int i = 0; i < divisionLevel; i++) {
 			final DiscreteArticleView newView = storage.view(i);
-			final DiscreteItem newItem = newView == null || newView.isEmpty() ? DiscreteItem.NOTHING : newView.item();
+			final CommonItem newItem = newView == null || newView.isEmpty() ? CommonItem.NOTHING : newView.item();
 
 			if (!newItem.equals(items[i])) {
 				items[i] = newItem;

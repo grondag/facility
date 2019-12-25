@@ -12,20 +12,20 @@ import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
 import grondag.fermion.varia.Base32Namer;
-import grondag.fluidity.api.storage.DiscreteStorage;
-import grondag.fluidity.api.storage.DiscreteStorageSupplier;
-import grondag.fluidity.base.storage.bulk.AbstractStorage;
+import grondag.fluidity.api.storage.CommonStorage;
+import grondag.fluidity.api.storage.StorageSupplier;
+import grondag.fluidity.base.storage.AbstractStorage;
 
-public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, DiscreteStorageSupplier, BlockEntityClientSerializable {
+public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, StorageSupplier, BlockEntityClientSerializable {
 	public static String TAG_STORAGE = "storage";
 	public static String TAG_LABEL = "label";
 
-	protected final Supplier<DiscreteStorage> storageSupplier;
-	protected DiscreteStorage storage;
+	protected final Supplier<CommonStorage> storageSupplier;
+	protected CommonStorage storage;
 	protected String label = "UNKNOWN";
 	protected ItemStorageClientState clientState;
 
-	public ItemStorageBlockEntity(BlockEntityType<? extends ItemStorageBlockEntity> type, Supplier<DiscreteStorage> storageSupplier, String labelRoot) {
+	public ItemStorageBlockEntity(BlockEntityType<? extends ItemStorageBlockEntity> type, Supplier<CommonStorage> storageSupplier, String labelRoot) {
 		super(type);
 		this.storageSupplier = storageSupplier;
 		label = labelRoot + Base32Namer.makeFilteredName(ThreadLocalRandom.current().nextLong());
@@ -65,10 +65,10 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	}
 
 	/** Do not call on client - will not crash but wastes memory */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public DiscreteStorage getDiscreteStorage() {
-		DiscreteStorage result = storage;
+	public CommonStorage getStorage() {
+		CommonStorage result = storage;
 
 		if(result == null) {
 			result = storageSupplier.get();
@@ -102,14 +102,14 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	}
 
 	public CompoundTag toContainerTag(CompoundTag tag) {
-		tag.put(TAG_STORAGE, getDiscreteStorage().writeTag());
+		tag.put(TAG_STORAGE, getStorage().writeTag());
 		tag.putString(TAG_LABEL, label);
 		return tag;
 	}
 
 	public void fromContainerTag(CompoundTag tag) {
 		label = tag.getString(TAG_LABEL);
-		getDiscreteStorage().readTag(tag.getCompound(TAG_STORAGE));
+		getStorage().readTag(tag.getCompound(TAG_STORAGE));
 	}
 
 	@Override

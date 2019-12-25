@@ -23,10 +23,11 @@ import grondag.contained.block.BinStorageBlock;
 import grondag.contained.block.ItemStorageBlock;
 import grondag.contained.block.ItemStorageBlockEntity;
 import grondag.contained.block.ItemStorageContainer;
-import grondag.fluidity.api.item.DiscreteItem;
-import grondag.fluidity.base.storage.discrete.DividedItemStorage;
-import grondag.fluidity.base.storage.discrete.FlexibleItemStorage;
-import grondag.fluidity.base.storage.discrete.SlottedItemStorage;
+import grondag.fluidity.api.item.CommonItem;
+import grondag.fluidity.api.storage.CommonStorage;
+import grondag.fluidity.base.storage.discrete.DividedDiscreteStorage;
+import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStorage;
+import grondag.fluidity.base.storage.discrete.SlottedCommonStorage;
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
@@ -56,26 +57,26 @@ public enum Registrations {
 	public static final BlockEntityType<BinBlockEntity> BIN_X2_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x2", Registrations::binX2Be, BIN_X2);
 	public static final BlockEntityType<BinBlockEntity> BIN_X4_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x4", Registrations::binX4Be, BIN_X4);
 
-	public static final Predicate<DiscreteItem> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.getItem()).getClass() != ItemStorageBlock.class;
+	public static final Predicate<CommonItem> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.getItem()).getClass() != ItemStorageBlock.class;
 
 	static ItemStorageBlockEntity crateBe() {
-		return new ItemStorageBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleItemStorage(2048).filter(FILTER_NESTING), "CRATE ");
+		return new ItemStorageBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> (CommonStorage) new FlexibleDiscreteStorage(2048).filter(FILTER_NESTING), "CRATE ");
 	}
 
 	static ItemStorageBlockEntity barrelBe() {
-		return new ItemStorageBlockEntity(BARREL_BLOCK_ENTITY_TYPE, () -> new SlottedItemStorage(32).filter(FILTER_NESTING), "BARREL ");
+		return new ItemStorageBlockEntity(BARREL_BLOCK_ENTITY_TYPE, () -> (CommonStorage) new SlottedCommonStorage(32).filter(FILTER_NESTING), "BARREL ");
 	}
 
 	static BinBlockEntity binX1Be() {
-		return new BinBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, () -> new DividedItemStorage(1, 2048).filter(FILTER_NESTING), "BINx1 ", 1);
+		return new BinBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, () -> (CommonStorage) new DividedDiscreteStorage(1, 2048).filter(FILTER_NESTING), "BINx1 ", 1);
 	}
 
 	static BinBlockEntity binX2Be() {
-		return new BinBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, () -> new DividedItemStorage(2, 1024).filter(FILTER_NESTING), "BINx2 ", 2);
+		return new BinBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, () -> (CommonStorage) new DividedDiscreteStorage(2, 1024).filter(FILTER_NESTING), "BINx2 ", 2);
 	}
 
 	static BinBlockEntity binX4Be() {
-		return new BinBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, () -> new DividedItemStorage(4, 512).filter(FILTER_NESTING), "BINx4 ", 4);
+		return new BinBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, () -> (CommonStorage) new DividedDiscreteStorage(4, 512).filter(FILTER_NESTING), "BINx4 ", 4);
 	}
 
 	public static final TextureSet CRATE_BASE = TextureSet.builder()
@@ -146,7 +147,7 @@ public enum Registrations {
 
 			if (be instanceof ItemStorageBlockEntity) {
 				final ItemStorageBlockEntity myBe = (ItemStorageBlockEntity) be;
-				return new ItemStorageContainer(player, syncId, world.isClient ? null : myBe.getDiscreteStorage(), label);
+				return new ItemStorageContainer(player, syncId, world.isClient ? null : myBe.getStorage(), label);
 			}
 
 			return null;

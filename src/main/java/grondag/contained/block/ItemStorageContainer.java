@@ -14,18 +14,18 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import grondag.contained.Contained;
-import grondag.fluidity.api.storage.DiscreteStorage;
-import grondag.fluidity.api.storage.DiscreteStorageSupplier;
+import grondag.fluidity.api.storage.CommonStorage;
+import grondag.fluidity.api.storage.StorageSupplier;
 import grondag.fluidity.api.synch.ItemStorageServerDelegate;
 
-public class ItemStorageContainer extends Container implements DiscreteStorageSupplier {
+public class ItemStorageContainer extends Container implements StorageSupplier {
 	public static Identifier ID = Contained.REG.id("item_storage");
 
-	protected final @Nullable DiscreteStorage storage;
+	protected final @Nullable CommonStorage storage;
 	protected String label;
 	protected ItemStorageServerDelegate delegate;
 
-	public ItemStorageContainer(PlayerEntity player, int synchId, @Nullable DiscreteStorage storage, String label) {
+	public ItemStorageContainer(PlayerEntity player, int synchId, @Nullable CommonStorage storage, String label) {
 		super(null, synchId);
 		this.storage = storage;
 		this.label = label;
@@ -51,9 +51,10 @@ public class ItemStorageContainer extends Container implements DiscreteStorageSu
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Nullable
-	public DiscreteStorage getDiscreteStorage() {
+	public CommonStorage getStorage() {
 		return storage;
 	}
 
