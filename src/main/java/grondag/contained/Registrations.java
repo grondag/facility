@@ -23,10 +23,10 @@ import grondag.contained.block.BinStorageBlock;
 import grondag.contained.block.ItemStorageBlock;
 import grondag.contained.block.ItemStorageBlockEntity;
 import grondag.contained.block.ItemStorageContainer;
-import grondag.fluidity.api.item.Article;
+import grondag.fluidity.api.article.Article;
 import grondag.fluidity.base.storage.discrete.DividedDiscreteStorage;
 import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStorage;
-import grondag.fluidity.base.storage.discrete.SlottedCommonStorage;
+import grondag.fluidity.base.storage.discrete.SlottedInventoryStorage;
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
@@ -56,14 +56,14 @@ public enum Registrations {
 	public static final BlockEntityType<BinBlockEntity> BIN_X2_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x2", Registrations::binX2Be, BIN_X2);
 	public static final BlockEntityType<BinBlockEntity> BIN_X4_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x4", Registrations::binX4Be, BIN_X4);
 
-	public static final Predicate<Article> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.getItem()).getClass() != ItemStorageBlock.class;
+	public static final Predicate<Article> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.toItem()).getClass() != ItemStorageBlock.class;
 
 	static ItemStorageBlockEntity crateBe() {
 		return new ItemStorageBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStorage(2048).filter(FILTER_NESTING), "CRATE ");
 	}
 
 	static ItemStorageBlockEntity barrelBe() {
-		return new ItemStorageBlockEntity(BARREL_BLOCK_ENTITY_TYPE, () -> new SlottedCommonStorage(32).filter(FILTER_NESTING), "BARREL ");
+		return new ItemStorageBlockEntity(BARREL_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStorage(32).filter(FILTER_NESTING), "BARREL ");
 	}
 
 	static BinBlockEntity binX1Be() {

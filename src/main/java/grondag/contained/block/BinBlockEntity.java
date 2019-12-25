@@ -10,8 +10,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.StoredArticleView;
-import grondag.fluidity.api.item.Article;
 import grondag.fluidity.api.storage.Storage;
 
 public class BinBlockEntity extends ItemStorageBlockEntity {
@@ -35,7 +35,7 @@ public class BinBlockEntity extends ItemStorageBlockEntity {
 
 		for(int i = 0; i < divisionLevel; i++) {
 
-			final Article newItem =  Article.fromTag(tag, "i" + i);
+			final Article newItem =  Article.fromTag(tag.get("i" + i));
 
 			if(!Objects.equals(newItem, items[i])) {
 				items[i] = newItem;
@@ -57,7 +57,7 @@ public class BinBlockEntity extends ItemStorageBlockEntity {
 		tag.putString(TAG_LABEL, label);
 
 		for(int i = 0; i < divisionLevel; i++) {
-			items[i].writeTag(tag, "i" + i);
+			tag.put("i" + i, items[i].toTag());
 		}
 
 		return tag;

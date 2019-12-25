@@ -19,9 +19,9 @@ import net.fabricmc.fabric.api.network.PacketContext;
 
 import grondag.contained.Contained;
 import grondag.contained.block.BinBlockEntity;
+import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.StoredArticleView;
-import grondag.fluidity.api.item.Article;
-import grondag.fluidity.api.storage.discrete.FixedDiscreteStorage;
+import grondag.fluidity.api.storage.FixedStorage;
 
 public enum BinActionC2S {
 	;
@@ -66,7 +66,7 @@ public enum BinActionC2S {
 			return;
 		}
 
-		final FixedDiscreteStorage storage = (FixedDiscreteStorage) ((BinBlockEntity) be).getStorage();
+		final FixedStorage storage = (FixedStorage) ((BinBlockEntity) be).getStorage();
 		final StoredArticleView view = storage.view(handle);
 
 		if(view == null) {
@@ -76,7 +76,7 @@ public enum BinActionC2S {
 		if(isAttack) {
 			if(!view.isEmpty()) {
 				final Article hitResource = view.item();
-				final int requested = player.isSneaking() ? 1 : hitResource.getItem().getMaxCount();
+				final int requested = player.isSneaking() ? 1 : hitResource.toItem().getMaxCount();
 				final int q = (int) storage.supply(handle, hitResource, requested, false);
 
 				if(q > 0) {

@@ -179,7 +179,7 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 				lookup.readTag(tagList.getCompound(i));
 
 				if(!lookup.isEmpty()) {
-					final Text text = lookup.item.toStack().getName().deepCopy();
+					final Text text = lookup.article.toStack().getName().deepCopy();
 					text.append(" x").append(String.valueOf(lookup.count()));
 					list.add(text);
 				}
