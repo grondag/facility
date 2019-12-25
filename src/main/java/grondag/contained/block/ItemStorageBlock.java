@@ -38,7 +38,6 @@ import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
 import grondag.fermion.modkeys.api.ModKeys;
 import grondag.fluidity.api.storage.Storage;
-import grondag.fluidity.api.storage.discrete.DiscreteStorage;
 import grondag.fluidity.base.article.DiscreteStoredArticle;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.Species;
@@ -125,7 +124,7 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 
 		if (blockEntity instanceof ItemStorageBlockEntity) {
 			//TODO: move to helper method on storage
-			final DiscreteStorage storage = ((ItemStorageBlockEntity)blockEntity).getStorage();
+			final Storage storage = ((ItemStorageBlockEntity)blockEntity).getStorage();
 
 			if(storage != null){
 				return (int)(Math.floor(14.0 * storage.count() / storage.capacity())) + 1;

@@ -10,19 +10,19 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import grondag.fluidity.api.article.DiscreteArticleView;
-import grondag.fluidity.api.storage.discrete.DiscreteStorage;
-import grondag.fluidity.impl.CommonItem;
+import grondag.fluidity.api.article.StoredArticleView;
+import grondag.fluidity.api.item.Article;
+import grondag.fluidity.api.storage.Storage;
 
 public class BinBlockEntity extends ItemStorageBlockEntity {
 	protected final int divisionLevel;
-	protected final CommonItem[] items;
+	protected final Article[] items;
 
-	public BinBlockEntity(BlockEntityType<BinBlockEntity> type, Supplier<DiscreteStorage> storageSupplier, String labelRoot, int divisionLevel) {
+	public BinBlockEntity(BlockEntityType<BinBlockEntity> type, Supplier<Storage> storageSupplier, String labelRoot, int divisionLevel) {
 		super(type, storageSupplier, labelRoot);
 		this.divisionLevel = divisionLevel;
-		items = new CommonItem[divisionLevel];
-		Arrays.fill(items, CommonItem.NOTHING);
+		items = new Article[divisionLevel];
+		Arrays.fill(items, Article.NOTHING);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class BinBlockEntity extends ItemStorageBlockEntity {
 
 		for(int i = 0; i < divisionLevel; i++) {
 
-			final CommonItem newItem =  CommonItem.fromTag(tag, "i" + i);
+			final Article newItem =  Article.fromTag(tag, "i" + i);
 
 			if(!Objects.equals(newItem, items[i])) {
 				items[i] = newItem;
@@ -83,11 +83,11 @@ public class BinBlockEntity extends ItemStorageBlockEntity {
 
 	protected void refreshClient() {
 		boolean clientRefresh = false;
-		final DiscreteStorage storage = getStorage();
+		final Storage storage = getStorage();
 
 		for(int i = 0; i < divisionLevel; i++) {
-			final DiscreteArticleView newView = storage.view(i);
-			final CommonItem newItem = newView == null || newView.isEmpty() ? CommonItem.NOTHING : newView.item();
+			final StoredArticleView newView = storage.view(i);
+			final Article newItem = newView == null || newView.isEmpty() ? Article.NOTHING : newView.item();
 
 			if (!newItem.equals(items[i])) {
 				items[i] = newItem;

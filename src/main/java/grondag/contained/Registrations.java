@@ -24,7 +24,6 @@ import grondag.contained.block.ItemStorageBlock;
 import grondag.contained.block.ItemStorageBlockEntity;
 import grondag.contained.block.ItemStorageContainer;
 import grondag.fluidity.api.item.Article;
-import grondag.fluidity.api.storage.discrete.DiscreteStorage;
 import grondag.fluidity.base.storage.discrete.DividedDiscreteStorage;
 import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStorage;
 import grondag.fluidity.base.storage.discrete.SlottedCommonStorage;
@@ -60,23 +59,23 @@ public enum Registrations {
 	public static final Predicate<Article> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.getItem()).getClass() != ItemStorageBlock.class;
 
 	static ItemStorageBlockEntity crateBe() {
-		return new ItemStorageBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> (DiscreteStorage) new FlexibleDiscreteStorage(2048).filter(FILTER_NESTING), "CRATE ");
+		return new ItemStorageBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStorage(2048).filter(FILTER_NESTING), "CRATE ");
 	}
 
 	static ItemStorageBlockEntity barrelBe() {
-		return new ItemStorageBlockEntity(BARREL_BLOCK_ENTITY_TYPE, () -> (DiscreteStorage) new SlottedCommonStorage(32).filter(FILTER_NESTING), "BARREL ");
+		return new ItemStorageBlockEntity(BARREL_BLOCK_ENTITY_TYPE, () -> new SlottedCommonStorage(32).filter(FILTER_NESTING), "BARREL ");
 	}
 
 	static BinBlockEntity binX1Be() {
-		return new BinBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, () -> (DiscreteStorage) new DividedDiscreteStorage(1, 2048).filter(FILTER_NESTING), "BINx1 ", 1);
+		return new BinBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, () -> new DividedDiscreteStorage(1, 2048).filter(FILTER_NESTING), "BINx1 ", 1);
 	}
 
 	static BinBlockEntity binX2Be() {
-		return new BinBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, () -> (DiscreteStorage) new DividedDiscreteStorage(2, 1024).filter(FILTER_NESTING), "BINx2 ", 2);
+		return new BinBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, () -> new DividedDiscreteStorage(2, 1024).filter(FILTER_NESTING), "BINx2 ", 2);
 	}
 
 	static BinBlockEntity binX4Be() {
-		return new BinBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, () -> (DiscreteStorage) new DividedDiscreteStorage(4, 512).filter(FILTER_NESTING), "BINx4 ", 4);
+		return new BinBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, () -> new DividedDiscreteStorage(4, 512).filter(FILTER_NESTING), "BINx4 ", 4);
 	}
 
 	public static final TextureSet CRATE_BASE = TextureSet.builder()
