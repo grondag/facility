@@ -13,10 +13,10 @@ import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
 import grondag.fermion.varia.Base32Namer;
 import grondag.fluidity.api.storage.Storage;
-import grondag.fluidity.api.storage.StorageSupplier;
+import grondag.fluidity.api.storage.StorageDevice;
 import grondag.fluidity.base.storage.AbstractStorage;
 
-public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, StorageSupplier, BlockEntityClientSerializable {
+public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, StorageDevice, BlockEntityClientSerializable {
 	public static String TAG_STORAGE = "storage";
 	public static String TAG_LABEL = "label";
 

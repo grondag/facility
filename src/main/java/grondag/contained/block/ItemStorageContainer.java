@@ -15,10 +15,10 @@ import net.minecraft.util.Identifier;
 
 import grondag.contained.Contained;
 import grondag.fluidity.api.storage.Storage;
-import grondag.fluidity.api.storage.StorageSupplier;
+import grondag.fluidity.api.storage.StorageDevice;
 import grondag.fluidity.api.synch.ItemStorageServerDelegate;
 
-public class ItemStorageContainer extends Container implements StorageSupplier {
+public class ItemStorageContainer extends Container implements StorageDevice {
 	public static Identifier ID = Contained.REG.id("item_storage");
 
 	protected final @Nullable Storage storage;

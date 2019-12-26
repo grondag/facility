@@ -36,7 +36,8 @@ import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
 import grondag.fermion.modkeys.api.ModKeys;
 import grondag.fluidity.api.storage.Storage;
-import grondag.fluidity.base.article.DiscreteStoredArticle;
+import grondag.fluidity.base.article.StoredDiscreteArticle;
+import grondag.fluidity.base.storage.discrete.AbstractDiscreteStorage;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.Species;
 import grondag.xm.api.connect.species.SpeciesFunction;
@@ -169,15 +170,15 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 
 		// TODO: move to shared helper method
 		if (beTag != null && beTag.contains(ItemStorageBlockEntity.TAG_STORAGE)) {
-			final ListTag tagList = beTag.getCompound(ItemStorageBlockEntity.TAG_STORAGE).getList(Storage.TAG_ITEMS, 10);
+			final ListTag tagList = beTag.getCompound(ItemStorageBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStorage.TAG_ITEMS, 10);
 			final int limit = Math.min(32,tagList.size());
-			final DiscreteStoredArticle lookup = new DiscreteStoredArticle();
+			final StoredDiscreteArticle lookup = new StoredDiscreteArticle();
 
 			for(int i = 0; i < limit; i++) {
 				lookup.readTag(tagList.getCompound(i));
 
 				if(!lookup.isEmpty()) {
-					final Text text = lookup.article.toStack().getName().deepCopy();
+					final Text text = lookup.article().toStack().getName().deepCopy();
 					text.append(" x").append(String.valueOf(lookup.count()));
 					list.add(text);
 				}

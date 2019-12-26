@@ -75,7 +75,7 @@ public enum BinActionC2S {
 
 		if(isAttack) {
 			if(!view.isEmpty()) {
-				final Article hitResource = view.item();
+				final Article hitResource = view.article();
 				final int requested = player.isSneaking() ? 1 : hitResource.toItem().getMaxCount();
 				final int q = (int) storage.supply(handle, hitResource, requested, false);
 
@@ -85,7 +85,7 @@ public enum BinActionC2S {
 				}
 			}
 		} else {
-			final Article hitResource = view.item();
+			final Article hitResource = view.article();
 			final ItemStack stack =  player.getMainHandStack();
 
 			if(stack != null && !stack.isEmpty() && (view.isEmpty() || hitResource.matches(stack))) {

@@ -87,7 +87,7 @@ public class BinBlockEntity extends ItemStorageBlockEntity {
 
 		for(int i = 0; i < divisionLevel; i++) {
 			final StoredArticleView newView = storage.view(i);
-			final Article newItem = newView == null || newView.isEmpty() ? Article.NOTHING : newView.item();
+			final Article newItem = newView == null || newView.isEmpty() ? Article.NOTHING : newView.article();
 
 			if (!newItem.equals(items[i])) {
 				items[i] = newItem;
