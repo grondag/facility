@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -29,8 +30,8 @@ import grondag.xm.api.orientation.FaceEdge;
 public class BinStorageBlock extends ItemStorageBlock implements BlockAttackInteractionAware {
 	protected final int divisionLevel;
 
-	public BinStorageBlock(Supplier<BlockEntity> beFactory, int divisionLevel) {
-		super(beFactory);
+	public BinStorageBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, int divisionLevel) {
+		super(settings, beFactory);
 		this.divisionLevel = divisionLevel;
 	}
 

@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.piston.PistonBehavior;
@@ -33,7 +32,6 @@ import net.minecraft.world.World;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
 import grondag.fermion.modkeys.api.ModKeys;
@@ -52,8 +50,8 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 	public final SpeciesFunction speciesFunc = SpeciesProperty.speciesForBlock(this);
 	protected final Supplier<BlockEntity> beFactory;
 
-	public ItemStorageBlock(Supplier<BlockEntity> beFactory) {
-		super(FabricBlockSettings.of(Material.STONE).dynamicBounds().strength(1, 1).build());
+	public ItemStorageBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
+		super(settings);
 		this.beFactory = beFactory;
 	}
 

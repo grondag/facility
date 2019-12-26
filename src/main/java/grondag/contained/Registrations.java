@@ -11,11 +11,13 @@ import static grondag.xm.api.texture.TextureTransform.STONE_LIKE;
 import java.util.function.Predicate;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
 import grondag.contained.block.BinBlockEntity;
@@ -44,11 +46,11 @@ import grondag.xm.texture.TextureSetHelper;
 public enum Registrations {
 	;
 
-	public static final ItemStorageBlock CRATE = REG.block("crate", new ItemStorageBlock(Registrations::crateBe));
-	public static final ItemStorageBlock BARREL = REG.block("barrel", new ItemStorageBlock(Registrations::barrelBe));
-	public static final BinStorageBlock BIN_X1 = REG.block("bin_x1", new BinStorageBlock(Registrations::binX1Be, 1));
-	public static final BinStorageBlock BIN_X2 = REG.block("bin_x2", new BinStorageBlock(Registrations::binX2Be, 2));
-	public static final BinStorageBlock BIN_X4 = REG.block("bin_x4", new BinStorageBlock(Registrations::binX4Be, 4));
+	public static final ItemStorageBlock CRATE = REG.block("crate", new ItemStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::crateBe));
+	public static final ItemStorageBlock BARREL = REG.block("barrel", new ItemStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::barrelBe));
+	public static final BinStorageBlock BIN_X1 = REG.block("bin_x1", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::binX1Be, 1));
+	public static final BinStorageBlock BIN_X2 = REG.block("bin_x2", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::binX2Be, 2));
+	public static final BinStorageBlock BIN_X4 = REG.block("bin_x4", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::binX4Be, 4));
 
 	public static final BlockEntityType<ItemStorageBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", Registrations::crateBe, CRATE);
 	public static final BlockEntityType<ItemStorageBlockEntity> BARREL_BLOCK_ENTITY_TYPE = REG.blockEntityType("barrel", Registrations::barrelBe, BARREL);
