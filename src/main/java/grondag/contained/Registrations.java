@@ -148,7 +148,7 @@ public enum Registrations {
 
 			if (be instanceof ItemStorageBlockEntity) {
 				final ItemStorageBlockEntity myBe = (ItemStorageBlockEntity) be;
-				return new ItemStorageContainer(player, syncId, world.isClient ? null : myBe.getStorage(), label);
+				return new ItemStorageContainer(player, syncId, world.isClient ? null : myBe.getStorageForDisplay(), label);
 			}
 
 			return null;

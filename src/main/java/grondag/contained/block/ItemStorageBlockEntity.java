@@ -7,6 +7,7 @@ import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.math.Direction;
 
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
@@ -15,6 +16,7 @@ import grondag.fermion.varia.Base32Namer;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.api.storage.StorageDevice;
 import grondag.fluidity.base.storage.AbstractStorage;
+import grondag.fluidity.base.storage.discrete.AggregateDiscreteStorage;
 
 public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, StorageDevice, BlockEntityClientSerializable {
 	public static String TAG_STORAGE = "storage";
@@ -127,6 +129,21 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 		if(world != null && pos != null) {
 			world.markDirty(pos, this);
 		}
+	}
+
+	public Storage getStorageForDisplay() {
+		final AggregateDiscreteStorage result = new AggregateDiscreteStorage();
+		result.addStore(getStorage());
+
+		for(final Direction face : Direction.values()) {
+			final BlockEntity be = world.getBlockEntity(pos.offset(face));
+
+			if(be instanceof ItemStorageBlockEntity) {
+				result.addStore(((ItemStorageBlockEntity) be).getStorage());
+			}
+		}
+
+		return result;
 	}
 
 	//	@Environment(EnvType.CLIENT)
