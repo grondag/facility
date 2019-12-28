@@ -7,18 +7,28 @@ import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
+import grondag.contained.block.ItemStorageBlockEntity.ItemStorageMultiblock;
 import grondag.fermion.varia.Base32Namer;
+import grondag.fluidity.api.device.StorageDevice;
 import grondag.fluidity.api.storage.Storage;
-import grondag.fluidity.api.storage.StorageDevice;
 import grondag.fluidity.base.storage.AbstractStorage;
-import grondag.fluidity.base.storage.discrete.AggregateDiscreteStorage;
+import grondag.fluidity.wip.CompoundDeviceManager;
+import grondag.fluidity.wip.CompoundDeviceMember;
+import grondag.fluidity.wip.CompoundDiscreteStorage;
 
-public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, StorageDevice, BlockEntityClientSerializable {
+public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, StorageDevice, BlockEntityClientSerializable, CompoundDeviceMember<ItemStorageBlockEntity, ItemStorageMultiblock> {
+	protected static class ItemStorageMultiblock extends CompoundDiscreteStorage<ItemStorageBlockEntity, ItemStorageMultiblock> {}
+
+	protected static final CompoundDeviceManager<ItemStorageBlockEntity, ItemStorageMultiblock> DEVICE_MANAGER = new CompoundDeviceManager<>(
+			ItemStorageMultiblock::new, (ItemStorageBlockEntity a, ItemStorageBlockEntity b) -> ItemStorageBlock.canConnect(a, b));
+
 	public static String TAG_STORAGE = "storage";
 	public static String TAG_LABEL = "label";
 
@@ -132,29 +142,73 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	}
 
 	public Storage getStorageForDisplay() {
-		final AggregateDiscreteStorage result = new AggregateDiscreteStorage();
-		result.addStore(getStorage());
-
-		for(final Direction face : Direction.values()) {
-			final BlockEntity be = world.getBlockEntity(pos.offset(face));
-
-			if(be instanceof ItemStorageBlockEntity) {
-				result.addStore(((ItemStorageBlockEntity) be).getStorage());
-			}
-		}
-
-		return result;
+		return owner == null ? getStorage() : owner.getStorage();
 	}
 
-	//	@Environment(EnvType.CLIENT)
-	//	public void notifyServerPlayerWatching() {
-	//		final long time = world.getTime();
-	//
-	//		// don't send more frequently than needed
-	//		if (time >= nextPlayerUpdateMilliseconds) {
-	//			//TODO: implement
-	//			//            PacketHandler.CHANNEL.sendToServer(new PacketMachineStatusAddListener(this.pos));
-	//			nextPlayerUpdateMilliseconds = time + ContainedConfig.keepaliveIntervalMilliseconds;
-	//		}
-	//	}
+	@Override
+	public long packedPos() {
+		return pos.asLong();
+	}
+
+	@Override
+	public int dimensionId() {
+		return dimension().getRawId();
+	}
+
+	@Override
+	public DimensionType dimension() {
+		return world.getDimension().getType();
+	}
+
+	@Override
+	public World world() {
+		return world;
+	}
+
+	protected ItemStorageMultiblock owner = null;
+
+	@Override
+	public ItemStorageMultiblock getCompoundDevice() {
+		return owner;
+	}
+
+	@Override
+	public void setCompoundDevice(ItemStorageMultiblock owner) {
+		this.owner = owner;
+	}
+
+	protected boolean isRegistered = false;
+
+	protected void registerDevice() {
+		if(!isRegistered && hasWorld() && !world.isClient) {
+			DEVICE_MANAGER.connect(this);
+			isRegistered = true;
+		}
+	}
+
+	protected void unregisterDevice() {
+		if(isRegistered && hasWorld() && !world.isClient) {
+			DEVICE_MANAGER.disconnect(this);
+			isRegistered = false;
+		}
+	}
+
+	@Override
+	public void setWorld(World world, BlockPos blockPos) {
+		unregisterDevice();
+		super.setWorld(world, blockPos);
+		registerDevice();
+	}
+
+	@Override
+	public void markRemoved() {
+		unregisterDevice();
+		super.markRemoved();
+	}
+
+	@Override
+	public void cancelRemoval() {
+		super.cancelRemoval();
+		registerDevice();
+	}
 }

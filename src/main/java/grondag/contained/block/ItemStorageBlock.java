@@ -74,11 +74,18 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static final BlockTest JOIN_TEST = ctx -> {
-		return ctx.fromBlockState().getBlock() instanceof ItemStorageBlock
-				&& ctx.toBlockState().getBlock() instanceof ItemStorageBlock
-				&& ctx.fromBlockState().get(SpeciesProperty.SPECIES) == ctx.toBlockState().get(SpeciesProperty.SPECIES);
-	};
+	public static final BlockTest JOIN_TEST = ctx -> canConnect(ctx.fromBlockState(), ctx.toBlockState());
+
+	public static boolean canConnect(BlockState fromState, BlockState toState) {
+		return fromState.getBlock() instanceof ItemStorageBlock
+				&& toState.getBlock() instanceof ItemStorageBlock
+				&& fromState.get(SpeciesProperty.SPECIES) == toState.get(SpeciesProperty.SPECIES);
+	}
+
+	public static boolean canConnect(ItemStorageBlockEntity fromEntity, ItemStorageBlockEntity toEntity) {
+		final World fromWorld = fromEntity.getWorld();
+		return fromWorld == null || fromWorld != toEntity.getWorld() ? false : canConnect(fromEntity.getCachedState(), toEntity.getCachedState());
+	}
 
 	@Override
 	public BlockState getPlacementState(ItemPlacementContext context) {
