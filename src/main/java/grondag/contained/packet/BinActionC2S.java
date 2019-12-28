@@ -66,7 +66,7 @@ public enum BinActionC2S {
 			return;
 		}
 
-		final FixedStorage storage = (FixedStorage) ((BinBlockEntity) be).getStorage();
+		final FixedStorage storage = (FixedStorage) ((BinBlockEntity) be).getLocalStorage();
 		final StoredArticleView view = storage.view(handle);
 
 		if(view == null) {

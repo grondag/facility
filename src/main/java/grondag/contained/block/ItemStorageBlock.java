@@ -130,7 +130,7 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 
 		if (blockEntity instanceof ItemStorageBlockEntity) {
 			//TODO: move to helper method on storage
-			final Storage storage = ((ItemStorageBlockEntity)blockEntity).getStorage();
+			final Storage storage = ((ItemStorageBlockEntity)blockEntity).getLocalStorage();
 
 			if(storage != null){
 				return (int)(Math.floor(14.0 * storage.count() / storage.capacity())) + 1;
@@ -150,7 +150,7 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 			if (!world.isClient) {
 				final ItemStack stack = new ItemStack(this);
 
-				if(!myBlockEntity.getStorage().isEmpty()) {
+				if(!myBlockEntity.getLocalStorage().isEmpty()) {
 					final CompoundTag tag = myBlockEntity.toContainerTag(new CompoundTag());
 
 					if (!tag.isEmpty()) {

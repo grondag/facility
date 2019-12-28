@@ -16,15 +16,16 @@ import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
 import grondag.contained.block.ItemStorageBlockEntity.ItemStorageMultiblock;
 import grondag.fermion.varia.Base32Namer;
-import grondag.fluidity.api.device.StorageDevice;
+import grondag.fluidity.api.device.Device;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.storage.AbstractStorage;
+import grondag.fluidity.base.storage.ForwardingStorage;
 import grondag.fluidity.wip.CompoundDeviceManager;
 import grondag.fluidity.wip.CompoundDeviceMember;
-import grondag.fluidity.wip.CompoundDiscreteStorage;
+import grondag.fluidity.wip.CompoundDiscreteStorageDevice;
 
-public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, StorageDevice, BlockEntityClientSerializable, CompoundDeviceMember<ItemStorageBlockEntity, ItemStorageMultiblock> {
-	protected static class ItemStorageMultiblock extends CompoundDiscreteStorage<ItemStorageBlockEntity, ItemStorageMultiblock> {}
+public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, Device, BlockEntityClientSerializable, CompoundDeviceMember<ItemStorageBlockEntity, ItemStorageMultiblock> {
+	protected static class ItemStorageMultiblock extends CompoundDiscreteStorageDevice<ItemStorageBlockEntity, ItemStorageMultiblock> {}
 
 	protected static final CompoundDeviceManager<ItemStorageBlockEntity, ItemStorageMultiblock> DEVICE_MANAGER = new CompoundDeviceManager<>(
 			ItemStorageMultiblock::new, (ItemStorageBlockEntity a, ItemStorageBlockEntity b) -> ItemStorageBlock.canConnect(a, b));
@@ -34,6 +35,7 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 
 	protected final Supplier<Storage> storageSupplier;
 	protected Storage storage;
+	protected final ForwardingStorage wrapper = new ForwardingStorage();
 	protected String label = "UNKNOWN";
 	protected ItemStorageClientState clientState;
 
@@ -79,7 +81,7 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	/** Do not call on client - will not crash but wastes memory */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Storage getStorage() {
+	public Storage getLocalStorage() {
 		Storage result = storage;
 
 		if(result == null) {
@@ -114,14 +116,14 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	}
 
 	public CompoundTag toContainerTag(CompoundTag tag) {
-		tag.put(TAG_STORAGE, getStorage().writeTag());
+		tag.put(TAG_STORAGE, getLocalStorage().writeTag());
 		tag.putString(TAG_LABEL, label);
 		return tag;
 	}
 
 	public void fromContainerTag(CompoundTag tag) {
 		label = tag.getString(TAG_LABEL);
-		getStorage().readTag(tag.getCompound(TAG_STORAGE));
+		getLocalStorage().readTag(tag.getCompound(TAG_STORAGE));
 	}
 
 	@Override
@@ -139,10 +141,6 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 		if(world != null && pos != null) {
 			world.markDirty(pos, this);
 		}
-	}
-
-	public Storage getStorageForDisplay() {
-		return owner == null ? getStorage() : owner.getStorage();
 	}
 
 	@Override
@@ -175,6 +173,20 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	@Override
 	public void setCompoundDevice(ItemStorageMultiblock owner) {
 		this.owner = owner;
+
+		if(owner == null) {
+			wrapper.setWrapped(getLocalStorage());
+		} else {
+			wrapper.setWrapped(owner.getStorage());
+		}
+	}
+
+	@Override
+	public Storage getStorage() {
+		if(wrapper.getWrapped() == Storage.EMPTY) {
+			wrapper.setWrapped(getLocalStorage());
+		}
+		return wrapper;
 	}
 
 	protected boolean isRegistered = false;

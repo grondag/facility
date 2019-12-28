@@ -22,6 +22,8 @@ import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
 import grondag.contained.block.BinBlockEntity;
 import grondag.contained.block.BinStorageBlock;
+import grondag.contained.block.CreativeBlockEntity;
+import grondag.contained.block.CreativeStorageBlock;
 import grondag.contained.block.ItemStorageBlock;
 import grondag.contained.block.ItemStorageBlockEntity;
 import grondag.contained.block.ItemStorageContainer;
@@ -36,6 +38,7 @@ import grondag.xm.api.modelstate.primitive.PrimitiveStateFunction;
 import grondag.xm.api.paint.PaintBlendMode;
 import grondag.xm.api.paint.XmPaint;
 import grondag.xm.api.paint.XmPaintFinder;
+import grondag.xm.api.primitive.simple.Cube;
 import grondag.xm.api.primitive.simple.CubeWithFace;
 import grondag.xm.api.texture.TextureLayoutMap;
 import grondag.xm.api.texture.TextureSet;
@@ -51,12 +54,14 @@ public enum Registrations {
 	public static final BinStorageBlock BIN_X1 = REG.block("bin_x1", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::binX1Be, 1));
 	public static final BinStorageBlock BIN_X2 = REG.block("bin_x2", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::binX2Be, 2));
 	public static final BinStorageBlock BIN_X4 = REG.block("bin_x4", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::binX4Be, 4));
+	public static final CreativeStorageBlock ITEM_SUPPLIER = REG.block("item_supplier", new CreativeStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::itemSupplier));
 
 	public static final BlockEntityType<ItemStorageBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", Registrations::crateBe, CRATE);
 	public static final BlockEntityType<ItemStorageBlockEntity> BARREL_BLOCK_ENTITY_TYPE = REG.blockEntityType("barrel", Registrations::barrelBe, BARREL);
 	public static final BlockEntityType<BinBlockEntity> BIN_X1_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x1", Registrations::binX1Be, BIN_X1);
 	public static final BlockEntityType<BinBlockEntity> BIN_X2_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x2", Registrations::binX2Be, BIN_X2);
 	public static final BlockEntityType<BinBlockEntity> BIN_X4_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x4", Registrations::binX4Be, BIN_X4);
+	public static final BlockEntityType<CreativeBlockEntity> ITEM_SUPPLIER_BLOCK_ENTITY_TYPE = REG.blockEntityType("item_supplier", Registrations::itemSupplier, ITEM_SUPPLIER);
 
 	public static final Predicate<Article> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.toItem()).getClass() != ItemStorageBlock.class;
 
@@ -78,6 +83,10 @@ public enum Registrations {
 
 	static BinBlockEntity binX4Be() {
 		return new BinBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, () -> new DividedDiscreteStorage(4, 512).filter(FILTER_NESTING), "BINx4 ", 4);
+	}
+
+	static CreativeBlockEntity itemSupplier() {
+		return new CreativeBlockEntity(ITEM_SUPPLIER_BLOCK_ENTITY_TYPE, true);
 	}
 
 	public static final TextureSet CRATE_BASE = TextureSet.builder()
@@ -140,6 +149,10 @@ public enum Registrations {
 						.paint(CubeWithFace.SURFACE_TOP, cratePaintWithDecal(QUARTER_DIVIDER, 0xFFFFFFFF)), bs), bs))
 				.build());
 
+		XmBlockRegistry.addBlockStates(ITEM_SUPPLIER, bs -> PrimitiveStateFunction.builder()
+				.withDefaultState(Cube.INSTANCE.newState().paintAll(crateBaseFinder(2).textureColor(0, 0xFF00FFFF).find()))
+				.build());
+
 		ContainerProviderRegistry.INSTANCE.registerFactory(ItemStorageContainer.ID, (syncId, identifier, player, buf) ->  {
 			final BlockPos pos = buf.readBlockPos();
 			final String label = buf.readString();
@@ -148,7 +161,7 @@ public enum Registrations {
 
 			if (be instanceof ItemStorageBlockEntity) {
 				final ItemStorageBlockEntity myBe = (ItemStorageBlockEntity) be;
-				return new ItemStorageContainer(player, syncId, world.isClient ? null : myBe.getStorageForDisplay(), label);
+				return new ItemStorageContainer(player, syncId, world.isClient ? null : myBe.getStorage(), label);
 			}
 
 			return null;
