@@ -1,10 +1,10 @@
-package grondag.contained.block;
+package grondag.facility.block;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
 
-import grondag.contained.ContainedConfig;
+import grondag.facility.FacilityConfig;
 
 public class ItemStorageClientState {
 	public final ItemStorageBlockEntity owner;
@@ -36,7 +36,7 @@ public class ItemStorageClientState {
 			//				a = 1;
 			//			}
 
-			displayAlpha = d > ContainedConfig.maxRenderDistanceSq ? 0 : 1;
+			displayAlpha = d > FacilityConfig.maxRenderDistanceSq ? 0 : 1;
 			lastDistanceSquared = d;
 		}
 	}

@@ -1,6 +1,6 @@
-package grondag.contained;
+package grondag.facility;
 
-public class ContainedConfig {
+public class FacilityConfig {
 
 	public static int maxRenderDistance =  32;
 	public static long maxRenderDistanceSq = maxRenderDistance * maxRenderDistance;

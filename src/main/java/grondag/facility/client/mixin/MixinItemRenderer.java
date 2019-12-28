@@ -1,4 +1,4 @@
-package grondag.contained.client.mixin;
+package grondag.facility.client.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -10,7 +10,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 
-import grondag.contained.client.ItemRendererHook;
+import grondag.facility.client.ItemRendererHook;
 
 @Mixin(ItemRenderer.class)
 public abstract class MixinItemRenderer {

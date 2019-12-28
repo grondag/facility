@@ -14,7 +14,7 @@
  * the License.
  ******************************************************************************/
 
-package grondag.contained;
+package grondag.facility;
 
 /**
  * TODO: fix semantic key config in mod keys
@@ -28,13 +28,13 @@ import org.apache.logging.log4j.Logger;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 
-import grondag.contained.packet.BinActionC2S;
+import grondag.facility.packet.BinActionC2S;
 import grondag.fermion.registrar.Registrar;
 
-public class Contained implements ModInitializer {
-	public static final Logger LOG = LogManager.getLogger("Contained");
-	public static final String MODID = "contained";
-	public static Registrar REG  = new Registrar(MODID, "contained");
+public class Facility implements ModInitializer {
+	public static final Logger LOG = LogManager.getLogger("Facility");
+	public static final String MODID = "facility";
+	public static Registrar REG  = new Registrar(MODID, "facility");
 
 	@Override
 	public void onInitialize() {

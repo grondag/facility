@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "grondag.contained.client.mixin",
+  "package": "grondag.facility.client.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
   	"MixinItemRenderer"

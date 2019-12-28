@@ -1,4 +1,4 @@
-package grondag.contained.block;
+package grondag.facility.block;
 
 import java.util.function.Supplier;
 
@@ -21,7 +21,7 @@ import net.minecraft.world.World;
 
 import net.fabricmc.fabric.api.block.BlockAttackInteractionAware;
 
-import grondag.contained.packet.BinActionC2S;
+import grondag.facility.packet.BinActionC2S;
 import grondag.fermion.world.WorldHelper;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.orientation.FaceCorner;

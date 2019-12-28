@@ -1,33 +1,33 @@
 {
   "schemaVersion": 1,
-  "id": "contained",
+  "id": "facility",
   "version": "${version}",
-  "name": "Contained",
-  "description": "Intermodal storage and transport",
+  "name": "Facility",
+  "description": "Intermodal storage and transport, with extras.",
   "authors": [
     "Grondag"
   ],
   "contact": {
-    "homepage": "https://minecraft.curseforge.com/projects/contained",
-    "sources": "https://github.com/grondag/contained"
+    "homepage": "https://minecraft.curseforge.com/projects/facility",
+    "sources": "https://github.com/grondag/facility"
   },
   "license": "Apache-2.0",
-  "icon": "assets/contained/contained_icon.png",
+  "icon": "assets/facility/facility_icon.png",
   
   "environment": "*",
   "entrypoints": {
     "main": [
-      "grondag.contained.Contained"
+      "grondag.facility.Facility"
     ],
     "client": [
-      "grondag.contained.client.ContainedClient"
+      "grondag.facility.client.FacilityClient"
     ],
     "rei_plugins_v0": [
-      "grondag.contained.compat.rei.ContainedReiPlugin"
+      "grondag.facility.compat.rei.FacilityReiPlugin"
     ]
   },
   "mixins": [
-    "contained.client.json"
+    "facility.client.json"
   ],
   "depends": {
     "fabricloader": ">=0.7.1",

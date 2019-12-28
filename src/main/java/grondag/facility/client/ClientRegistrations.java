@@ -1,10 +1,10 @@
-package grondag.contained.client;
+package grondag.facility.client;
 
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.screen.ScreenProviderRegistry;
 
-import grondag.contained.Registrations;
-import grondag.contained.block.ItemStorageContainer;
+import grondag.facility.Registrations;
+import grondag.facility.block.ItemStorageContainer;
 
 public enum ClientRegistrations {
 	;

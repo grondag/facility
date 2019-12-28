@@ -1,4 +1,4 @@
-package grondag.contained.client;
+package grondag.facility.client;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -16,9 +16,9 @@ import net.minecraft.world.World;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import grondag.contained.block.BinBlockEntity;
-import grondag.contained.block.ItemStorageBlockEntity;
-import grondag.contained.block.ItemStorageClientState;
+import grondag.facility.block.BinBlockEntity;
+import grondag.facility.block.ItemStorageBlockEntity;
+import grondag.facility.block.ItemStorageClientState;
 import grondag.xm.api.block.XmProperties;
 
 @Environment(EnvType.CLIENT)

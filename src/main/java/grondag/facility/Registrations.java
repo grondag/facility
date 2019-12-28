@@ -1,6 +1,6 @@
-package grondag.contained;
+package grondag.facility;
 
-import static grondag.contained.Contained.REG;
+import static grondag.facility.Facility.REG;
 import static grondag.xm.api.texture.TextureGroup.STATIC_TILES;
 import static grondag.xm.api.texture.TextureRenderIntent.BASE_ONLY;
 import static grondag.xm.api.texture.TextureScale.SINGLE;
@@ -20,13 +20,13 @@ import net.minecraft.world.World;
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
-import grondag.contained.block.BinBlockEntity;
-import grondag.contained.block.BinStorageBlock;
-import grondag.contained.block.CreativeBlockEntity;
-import grondag.contained.block.CreativeStorageBlock;
-import grondag.contained.block.ItemStorageBlock;
-import grondag.contained.block.ItemStorageBlockEntity;
-import grondag.contained.block.ItemStorageContainer;
+import grondag.facility.block.BinBlockEntity;
+import grondag.facility.block.BinStorageBlock;
+import grondag.facility.block.CreativeBlockEntity;
+import grondag.facility.block.CreativeStorageBlock;
+import grondag.facility.block.ItemStorageBlock;
+import grondag.facility.block.ItemStorageBlockEntity;
+import grondag.facility.block.ItemStorageContainer;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.base.storage.discrete.DividedDiscreteStorage;
 import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStorage;
@@ -90,15 +90,15 @@ public enum Registrations {
 	}
 
 	public static final TextureSet CRATE_BASE = TextureSet.builder()
-			.displayNameToken("crate_base").baseTextureName("contained:block/crate_base")
+			.displayNameToken("crate_base").baseTextureName("facility:block/crate_base")
 			.versionCount(4).scale(SINGLE).layout(TextureLayoutMap.VERSIONED).transform(STONE_LIKE)
 			.renderIntent(BASE_ONLY).groups(STATIC_TILES).build("contained:crate_base");
 
-	public static final TextureSet OPEN_BOX = TextureSetHelper.addDecal(Contained.MODID, "open_box", "open_box", ROTATE_RANDOM);
-	public static final TextureSet FILLED_BOX = TextureSetHelper.addDecal(Contained.MODID, "filled_box", "filled_box", ROTATE_RANDOM);
-	public static final TextureSet BIN_FACE = TextureSetHelper.addDecal(Contained.MODID, "bin_face", "bin_face", IDENTITY);
-	public static final TextureSet HALF_DIVIDER = TextureSetHelper.addDecal(Contained.MODID, "half_divider", "half_divider", STONE_LIKE);
-	public static final TextureSet QUARTER_DIVIDER = TextureSetHelper.addDecal(Contained.MODID, "quarter_divider", "quarter_divider", STONE_LIKE);
+	public static final TextureSet OPEN_BOX = TextureSetHelper.addDecal(Facility.MODID, "open_box", "open_box", ROTATE_RANDOM);
+	public static final TextureSet FILLED_BOX = TextureSetHelper.addDecal(Facility.MODID, "filled_box", "filled_box", ROTATE_RANDOM);
+	public static final TextureSet BIN_FACE = TextureSetHelper.addDecal(Facility.MODID, "bin_face", "bin_face", IDENTITY);
+	public static final TextureSet HALF_DIVIDER = TextureSetHelper.addDecal(Facility.MODID, "half_divider", "half_divider", STONE_LIKE);
+	public static final TextureSet QUARTER_DIVIDER = TextureSetHelper.addDecal(Facility.MODID, "quarter_divider", "quarter_divider", STONE_LIKE);
 
 	static {
 		final XmPaint basePaint = crateBaseFinder(2).find();

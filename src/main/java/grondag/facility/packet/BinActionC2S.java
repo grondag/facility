@@ -1,4 +1,4 @@
-package grondag.contained.packet;
+package grondag.facility.packet;
 
 import io.netty.buffer.Unpooled;
 
@@ -17,8 +17,8 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 
-import grondag.contained.Contained;
-import grondag.contained.block.BinBlockEntity;
+import grondag.facility.Facility;
+import grondag.facility.block.BinBlockEntity;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.StoredArticleView;
 import grondag.fluidity.api.storage.FixedStorage;
@@ -26,7 +26,7 @@ import grondag.fluidity.api.storage.FixedStorage;
 public enum BinActionC2S {
 	;
 
-	public static final Identifier ID = Contained.REG.id("bini");
+	public static final Identifier ID = Facility.REG.id("bini");
 
 	@Environment(EnvType.CLIENT)
 	public static void send(BlockPos pos, int slot, boolean isAttack) {

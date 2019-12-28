@@ -1,4 +1,4 @@
-package grondag.contained.client;
+package grondag.facility.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -10,7 +10,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import grondag.contained.block.ItemStorageBlockEntity;
+import grondag.facility.block.ItemStorageBlockEntity;
 
 @Environment(EnvType.CLIENT)
 public class StorageBlockRenderer<T extends ItemStorageBlockEntity> extends BlockEntityRenderer<T> {

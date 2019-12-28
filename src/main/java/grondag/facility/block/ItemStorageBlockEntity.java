@@ -1,4 +1,4 @@
-package grondag.contained.block;
+package grondag.facility.block;
 
 import java.util.function.Supplier;
 
@@ -14,7 +14,7 @@ import net.minecraft.world.dimension.DimensionType;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
-import grondag.contained.block.ItemStorageBlockEntity.ItemStorageMultiblock;
+import grondag.facility.block.ItemStorageBlockEntity.ItemStorageMultiblock;
 import grondag.fermion.varia.Base32Namer;
 import grondag.fluidity.api.device.Device;
 import grondag.fluidity.api.storage.Storage;

@@ -1,4 +1,4 @@
-package grondag.contained.block;
+package grondag.facility.block;
 
 import java.util.function.Supplier;
 

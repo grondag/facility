@@ -1,4 +1,4 @@
-package grondag.contained.block;
+package grondag.facility.block;
 
 import java.util.Random;
 
@@ -48,10 +48,12 @@ public class CreativeBlockEntity extends BlockEntity  implements Tickable {
 	}
 
 	private void addNeighbor(Mutable searchPos) {
-		final BlockEntity be = world.getBlockEntity(searchPos);
+		if(world.isChunkLoaded(searchPos)) {
+			final BlockEntity be = world.getBlockEntity(searchPos);
 
-		if(be instanceof Device) {
-			neighbors.add(((Device) be).getStorage());
+			if(be instanceof Device) {
+				neighbors.add(((Device) be).getStorage());
+			}
 		}
 	}
 

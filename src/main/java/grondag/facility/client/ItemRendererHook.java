@@ -1,4 +1,4 @@
-package grondag.contained.client;
+package grondag.facility.client;
 
 import javax.annotation.Nullable;
 

@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  ******************************************************************************/
-package grondag.contained.compat.rei;
+package grondag.facility.compat.rei;
 
 import me.shedaniel.rei.api.plugins.REIPluginV0;
 
@@ -28,10 +28,10 @@ import net.minecraft.util.Identifier;
 import net.fabricmc.loader.api.SemanticVersion;
 import net.fabricmc.loader.util.version.VersionParsingException;
 
-import grondag.contained.Contained;
+import grondag.facility.Facility;
 
-public class ContainedReiPlugin implements REIPluginV0 {
-	public static final Identifier ID = Contained.REG.id("rei_plugin");
+public class FacilityReiPlugin implements REIPluginV0 {
+	public static final Identifier ID = Facility.REG.id("rei_plugin");
 
 	@Override
 	public Identifier getPluginIdentifier() {

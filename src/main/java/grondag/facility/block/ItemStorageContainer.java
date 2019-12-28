@@ -1,4 +1,4 @@
-package grondag.contained.block;
+package grondag.facility.block;
 
 import java.util.List;
 
@@ -13,13 +13,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
-import grondag.contained.Contained;
+import grondag.facility.Facility;
 import grondag.fluidity.api.device.Device;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.api.synch.ItemStorageServerDelegate;
 
 public class ItemStorageContainer extends Container implements Device {
-	public static Identifier ID = Contained.REG.id("item_storage");
+	public static Identifier ID = Facility.REG.id("item_storage");
 
 	protected final @Nullable Storage storage;
 	protected String label;
