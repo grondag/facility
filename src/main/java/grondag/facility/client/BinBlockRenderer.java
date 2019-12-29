@@ -4,7 +4,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
-import net.minecraft.client.render.model.json.ModelTransformation.Type;
+import net.minecraft.client.render.model.json.ModelTransformation.Mode;
 import net.minecraft.client.util.math.Matrix4f;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -89,58 +89,58 @@ public class BinBlockRenderer extends StorageBlockRenderer<BinBlockEntity> {
 			// don't apply scaling to normals
 
 			//TODO: rotate normal up for generated items - improve the lighting - or maybe disable diffuse
-			matrixStack.peek().getModel().multiply(Matrix4f.method_24019(0.65f, 0.65f, 0.001f + d * 0.2f));
-			ir.renderItem(stacks[0], Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			matrixStack.peek().getModel().multiply(Matrix4f.scale(0.65f, 0.65f, 0.001f + d * 0.2f));
+			ir.renderItem(stacks[0], Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
 		}
 	}
 
 	protected void renderFront2(ItemStack[] stacks, float d, Direction face, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int lightMap, int overlay) {
-		matrixStack.peek().getModel().multiply(Matrix4f.method_24019(0.36f, 0.36f, 0.001f + d * 0.2f));
+		matrixStack.peek().getModel().multiply(Matrix4f.scale(0.36f, 0.36f, 0.001f + d * 0.2f));
 
 		matrixStack.translate(0, 0.23 / 0.36, 0);
 		ItemStack stack = stacks[0];
 
 		if(stack != null && !stack.isEmpty()) {
-			ir.renderItem(stack, Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
 		}
 
 		matrixStack.translate(0, -0.46 / 0.36, 0);
 		stack = stacks[1];
 
 		if(stack != null && !stack.isEmpty()) {
-			ir.renderItem(stack, Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
 		}
 	}
 
 	protected void renderFront4(ItemStack[] stacks, float d, Direction face, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int lightMap, int overlay) {
-		matrixStack.peek().getModel().multiply(Matrix4f.method_24019(0.32f, 0.32f, 0.001f + d * 0.2f));
+		matrixStack.peek().getModel().multiply(Matrix4f.scale(0.32f, 0.32f, 0.001f + d * 0.2f));
 
 		matrixStack.translate(-0.23 / 0.32, 0.23 / 0.32, 0);
 		ItemStack stack = stacks[0];
 
 		if(stack != null && !stack.isEmpty()) {
-			ir.renderItem(stack, Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
 		}
 
 		matrixStack.translate(0.46 / 0.32, 0, 0);
 		stack = stacks[1];
 
 		if(stack != null && !stack.isEmpty()) {
-			ir.renderItem(stack, Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
 		}
 
 		matrixStack.translate(-0.46 / 0.32, -0.46 / 0.32, 0);
 		stack = stacks[2];
 
 		if(stack != null && !stack.isEmpty()) {
-			ir.renderItem(stack, Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
 		}
 
 		matrixStack.translate(0.46 / 0.32, 0, 0);
 		stack = stacks[3];
 
 		if(stack != null && !stack.isEmpty()) {
-			ir.renderItem(stack, Type.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
 		}
 	}
 }
