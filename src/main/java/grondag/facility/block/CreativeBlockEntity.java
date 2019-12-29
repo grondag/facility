@@ -9,15 +9,18 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 
+import grondag.facility.wip.transport.CarrierDevice;
+import grondag.facility.wip.transport.NodeDevice;
 import grondag.fluidity.api.device.Device;
 import grondag.fluidity.api.storage.Storage;
 
-public class CreativeBlockEntity extends AbstractFunctionalBlockEntity<Storage> implements Tickable {
+public class CreativeBlockEntity extends AbstractFunctionalBlockEntity<Storage> implements Tickable, NodeDevice {
 	protected final boolean isOutput;
 	protected boolean isFirstTick = true;
 
@@ -68,5 +71,17 @@ public class CreativeBlockEntity extends AbstractFunctionalBlockEntity<Storage> 
 		if(be instanceof Device && ((Device) be).hasStorage(neighborSide)) {
 			neighbors.add(((Device) be).getStorage(neighborSide));
 		}
+	}
+
+	@Override
+	public Storage getStorage(Direction side, Identifier id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void onCarrierPresent(CarrierDevice carrierDevice) {
+		// TODO Auto-generated method stub
+
 	}
 }

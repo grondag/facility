@@ -22,11 +22,14 @@ import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
 import grondag.facility.block.BinBlockEntity;
 import grondag.facility.block.BinStorageBlock;
+import grondag.facility.block.PipeModel;
 import grondag.facility.block.CreativeBlockEntity;
 import grondag.facility.block.CreativeStorageBlock;
 import grondag.facility.block.ItemStorageBlock;
 import grondag.facility.block.ItemStorageBlockEntity;
 import grondag.facility.block.ItemStorageContainer;
+import grondag.facility.block.PipeBlock;
+import grondag.facility.block.PipeBlockEntity;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.base.storage.discrete.DividedDiscreteStorage;
 import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStorage;
@@ -49,12 +52,13 @@ import grondag.xm.texture.TextureSetHelper;
 public enum Registrations {
 	;
 
-	public static final ItemStorageBlock CRATE = REG.block("crate", new ItemStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::crateBe));
-	public static final ItemStorageBlock BARREL = REG.block("barrel", new ItemStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::barrelBe));
-	public static final BinStorageBlock BIN_X1 = REG.block("bin_x1", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::binX1Be, 1));
-	public static final BinStorageBlock BIN_X2 = REG.block("bin_x2", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::binX2Be, 2));
-	public static final BinStorageBlock BIN_X4 = REG.block("bin_x4", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::binX4Be, 4));
-	public static final CreativeStorageBlock ITEM_SUPPLIER = REG.block("item_supplier", new CreativeStorageBlock(FabricBlockSettings.of(Material.WOOD).dynamicBounds().strength(1, 1).build(), Registrations::itemSupplier));
+	public static final ItemStorageBlock CRATE = REG.block("crate", new ItemStorageBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::crateBe));
+	public static final ItemStorageBlock BARREL = REG.block("barrel", new ItemStorageBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::barrelBe));
+	public static final BinStorageBlock BIN_X1 = REG.block("bin_x1", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::binX1Be, 1));
+	public static final BinStorageBlock BIN_X2 = REG.block("bin_x2", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::binX2Be, 2));
+	public static final BinStorageBlock BIN_X4 = REG.block("bin_x4", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::binX4Be, 4));
+	public static final CreativeStorageBlock ITEM_SUPPLIER = REG.block("item_supplier", new CreativeStorageBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::itemSupplier));
+	public static final PipeBlock PIPE = REG.block("basic_pipe", new PipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1).build(), Registrations::pipeSupplier));
 
 	public static final BlockEntityType<ItemStorageBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", Registrations::crateBe, CRATE);
 	public static final BlockEntityType<ItemStorageBlockEntity> BARREL_BLOCK_ENTITY_TYPE = REG.blockEntityType("barrel", Registrations::barrelBe, BARREL);
@@ -62,6 +66,7 @@ public enum Registrations {
 	public static final BlockEntityType<BinBlockEntity> BIN_X2_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x2", Registrations::binX2Be, BIN_X2);
 	public static final BlockEntityType<BinBlockEntity> BIN_X4_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x4", Registrations::binX4Be, BIN_X4);
 	public static final BlockEntityType<CreativeBlockEntity> ITEM_SUPPLIER_BLOCK_ENTITY_TYPE = REG.blockEntityType("item_supplier", Registrations::itemSupplier, ITEM_SUPPLIER);
+	public static final BlockEntityType<PipeBlockEntity> PIPE_BLOCK_ENTITY_TYPE = REG.blockEntityType("basic_pipe", Registrations::pipeSupplier, PIPE);
 
 	public static final Predicate<Article> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.toItem()).getClass() != ItemStorageBlock.class;
 
@@ -87,6 +92,10 @@ public enum Registrations {
 
 	static CreativeBlockEntity itemSupplier() {
 		return new CreativeBlockEntity(ITEM_SUPPLIER_BLOCK_ENTITY_TYPE, true);
+	}
+
+	static PipeBlockEntity pipeSupplier() {
+		return new PipeBlockEntity(PIPE_BLOCK_ENTITY_TYPE);
 	}
 
 	public static final TextureSet CRATE_BASE = TextureSet.builder()
@@ -151,6 +160,17 @@ public enum Registrations {
 
 		XmBlockRegistry.addBlockStates(ITEM_SUPPLIER, bs -> PrimitiveStateFunction.builder()
 				.withDefaultState(Cube.INSTANCE.newState().paintAll(crateBaseFinder(2).textureColor(0, 0xFF00FFFF).find()))
+				.build());
+
+		XmBlockRegistry.addBlockStates(PIPE, bs -> PrimitiveStateFunction.builder()
+				.withJoin(PipeBlock.JOIN_TEST)
+				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
+				.withUpdate(PipeModel.MODEL_STATE_UPDATE)
+				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
+						PipeModel.PRIMITIVE.newState()
+						.paint(PipeModel.SURFACE_SIDE, PipeModel.PAINT_SIDE)
+						.paint(PipeModel.SURFACE_END, PipeModel.PAINT_END)
+						.paint(PipeModel.SURFACE_CONNECTOR, PipeModel.PAINT_CONNECTOR), bs)))
 				.build());
 
 		ContainerProviderRegistry.INSTANCE.registerFactory(ItemStorageContainer.ID, (syncId, identifier, player, buf) ->  {
