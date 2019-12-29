@@ -16,7 +16,7 @@ import net.minecraft.util.Identifier;
 import grondag.facility.Facility;
 import grondag.fluidity.api.device.Device;
 import grondag.fluidity.api.storage.Storage;
-import grondag.fluidity.api.synch.ItemStorageServerDelegate;
+import grondag.fluidity.base.synch.ItemStorageServerDelegate;
 
 public class ItemStorageContainer extends Container implements Device {
 	public static Identifier ID = Facility.REG.id("item_storage");

@@ -34,9 +34,9 @@ import grondag.fermion.gui.GuiUtil;
 import grondag.fermion.gui.control.Button;
 import grondag.fermion.gui.control.ItemStackPicker;
 import grondag.fermion.gui.control.TextField;
-import grondag.fluidity.api.synch.ItemDisplayDelegate;
-import grondag.fluidity.api.synch.ItemStorageClientDelegate;
-import grondag.fluidity.api.synch.StorageAction;
+import grondag.fluidity.base.synch.ItemDisplayDelegate;
+import grondag.fluidity.base.synch.ItemStorageClientDelegate;
+import grondag.fluidity.base.synch.StorageAction;
 import grondag.fluidity.impl.ItemDisplayDelegateImpl;
 import grondag.fonthack.FontHackClient;
 
