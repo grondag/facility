@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.Mutable;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 
 import grondag.fluidity.api.device.Device;
@@ -38,21 +39,21 @@ public class CreativeBlockEntity extends BlockEntity  implements Tickable {
 		final long myPos = pos.asLong();
 
 		try(BlockPos.PooledMutable p = BlockPos.PooledMutable.get()) {
-			addNeighbor(p.set(BlockPos.add(myPos, -1, 0, 0)));
-			addNeighbor(p.set(BlockPos.add(myPos, 1, 0, 0)));
-			addNeighbor(p.set(BlockPos.add(myPos, 0, -1, 0)));
-			addNeighbor(p.set(BlockPos.add(myPos, 0, 1, 0)));
-			addNeighbor(p.set(BlockPos.add(myPos, 0, 0, -1)));
-			addNeighbor(p.set(BlockPos.add(myPos, 0, 0, 1)));
+			addNeighbor(p.set(myPos).setOffset(Direction.EAST), Direction.WEST);
+			addNeighbor(p.set(myPos).setOffset(Direction.WEST), Direction.EAST);
+			addNeighbor(p.set(myPos).setOffset(Direction.NORTH), Direction.SOUTH);
+			addNeighbor(p.set(myPos).setOffset(Direction.SOUTH), Direction.NORTH);
+			addNeighbor(p.set(myPos).setOffset(Direction.UP), Direction.DOWN);
+			addNeighbor(p.set(myPos).setOffset(Direction.DOWN), Direction.UP);
 		}
 	}
 
-	private void addNeighbor(Mutable searchPos) {
+	private void addNeighbor(Mutable searchPos, Direction side) {
 		if(world.isChunkLoaded(searchPos)) {
 			final BlockEntity be = world.getBlockEntity(searchPos);
 
-			if(be instanceof Device && ((Device) be).hasStorage()) {
-				neighbors.add(((Device) be).getStorage());
+			if(be instanceof Device && ((Device) be).hasStorage(side)) {
+				neighbors.add(((Device) be).getStorage(side));
 			}
 		}
 	}

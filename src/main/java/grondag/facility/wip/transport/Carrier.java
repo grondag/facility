@@ -66,6 +66,13 @@ package grondag.facility.wip.transport;
  *
  */
 public interface Carrier {
+	CarrierNode attach(CarrierDevice fromDevice);
 
+	default boolean isPointToPoint() {
+		return false;
+	}
 
+	static Carrier p2p(CarrierDevice a, CarrierDevice b) {
+		return null;
+	}
 }

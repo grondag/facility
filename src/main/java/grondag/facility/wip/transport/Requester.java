@@ -5,9 +5,9 @@ package grondag.facility.wip.transport;
  * other state changes of TransactionParticipants. For machines, often the device itself.
  *
  *
- * One purpose of Transactor is to serve as an identity token that can be validated to
+ * One purpose of Requester is to serve as an identity token that can be validated to
  * confirm the requests it is making are permissible.
  */
-public interface Transactor {
+public interface Requester {
 
 }

@@ -7,7 +7,9 @@ import io.netty.util.internal.ThreadLocalRandom;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
@@ -82,7 +84,7 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	/** Do not call on client - will not crash but wastes memory */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public Storage getLocalStorage() {
+	public Storage getLocalStorage(Direction direction, Identifier id) {
 		Storage result = storage;
 
 		if(result == null) {
@@ -183,7 +185,7 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	}
 
 	@Override
-	public Storage getStorage() {
+	public Storage getStorage(Direction direction, Identifier id) {
 		if(wrapper.getWrapped() == Storage.EMPTY) {
 			wrapper.setWrapped(getLocalStorage());
 		}
@@ -191,7 +193,7 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	}
 
 	@Override
-	public boolean hasStorage() {
+	public boolean hasStorage(Direction direction, Identifier id) {
 		return true;
 	}
 

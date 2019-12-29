@@ -1,6 +1,5 @@
 package grondag.facility.wip.transport;
 
-public interface Port {
-
+public interface Network {
 
 }
