@@ -16,18 +16,18 @@ import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
 import grondag.facility.block.ItemStorageBlockEntity.ItemStorageMultiblock;
 import grondag.fermion.varia.Base32Namer;
+import grondag.fluidity.api.device.CompoundDeviceManager;
+import grondag.fluidity.api.device.CompoundDeviceMember;
 import grondag.fluidity.api.device.Device;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.storage.AbstractStorage;
 import grondag.fluidity.base.storage.ForwardingStorage;
-import grondag.fluidity.wip.CompoundDeviceManager;
-import grondag.fluidity.wip.CompoundDeviceMember;
-import grondag.fluidity.wip.CompoundDiscreteStorageDevice;
+import grondag.fluidity.base.storage.discrete.CompoundDiscreteStorageDevice;
 
 public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, Device, BlockEntityClientSerializable, CompoundDeviceMember<ItemStorageBlockEntity, ItemStorageMultiblock> {
 	protected static class ItemStorageMultiblock extends CompoundDiscreteStorageDevice<ItemStorageBlockEntity, ItemStorageMultiblock> {}
 
-	protected static final CompoundDeviceManager<ItemStorageBlockEntity, ItemStorageMultiblock> DEVICE_MANAGER = new CompoundDeviceManager<>(
+	protected static final CompoundDeviceManager<ItemStorageBlockEntity, ItemStorageMultiblock> DEVICE_MANAGER = CompoundDeviceManager.create(
 			ItemStorageMultiblock::new, (ItemStorageBlockEntity a, ItemStorageBlockEntity b) -> ItemStorageBlock.canConnect(a, b));
 
 	public static String TAG_STORAGE = "storage";
