@@ -17,14 +17,15 @@ import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 import grondag.facility.block.ItemStorageBlockEntity.ItemStorageMultiblock;
 import grondag.fermion.varia.Base32Namer;
 import grondag.fluidity.api.device.CompoundDeviceManager;
-import grondag.fluidity.api.device.CompoundDeviceMember;
+import grondag.fluidity.api.device.CompoundMemberDevice;
 import grondag.fluidity.api.device.Device;
+import grondag.fluidity.api.device.Location;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.storage.AbstractStorage;
 import grondag.fluidity.base.storage.ForwardingStorage;
 import grondag.fluidity.base.storage.discrete.CompoundDiscreteStorageDevice;
 
-public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, Device, BlockEntityClientSerializable, CompoundDeviceMember<ItemStorageBlockEntity, ItemStorageMultiblock> {
+public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, Device, Location, BlockEntityClientSerializable, CompoundMemberDevice<ItemStorageBlockEntity, ItemStorageMultiblock> {
 	protected static class ItemStorageMultiblock extends CompoundDiscreteStorageDevice<ItemStorageBlockEntity, ItemStorageMultiblock> {}
 
 	protected static final CompoundDeviceManager<ItemStorageBlockEntity, ItemStorageMultiblock> DEVICE_MANAGER = CompoundDeviceManager.create(
@@ -187,6 +188,21 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 			wrapper.setWrapped(getLocalStorage());
 		}
 		return wrapper;
+	}
+
+	@Override
+	public boolean hasStorage() {
+		return true;
+	}
+
+	@Override
+	public Location getLocation() {
+		return this;
+	}
+
+	@Override
+	public boolean hasLocation() {
+		return true;
 	}
 
 	protected boolean isRegistered = false;

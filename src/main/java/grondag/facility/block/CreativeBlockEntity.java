@@ -51,7 +51,7 @@ public class CreativeBlockEntity extends BlockEntity  implements Tickable {
 		if(world.isChunkLoaded(searchPos)) {
 			final BlockEntity be = world.getBlockEntity(searchPos);
 
-			if(be instanceof Device) {
+			if(be instanceof Device && ((Device) be).hasStorage()) {
 				neighbors.add(((Device) be).getStorage());
 			}
 		}
