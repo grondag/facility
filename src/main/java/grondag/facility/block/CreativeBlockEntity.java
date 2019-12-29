@@ -58,7 +58,7 @@ public class CreativeBlockEntity extends AbstractFunctionalBlockEntity<Storage> 
 		if(isOutput) {
 			for(int i = 0; i < limit; i++) {
 				final Storage s = neighbors.get(i);
-				s.accept(stack, false);
+				s.getConsumer().accept(stack, false);
 			}
 		}
 	}

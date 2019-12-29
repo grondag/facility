@@ -77,7 +77,7 @@ public enum BinActionC2S {
 			if(!view.isEmpty()) {
 				final Article hitResource = view.article();
 				final int requested = player.isSneaking() ? 1 : hitResource.toItem().getMaxCount();
-				final int q = (int) storage.supply(handle, hitResource, requested, false);
+				final int q = (int) storage.getSupplier().supply(handle, hitResource, requested, false);
 
 				if(q > 0) {
 					player.inventory.offerOrDrop(world, hitResource.toStack(q));
@@ -89,7 +89,7 @@ public enum BinActionC2S {
 			final ItemStack stack =  player.getMainHandStack();
 
 			if(stack != null && !stack.isEmpty() && (view.isEmpty() || hitResource.matches(stack))) {
-				final int q = (int) storage.accept(handle, stack, false);
+				final int q = (int) storage.getConsumer().accept(handle, stack, false);
 
 				if(q != 0) {
 					stack.decrement(q);
@@ -105,7 +105,7 @@ public enum BinActionC2S {
 					final ItemStack mainStack = main.get(i);
 
 					if(!mainStack.isEmpty() && hitResource.matches(mainStack)) {
-						final int q = (int) storage.accept(handle, mainStack, false);
+						final int q = (int) storage.getConsumer().accept(handle, mainStack, false);
 
 						if(q == 0) {
 							break;
@@ -123,7 +123,7 @@ public enum BinActionC2S {
 				final ItemStack offStack = player.getOffHandStack();
 
 				if(!offStack.isEmpty() && hitResource.matches(offStack)) {
-					final int q = (int) storage.accept(handle, offStack, false);
+					final int q = (int) storage.getConsumer().accept(handle, offStack, false);
 
 					if(q != 0) {
 						didSucceed = true;

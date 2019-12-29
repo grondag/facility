@@ -91,7 +91,7 @@ public class ItemStorageContainer extends Container implements Device {
 			slot.markDirty();
 
 			if(playerEntity instanceof ServerPlayerEntity) {
-				final int qty = (int) storage.accept(sourceStack, false);
+				final int qty = (int) storage.getConsumer().accept(sourceStack, false);
 
 				if(qty < sourceStack.getCount()) {
 					final ItemStack giveBack = sourceStack.copy();
