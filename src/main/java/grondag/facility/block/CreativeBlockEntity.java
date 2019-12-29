@@ -3,7 +3,6 @@ package grondag.facility.block;
 import java.util.Random;
 
 import io.netty.util.internal.ThreadLocalRandom;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -12,50 +11,19 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.Mutable;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 
 import grondag.fluidity.api.device.Device;
 import grondag.fluidity.api.storage.Storage;
 
-public class CreativeBlockEntity extends BlockEntity  implements Tickable {
+public class CreativeBlockEntity extends AbstractFunctionalBlockEntity<Storage> implements Tickable {
 	protected final boolean isOutput;
 	protected boolean isFirstTick = true;
-
-	protected final ObjectArrayList<Storage> neighbors = new ObjectArrayList<>();
 
 	public CreativeBlockEntity(BlockEntityType<CreativeBlockEntity> type, boolean isOutput) {
 		super(type);
 		this.isOutput = isOutput;
-	}
-
-	public void updateNeighbors() {
-		if(world == null || world.isClient) {
-			return;
-		}
-
-		neighbors.clear();
-		final long myPos = pos.asLong();
-
-		try(BlockPos.PooledMutable p = BlockPos.PooledMutable.get()) {
-			addNeighbor(p.set(myPos).setOffset(Direction.EAST), Direction.WEST);
-			addNeighbor(p.set(myPos).setOffset(Direction.WEST), Direction.EAST);
-			addNeighbor(p.set(myPos).setOffset(Direction.NORTH), Direction.SOUTH);
-			addNeighbor(p.set(myPos).setOffset(Direction.SOUTH), Direction.NORTH);
-			addNeighbor(p.set(myPos).setOffset(Direction.UP), Direction.DOWN);
-			addNeighbor(p.set(myPos).setOffset(Direction.DOWN), Direction.UP);
-		}
-	}
-
-	private void addNeighbor(Mutable searchPos, Direction side) {
-		if(world.isChunkLoaded(searchPos)) {
-			final BlockEntity be = world.getBlockEntity(searchPos);
-
-			if(be instanceof Device && ((Device) be).hasStorage(side)) {
-				neighbors.add(((Device) be).getStorage(side));
-			}
-		}
 	}
 
 	@Override
@@ -92,6 +60,13 @@ public class CreativeBlockEntity extends BlockEntity  implements Tickable {
 				final Storage s = neighbors.get(i);
 				s.accept(stack, false);
 			}
+		}
+	}
+
+	@Override
+	protected void addNeighbor(BlockEntity be, BlockPos neighborPos, Direction neighborSide) {
+		if(be instanceof Device && ((Device) be).hasStorage(neighborSide)) {
+			neighbors.add(((Device) be).getStorage(neighborSide));
 		}
 	}
 }

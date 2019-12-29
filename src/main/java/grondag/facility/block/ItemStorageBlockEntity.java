@@ -41,6 +41,7 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	protected final ForwardingStorage wrapper = new ForwardingStorage();
 	protected String label = "UNKNOWN";
 	protected ItemStorageClientState clientState;
+	protected ItemStorageMultiblock owner = null;
 
 	public ItemStorageBlockEntity(BlockEntityType<? extends ItemStorageBlockEntity> type, Supplier<Storage> storageSupplier, String labelRoot) {
 		super(type);
@@ -165,8 +166,6 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	public World world() {
 		return world;
 	}
-
-	protected ItemStorageMultiblock owner = null;
 
 	@Override
 	public ItemStorageMultiblock getCompoundDevice() {
