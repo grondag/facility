@@ -267,13 +267,16 @@ public class PipeModel {
 		if(refreshFromWorld) {
 			int bits = 0;
 			final SimpleJoinState join = modelState.simpleJoin();
+
 			for(final Direction face : FACES) {
 				if(join.isJoined(face)) {
+					// TODO: make this more generic or move to registration
 					if(!(neighbors.blockEntity(face) instanceof PipeBlockEntity)) {
 						bits |= 1 << face.ordinal();
 					};
 				}
 			}
+
 			modelState.primitiveBits(bits);
 		}
 	};
