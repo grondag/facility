@@ -11,7 +11,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
 
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
@@ -20,19 +19,18 @@ import grondag.facility.block.ItemStorageBlockEntity.ItemStorageMultiblock;
 import grondag.facility.wip.transport.CarrierDevice;
 import grondag.facility.wip.transport.NodeDevice;
 import grondag.fermion.varia.Base32Namer;
-import grondag.fluidity.api.device.CompoundDeviceManager;
-import grondag.fluidity.api.device.CompoundMemberDevice;
-import grondag.fluidity.api.device.Location;
+import grondag.fluidity.api.device.MultiBlockManager;
+import grondag.fluidity.api.device.MultiblockStorageMember;
 import grondag.fluidity.api.device.StorageProvider;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.storage.AbstractStorage;
 import grondag.fluidity.base.storage.ForwardingStorage;
 import grondag.fluidity.base.storage.discrete.CompoundDiscreteStorageDevice;
 
-public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, NodeDevice, Location, BlockEntityClientSerializable, CompoundMemberDevice<ItemStorageBlockEntity, ItemStorageMultiblock> {
+public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, NodeDevice, BlockEntityClientSerializable, MultiblockStorageMember<ItemStorageBlockEntity, ItemStorageMultiblock> {
 	protected static class ItemStorageMultiblock extends CompoundDiscreteStorageDevice<ItemStorageBlockEntity, ItemStorageMultiblock> {}
 
-	protected static final CompoundDeviceManager<ItemStorageBlockEntity, ItemStorageMultiblock> DEVICE_MANAGER = CompoundDeviceManager.create(
+	protected static final MultiBlockManager<ItemStorageBlockEntity, ItemStorageMultiblock> DEVICE_MANAGER = MultiBlockManager.create(
 			ItemStorageMultiblock::new, (ItemStorageBlockEntity a, ItemStorageBlockEntity b) -> ItemStorageBlock.canConnect(a, b));
 
 	public static String TAG_STORAGE = "storage";
@@ -179,32 +177,12 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	}
 
 	@Override
-	public long packedPos() {
-		return pos.asLong();
-	}
-
-	@Override
-	public int dimensionId() {
-		return dimension().getRawId();
-	}
-
-	@Override
-	public DimensionType dimension() {
-		return world.getDimension().getType();
-	}
-
-	@Override
-	public World world() {
-		return world;
-	}
-
-	@Override
-	public ItemStorageMultiblock getCompoundDevice() {
+	public ItemStorageMultiblock getMultiblock() {
 		return owner;
 	}
 
 	@Override
-	public void setCompoundDevice(ItemStorageMultiblock owner) {
+	public void setMultiblock(ItemStorageMultiblock owner) {
 		this.owner = owner;
 
 		if(owner == null) {
@@ -212,16 +190,6 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 		} else {
 			wrapper.setWrapped(owner.getStorageProvider().getStorage());
 		}
-	}
-
-	@Override
-	public Location getLocation() {
-		return this;
-	}
-
-	@Override
-	public boolean hasLocation() {
-		return true;
 	}
 
 	protected boolean isRegistered = false;
@@ -263,5 +231,20 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	public void onCarrierPresent(CarrierDevice carrierDevice) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public Storage getMemberStorage() {
+		return getInternalStorage();
+	}
+
+	@Override
+	public long getPackedPos() {
+		return pos.asLong();
+	}
+
+	@Override
+	public int getDimensionId() {
+		return world.getDimension().getType().getRawId();
 	}
 }

@@ -18,9 +18,9 @@ import grondag.facility.wip.transport.CarrierNode;
 import grondag.facility.wip.transport.NodeDevice;
 import grondag.facility.wip.transport.StorageConnection;
 import grondag.fluidity.api.article.Article;
-import grondag.fluidity.api.device.CompoundDeviceManager;
-import grondag.fluidity.api.device.CompoundMemberDevice;
+import grondag.fluidity.api.device.MultiBlockManager;
 import grondag.fluidity.api.device.Device;
+import grondag.fluidity.api.device.MultiBlockMember;
 import grondag.fluidity.api.storage.ArticleConsumer;
 import grondag.fluidity.api.storage.ArticleSupplier;
 import grondag.fluidity.api.transact.TransactionContext;
@@ -29,7 +29,7 @@ import grondag.fluidity.base.device.AbstractCompoundDevice;
 import grondag.fluidity.base.storage.discrete.DiscreteStorage.DiscreteArticleConsumer;
 import grondag.fluidity.base.storage.discrete.DiscreteStorage.DiscreteArticleSupplier;
 
-public class PipeBlockEntity extends AbstractFunctionalBlockEntity<NodeDevice> implements CarrierDevice, CompoundMemberDevice<PipeBlockEntity, PipeMultiblock> {
+public class PipeBlockEntity extends AbstractFunctionalBlockEntity<NodeDevice> implements CarrierDevice, MultiBlockMember<PipeBlockEntity, PipeMultiblock> {
 
 	protected static class PipeMultiblock extends AbstractCompoundDevice<PipeBlockEntity, PipeMultiblock> {
 
@@ -50,7 +50,7 @@ public class PipeBlockEntity extends AbstractFunctionalBlockEntity<NodeDevice> i
 		}
 	}
 
-	protected static final CompoundDeviceManager<ItemStorageBlockEntity, ItemStorageMultiblock> DEVICE_MANAGER = CompoundDeviceManager.create(
+	protected static final MultiBlockManager<ItemStorageBlockEntity, ItemStorageMultiblock> DEVICE_MANAGER = MultiBlockManager.create(
 			ItemStorageMultiblock::new, (ItemStorageBlockEntity a, ItemStorageBlockEntity b) -> ItemStorageBlock.canConnect(a, b));
 
 	protected PipeMultiblock owner = null;
@@ -82,12 +82,12 @@ public class PipeBlockEntity extends AbstractFunctionalBlockEntity<NodeDevice> i
 	}
 
 	@Override
-	public PipeMultiblock getCompoundDevice() {
+	public PipeMultiblock getMultiblock() {
 		return owner;
 	}
 
 	@Override
-	public void setCompoundDevice(PipeMultiblock owner) {
+	public void setMultiblock(PipeMultiblock owner) {
 		this.owner = owner;
 	}
 
@@ -211,5 +211,20 @@ public class PipeBlockEntity extends AbstractFunctionalBlockEntity<NodeDevice> i
 			// TODO Auto-generated method stub
 			return null;
 		}
+	}
+
+	@Override
+	public BlockPos getBlockPos() {
+		return getPos();
+	}
+
+	@Override
+	public long getPackedPos() {
+		return pos.asLong();
+	}
+
+	@Override
+	public int getDimensionId() {
+		return world.getDimension().getType().getRawId();
 	}
 }
