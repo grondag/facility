@@ -98,6 +98,10 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 
 	@Override
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+		if(Block.getBlockFromItem(player.getStackInHand(hand).getItem()) instanceof ItemStorageBlock) {
+			return ActionResult.PASS;
+		}
+
 		if (!world.isClient) {
 			final BlockEntity be = world.getBlockEntity(pos);
 
@@ -130,7 +134,7 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 
 		if (blockEntity instanceof ItemStorageBlockEntity) {
 			//TODO: move to helper method on storage
-			final Storage storage = ((ItemStorageBlockEntity)blockEntity).getLocalStorage();
+			final Storage storage = ((ItemStorageBlockEntity)blockEntity).getInternalStorage();
 
 			if(storage != null){
 				return (int)(Math.floor(14.0 * storage.count() / storage.capacity())) + 1;
@@ -150,7 +154,7 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 			if (!world.isClient) {
 				final ItemStack stack = new ItemStack(this);
 
-				if(!myBlockEntity.getLocalStorage().isEmpty()) {
+				if(!myBlockEntity.getInternalStorage().isEmpty()) {
 					final CompoundTag tag = myBlockEntity.toContainerTag(new CompoundTag());
 
 					if (!tag.isEmpty()) {

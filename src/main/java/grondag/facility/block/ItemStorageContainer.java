@@ -12,14 +12,13 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
 
 import grondag.facility.Facility;
-import grondag.fluidity.api.device.Device;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.synch.ItemStorageServerDelegate;
+import grondag.fluidity.base.synch.StorageContainer;
 
-public class ItemStorageContainer extends Container implements Device {
+public class ItemStorageContainer extends Container implements StorageContainer {
 	public static Identifier ID = Facility.REG.id("item_storage");
 
 	protected final @Nullable Storage storage;
@@ -53,7 +52,7 @@ public class ItemStorageContainer extends Container implements Device {
 	}
 
 	@Override
-	public @Nullable Storage getStorage(PlayerEntity playerEntity) {
+	public Storage getStorage() {
 		return storage;
 	}
 
@@ -127,10 +126,5 @@ public class ItemStorageContainer extends Container implements Device {
 	@Override
 	protected boolean insertItem(ItemStack itemStack, int i, int j, boolean bl) {
 		return super.insertItem(itemStack, i, j, bl);
-	}
-
-	@Override
-	public Storage getStorage(Direction side, Identifier id) {
-		return null;
 	}
 }

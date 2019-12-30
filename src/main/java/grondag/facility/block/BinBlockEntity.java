@@ -83,7 +83,7 @@ public class BinBlockEntity extends ItemStorageBlockEntity {
 
 	protected void refreshClient() {
 		boolean clientRefresh = false;
-		final Storage storage = getLocalStorage();
+		final Storage storage = getInternalStorage();
 
 		for(int i = 0; i < divisionLevel; i++) {
 			final StoredArticleView newView = storage.view(i);

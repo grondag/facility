@@ -9,18 +9,18 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.World;
 
 import grondag.facility.wip.transport.CarrierDevice;
+import grondag.facility.wip.transport.CarrierNode;
 import grondag.facility.wip.transport.NodeDevice;
-import grondag.fluidity.api.device.Device;
-import grondag.fluidity.api.storage.Storage;
+import grondag.fluidity.api.device.StorageProvider;
 
-public class CreativeBlockEntity extends AbstractFunctionalBlockEntity<Storage> implements Tickable, NodeDevice {
+public class CreativeBlockEntity extends AbstractFunctionalBlockEntity<CarrierNode> implements Tickable, NodeDevice {
 	protected final boolean isOutput;
 	protected boolean isFirstTick = true;
 
@@ -40,7 +40,7 @@ public class CreativeBlockEntity extends AbstractFunctionalBlockEntity<Storage> 
 			isFirstTick = false;
 		}
 
-		if(neighbors.isEmpty()) {
+		if(neighbors.isEmpty() || !isReceivingRedstonePower()) {
 			return;
 		}
 
@@ -60,28 +60,51 @@ public class CreativeBlockEntity extends AbstractFunctionalBlockEntity<Storage> 
 
 		if(isOutput) {
 			for(int i = 0; i < limit; i++) {
-				final Storage s = neighbors.get(i);
-				s.getConsumer().accept(stack, false);
+				final CarrierNode s = neighbors.get(i);
+				s.broadcastConsumer().accept(stack, false);
 			}
 		}
 	}
 
 	@Override
 	protected void addNeighbor(BlockEntity be, BlockPos neighborPos, Direction neighborSide) {
-		if(be instanceof Device && ((Device) be).hasStorage(neighborSide)) {
-			neighbors.add(((Device) be).getStorage(neighborSide));
+		if(be instanceof CarrierDevice) {
+			final CarrierNode n = ((CarrierDevice) be).attach(this, neighborSide);
+			if(n != null && n.isValid()) {
+				neighbors.add(n);
+			}
 		}
 	}
 
 	@Override
-	public Storage getStorage(Direction side, Identifier id) {
-		// TODO Auto-generated method stub
-		return null;
+	public StorageProvider getStorageProvider() {
+		return StorageProvider.CREATIVE;
 	}
 
 	@Override
 	public void onCarrierPresent(CarrierDevice carrierDevice) {
 		// TODO Auto-generated method stub
 
+	}
+
+	protected static final BlockPos.Mutable searchPos = new BlockPos.Mutable();
+
+	protected boolean isReceivingRedstonePower() {
+		final BlockPos pos = this.pos;
+		final World world = this.world;
+
+		if (world.getEmittedRedstonePower(searchPos.set(pos).setOffset(Direction.DOWN), Direction.UP) > 0) {
+			return true;
+		} else if (world.getEmittedRedstonePower(searchPos.set(pos).setOffset(Direction.UP), Direction.DOWN) > 0) {
+			return true;
+		} else if (world.getEmittedRedstonePower(searchPos.set(pos).setOffset(Direction.NORTH), Direction.SOUTH) > 0) {
+			return true;
+		} else if (world.getEmittedRedstonePower(searchPos.set(pos).setOffset(Direction.SOUTH), Direction.NORTH) > 0) {
+			return true;
+		} else if (world.getEmittedRedstonePower(searchPos.set(pos).setOffset(Direction.WEST), Direction.EAST) > 0) {
+			return true;
+		} else {
+			return world.getEmittedRedstonePower(searchPos.set(pos).setOffset(Direction.EAST), Direction.WEST) > 0;
+		}
 	}
 }

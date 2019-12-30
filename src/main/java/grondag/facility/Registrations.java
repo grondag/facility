@@ -22,7 +22,6 @@ import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
 import grondag.facility.block.BinBlockEntity;
 import grondag.facility.block.BinStorageBlock;
-import grondag.facility.block.PipeModel;
 import grondag.facility.block.CreativeBlockEntity;
 import grondag.facility.block.CreativeStorageBlock;
 import grondag.facility.block.ItemStorageBlock;
@@ -30,6 +29,7 @@ import grondag.facility.block.ItemStorageBlockEntity;
 import grondag.facility.block.ItemStorageContainer;
 import grondag.facility.block.PipeBlock;
 import grondag.facility.block.PipeBlockEntity;
+import grondag.facility.block.PipeModel;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.base.storage.discrete.DividedDiscreteStorage;
 import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStorage;
@@ -181,7 +181,7 @@ public enum Registrations {
 
 			if (be instanceof ItemStorageBlockEntity) {
 				final ItemStorageBlockEntity myBe = (ItemStorageBlockEntity) be;
-				return new ItemStorageContainer(player, syncId, world.isClient ? null : myBe.getStorage(), label);
+				return new ItemStorageContainer(player, syncId, world.isClient ? null : myBe.getStorageProvider().getStorage(), label);
 			}
 
 			return null;

@@ -13,4 +13,6 @@ public interface CarrierNode {
 	ArticleSupplier broadcastSupplier();
 
 	StorageConnection connect(long remoteAddress);
+
+	void close();
 }

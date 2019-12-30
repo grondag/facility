@@ -23,6 +23,7 @@ import grondag.fermion.varia.Base32Namer;
 import grondag.fluidity.api.device.CompoundDeviceManager;
 import grondag.fluidity.api.device.CompoundMemberDevice;
 import grondag.fluidity.api.device.Location;
+import grondag.fluidity.api.device.StorageProvider;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.storage.AbstractStorage;
 import grondag.fluidity.base.storage.ForwardingStorage;
@@ -43,6 +44,26 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	protected String label = "UNKNOWN";
 	protected ItemStorageClientState clientState;
 	protected ItemStorageMultiblock owner = null;
+
+	final StorageProvider storageProvider = new StorageProvider() {
+		@Override
+		public Storage getStorage(Direction direction, Identifier id) {
+			if(wrapper.getWrapped() == Storage.EMPTY) {
+				wrapper.setWrapped(getInternalStorage());
+			}
+			return wrapper;
+		}
+
+		@Override
+		public Storage getLocalStorage() {
+			return getInternalStorage();
+		}
+
+		@Override
+		public boolean hasStorage(Direction direction, Identifier id) {
+			return true;
+		}
+	};
 
 	public ItemStorageBlockEntity(BlockEntityType<? extends ItemStorageBlockEntity> type, Supplier<Storage> storageSupplier, String labelRoot) {
 		super(type);
@@ -85,8 +106,7 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 
 	/** Do not call on client - will not crash but wastes memory */
 	@SuppressWarnings("rawtypes")
-	@Override
-	public Storage getLocalStorage(Direction direction, Identifier id) {
+	public Storage getInternalStorage() {
 		Storage result = storage;
 
 		if(result == null) {
@@ -96,6 +116,16 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 		}
 
 		return result;
+	}
+
+	@Override
+	public StorageProvider getStorageProvider() {
+		return storageProvider;
+	}
+
+	@Override
+	public boolean hasStorage() {
+		return true;
 	}
 
 	public String getLabel() {
@@ -121,14 +151,14 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	}
 
 	public CompoundTag toContainerTag(CompoundTag tag) {
-		tag.put(TAG_STORAGE, getLocalStorage().writeTag());
+		tag.put(TAG_STORAGE, getInternalStorage().writeTag());
 		tag.putString(TAG_LABEL, label);
 		return tag;
 	}
 
 	public void fromContainerTag(CompoundTag tag) {
 		label = tag.getString(TAG_LABEL);
-		getLocalStorage().readTag(tag.getCompound(TAG_STORAGE));
+		getInternalStorage().readTag(tag.getCompound(TAG_STORAGE));
 	}
 
 	@Override
@@ -178,23 +208,10 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 		this.owner = owner;
 
 		if(owner == null) {
-			wrapper.setWrapped(getLocalStorage());
+			wrapper.setWrapped(getInternalStorage());
 		} else {
-			wrapper.setWrapped(owner.getStorage());
+			wrapper.setWrapped(owner.getStorageProvider().getStorage());
 		}
-	}
-
-	@Override
-	public Storage getStorage(Direction direction, Identifier id) {
-		if(wrapper.getWrapped() == Storage.EMPTY) {
-			wrapper.setWrapped(getLocalStorage());
-		}
-		return wrapper;
-	}
-
-	@Override
-	public boolean hasStorage(Direction direction, Identifier id) {
-		return true;
 	}
 
 	@Override
