@@ -1,3 +1,18 @@
+/*******************************************************************************
+ * Copyright 2019, 2020 grondag
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License.  You may obtain a copy
+ * of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ ******************************************************************************/
 package grondag.facility.block;
 
 import java.util.Set;
@@ -16,8 +31,6 @@ import net.minecraft.world.World;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
-import grondag.facility.wip.transport.CarrierProvider;
-import grondag.facility.wip.transport.CarrierSession;
 import grondag.fermion.varia.Base32Namer;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.device.Authorization;
@@ -25,6 +38,8 @@ import grondag.fluidity.api.device.ComponentType;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.storage.AbstractStorage;
 import grondag.fluidity.base.storage.ForwardingStorage;
+import grondag.fluidity.wip.api.transport.CarrierProvider;
+import grondag.fluidity.wip.api.transport.CarrierSession;
 
 public class ItemStorageBlockEntity extends CarrierSessionBlockEntity implements RenderAttachmentBlockEntity, BlockEntityClientSerializable {
 
