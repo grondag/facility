@@ -6,11 +6,9 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,48 +26,30 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
-import grondag.fermion.modkeys.api.ModKeys;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
 import grondag.fluidity.base.storage.discrete.AbstractDiscreteStorage;
 import grondag.xm.api.block.XmProperties;
-import grondag.xm.api.connect.species.Species;
-import grondag.xm.api.connect.species.SpeciesFunction;
-import grondag.xm.api.connect.species.SpeciesMode;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.connect.world.BlockTest;
 
-public class ItemStorageBlock extends Block implements BlockEntityProvider {
+public class ItemStorageBlock extends FacilitySpeciesBlock {
 	public static final Identifier CONTENTS  = ShulkerBoxBlock.CONTENTS;
 
-	public final SpeciesFunction speciesFunc = SpeciesProperty.speciesForBlock(this);
-	protected final Supplier<BlockEntity> beFactory;
-
 	public ItemStorageBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
-		super(settings);
-		this.beFactory = beFactory;
-	}
-
-	@Override
-	public BlockEntity createBlockEntity(BlockView blockView) {
-		return beFactory.get();
-	}
-
-	@Override
-	public boolean hasBlockEntity() {
-		return true;
+		super(settings, beFactory);
 	}
 
 	@Override
 	protected void appendProperties(Builder<Block, BlockState> builder) {
 		super.appendProperties(builder);
-		builder.add(SpeciesProperty.SPECIES);
 		builder.add(XmProperties.FACE);
 	}
 
@@ -85,15 +65,6 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 	public static boolean canConnect(ItemStorageBlockEntity fromEntity, ItemStorageBlockEntity toEntity) {
 		final World fromWorld = fromEntity.getWorld();
 		return fromWorld == null || fromWorld != toEntity.getWorld() ? false : canConnect(fromEntity.getCachedState(), toEntity.getCachedState());
-	}
-
-	@Override
-	public BlockState getPlacementState(ItemPlacementContext context) {
-		final Direction face = context.getPlayerLookDirection();
-		final BlockPos onPos = context.getBlockPos().offset(context.getSide().getOpposite());
-		final SpeciesMode mode = ModKeys.isPrimaryPressed(context.getPlayer()) ? SpeciesMode.COUNTER_MOST : SpeciesMode.MATCH_MOST;
-		final int species = Species.speciesForPlacement(context.getWorld(), onPos, face.getOpposite(), mode, speciesFunc);
-		return getDefaultState().with(SpeciesProperty.SPECIES, species).with(XmProperties.FACE, face);
 	}
 
 	@Override
@@ -116,11 +87,6 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 		}
 
 		return ActionResult.SUCCESS;
-	}
-
-	@Override
-	public PistonBehavior getPistonBehavior(BlockState blockState) {
-		return PistonBehavior.DESTROY;
 	}
 
 	@Override
@@ -199,6 +165,32 @@ public class ItemStorageBlock extends Block implements BlockEntityProvider {
 				list.add(new LiteralText("..."));
 
 			}
+		}
+	}
+
+	@Override
+	public BlockState getPlacementState(ItemPlacementContext context) {
+		return super.getPlacementState(context).with(XmProperties.FACE, context.getPlayerLookDirection());
+	}
+
+	@Override
+	public BlockState getStateForNeighborUpdate(BlockState blockState, Direction direction, BlockState blockState2, IWorld iWorld, BlockPos blockPos, BlockPos blockPos2) {
+		updateBe(iWorld, blockPos);
+		return blockState;
+	}
+
+	@Override
+	public void onBlockAdded(BlockState blockState, World world, BlockPos blockPos, BlockState blockState2, boolean bl) {
+		updateBe(world, blockPos);
+		super.onBlockAdded(blockState, world, blockPos, blockState2, bl);
+	}
+
+	@SuppressWarnings("rawtypes")
+	protected void updateBe(IWorld world, BlockPos pos) {
+		final BlockEntity be = world.getBlockEntity(pos);
+
+		if(be instanceof NeighboredBlockEntity) {
+			((NeighboredBlockEntity) be).updateNeighbors();
 		}
 	}
 }

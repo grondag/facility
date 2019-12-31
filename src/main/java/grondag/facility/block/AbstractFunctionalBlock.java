@@ -2,33 +2,17 @@ package grondag.facility.block;
 
 import java.util.function.Supplier;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
-public class AbstractFunctionalBlock extends Block implements BlockEntityProvider {
-
-	protected final Supplier<BlockEntity> beFactory;
+public class AbstractFunctionalBlock extends FacilityBlock {
 
 	public AbstractFunctionalBlock(Settings settings, Supplier<BlockEntity> beFactory) {
-		super(settings);
-		this.beFactory = beFactory;
-	}
-
-	@Override
-	public BlockEntity createBlockEntity(BlockView blockView) {
-		return beFactory.get();
-	}
-
-	@Override
-	public boolean hasBlockEntity() {
-		return true;
+		super(settings, beFactory);
 	}
 
 	@Override
@@ -47,8 +31,8 @@ public class AbstractFunctionalBlock extends Block implements BlockEntityProvide
 	protected void updateBe(IWorld world, BlockPos pos) {
 		final BlockEntity be = world.getBlockEntity(pos);
 
-		if(be instanceof PipeBlockEntity) {
-			((AbstractFunctionalBlockEntity) be).updateNeighbors();
+		if(be instanceof NeighboredBlockEntity) {
+			((NeighboredBlockEntity) be).updateNeighbors();
 		}
 	}
 

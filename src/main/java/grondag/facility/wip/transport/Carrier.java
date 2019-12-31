@@ -1,5 +1,13 @@
 package grondag.facility.wip.transport;
 
+import java.util.Collections;
+import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
+
+import grondag.fluidity.api.storage.ArticleConsumer;
+import grondag.fluidity.api.storage.ArticleSupplier;
+
 /**
  *
  * Storages don't move articles to or from other storages.  This is done by a Transactor, which
@@ -66,13 +74,62 @@ package grondag.facility.wip.transport;
  *
  */
 public interface Carrier {
-	CarrierNode attach(CarrierDevice fromDevice);
+	CarrierType carrierType();
 
 	default boolean isPointToPoint() {
 		return false;
 	}
 
-	static Carrier p2p(CarrierDevice a, CarrierDevice b) {
+	static Carrier p2p(CarrierNode a, CarrierNode b) {
 		return null;
 	}
+
+	CarrierSession attach(CarrierNode fromNode, Supplier<ArticleConsumer> nodeConsumerFactory, Supplier<ArticleSupplier> nodeSupplierFactory);
+
+	void startListening(CarrierListener listener, boolean sendNotifications);
+
+	void stopListening(CarrierListener listener, boolean sendNotifications);
+
+	void detach(CarrierSession node);
+
+	int nodeCount();
+
+	Iterable<? extends CarrierEndpoint> nodes();
+
+	Carrier EMPTY = new Carrier() {
+		@Override
+		public CarrierType carrierType() {
+			return CarrierType.EMPTY;
+		}
+
+		@Override
+		public @Nullable CarrierSession attach(CarrierNode fromNode, Supplier<ArticleConsumer> nodeConsumerFactory, Supplier<ArticleSupplier> nodeSupplierFactory) {
+			return null;
+		}
+
+		@Override
+		public void startListening(CarrierListener listener, boolean sendNotifications) {
+			// NOOP
+		}
+
+		@Override
+		public void stopListening(CarrierListener listener, boolean sendNotifications) {
+			// NOOP
+		}
+
+		@Override
+		public void detach(CarrierSession node) {
+			// NOOP
+		}
+
+		@Override
+		public int nodeCount() {
+			return 0;
+		}
+
+		@Override
+		public Iterable<? extends CarrierSession> nodes() {
+			return Collections.emptyList();
+		}
+	};
 }

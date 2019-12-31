@@ -1,18 +1,23 @@
 package grondag.facility.wip.transport;
 
-import grondag.fluidity.api.storage.ArticleConsumer;
-import grondag.fluidity.api.storage.ArticleSupplier;
+import java.util.Collections;
+import java.util.Set;
 
+import grondag.fluidity.api.article.ArticleType;
+import grondag.fluidity.api.device.ComponentType;
+
+/**
+ * Device that may attach to a carrier.
+ */
+@FunctionalInterface
 public interface CarrierNode {
-	long address();
+	Set<ArticleType<?>> articleTypes();
 
-	boolean isValid();
+	default String name() {
+		return "Unknown";
+	}
 
-	ArticleConsumer broadcastConsumer();
+	CarrierNode EMPTY  = Collections::emptySet;
 
-	ArticleSupplier broadcastSupplier();
-
-	StorageConnection connect(long remoteAddress);
-
-	void close();
+	ComponentType<CarrierNode> CARRIER_NODE_COMPONENT = () -> EMPTY;
 }

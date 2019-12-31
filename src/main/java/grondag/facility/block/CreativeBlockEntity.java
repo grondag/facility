@@ -1,6 +1,7 @@
 package grondag.facility.block;
 
 import java.util.Random;
+import java.util.Set;
 
 import io.netty.util.internal.ThreadLocalRandom;
 
@@ -9,18 +10,22 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.World;
 
-import grondag.facility.wip.transport.CarrierDevice;
-import grondag.facility.wip.transport.CarrierNode;
-import grondag.facility.wip.transport.NodeDevice;
-import grondag.fluidity.api.device.StorageProvider;
+import grondag.facility.wip.transport.CarrierProvider;
+import grondag.facility.wip.transport.CarrierSession;
+import grondag.fluidity.api.article.ArticleType;
+import grondag.fluidity.api.device.Authorization;
+import grondag.fluidity.api.device.ComponentType;
+import grondag.fluidity.api.storage.ArticleConsumer;
+import grondag.fluidity.api.storage.ArticleSupplier;
+import grondag.fluidity.api.storage.Storage;
 
-public class CreativeBlockEntity extends AbstractFunctionalBlockEntity<CarrierNode> implements Tickable, NodeDevice {
+public class CreativeBlockEntity extends CarrierSessionBlockEntity implements Tickable {
 	protected final boolean isOutput;
 	protected boolean isFirstTick = true;
 
@@ -60,51 +65,29 @@ public class CreativeBlockEntity extends AbstractFunctionalBlockEntity<CarrierNo
 
 		if(isOutput) {
 			for(int i = 0; i < limit; i++) {
-				final CarrierNode s = neighbors.get(i);
+				final CarrierSession s = neighbors.get(i);
 				s.broadcastConsumer().accept(stack, false);
 			}
 		}
 	}
 
 	@Override
-	protected void addNeighbor(BlockEntity be, BlockPos neighborPos, Direction neighborSide) {
-		if(be instanceof CarrierDevice) {
-			final CarrierNode n = ((CarrierDevice) be).attach(this, neighborSide);
-			if(n != null && n.isValid()) {
-				neighbors.add(n);
-			}
-		}
+	public Set<ArticleType<?>> articleTypes() {
+		return ArticleType.SET_OF_ITEMS;
 	}
 
 	@Override
-	public StorageProvider getStorageProvider() {
-		return StorageProvider.CREATIVE;
+	protected CarrierSession getSession(BlockEntity be, BlockPos neighborPos, Direction neighborSide) {
+		return CarrierProvider.CARRIER_PROVIDER_COMPONENT.applyIfPresent(be, neighborSide, p ->
+		p.attachIfPresent(ArticleType.ITEM, this, () -> ArticleConsumer.FULL, () -> ArticleSupplier.CREATIVE));
 	}
 
 	@Override
-	public void onCarrierPresent(CarrierDevice carrierDevice) {
-		// TODO Auto-generated method stub
-
-	}
-
-	protected static final BlockPos.Mutable searchPos = new BlockPos.Mutable();
-
-	protected boolean isReceivingRedstonePower() {
-		final BlockPos pos = this.pos;
-		final World world = this.world;
-
-		if (world.getEmittedRedstonePower(searchPos.set(pos).setOffset(Direction.DOWN), Direction.UP) > 0) {
-			return true;
-		} else if (world.getEmittedRedstonePower(searchPos.set(pos).setOffset(Direction.UP), Direction.DOWN) > 0) {
-			return true;
-		} else if (world.getEmittedRedstonePower(searchPos.set(pos).setOffset(Direction.NORTH), Direction.SOUTH) > 0) {
-			return true;
-		} else if (world.getEmittedRedstonePower(searchPos.set(pos).setOffset(Direction.SOUTH), Direction.NORTH) > 0) {
-			return true;
-		} else if (world.getEmittedRedstonePower(searchPos.set(pos).setOffset(Direction.WEST), Direction.EAST) > 0) {
-			return true;
+	protected <T> T getOtherComponent(ComponentType<T> serviceType, Authorization auth, Direction side, Identifier id) {
+		if(serviceType == Storage.STORAGE_COMPONENT || serviceType == Storage.INTERNAL_STORAGE_COMPONENT) {
+			return serviceType.cast(Storage.CREATIVE);
 		} else {
-			return world.getEmittedRedstonePower(searchPos.set(pos).setOffset(Direction.EAST), Direction.WEST) > 0;
+			return serviceType.absent();
 		}
 	}
 }

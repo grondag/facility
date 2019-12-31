@@ -1,5 +1,6 @@
 package grondag.facility.block;
 
+import java.util.Set;
 import java.util.function.Supplier;
 
 import io.netty.util.internal.ThreadLocalRandom;
@@ -15,23 +16,17 @@ import net.minecraft.world.World;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
-import grondag.facility.block.ItemStorageBlockEntity.ItemStorageMultiblock;
-import grondag.facility.wip.transport.CarrierDevice;
-import grondag.facility.wip.transport.NodeDevice;
+import grondag.facility.wip.transport.CarrierProvider;
+import grondag.facility.wip.transport.CarrierSession;
 import grondag.fermion.varia.Base32Namer;
-import grondag.fluidity.api.device.MultiBlockManager;
-import grondag.fluidity.api.device.MultiblockStorageMember;
-import grondag.fluidity.api.device.StorageProvider;
+import grondag.fluidity.api.article.ArticleType;
+import grondag.fluidity.api.device.Authorization;
+import grondag.fluidity.api.device.ComponentType;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.storage.AbstractStorage;
 import grondag.fluidity.base.storage.ForwardingStorage;
-import grondag.fluidity.base.storage.discrete.CompoundDiscreteStorageDevice;
 
-public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachmentBlockEntity, NodeDevice, BlockEntityClientSerializable, MultiblockStorageMember<ItemStorageBlockEntity, ItemStorageMultiblock> {
-	protected static class ItemStorageMultiblock extends CompoundDiscreteStorageDevice<ItemStorageBlockEntity, ItemStorageMultiblock> {}
-
-	protected static final MultiBlockManager<ItemStorageBlockEntity, ItemStorageMultiblock> DEVICE_MANAGER = MultiBlockManager.create(
-			ItemStorageMultiblock::new, (ItemStorageBlockEntity a, ItemStorageBlockEntity b) -> ItemStorageBlock.canConnect(a, b));
+public class ItemStorageBlockEntity extends CarrierSessionBlockEntity implements RenderAttachmentBlockEntity, BlockEntityClientSerializable {
 
 	public static String TAG_STORAGE = "storage";
 	public static String TAG_LABEL = "label";
@@ -41,32 +36,13 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	protected final ForwardingStorage wrapper = new ForwardingStorage();
 	protected String label = "UNKNOWN";
 	protected ItemStorageClientState clientState;
-	protected ItemStorageMultiblock owner = null;
-
-	final StorageProvider storageProvider = new StorageProvider() {
-		@Override
-		public Storage getStorage(Direction direction, Identifier id) {
-			if(wrapper.getWrapped() == Storage.EMPTY) {
-				wrapper.setWrapped(getInternalStorage());
-			}
-			return wrapper;
-		}
-
-		@Override
-		public Storage getLocalStorage() {
-			return getInternalStorage();
-		}
-
-		@Override
-		public boolean hasStorage(Direction direction, Identifier id) {
-			return true;
-		}
-	};
+	protected final ItemStorageMultiBlock.Member member;
 
 	public ItemStorageBlockEntity(BlockEntityType<? extends ItemStorageBlockEntity> type, Supplier<Storage> storageSupplier, String labelRoot) {
 		super(type);
 		this.storageSupplier = storageSupplier;
 		label = labelRoot + Base32Namer.makeFilteredName(ThreadLocalRandom.current().nextLong());
+		member = new ItemStorageMultiBlock.Member(this, b -> b.getInternalStorage());
 	}
 
 	@Override
@@ -114,16 +90,6 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 		}
 
 		return result;
-	}
-
-	@Override
-	public StorageProvider getStorageProvider() {
-		return storageProvider;
-	}
-
-	@Override
-	public boolean hasStorage() {
-		return true;
 	}
 
 	public String getLabel() {
@@ -176,34 +142,18 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 		}
 	}
 
-	@Override
-	public ItemStorageMultiblock getMultiblock() {
-		return owner;
-	}
-
-	@Override
-	public void setMultiblock(ItemStorageMultiblock owner) {
-		this.owner = owner;
-
-		if(owner == null) {
-			wrapper.setWrapped(getInternalStorage());
-		} else {
-			wrapper.setWrapped(owner.getStorageProvider().getStorage());
-		}
-	}
-
 	protected boolean isRegistered = false;
 
 	protected void registerDevice() {
 		if(!isRegistered && hasWorld() && !world.isClient) {
-			DEVICE_MANAGER.connect(this);
+			ItemStorageMultiBlock.DEVICE_MANAGER.connect(member);
 			isRegistered = true;
 		}
 	}
 
 	protected void unregisterDevice() {
 		if(isRegistered && hasWorld() && !world.isClient) {
-			DEVICE_MANAGER.disconnect(this);
+			ItemStorageMultiBlock.DEVICE_MANAGER.disconnect(member);
 			isRegistered = false;
 		}
 	}
@@ -228,23 +178,28 @@ public class ItemStorageBlockEntity extends BlockEntity implements RenderAttachm
 	}
 
 	@Override
-	public void onCarrierPresent(CarrierDevice carrierDevice) {
-		// TODO Auto-generated method stub
-
+	public Set<ArticleType<?>> articleTypes() {
+		return ArticleType.SET_OF_ITEMS;
 	}
 
 	@Override
-	public Storage getMemberStorage() {
-		return getInternalStorage();
+	protected CarrierSession getSession(BlockEntity be, BlockPos neighborPos, Direction neighborSide) {
+		return CarrierProvider.CARRIER_PROVIDER_COMPONENT.applyIfPresent(be, neighborSide, p ->
+		p.attachIfPresent(ArticleType.ITEM, this, wrapper::getConsumer, wrapper::getSupplier));
 	}
 
 	@Override
-	public long getPackedPos() {
-		return pos.asLong();
-	}
+	protected <T> T getOtherComponent(ComponentType<T> serviceType, Authorization auth, Direction side, Identifier id) {
+		if(serviceType == Storage.STORAGE_COMPONENT) {
+			if(wrapper.getWrapped() == Storage.EMPTY) {
+				wrapper.setWrapped(getInternalStorage());
+			}
 
-	@Override
-	public int getDimensionId() {
-		return world.getDimension().getType().getRawId();
+			return serviceType.cast(wrapper);
+		} else if(serviceType == Storage.INTERNAL_STORAGE_COMPONENT) {
+			return serviceType.cast(getInternalStorage());
+		} else {
+			return serviceType.absent();
+		}
 	}
 }

@@ -8,11 +8,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.Mutable;
 import net.minecraft.util.math.Direction;
 
-public abstract class AbstractFunctionalBlockEntity<T> extends BlockEntity {
+public abstract class NeighboredBlockEntity<T> extends BlockEntity {
 
 	protected final ObjectArrayList<T> neighbors = new ObjectArrayList<>();
 
-	public AbstractFunctionalBlockEntity(BlockEntityType<?> blockEntityType) {
+	public NeighboredBlockEntity(BlockEntityType<?> blockEntityType) {
 		super(blockEntityType);
 	}
 

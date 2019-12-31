@@ -31,6 +31,7 @@ import grondag.facility.block.PipeBlock;
 import grondag.facility.block.PipeBlockEntity;
 import grondag.facility.block.PipeModel;
 import grondag.fluidity.api.article.Article;
+import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.storage.discrete.DividedDiscreteStorage;
 import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStorage;
 import grondag.fluidity.base.storage.discrete.SlottedInventoryStorage;
@@ -181,7 +182,7 @@ public enum Registrations {
 
 			if (be instanceof ItemStorageBlockEntity) {
 				final ItemStorageBlockEntity myBe = (ItemStorageBlockEntity) be;
-				return new ItemStorageContainer(player, syncId, world.isClient ? null : myBe.getStorageProvider().getStorage(), label);
+				return new ItemStorageContainer(player, syncId, world.isClient ? null : myBe.getComponent(Storage.STORAGE_COMPONENT), label);
 			}
 
 			return null;
