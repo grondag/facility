@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019, 2020 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -50,6 +50,8 @@ import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.storage.discrete.DividedDiscreteStorage;
 import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStorage;
 import grondag.fluidity.base.storage.discrete.SlottedInventoryStorage;
+import grondag.fluidity.wip.api.transport.CarrierConnector;
+import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
@@ -85,6 +87,17 @@ public enum Registrations {
 	public static final BlockEntityType<PipeBlockEntity> PIPE_BLOCK_ENTITY_TYPE = REG.blockEntityType("basic_pipe", Registrations::pipeSupplier, PIPE);
 
 	public static final Predicate<Article> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.toItem()).getClass() != ItemStorageBlock.class;
+
+	static {
+		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(CRATE, BARREL, BIN_X1, BIN_X2, BIN_X4, ITEM_SUPPLIER);
+
+		CarrierProvider.CARRIER_PROVIDER_COMPONENT.addProvider(ctx -> ((PipeBlockEntity) ctx.blockEntity()).carrierProvider, PIPE);
+
+		Storage.STORAGE_COMPONENT.addProvider(ctx -> Storage.CREATIVE, ITEM_SUPPLIER);
+		Storage.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> Storage.CREATIVE, ITEM_SUPPLIER);
+		Storage.STORAGE_COMPONENT.addProvider(ctx -> ((ItemStorageBlockEntity) ctx.blockEntity()).getEffectiveStorage(), CRATE, BARREL, BIN_X1, BIN_X2, BIN_X4);
+		Storage.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> ((ItemStorageBlockEntity) ctx.blockEntity()).getInternalStorage(), CRATE, BARREL, BIN_X1, BIN_X2, BIN_X4);
+	}
 
 	static ItemStorageBlockEntity crateBe() {
 		return new ItemStorageBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStorage(2048).filter(FILTER_NESTING), "CRATE ");
@@ -197,7 +210,7 @@ public enum Registrations {
 
 			if (be instanceof ItemStorageBlockEntity) {
 				final ItemStorageBlockEntity myBe = (ItemStorageBlockEntity) be;
-				return new ItemStorageContainer(player, syncId, world.isClient ? null : myBe.getComponent(Storage.STORAGE_COMPONENT), label);
+				return new ItemStorageContainer(player, syncId, world.isClient ? null : Storage.STORAGE_COMPONENT.get(myBe).get(), label);
 			}
 
 			return null;
