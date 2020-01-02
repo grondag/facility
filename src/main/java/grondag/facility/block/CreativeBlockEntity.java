@@ -25,6 +25,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -38,7 +39,6 @@ import grondag.fluidity.wip.api.transport.CarrierSession;
 
 public class CreativeBlockEntity extends CarrierSessionBlockEntity implements Tickable {
 	protected final boolean isOutput;
-	protected boolean isFirstTick = true;
 
 	public CreativeBlockEntity(BlockEntityType<CreativeBlockEntity> type, boolean isOutput) {
 		super(type);
@@ -51,16 +51,12 @@ public class CreativeBlockEntity extends CarrierSessionBlockEntity implements Ti
 			return;
 		}
 
-		if(isFirstTick) {
-			updateNeighbors();
-			isFirstTick = false;
-		}
+		final int limit = neighborCount();
 
-		if(neighbors.isEmpty() || !isReceivingRedstonePower()) {
+		if(limit == 0 || !getCachedState().get(Properties.POWERED)) {
 			return;
 		}
 
-		final int limit = neighbors.size();
 		final Random random =  ThreadLocalRandom.current();
 		final Item item = Registry.ITEM.getRandom(random);
 		ItemStack stack = new ItemStack(item);
@@ -76,7 +72,7 @@ public class CreativeBlockEntity extends CarrierSessionBlockEntity implements Ti
 
 		if(isOutput) {
 			for(int i = 0; i < limit; i++) {
-				final CarrierSession s = neighbors.get(i);
+				final CarrierSession s = getNeighbor(i);
 				s.broadcastConsumer().accept(stack, false);
 			}
 		}

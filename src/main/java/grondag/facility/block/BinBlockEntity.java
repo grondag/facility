@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019, 2020 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -22,8 +22,6 @@ import java.util.function.Supplier;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.StoredArticleView;
@@ -79,8 +77,8 @@ public class BinBlockEntity extends ItemStorageBlockEntity {
 	}
 
 	@Override
-	public void setWorld(World world, BlockPos blockPos) {
-		super.setWorld(world, blockPos);
+	public void updateNeighbors() {
+		super.updateNeighbors();
 
 		if(!world.isClient) {
 			refreshClient();

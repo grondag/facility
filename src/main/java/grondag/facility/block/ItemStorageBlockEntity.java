@@ -40,19 +40,21 @@ import grondag.fluidity.wip.api.transport.CarrierSession;
 
 public class ItemStorageBlockEntity extends CarrierSessionBlockEntity implements RenderAttachmentBlockEntity, BlockEntityClientSerializable {
 
-	public static String TAG_STORAGE = "storage";
-	public static String TAG_LABEL = "label";
+	public static final String TAG_STORAGE = "storage";
+	public static final String TAG_LABEL = "label";
 
-	protected final Supplier<Storage> storageSupplier;
-	protected Storage storage;
+	protected final Storage storage;
 	protected final ForwardingStorage wrapper = new ForwardingStorage();
 	protected String label = "UNKNOWN";
 	protected ItemStorageClientState clientState;
 	protected final ItemStorageMultiBlock.Member member;
 
+	@SuppressWarnings("rawtypes")
 	public ItemStorageBlockEntity(BlockEntityType<? extends ItemStorageBlockEntity> type, Supplier<Storage> storageSupplier, String labelRoot) {
 		super(type);
-		this.storageSupplier = storageSupplier;
+		storage = storageSupplier.get();
+		((AbstractStorage) storage).onDirty(this::markForSave);
+		wrapper.setWrapped(storage);
 		label = labelRoot + Base32Namer.makeFilteredName(ThreadLocalRandom.current().nextLong());
 		member = new ItemStorageMultiBlock.Member(this, b -> b.getInternalStorage());
 	}
@@ -73,7 +75,6 @@ public class ItemStorageBlockEntity extends CarrierSessionBlockEntity implements
 		return result;
 	}
 
-
 	/**
 	 * Rely on the fact that BE render dispath will call this each frame
 	 * and check for deltas to know if we should recompute distance.
@@ -91,24 +92,11 @@ public class ItemStorageBlockEntity extends CarrierSessionBlockEntity implements
 	}
 
 	/** Do not call on client - will not crash but wastes memory */
-	@SuppressWarnings("rawtypes")
 	public Storage getInternalStorage() {
-		Storage result = storage;
-
-		if(result == null) {
-			result = storageSupplier.get();
-			((AbstractStorage) result).onDirty(this::markForSave);
-			storage = result;
-		}
-
-		return result;
+		return storage;
 	}
 
 	public Storage getEffectiveStorage() {
-		if(wrapper.getWrapped() == Storage.EMPTY) {
-			wrapper.setWrapped(getInternalStorage());
-		}
-
 		return wrapper;
 	}
 

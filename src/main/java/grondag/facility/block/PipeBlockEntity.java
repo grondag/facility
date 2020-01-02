@@ -17,6 +17,8 @@ package grondag.facility.block;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
 import grondag.facility.transport.UniversalTransportBus;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
@@ -32,5 +34,40 @@ public class PipeBlockEntity extends BlockEntity {
 	public PipeBlockEntity(BlockEntityType<PipeBlockEntity> type) {
 		super(type);
 		member = new PipeMultiBlock.Member(this, b -> b.carrier);
+	}
+
+	protected boolean isRegistered = false;
+
+	protected void registerDevice() {
+		if(!isRegistered && hasWorld() && !world.isClient) {
+			PipeMultiBlock.DEVICE_MANAGER.connect(member);
+			isRegistered = true;
+		}
+	}
+
+	protected void unregisterDevice() {
+		if(isRegistered && hasWorld() && !world.isClient) {
+			PipeMultiBlock.DEVICE_MANAGER.disconnect(member);
+			isRegistered = false;
+		}
+	}
+
+	@Override
+	public void setWorld(World world, BlockPos blockPos) {
+		unregisterDevice();
+		super.setWorld(world, blockPos);
+		registerDevice();
+	}
+
+	@Override
+	public void markRemoved() {
+		unregisterDevice();
+		super.markRemoved();
+	}
+
+	@Override
+	public void cancelRemoval() {
+		super.cancelRemoval();
+		registerDevice();
 	}
 }
