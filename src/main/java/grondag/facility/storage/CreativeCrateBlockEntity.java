@@ -33,8 +33,6 @@ import net.minecraft.util.registry.Registry;
 
 import grondag.facility.block.CarrierSessionBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
-import grondag.fluidity.api.storage.ArticleConsumer;
-import grondag.fluidity.api.storage.ArticleSupplier;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 
@@ -87,6 +85,6 @@ public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implemen
 	@Override
 	protected CarrierSession getSession(BlockEntity be, BlockPos neighborPos, Direction neighborSide) {
 		return CarrierProvider.CARRIER_PROVIDER_COMPONENT.get(be).applyIfPresent(neighborSide, p ->
-		p.attachIfPresent(ArticleType.ITEM, this, () -> ArticleConsumer.FULL, () -> ArticleSupplier.CREATIVE));
+		p.attachIfPresent(ArticleType.ITEM, this, ct -> ct.get(this)));
 	}
 }

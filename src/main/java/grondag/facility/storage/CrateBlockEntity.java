@@ -194,6 +194,6 @@ public class CrateBlockEntity extends CarrierSessionBlockEntity implements Rende
 	@Override
 	protected CarrierSession getSession(BlockEntity be, BlockPos neighborPos, Direction neighborSide) {
 		return CarrierProvider.CARRIER_PROVIDER_COMPONENT.get(be).applyIfPresent(neighborSide, p ->
-		p.attachIfPresent(ArticleType.ITEM, this, wrapper::getConsumer, wrapper::getSupplier));
+		p.attachIfPresent(ArticleType.ITEM, this, ct -> ct.get(this)));
 	}
 }
