@@ -36,7 +36,6 @@ public enum PipeBlocks {
 
 	public static final PipeBlock PIPE = REG.block("basic_pipe", new PipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1).build(), PipeBlocks::pipeSupplier));
 	public static final BlockEntityType<PipeBlockEntity> PIPE_BLOCK_ENTITY_TYPE = REG.blockEntityType("basic_pipe", PipeBlocks::pipeSupplier, PIPE);
-
 	static PipeBlockEntity pipeSupplier() {
 		return new PipeBlockEntity(PIPE_BLOCK_ENTITY_TYPE);
 	}

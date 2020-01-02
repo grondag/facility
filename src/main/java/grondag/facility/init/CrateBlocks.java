@@ -48,7 +48,6 @@ public enum CrateBlocks {
 
 	public static final CrateBlock CRATE = REG.block("crate", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::crateBe));
 	public static final BlockEntityType<CrateBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", CrateBlocks::crateBe, CRATE);
-
 	static CrateBlockEntity crateBe() {
 		return new CrateBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStorage(2048).filter(FILTER_NESTING), "CRATE ");
 	}
@@ -56,7 +55,6 @@ public enum CrateBlocks {
 
 	public static final CrateBlock BARREL = REG.block("barrel", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::barrelBe));
 	public static final BlockEntityType<CrateBlockEntity> BARREL_BLOCK_ENTITY_TYPE = REG.blockEntityType("barrel", CrateBlocks::barrelBe, BARREL);
-
 	static CrateBlockEntity barrelBe() {
 		return new CrateBlockEntity(BARREL_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStorage(32).filter(FILTER_NESTING), "BARREL ");
 	}
@@ -64,7 +62,6 @@ public enum CrateBlocks {
 
 	public static final CreativeICrateBlock ITEM_SUPPLIER = REG.block("item_supplier", new CreativeICrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::itemSupplier));
 	public static final BlockEntityType<CreativeCrateBlockEntity> ITEM_SUPPLIER_BLOCK_ENTITY_TYPE = REG.blockEntityType("item_supplier", CrateBlocks::itemSupplier, ITEM_SUPPLIER);
-
 	static CreativeCrateBlockEntity itemSupplier() {
 		return new CreativeCrateBlockEntity(ITEM_SUPPLIER_BLOCK_ENTITY_TYPE, true);
 	}
