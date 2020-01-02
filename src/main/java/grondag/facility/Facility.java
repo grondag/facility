@@ -44,6 +44,11 @@ import org.apache.logging.log4j.Logger;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 
+import grondag.facility.init.BinBlocks;
+import grondag.facility.init.Containers;
+import grondag.facility.init.CrateBlocks;
+import grondag.facility.init.PipeBlocks;
+import grondag.facility.init.Textures;
 import grondag.facility.packet.BinActionC2S;
 import grondag.fermion.registrar.Registrar;
 
@@ -54,7 +59,11 @@ public class Facility implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-		Registrations.values();
+		Containers.values();
+		Textures.values();
+		CrateBlocks.values();
+		BinBlocks.values();
+		PipeBlocks.values();
 
 		ServerSidePacketRegistry.INSTANCE.register(BinActionC2S.ID, BinActionC2S::accept);
 	}

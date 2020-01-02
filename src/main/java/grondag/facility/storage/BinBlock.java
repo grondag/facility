@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019, 2020 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -23,7 +23,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -31,11 +30,11 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.RayTraceContext;
 import net.minecraft.world.World;
 
 import net.fabricmc.fabric.api.block.BlockAttackInteractionAware;
 
+import grondag.facility.block.TracerAccess;
 import grondag.facility.packet.BinActionC2S;
 import grondag.fermion.world.WorldHelper;
 import grondag.xm.api.block.XmProperties;
@@ -43,11 +42,13 @@ import grondag.xm.api.orientation.FaceCorner;
 import grondag.xm.api.orientation.FaceEdge;
 
 public class BinBlock extends CrateBlock implements BlockAttackInteractionAware {
-	protected final int divisionLevel;
+	public final int divisionLevel;
+	public final boolean isCreative;
 
-	public BinBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, int divisionLevel) {
+	public BinBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, int divisionLevel, boolean isCreative) {
 		super(settings, beFactory);
 		this.divisionLevel = divisionLevel;
+		this.isCreative = isCreative;
 	}
 
 	@Override
@@ -63,16 +64,6 @@ public class BinBlock extends CrateBlock implements BlockAttackInteractionAware 
 		return super.onUse(state, world, pos, player, hand, hit);
 	}
 
-
-	protected static class TracerAccess extends Item {
-		protected static HitResult trace(World world, PlayerEntity player) {
-			return rayTrace(world, player, RayTraceContext.FluidHandling.NONE);
-		}
-
-		protected TracerAccess() {
-			super(new Settings());
-		}
-	}
 
 	protected static long lastClickMs = 0;
 
