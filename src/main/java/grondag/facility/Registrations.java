@@ -36,12 +36,12 @@ import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
 import grondag.facility.storage.BinBlockEntity;
-import grondag.facility.storage.BinStorageBlock;
-import grondag.facility.storage.CreativeItemStorageBlockEntity;
-import grondag.facility.storage.CreativeItemStorageBlock;
-import grondag.facility.storage.ItemStorageBlock;
-import grondag.facility.storage.ItemStorageBlockEntity;
-import grondag.facility.storage.ItemStorageContainer;
+import grondag.facility.storage.BinBlock;
+import grondag.facility.storage.CreativeCrateBlockEntity;
+import grondag.facility.storage.CreativeICrateBlock;
+import grondag.facility.storage.CrateBlock;
+import grondag.facility.storage.CrateBlockEntity;
+import grondag.facility.storage.CrateContainer;
 import grondag.facility.transport.PipeBlock;
 import grondag.facility.transport.PipeBlockEntity;
 import grondag.facility.transport.PipeModel;
@@ -70,23 +70,23 @@ import grondag.xm.texture.TextureSetHelper;
 public enum Registrations {
 	;
 
-	public static final ItemStorageBlock CRATE = REG.block("crate", new ItemStorageBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::crateBe));
-	public static final ItemStorageBlock BARREL = REG.block("barrel", new ItemStorageBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::barrelBe));
-	public static final BinStorageBlock BIN_X1 = REG.block("bin_x1", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::binX1Be, 1));
-	public static final BinStorageBlock BIN_X2 = REG.block("bin_x2", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::binX2Be, 2));
-	public static final BinStorageBlock BIN_X4 = REG.block("bin_x4", new BinStorageBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::binX4Be, 4));
-	public static final CreativeItemStorageBlock ITEM_SUPPLIER = REG.block("item_supplier", new CreativeItemStorageBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::itemSupplier));
+	public static final CrateBlock CRATE = REG.block("crate", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::crateBe));
+	public static final CrateBlock BARREL = REG.block("barrel", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::barrelBe));
+	public static final BinBlock BIN_X1 = REG.block("bin_x1", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::binX1Be, 1));
+	public static final BinBlock BIN_X2 = REG.block("bin_x2", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::binX2Be, 2));
+	public static final BinBlock BIN_X4 = REG.block("bin_x4", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::binX4Be, 4));
+	public static final CreativeICrateBlock ITEM_SUPPLIER = REG.block("item_supplier", new CreativeICrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), Registrations::itemSupplier));
 	public static final PipeBlock PIPE = REG.block("basic_pipe", new PipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1).build(), Registrations::pipeSupplier));
 
-	public static final BlockEntityType<ItemStorageBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", Registrations::crateBe, CRATE);
-	public static final BlockEntityType<ItemStorageBlockEntity> BARREL_BLOCK_ENTITY_TYPE = REG.blockEntityType("barrel", Registrations::barrelBe, BARREL);
+	public static final BlockEntityType<CrateBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", Registrations::crateBe, CRATE);
+	public static final BlockEntityType<CrateBlockEntity> BARREL_BLOCK_ENTITY_TYPE = REG.blockEntityType("barrel", Registrations::barrelBe, BARREL);
 	public static final BlockEntityType<BinBlockEntity> BIN_X1_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x1", Registrations::binX1Be, BIN_X1);
 	public static final BlockEntityType<BinBlockEntity> BIN_X2_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x2", Registrations::binX2Be, BIN_X2);
 	public static final BlockEntityType<BinBlockEntity> BIN_X4_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x4", Registrations::binX4Be, BIN_X4);
-	public static final BlockEntityType<CreativeItemStorageBlockEntity> ITEM_SUPPLIER_BLOCK_ENTITY_TYPE = REG.blockEntityType("item_supplier", Registrations::itemSupplier, ITEM_SUPPLIER);
+	public static final BlockEntityType<CreativeCrateBlockEntity> ITEM_SUPPLIER_BLOCK_ENTITY_TYPE = REG.blockEntityType("item_supplier", Registrations::itemSupplier, ITEM_SUPPLIER);
 	public static final BlockEntityType<PipeBlockEntity> PIPE_BLOCK_ENTITY_TYPE = REG.blockEntityType("basic_pipe", Registrations::pipeSupplier, PIPE);
 
-	public static final Predicate<Article> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.toItem()).getClass() != ItemStorageBlock.class;
+	public static final Predicate<Article> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.toItem()).getClass() != CrateBlock.class;
 
 	static {
 		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(CRATE, BARREL, BIN_X1, BIN_X2, BIN_X4, ITEM_SUPPLIER);
@@ -95,16 +95,16 @@ public enum Registrations {
 
 		Storage.STORAGE_COMPONENT.addProvider(ctx -> Storage.CREATIVE, ITEM_SUPPLIER);
 		Storage.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> Storage.CREATIVE, ITEM_SUPPLIER);
-		Storage.STORAGE_COMPONENT.addProvider(ctx -> ((ItemStorageBlockEntity) ctx.blockEntity()).getEffectiveStorage(), CRATE, BARREL, BIN_X1, BIN_X2, BIN_X4);
-		Storage.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> ((ItemStorageBlockEntity) ctx.blockEntity()).getInternalStorage(), CRATE, BARREL, BIN_X1, BIN_X2, BIN_X4);
+		Storage.STORAGE_COMPONENT.addProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), CRATE, BARREL, BIN_X1, BIN_X2, BIN_X4);
+		Storage.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), CRATE, BARREL, BIN_X1, BIN_X2, BIN_X4);
 	}
 
-	static ItemStorageBlockEntity crateBe() {
-		return new ItemStorageBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStorage(2048).filter(FILTER_NESTING), "CRATE ");
+	static CrateBlockEntity crateBe() {
+		return new CrateBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStorage(2048).filter(FILTER_NESTING), "CRATE ");
 	}
 
-	static ItemStorageBlockEntity barrelBe() {
-		return new ItemStorageBlockEntity(BARREL_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStorage(32).filter(FILTER_NESTING), "BARREL ");
+	static CrateBlockEntity barrelBe() {
+		return new CrateBlockEntity(BARREL_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStorage(32).filter(FILTER_NESTING), "BARREL ");
 	}
 
 	static BinBlockEntity binX1Be() {
@@ -119,8 +119,8 @@ public enum Registrations {
 		return new BinBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, () -> new DividedDiscreteStorage(4, 512).filter(FILTER_NESTING), "BINx4 ", 4);
 	}
 
-	static CreativeItemStorageBlockEntity itemSupplier() {
-		return new CreativeItemStorageBlockEntity(ITEM_SUPPLIER_BLOCK_ENTITY_TYPE, true);
+	static CreativeCrateBlockEntity itemSupplier() {
+		return new CreativeCrateBlockEntity(ITEM_SUPPLIER_BLOCK_ENTITY_TYPE, true);
 	}
 
 	static PipeBlockEntity pipeSupplier() {
@@ -142,7 +142,7 @@ public enum Registrations {
 		final XmPaint basePaint = crateBaseFinder(2).find();
 
 		XmBlockRegistry.addBlockStates(BARREL, bs -> PrimitiveStateFunction.builder()
-				.withJoin(ItemStorageBlock.JOIN_TEST)
+				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
@@ -150,7 +150,7 @@ public enum Registrations {
 				.build());
 
 		XmBlockRegistry.addBlockStates(CRATE, bs -> PrimitiveStateFunction.builder()
-				.withJoin(ItemStorageBlock.JOIN_TEST)
+				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
@@ -158,7 +158,7 @@ public enum Registrations {
 				.build());
 
 		XmBlockRegistry.addBlockStates(BIN_X1, bs -> PrimitiveStateFunction.builder()
-				.withJoin(ItemStorageBlock.JOIN_TEST)
+				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
@@ -168,7 +168,7 @@ public enum Registrations {
 				.build());
 
 		XmBlockRegistry.addBlockStates(BIN_X2, bs -> PrimitiveStateFunction.builder()
-				.withJoin(ItemStorageBlock.JOIN_TEST)
+				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
@@ -178,7 +178,7 @@ public enum Registrations {
 				.build());
 
 		XmBlockRegistry.addBlockStates(BIN_X4, bs -> PrimitiveStateFunction.builder()
-				.withJoin(ItemStorageBlock.JOIN_TEST)
+				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
@@ -202,15 +202,15 @@ public enum Registrations {
 						.paint(PipeModel.SURFACE_CONNECTOR, PipeModel.PAINT_CONNECTOR), bs)))
 				.build());
 
-		ContainerProviderRegistry.INSTANCE.registerFactory(ItemStorageContainer.ID, (syncId, identifier, player, buf) ->  {
+		ContainerProviderRegistry.INSTANCE.registerFactory(CrateContainer.ID, (syncId, identifier, player, buf) ->  {
 			final BlockPos pos = buf.readBlockPos();
 			final String label = buf.readString();
 			final World world = player.getEntityWorld();
 			final BlockEntity be = world.getBlockEntity(pos);
 
-			if (be instanceof ItemStorageBlockEntity) {
-				final ItemStorageBlockEntity myBe = (ItemStorageBlockEntity) be;
-				return new ItemStorageContainer(player, syncId, world.isClient ? null : Storage.STORAGE_COMPONENT.get(myBe).get(), label);
+			if (be instanceof CrateBlockEntity) {
+				final CrateBlockEntity myBe = (CrateBlockEntity) be;
+				return new CrateContainer(player, syncId, world.isClient ? null : Storage.STORAGE_COMPONENT.get(myBe).get(), label);
 			}
 
 			return null;

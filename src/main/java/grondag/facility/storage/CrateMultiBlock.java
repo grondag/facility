@@ -24,13 +24,13 @@ import grondag.fluidity.base.multiblock.AbstractStorageMultiBlock;
 import grondag.fluidity.base.storage.discrete.AggregateDiscreteStorage;
 import grondag.xm.api.connect.species.SpeciesProperty;
 
-public class ItemStorageMultiBlock extends AbstractStorageMultiBlock<ItemStorageMultiBlock.Member, ItemStorageMultiBlock> {
-	public ItemStorageMultiBlock() {
+public class CrateMultiBlock extends AbstractStorageMultiBlock<CrateMultiBlock.Member, CrateMultiBlock> {
+	public CrateMultiBlock() {
 		super(new AggregateDiscreteStorage());
 	}
 
-	protected static class Member extends AbstractBlockEntityMember<Member, ItemStorageMultiBlock, Storage, ItemStorageBlockEntity> {
-		public Member(ItemStorageBlockEntity blockEntity, Function<ItemStorageBlockEntity, Storage> componentFunction) {
+	protected static class Member extends AbstractBlockEntityMember<Member, CrateMultiBlock, Storage, CrateBlockEntity> {
+		public Member(CrateBlockEntity blockEntity, Function<CrateBlockEntity, Storage> componentFunction) {
 			super(blockEntity, componentFunction);
 		}
 
@@ -53,6 +53,6 @@ public class ItemStorageMultiBlock extends AbstractStorageMultiBlock<ItemStorage
 		}
 	}
 
-	protected static final MultiBlockManager<Member, ItemStorageMultiBlock, Storage> DEVICE_MANAGER = MultiBlockManager.create(
-			ItemStorageMultiBlock::new, (Member a, Member b) -> a != null && a.canConnect(b));
+	protected static final MultiBlockManager<Member, CrateMultiBlock, Storage> DEVICE_MANAGER = MultiBlockManager.create(
+			CrateMultiBlock::new, (Member a, Member b) -> a != null && a.canConnect(b));
 }

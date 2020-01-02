@@ -19,7 +19,7 @@ import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegi
 import net.fabricmc.fabric.api.client.screen.ScreenProviderRegistry;
 
 import grondag.facility.Registrations;
-import grondag.facility.storage.ItemStorageContainer;
+import grondag.facility.storage.CrateContainer;
 
 public enum ClientRegistrations {
 	;
@@ -31,6 +31,6 @@ public enum ClientRegistrations {
 		BlockEntityRendererRegistry.INSTANCE.register(Registrations.BIN_X2_BLOCK_ENTITY_TYPE, d -> new BinBlockRenderer(d, 2));
 		BlockEntityRendererRegistry.INSTANCE.register(Registrations.BIN_X4_BLOCK_ENTITY_TYPE, d -> new BinBlockRenderer(d, 4));
 
-		ScreenProviderRegistry.INSTANCE.registerFactory(ItemStorageContainer.ID, ItemStorageScreen::new);
+		ScreenProviderRegistry.INSTANCE.registerFactory(CrateContainer.ID, ItemStorageScreen::new);
 	}
 }

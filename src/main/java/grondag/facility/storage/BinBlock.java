@@ -42,10 +42,10 @@ import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.orientation.FaceCorner;
 import grondag.xm.api.orientation.FaceEdge;
 
-public class BinStorageBlock extends ItemStorageBlock implements BlockAttackInteractionAware {
+public class BinBlock extends CrateBlock implements BlockAttackInteractionAware {
 	protected final int divisionLevel;
 
-	public BinStorageBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, int divisionLevel) {
+	public BinBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, int divisionLevel) {
 		super(settings, beFactory);
 		this.divisionLevel = divisionLevel;
 	}

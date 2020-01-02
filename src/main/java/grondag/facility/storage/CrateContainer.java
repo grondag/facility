@@ -33,14 +33,14 @@ import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.synch.ItemStorageServerDelegate;
 import grondag.fluidity.base.synch.StorageContainer;
 
-public class ItemStorageContainer extends Container implements StorageContainer {
+public class CrateContainer extends Container implements StorageContainer {
 	public static Identifier ID = Facility.REG.id("item_storage");
 
 	protected final @Nullable Storage storage;
 	protected String label;
 	protected ItemStorageServerDelegate delegate;
 
-	public ItemStorageContainer(PlayerEntity player, int synchId, @Nullable Storage storage, String label) {
+	public CrateContainer(PlayerEntity player, int synchId, @Nullable Storage storage, String label) {
 		super(null, synchId);
 		this.storage = storage;
 		this.label = label;

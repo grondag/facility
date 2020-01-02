@@ -25,10 +25,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import grondag.facility.storage.ItemStorageBlockEntity;
+import grondag.facility.storage.CrateBlockEntity;
 
 @Environment(EnvType.CLIENT)
-public class StorageBlockRenderer<T extends ItemStorageBlockEntity> extends BlockEntityRenderer<T> {
+public class StorageBlockRenderer<T extends CrateBlockEntity> extends BlockEntityRenderer<T> {
 	protected final MinecraftClient mc = MinecraftClient.getInstance();
 	protected final ItemRenderer ir = mc.getItemRenderer();
 

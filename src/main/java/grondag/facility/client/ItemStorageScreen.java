@@ -21,7 +21,7 @@ import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.text.TranslatableText;
 
-import grondag.facility.storage.ItemStorageContainer;
+import grondag.facility.storage.CrateContainer;
 import grondag.fermion.gui.AbstractSimpleContainerScreen;
 import grondag.fermion.gui.GuiUtil;
 import grondag.fermion.gui.control.Button;
@@ -33,7 +33,7 @@ import grondag.fluidity.base.synch.StorageAction;
 import grondag.fluidity.impl.ItemDisplayDelegateImpl;
 import grondag.fonthack.FontHackClient;
 
-public class ItemStorageScreen extends AbstractSimpleContainerScreen<ItemStorageContainer> implements ContainerProvider<ItemStorageContainer> {
+public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContainer> implements ContainerProvider<CrateContainer> {
 	protected int headerHeight;
 	protected int storageHeight;
 
@@ -43,7 +43,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<ItemStorage
 	protected int itemPickerTop;
 	protected int inventoryLeft;
 
-	public ItemStorageScreen(ItemStorageContainer container) {
+	public ItemStorageScreen(CrateContainer container) {
 		super(container, MinecraftClient.getInstance().player.inventory, new TranslatableText("Smart Chest"));
 	}
 

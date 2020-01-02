@@ -21,8 +21,8 @@ import net.minecraft.item.ItemStack;
 
 import grondag.facility.FacilityConfig;
 
-public class ItemStorageClientState {
-	public final ItemStorageBlockEntity owner;
+public class CrateClientState {
+	public final CrateBlockEntity owner;
 	public @Nullable ItemStack[] renderStacks = null;
 
 	/**
@@ -32,7 +32,7 @@ public class ItemStorageClientState {
 
 	private float displayAlpha = 1f;
 
-	public ItemStorageClientState(ItemStorageBlockEntity owner) {
+	public CrateClientState(CrateBlockEntity owner) {
 		this.owner = owner;
 	}
 

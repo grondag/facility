@@ -39,7 +39,7 @@ import grondag.fluidity.base.storage.ForwardingStorage;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 
-public class ItemStorageBlockEntity extends CarrierSessionBlockEntity implements RenderAttachmentBlockEntity, BlockEntityClientSerializable {
+public class CrateBlockEntity extends CarrierSessionBlockEntity implements RenderAttachmentBlockEntity, BlockEntityClientSerializable {
 
 	public static final String TAG_STORAGE = "storage";
 	public static final String TAG_LABEL = "label";
@@ -47,17 +47,17 @@ public class ItemStorageBlockEntity extends CarrierSessionBlockEntity implements
 	protected final Storage storage;
 	protected final ForwardingStorage wrapper = new ForwardingStorage();
 	protected String label = "UNKNOWN";
-	protected ItemStorageClientState clientState;
-	protected final ItemStorageMultiBlock.Member member;
+	protected CrateClientState clientState;
+	protected final CrateMultiBlock.Member member;
 
 	@SuppressWarnings("rawtypes")
-	public ItemStorageBlockEntity(BlockEntityType<? extends ItemStorageBlockEntity> type, Supplier<Storage> storageSupplier, String labelRoot) {
+	public CrateBlockEntity(BlockEntityType<? extends CrateBlockEntity> type, Supplier<Storage> storageSupplier, String labelRoot) {
 		super(type);
 		storage = storageSupplier.get();
 		((AbstractStorage) storage).onDirty(this::markForSave);
 		wrapper.setWrapped(storage);
 		label = labelRoot + Base32Namer.makeFilteredName(ThreadLocalRandom.current().nextLong());
-		member = new ItemStorageMultiBlock.Member(this, b -> b.getInternalStorage());
+		member = new CrateMultiBlock.Member(this, b -> b.getInternalStorage());
 	}
 
 	@Override
@@ -65,11 +65,11 @@ public class ItemStorageBlockEntity extends CarrierSessionBlockEntity implements
 		return this;
 	}
 
-	public ItemStorageClientState clientState() {
-		ItemStorageClientState result = clientState;
+	public CrateClientState clientState() {
+		CrateClientState result = clientState;
 
 		if (result == null) {
-			result = new ItemStorageClientState(this);
+			result = new CrateClientState(this);
 			clientState =  result;
 		}
 
@@ -155,14 +155,14 @@ public class ItemStorageBlockEntity extends CarrierSessionBlockEntity implements
 
 	protected void registerDevice() {
 		if(!isRegistered && hasWorld() && !world.isClient) {
-			ItemStorageMultiBlock.DEVICE_MANAGER.connect(member);
+			CrateMultiBlock.DEVICE_MANAGER.connect(member);
 			isRegistered = true;
 		}
 	}
 
 	protected void unregisterDevice() {
 		if(isRegistered && hasWorld() && !world.isClient) {
-			ItemStorageMultiBlock.DEVICE_MANAGER.disconnect(member);
+			CrateMultiBlock.DEVICE_MANAGER.disconnect(member);
 			isRegistered = false;
 		}
 	}

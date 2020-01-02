@@ -27,7 +27,7 @@ import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.StoredArticleView;
 import grondag.fluidity.api.storage.Storage;
 
-public class BinBlockEntity extends ItemStorageBlockEntity {
+public class BinBlockEntity extends CrateBlockEntity {
 	protected final int divisionLevel;
 	protected final Article[] items;
 
@@ -43,7 +43,7 @@ public class BinBlockEntity extends ItemStorageBlockEntity {
 		label = tag.getString(TAG_LABEL);
 
 		boolean hasAny = false;
-		final ItemStorageClientState clientState = clientState();
+		final CrateClientState clientState = clientState();
 		ItemStack[] renderStacks = clientState.renderStacks;
 
 		for(int i = 0; i < divisionLevel; i++) {

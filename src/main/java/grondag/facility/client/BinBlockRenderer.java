@@ -32,8 +32,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import grondag.facility.storage.BinBlockEntity;
-import grondag.facility.storage.ItemStorageBlockEntity;
-import grondag.facility.storage.ItemStorageClientState;
+import grondag.facility.storage.CrateBlockEntity;
+import grondag.facility.storage.CrateClientState;
 import grondag.xm.api.block.XmProperties;
 
 @Environment(EnvType.CLIENT)
@@ -51,8 +51,8 @@ public class BinBlockRenderer extends StorageBlockRenderer<BinBlockEntity> {
 		renderInner(bin, tickDelta, matrixStack, ItemRendererHook.wrap(vertexConsumerProvider), lightmap, overlay);
 	}
 
-	protected void renderInner(ItemStorageBlockEntity bin, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int lightmap, int overlay) {
-		final ItemStorageClientState renderState = bin.clientState();
+	protected void renderInner(CrateBlockEntity bin, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int lightmap, int overlay) {
+		final CrateClientState renderState = bin.clientState();
 
 		final float a = renderState.displayAlpha();
 

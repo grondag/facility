@@ -57,10 +57,10 @@ import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.connect.world.BlockTest;
 
-public class ItemStorageBlock extends FacilitySpeciesBlock {
+public class CrateBlock extends FacilitySpeciesBlock {
 	public static final Identifier CONTENTS  = ShulkerBoxBlock.CONTENTS;
 
-	public ItemStorageBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
+	public CrateBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
 		super(settings, beFactory);
 	}
 
@@ -74,29 +74,29 @@ public class ItemStorageBlock extends FacilitySpeciesBlock {
 	public static final BlockTest JOIN_TEST = ctx -> canConnect(ctx.fromBlockState(), ctx.toBlockState());
 
 	public static boolean canConnect(BlockState fromState, BlockState toState) {
-		return fromState.getBlock() instanceof ItemStorageBlock
-				&& toState.getBlock() instanceof ItemStorageBlock
+		return fromState.getBlock() instanceof CrateBlock
+				&& toState.getBlock() instanceof CrateBlock
 				&& fromState.get(SpeciesProperty.SPECIES) == toState.get(SpeciesProperty.SPECIES);
 	}
 
-	public static boolean canConnect(ItemStorageBlockEntity fromEntity, ItemStorageBlockEntity toEntity) {
+	public static boolean canConnect(CrateBlockEntity fromEntity, CrateBlockEntity toEntity) {
 		final World fromWorld = fromEntity.getWorld();
 		return fromWorld == null || fromWorld != toEntity.getWorld() ? false : canConnect(fromEntity.getCachedState(), toEntity.getCachedState());
 	}
 
 	@Override
 	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-		if(Block.getBlockFromItem(player.getStackInHand(hand).getItem()) instanceof ItemStorageBlock) {
+		if(Block.getBlockFromItem(player.getStackInHand(hand).getItem()) instanceof CrateBlock) {
 			return ActionResult.PASS;
 		}
 
 		if (!world.isClient) {
 			final BlockEntity be = world.getBlockEntity(pos);
 
-			if(be instanceof ItemStorageBlockEntity) {
-				final String label = ((ItemStorageBlockEntity) be).label;
+			if(be instanceof CrateBlockEntity) {
+				final String label = ((CrateBlockEntity) be).label;
 
-				ContainerProviderRegistry.INSTANCE.openContainer(ItemStorageContainer.ID, player, p -> {
+				ContainerProviderRegistry.INSTANCE.openContainer(CrateContainer.ID, player, p -> {
 					p.writeBlockPos(pos);
 					p.writeString(label);
 				});
@@ -115,9 +115,9 @@ public class ItemStorageBlock extends FacilitySpeciesBlock {
 	public int getComparatorOutput(BlockState blockState, World world, BlockPos blockPos) {
 		final BlockEntity blockEntity = world.getBlockEntity(blockPos);
 
-		if (blockEntity instanceof ItemStorageBlockEntity) {
+		if (blockEntity instanceof CrateBlockEntity) {
 			//TODO: move to helper method on storage
-			final Storage storage = ((ItemStorageBlockEntity)blockEntity).getInternalStorage();
+			final Storage storage = ((CrateBlockEntity)blockEntity).getInternalStorage();
 
 			if(storage != null){
 				return (int)(Math.floor(14.0 * storage.count() / storage.capacity())) + 1;
@@ -131,8 +131,8 @@ public class ItemStorageBlock extends FacilitySpeciesBlock {
 	public void onBreak(World world, BlockPos blockPos, BlockState blockState, PlayerEntity playerEntity) {
 		final BlockEntity blockEntity = world.getBlockEntity(blockPos);
 
-		if (blockEntity instanceof ItemStorageBlockEntity) {
-			final ItemStorageBlockEntity myBlockEntity = (ItemStorageBlockEntity)blockEntity;
+		if (blockEntity instanceof CrateBlockEntity) {
+			final CrateBlockEntity myBlockEntity = (CrateBlockEntity)blockEntity;
 
 			if (!world.isClient) {
 				final ItemStack stack = new ItemStack(this);
@@ -163,8 +163,8 @@ public class ItemStorageBlock extends FacilitySpeciesBlock {
 		final CompoundTag beTag = itemStack.getSubTag("BlockEntityTag");
 
 		// TODO: move to shared helper method
-		if (beTag != null && beTag.contains(ItemStorageBlockEntity.TAG_STORAGE)) {
-			final ListTag tagList = beTag.getCompound(ItemStorageBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStorage.TAG_ITEMS, 10);
+		if (beTag != null && beTag.contains(CrateBlockEntity.TAG_STORAGE)) {
+			final ListTag tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStorage.TAG_ITEMS, 10);
 			final int limit = Math.min(32,tagList.size());
 			final StoredDiscreteArticle lookup = new StoredDiscreteArticle();
 

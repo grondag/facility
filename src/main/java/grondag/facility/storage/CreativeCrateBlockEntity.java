@@ -38,10 +38,10 @@ import grondag.fluidity.api.storage.ArticleSupplier;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 
-public class CreativeItemStorageBlockEntity extends CarrierSessionBlockEntity implements Tickable {
+public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implements Tickable {
 	protected final boolean isOutput;
 
-	public CreativeItemStorageBlockEntity(BlockEntityType<CreativeItemStorageBlockEntity> type, boolean isOutput) {
+	public CreativeCrateBlockEntity(BlockEntityType<CreativeCrateBlockEntity> type, boolean isOutput) {
 		super(type);
 		this.isOutput = isOutput;
 	}
