@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.block;
+package grondag.facility.storage;
 
 import java.util.Random;
 import java.util.Set;
@@ -31,16 +31,17 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 
+import grondag.facility.block.CarrierSessionBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.storage.ArticleConsumer;
 import grondag.fluidity.api.storage.ArticleSupplier;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 
-public class CreativeBlockEntity extends CarrierSessionBlockEntity implements Tickable {
+public class CreativeItemStorageBlockEntity extends CarrierSessionBlockEntity implements Tickable {
 	protected final boolean isOutput;
 
-	public CreativeBlockEntity(BlockEntityType<CreativeBlockEntity> type, boolean isOutput) {
+	public CreativeItemStorageBlockEntity(BlockEntityType<CreativeItemStorageBlockEntity> type, boolean isOutput) {
 		super(type);
 		this.isOutput = isOutput;
 	}

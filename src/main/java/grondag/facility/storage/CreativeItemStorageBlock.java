@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.block;
+package grondag.facility.storage;
 
 import java.util.function.Supplier;
 
@@ -25,8 +25,10 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class CreativeStorageBlock extends AbstractFunctionalBlock {
-	public CreativeStorageBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
+import grondag.facility.block.AbstractFunctionalBlock;
+
+public class CreativeItemStorageBlock extends AbstractFunctionalBlock {
+	public CreativeItemStorageBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
 		super(settings, beFactory);
 	}
 

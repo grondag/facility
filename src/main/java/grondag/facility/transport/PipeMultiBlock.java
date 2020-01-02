@@ -13,35 +13,35 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.block;
+package grondag.facility.transport;
 
 import java.util.function.Function;
 
 import grondag.fluidity.api.multiblock.MultiBlockManager;
-import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.multiblock.AbstractBlockEntityMember;
-import grondag.fluidity.base.multiblock.AbstractStorageMultiBlock;
-import grondag.fluidity.base.storage.discrete.AggregateDiscreteStorage;
+import grondag.fluidity.wip.base.transport.AbstractCarrierMultiBlock;
+import grondag.fluidity.wip.base.transport.SubCarrier;
 import grondag.xm.api.connect.species.SpeciesProperty;
 
-public class ItemStorageMultiBlock extends AbstractStorageMultiBlock<ItemStorageMultiBlock.Member, ItemStorageMultiBlock> {
-	public ItemStorageMultiBlock() {
-		super(new AggregateDiscreteStorage());
+public class PipeMultiBlock extends AbstractCarrierMultiBlock<PipeMultiBlock.Member, PipeMultiBlock> {
+
+	public PipeMultiBlock() {
+		super(UniversalTransportBus.BASIC);
 	}
 
-	protected static class Member extends AbstractBlockEntityMember<Member, ItemStorageMultiBlock, Storage, ItemStorageBlockEntity> {
-		public Member(ItemStorageBlockEntity blockEntity, Function<ItemStorageBlockEntity, Storage> componentFunction) {
+	protected static class Member extends AbstractBlockEntityMember<Member, PipeMultiBlock, SubCarrier, PipeBlockEntity> {
+		public Member(PipeBlockEntity blockEntity, Function<PipeBlockEntity, SubCarrier> componentFunction) {
 			super(blockEntity, componentFunction);
 		}
 
 		@Override
 		protected void beforeOwnerRemoval() {
-			blockEntity.wrapper.setWrapped(blockEntity.getInternalStorage());
+			blockEntity.carrier.setParent(null);
 		}
 
 		@Override
 		protected void afterOwnerAddition() {
-			blockEntity.wrapper.setWrapped(owner.storage);
+			blockEntity.carrier.setParent(owner.carrier);
 		}
 
 		protected int species() {
@@ -53,6 +53,6 @@ public class ItemStorageMultiBlock extends AbstractStorageMultiBlock<ItemStorage
 		}
 	}
 
-	protected static final MultiBlockManager<Member, ItemStorageMultiBlock, Storage> DEVICE_MANAGER = MultiBlockManager.create(
-			ItemStorageMultiBlock::new, (Member a, Member b) -> a != null && a.canConnect(b));
+	protected static final MultiBlockManager<Member, PipeMultiBlock, SubCarrier> DEVICE_MANAGER = MultiBlockManager.create(
+			PipeMultiBlock::new, (Member a, Member b) -> a != null && a.canConnect(b));
 }

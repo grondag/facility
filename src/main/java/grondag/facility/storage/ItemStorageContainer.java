@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.block;
+package grondag.facility.storage;
 
 import java.util.List;
 

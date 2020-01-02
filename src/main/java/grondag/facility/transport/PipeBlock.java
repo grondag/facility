@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.block;
+package grondag.facility.transport;
 
 import java.util.function.Supplier;
 
@@ -26,6 +26,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
+import grondag.facility.block.FacilitySpeciesBlock;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.xm.api.block.XmBlockState;
 import grondag.xm.api.collision.CollisionDispatcher;

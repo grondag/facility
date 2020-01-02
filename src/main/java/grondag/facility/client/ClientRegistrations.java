@@ -19,7 +19,7 @@ import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegi
 import net.fabricmc.fabric.api.client.screen.ScreenProviderRegistry;
 
 import grondag.facility.Registrations;
-import grondag.facility.block.ItemStorageContainer;
+import grondag.facility.storage.ItemStorageContainer;
 
 public enum ClientRegistrations {
 	;

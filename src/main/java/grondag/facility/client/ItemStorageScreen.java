@@ -21,7 +21,7 @@ import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.text.TranslatableText;
 
-import grondag.facility.block.ItemStorageContainer;
+import grondag.facility.storage.ItemStorageContainer;
 import grondag.fermion.gui.AbstractSimpleContainerScreen;
 import grondag.fermion.gui.GuiUtil;
 import grondag.fermion.gui.control.Button;

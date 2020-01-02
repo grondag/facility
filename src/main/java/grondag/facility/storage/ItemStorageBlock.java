@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.block;
+package grondag.facility.storage;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -48,6 +48,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
+import grondag.facility.block.FacilitySpeciesBlock;
+import grondag.facility.block.NeighboredBlockEntity;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
 import grondag.fluidity.base.storage.discrete.AbstractDiscreteStorage;
