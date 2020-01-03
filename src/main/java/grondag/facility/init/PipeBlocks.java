@@ -22,11 +22,15 @@ import net.minecraft.block.entity.BlockEntityType;
 
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
 
+import grondag.facility.transport.ExporterBlock;
+import grondag.facility.transport.ExporterBlockEntity;
 import grondag.facility.transport.PipeBlock;
 import grondag.facility.transport.PipeBlockEntity;
-import grondag.facility.transport.PipeModel;
+import grondag.facility.transport.model.ExporterModel;
+import grondag.facility.transport.model.PipeModel;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.xm.api.block.XmBlockRegistry;
+import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.modelstate.primitive.PrimitiveStateFunction;
 
@@ -40,8 +44,14 @@ public enum PipeBlocks {
 		return new PipeBlockEntity(PIPE_BLOCK_ENTITY_TYPE);
 	}
 
+	public static final ExporterBlock EXPORT_PIPE = REG.block("export_pipe", new ExporterBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1).build(), PipeBlocks::exportSupplier));
+	public static final BlockEntityType<ExporterBlockEntity> EXPORTER_BLOCK_ENTITY_TYPE = REG.blockEntityType("export_pipe", PipeBlocks::exportSupplier, EXPORT_PIPE);
+	static ExporterBlockEntity exportSupplier() {
+		return new ExporterBlockEntity(EXPORTER_BLOCK_ENTITY_TYPE);
+	}
+
 	static {
-		CarrierProvider.CARRIER_PROVIDER_COMPONENT.addProvider(ctx -> ((PipeBlockEntity) ctx.blockEntity()).carrierProvider, PIPE);
+		CarrierProvider.CARRIER_PROVIDER_COMPONENT.addProvider(ctx -> ((PipeBlockEntity) ctx.blockEntity()).getCarrierProvider(ctx), PIPE, EXPORT_PIPE);
 
 		XmBlockRegistry.addBlockStates(PIPE, bs -> PrimitiveStateFunction.builder()
 				.withJoin(PipeBlock.JOIN_TEST)
@@ -49,6 +59,18 @@ public enum PipeBlocks {
 				.withUpdate(PipeModel.MODEL_STATE_UPDATE)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						PipeModel.PRIMITIVE.newState()
+						.paint(PipeModel.SURFACE_SIDE, PipeModel.PAINT_SIDE)
+						.paint(PipeModel.SURFACE_END, PipeModel.PAINT_END)
+						.paint(PipeModel.SURFACE_CONNECTOR, PipeModel.PAINT_CONNECTOR), bs)))
+				.build());
+
+		XmBlockRegistry.addBlockStates(EXPORT_PIPE, bs -> PrimitiveStateFunction.builder()
+				.withJoin(PipeBlock.JOIN_TEST)
+				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
+				.withUpdate(PipeModel.MODEL_STATE_UPDATE)
+				.withUpdate(XmProperties.FACE_MODIFIER)
+				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
+						ExporterModel.PRIMITIVE.newState()
 						.paint(PipeModel.SURFACE_SIDE, PipeModel.PAINT_SIDE)
 						.paint(PipeModel.SURFACE_END, PipeModel.PAINT_END)
 						.paint(PipeModel.SURFACE_CONNECTOR, PipeModel.PAINT_CONNECTOR), bs)))

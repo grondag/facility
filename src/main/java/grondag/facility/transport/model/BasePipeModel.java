@@ -1,19 +1,4 @@
-/*******************************************************************************
- * Copyright 2019, 2020 grondag
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
-package grondag.facility.transport;
+package grondag.facility.transport.model;
 
 import static net.minecraft.util.math.Direction.DOWN;
 import static net.minecraft.util.math.Direction.EAST;
@@ -25,7 +10,6 @@ import static net.minecraft.util.math.Direction.WEST;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 
-import grondag.facility.Facility;
 import grondag.xm.api.connect.state.SimpleJoinState;
 import grondag.xm.api.mesh.Csg;
 import grondag.xm.api.mesh.CsgMesh;
@@ -35,16 +19,14 @@ import grondag.xm.api.mesh.XmMeshes;
 import grondag.xm.api.mesh.polygon.MutablePolygon;
 import grondag.xm.api.mesh.polygon.PolyTransform;
 import grondag.xm.api.modelstate.primitive.PrimitiveState;
-import grondag.xm.api.modelstate.primitive.PrimitiveStateMutator;
 import grondag.xm.api.paint.SurfaceTopology;
 import grondag.xm.api.paint.XmPaint;
-import grondag.xm.api.primitive.SimplePrimitive;
 import grondag.xm.api.primitive.surface.XmSurface;
 import grondag.xm.api.primitive.surface.XmSurfaceList;
 import grondag.xm.api.texture.XmTextures;
 
-public class PipeModel {
-	static final XmSurfaceList SURFACES = XmSurfaceList.builder()
+public class BasePipeModel {
+	protected static final XmSurfaceList SURFACES = XmSurfaceList.builder()
 			.add("side", SurfaceTopology.CUBIC, XmSurface.FLAG_NONE)
 			.add("end", SurfaceTopology.CUBIC, XmSurface.FLAG_NONE)
 			.add("connector", SurfaceTopology.CUBIC, XmSurface.FLAG_NONE)
@@ -74,21 +56,28 @@ public class PipeModel {
 			.find();
 
 	// could be used to configure cable shape
-	private static final float THICKNESS = 6f / 16f;
-	private static final float CONNECTOR_DEPTH = 0.1f;
-	private static final float CONNECTOR_MARGIN = 0.1f;
+	protected static final float THICKNESS = 6f / 16f;
 
 	// these are derived
-	private static final float MIN = 0.5f - THICKNESS * 0.5f;
-	private static final float MAX = 1f - MIN;
-	private static final float END_MIN = Math.max(0, MIN - THICKNESS);
-	private static final float END_MAX = Math.min(1, MAX + THICKNESS);
-	private static final float CONNECTOR_MIN = Math.max(0, MIN - CONNECTOR_MARGIN);
-	private static final float CONNECTOR_MAX = Math.min(1, MAX + CONNECTOR_MARGIN);
+	protected static final float MIN = 0.5f - THICKNESS * 0.5f;
+	protected static final float MAX = 1f - MIN;
+	protected static final float END_MIN = Math.max(0, MIN - THICKNESS);
+	protected static final float END_MAX = Math.min(1, MAX + THICKNESS);
 
-	static final Direction[] FACES = Direction.values();
+	protected static final float CONNECTOR_DEPTH = 0.1f;
+	protected static final float CONNECTOR_MARGIN = 0.1f;
+	protected static final float CONNECTOR_MIN = Math.max(0, MIN - CONNECTOR_MARGIN);
+	protected static final float CONNECTOR_MAX = Math.min(1, MAX + CONNECTOR_MARGIN);
 
-	private static final void emitSection(float from, float to, Axis axis, WritableMesh mesh) {
+	protected static final Direction[] FACES = Direction.values();
+
+	protected final boolean alwaysConnects;
+
+	protected BasePipeModel(boolean alwaysConnects) {
+		this.alwaysConnects = alwaysConnects;
+	}
+
+	protected void emitSection(float from, float to, Axis axis, WritableMesh mesh) {
 		final MutablePolygon writer = mesh.writer();
 		final PolyTransform transform = PolyTransform.get(axis);
 		writer.lockUV(0, true).surface(SURFACE_SIDE).saveDefaults();
@@ -124,47 +113,62 @@ public class PipeModel {
 		writer.append();
 	}
 
-	private static final void emitConnector(Direction face, WritableMesh mesh) {
+	protected void emitConnector(PrimitiveState modelState, Direction face, WritableMesh mesh) {
+		emitConnector(modelState, face, mesh, CONNECTOR_MIN, CONNECTOR_MAX, CONNECTOR_DEPTH);
+	}
+
+	protected void emitConnector(PrimitiveState modelState, Direction face, WritableMesh mesh, float connectorMin, float connectorMax, float connectorDepth) {
 		final MutablePolygon writer = mesh.writer();
 		final PolyTransform transform = PolyTransform.get(face);
 		writer.lockUV(0, true).surface(SURFACE_CONNECTOR);
 		writer.saveDefaults();
 
-		writer.setupFaceQuad(EAST, CONNECTOR_MIN, 0, CONNECTOR_MAX, CONNECTOR_DEPTH, CONNECTOR_MIN, UP);
+		writer.setupFaceQuad(EAST, connectorMin, 0, connectorMax, connectorDepth, connectorMin, UP);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(WEST, CONNECTOR_MIN, 0, CONNECTOR_MAX, CONNECTOR_DEPTH, CONNECTOR_MIN, UP);
+		writer.setupFaceQuad(WEST, connectorMin, 0, connectorMax, connectorDepth, connectorMin, UP);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(NORTH, CONNECTOR_MIN, 0, CONNECTOR_MAX, CONNECTOR_DEPTH, CONNECTOR_MIN, UP);
+		writer.setupFaceQuad(NORTH, connectorMin, 0, connectorMax, connectorDepth, connectorMin, UP);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(SOUTH, CONNECTOR_MIN, 0, CONNECTOR_MAX, CONNECTOR_DEPTH, CONNECTOR_MIN, UP);
+		writer.setupFaceQuad(SOUTH, connectorMin, 0, connectorMax, connectorDepth, connectorMin, UP);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(UP, CONNECTOR_MIN, CONNECTOR_MIN, CONNECTOR_MAX, CONNECTOR_MAX, 1 - CONNECTOR_DEPTH, NORTH);
+		writer.setupFaceQuad(UP, connectorMin, connectorMin, connectorMax, connectorMax, 1 - connectorDepth, NORTH);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(DOWN, CONNECTOR_MIN, CONNECTOR_MIN, CONNECTOR_MAX, CONNECTOR_MAX, 0, NORTH);
+		writer.setupFaceQuad(DOWN, connectorMin, connectorMin, connectorMax, connectorMax, 0, NORTH);
 		writer.surface(SURFACE_END);
 		transform.accept(writer);
 		writer.append();
 	}
 
-	private static XmMesh polyFactory(PrimitiveState modelState) {
+	protected boolean hasJoins(PrimitiveState modelState, SimpleJoinState joinState, Axis axis) {
+		return joinState.hasJoins(axis);
+	}
+
+	protected boolean isJoined(PrimitiveState modelState, SimpleJoinState joinState, Direction face) {
+		return joinState.isJoined(face);
+	}
+
+	protected boolean needsConnector(PrimitiveState modelState, int connectorBits, Direction face) {
+		return (connectorBits & (1 << face.ordinal())) != 0;
+	}
+
+	protected XmMesh polyFactory(PrimitiveState modelState) {
 		CsgMesh quadsA = null;
 		CsgMesh quadsB = null;
 		CsgMesh output = null;
 
+		final SimpleJoinState joinState = modelState.simpleJoin();
 
-		final SimpleJoinState state = modelState.simpleJoin();
-
-		if(state == SimpleJoinState.NO_JOINS) {
+		if(joinState == SimpleJoinState.NO_JOINS && !alwaysConnects) {
 			quadsA = XmMeshes.claimCsg();
 			quadsB = XmMeshes.claimCsg();
 			output = XmMeshes.claimCsg();
@@ -179,23 +183,24 @@ public class PipeModel {
 			emitSection(END_MIN, END_MAX, Axis.Z, quadsA);
 			Csg.union(quadsA, quadsB, output);
 		} else {
-			final boolean hasX = state.hasJoins(Axis.X);
-			final boolean hasY = state.hasJoins(Axis.Y);
-			final boolean hasZ = state.hasJoins(Axis.Z);
+			final boolean hasX = hasJoins(modelState, joinState, Axis.X);
+			final boolean hasY = hasJoins(modelState, joinState, Axis.Y);
+			final boolean hasZ = hasJoins(modelState, joinState, Axis.Z);
 			final boolean hasMultiple = (hasX ? 1 : 0) + (hasY ? 1 : 0) + (hasZ ? 1 : 0)  > 1;
 
 			if(hasX) {
 				output = XmMeshes.claimCsg();
-				final float top = state.isJoined(WEST) ? 1 : (hasMultiple ? MAX : END_MAX);
-				final float bottom = state.isJoined(EAST) ? 0 : (hasMultiple ? MIN : END_MIN);
+				final float top = isJoined(modelState, joinState, WEST) ? 1 : (hasMultiple ? MAX : END_MAX);
+				final float bottom = isJoined(modelState, joinState, EAST) ? 0 : (hasMultiple ? MIN : END_MIN);
 				emitSection(bottom, top, Axis.X, output);
 			}
 
 			if(hasY) {
 				quadsA = XmMeshes.claimCsg();
-				final float top = state.isJoined(UP) ? 1 : (hasMultiple ? MAX : END_MAX);
-				final float bottom = state.isJoined(DOWN) ? 0 : (hasMultiple ? MIN : END_MIN);
+				final float top = isJoined(modelState, joinState, UP) ? 1 : (hasMultiple ? MAX : END_MAX);
+				final float bottom = isJoined(modelState, joinState, DOWN) ? 0 : (hasMultiple ? MIN : END_MIN);
 				emitSection(bottom, top, Axis.Y, quadsA);
+
 				if(output == null) {
 					output = quadsA;
 					quadsA = null;
@@ -213,8 +218,8 @@ public class PipeModel {
 				if(quadsA == null) {
 					quadsA = XmMeshes.claimCsg();
 				}
-				final float top = state.isJoined(SOUTH) ? 1 : (hasMultiple ? MAX : END_MAX);
-				final float bottom = state.isJoined(NORTH) ? 0 : (hasMultiple ? MIN : END_MIN);
+				final float top = isJoined(modelState, joinState, SOUTH) ? 1 : (hasMultiple ? MAX : END_MAX);
+				final float bottom = isJoined(modelState, joinState, NORTH) ? 0 : (hasMultiple ? MIN : END_MIN);
 				emitSection(bottom, top, Axis.Z, quadsA);
 
 				if(output == null) {
@@ -232,13 +237,15 @@ public class PipeModel {
 		}
 
 		final int connectorBits = modelState.primitiveBits();
-		if(connectorBits != 0) {
+
+		if(alwaysConnects || connectorBits != 0) {
 			if(quadsA == null) {
 				quadsA = XmMeshes.claimCsg();
 			}
+
 			for(final Direction face : FACES) {
-				if((connectorBits & (1 << face.ordinal())) != 0) {
-					emitConnector(face, quadsA);
+				if(needsConnector(modelState, connectorBits, face)) {
+					emitConnector(modelState, face, quadsA);
 				}
 			}
 			quadsB = output;
@@ -254,30 +261,4 @@ public class PipeModel {
 		}
 		return output.releaseToReader();
 	}
-
-	public static final SimplePrimitive PRIMITIVE = SimplePrimitive.builder()
-			.surfaceList(SURFACES)
-			.polyFactory(PipeModel::polyFactory)
-			.primitiveBitCount(6)
-			.simpleJoin(true)
-			.build(Facility.REG.id("basic_pipe"));
-
-	public static final PrimitiveStateMutator MODEL_STATE_UPDATE = (modelState, xmBlockState, world, pos, neighbors, refreshFromWorld) -> {
-		// join should already be handled, so we just need to check if neighbors are inventory
-		if(refreshFromWorld) {
-			int bits = 0;
-			final SimpleJoinState join = modelState.simpleJoin();
-
-			for(final Direction face : FACES) {
-				if(join.isJoined(face)) {
-					// TODO: make this more generic or move to registration
-					if(!(neighbors.blockEntity(face) instanceof PipeBlockEntity)) {
-						bits |= 1 << face.ordinal();
-					};
-				}
-			}
-
-			modelState.primitiveBits(bits);
-		}
-	};
 }

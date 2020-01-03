@@ -20,19 +20,25 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import grondag.fluidity.api.device.BlockComponentContext;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.base.transport.SingleCarrierProvider;
 import grondag.fluidity.wip.base.transport.SubCarrier;
 
 public class PipeBlockEntity extends BlockEntity {
 	protected final SubCarrier carrier = new SubCarrier(UniversalTransportBus.BASIC);
-	public final CarrierProvider carrierProvider = SingleCarrierProvider.of(carrier);
+	public final CarrierProvider carrierProvider;
 	protected final PipeMultiBlock.Member member;
 	protected PipeMultiBlock owner = null;
 
-	public PipeBlockEntity(BlockEntityType<PipeBlockEntity> type) {
+	public PipeBlockEntity(BlockEntityType<? extends PipeBlockEntity> type) {
 		super(type);
 		member = new PipeMultiBlock.Member(this, b -> b.carrier);
+		carrierProvider = createCarrierProvider();
+	}
+
+	protected CarrierProvider createCarrierProvider() {
+		return SingleCarrierProvider.of(carrier);
 	}
 
 	protected boolean isRegistered = false;
@@ -68,5 +74,9 @@ public class PipeBlockEntity extends BlockEntity {
 	public void cancelRemoval() {
 		super.cancelRemoval();
 		registerDevice();
+	}
+
+	public CarrierProvider getCarrierProvider(BlockComponentContext ctx) {
+		return carrierProvider;
 	}
 }
