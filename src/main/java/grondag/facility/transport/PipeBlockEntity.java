@@ -26,7 +26,7 @@ import grondag.fluidity.wip.base.transport.SingleCarrierProvider;
 import grondag.fluidity.wip.base.transport.SubCarrier;
 
 public class PipeBlockEntity extends BlockEntity {
-	protected final SubCarrier carrier = new SubCarrier(UniversalTransportBus.BASIC);
+	protected final SubCarrier carrier = new UtbSubCarrier(UniversalTransportBus.BASIC);
 	public final CarrierProvider carrierProvider;
 	protected final PipeMultiBlock.Member member;
 	protected PipeMultiBlock owner = null;
