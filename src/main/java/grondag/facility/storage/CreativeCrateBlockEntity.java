@@ -72,7 +72,7 @@ public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implemen
 		if(isOutput) {
 			for(int i = 0; i < limit; i++) {
 				final CarrierSession s = getNeighbor(i);
-				s.broadcastConsumer().accept(stack, false);
+				s.broadcastConsumer().apply(stack, false);
 			}
 		}
 	}

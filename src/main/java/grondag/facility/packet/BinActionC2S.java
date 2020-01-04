@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019, 2020 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -92,7 +92,7 @@ public enum BinActionC2S {
 			if(!view.isEmpty()) {
 				final Article hitResource = view.article();
 				final int requested = player.isSneaking() ? 1 : hitResource.toItem().getMaxCount();
-				final int q = (int) storage.getSupplier().supply(handle, hitResource, requested, false);
+				final int q = (int) storage.getSupplier().apply(handle, hitResource, requested, false);
 
 				if(q > 0) {
 					player.inventory.offerOrDrop(world, hitResource.toStack(q));
@@ -104,7 +104,7 @@ public enum BinActionC2S {
 			final ItemStack stack =  player.getMainHandStack();
 
 			if(stack != null && !stack.isEmpty() && (view.isEmpty() || hitResource.matches(stack))) {
-				final int q = (int) storage.getConsumer().accept(handle, stack, false);
+				final int q = (int) storage.getConsumer().apply(handle, stack, false);
 
 				if(q != 0) {
 					stack.decrement(q);
@@ -120,7 +120,7 @@ public enum BinActionC2S {
 					final ItemStack mainStack = main.get(i);
 
 					if(!mainStack.isEmpty() && hitResource.matches(mainStack)) {
-						final int q = (int) storage.getConsumer().accept(handle, mainStack, false);
+						final int q = (int) storage.getConsumer().apply(handle, mainStack, false);
 
 						if(q == 0) {
 							break;
@@ -138,7 +138,7 @@ public enum BinActionC2S {
 				final ItemStack offStack = player.getOffHandStack();
 
 				if(!offStack.isEmpty() && hitResource.matches(offStack)) {
-					final int q = (int) storage.getConsumer().accept(handle, offStack, false);
+					final int q = (int) storage.getConsumer().apply(handle, offStack, false);
 
 					if(q != 0) {
 						didSucceed = true;

@@ -113,7 +113,7 @@ public class ExporterBlockEntity extends PipeBlockEntity implements Tickable, Ca
 			final ItemStack targetStack = inv.getInvStack(slot);
 
 			if (!targetStack.isEmpty()) {
-				final int howMany = (int) internalSession.broadcastConsumer().accept(targetStack, false);
+				final int howMany = (int) internalSession.broadcastConsumer().apply(targetStack, false);
 
 				if(howMany > 0) {
 					targetStack.decrement(howMany);
@@ -154,7 +154,7 @@ public class ExporterBlockEntity extends PipeBlockEntity implements Tickable, Ca
 			final ItemStack targetStack = sidedInv.getInvStack(slot);
 
 			if (!targetStack.isEmpty() && sidedInv.canExtractInvStack(slot, targetStack, targetFace)) {
-				final int howMany = (int) internalSession.broadcastConsumer().accept(targetStack, false);
+				final int howMany = (int) internalSession.broadcastConsumer().apply(targetStack, false);
 
 				if(howMany > 0) {
 					targetStack.decrement(howMany);
