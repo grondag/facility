@@ -35,6 +35,7 @@ public class PipeMultiBlock extends AbstractCarrierMultiBlock<PipeMultiBlock.Mem
 		return new UtbAggregateCarrier(carrierType);
 	}
 
+	@SuppressWarnings("rawtypes")
 	protected static class Member extends AbstractBlockEntityMember<Member, PipeMultiBlock, SubCarrier, PipeBlockEntity> {
 		public Member(PipeBlockEntity blockEntity, Function<PipeBlockEntity, SubCarrier> componentFunction) {
 			super(blockEntity, componentFunction);
@@ -45,6 +46,7 @@ public class PipeMultiBlock extends AbstractCarrierMultiBlock<PipeMultiBlock.Mem
 			blockEntity.carrier.setParent(null);
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		protected void afterOwnerAddition() {
 			blockEntity.carrier.setParent(owner.carrier);
@@ -59,6 +61,7 @@ public class PipeMultiBlock extends AbstractCarrierMultiBlock<PipeMultiBlock.Mem
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	protected static final MultiBlockManager<Member, PipeMultiBlock, SubCarrier> DEVICE_MANAGER = MultiBlockManager.create(
 			PipeMultiBlock::new, (Member a, Member b) -> a != null && a.canConnect(b));
 }
