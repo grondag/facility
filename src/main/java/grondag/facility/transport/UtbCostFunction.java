@@ -9,15 +9,17 @@ import grondag.fluidity.wip.base.transport.CarrierCostFunction;
 
 public class UtbCostFunction implements CarrierCostFunction {
 	int lastTick = 0;
-	int saturationCounter = 0;
-	boolean saturatedThisTick = false;
-	CarrierSession firstNodeThisTick = null;
+	int lastTickSaturationCounter = 0;
+	int thisTickSaturationCounter = 0;
+	int rotation = 0;
 
 	// TODO: move to config
 	long balance = 1;
 
-	public int backoffTickRange() {
-		return 1 << saturationCounter;
+	public boolean shouldTransmit() {
+		refresh();
+		++thisTickSaturationCounter;
+		return lastTickSaturationCounter == 1 ? true : thisTickSaturationCounter % lastTickSaturationCounter == rotation;
 	}
 
 	protected void refresh() {
@@ -30,14 +32,15 @@ public class UtbCostFunction implements CarrierCostFunction {
 			}
 
 			lastTick = thisTick;
-			firstNodeThisTick = null;
 
-			if(saturatedThisTick) {
-				++saturationCounter;
-				saturatedThisTick = false;
-			} else if (saturationCounter > 0) {
-				--saturationCounter;
+			if(thisTickSaturationCounter <= 1) {
+				lastTickSaturationCounter = 1;
+			} else {
+				lastTickSaturationCounter = thisTickSaturationCounter;
+				rotation = thisTick % thisTickSaturationCounter;
 			}
+
+			thisTickSaturationCounter = 0;
 		}
 	}
 
@@ -45,16 +48,6 @@ public class UtbCostFunction implements CarrierCostFunction {
 	public TransactionDelegate getTransactionDelegate() {
 		// TODO implement
 		return TransactionDelegate.IGNORE;
-	}
-
-	protected void updateSaturation(CarrierSession sender) {
-		if(saturatedThisTick) {
-			return;
-		} else if(firstNodeThisTick == null) {
-			firstNodeThisTick = sender;
-		} else if (firstNodeThisTick != sender) {
-			saturatedThisTick = true;
-		}
 	}
 
 	@Override
@@ -65,14 +58,10 @@ public class UtbCostFunction implements CarrierCostFunction {
 
 		refresh();
 
-		final long result = Math.min(count, balance);
+		final long result = balance > 0 ? Math.min(count, balance) : 0;
 
-		if(!simulate) {
-			if(result == 0) {
-				updateSaturation(sender);
-			} else {
-				balance -= result;
-			}
+		if(!simulate && result != 0) {
+			balance -= result;
 		}
 
 		return result;
@@ -86,14 +75,10 @@ public class UtbCostFunction implements CarrierCostFunction {
 
 		refresh();
 
-		final FractionView result = volume.ceil() > balance ? Fraction.of(balance) : volume;
+		final FractionView result = volume.ceil() > balance ? (balance > 0 ? Fraction.of(balance) : Fraction.ZERO) : volume;
 
-		if(!simulate) {
-			if(result.isZero()) {
-				updateSaturation(sender);
-			} else {
-				balance -= result.whole();
-			}
+		if(!simulate && !result.isZero()) {
+			balance -= result.whole();
 		}
 
 		return result;
@@ -107,14 +92,10 @@ public class UtbCostFunction implements CarrierCostFunction {
 
 		refresh();
 
-		final long result = Math.min((numerator + divisor - 1) / divisor, balance);
+		final long result = balance > 0 ? Math.min((numerator + divisor - 1) / divisor, balance) : 0;
 
-		if(!simulate) {
-			if(result == 0) {
-				updateSaturation(sender);
-			} else {
-				balance -= result;
-			}
+		if(!simulate && result != 0) {
+			balance -= result;
 		}
 
 		return result * divisor;

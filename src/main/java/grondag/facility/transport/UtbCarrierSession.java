@@ -2,8 +2,7 @@ package grondag.facility.transport;
 
 import java.util.function.Function;
 
-import io.netty.util.internal.ThreadLocalRandom;
-
+import grondag.fermion.world.WorldTaskManager;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.device.DeviceComponent;
 import grondag.fluidity.api.device.DeviceComponentType;
@@ -15,6 +14,9 @@ import grondag.fluidity.wip.base.transport.BroadcastConsumer;
 import grondag.fluidity.wip.base.transport.BroadcastSupplier;
 
 public class UtbCarrierSession extends BasicCarrierSession<UtbCostFunction> {
+	long lastTick = 0;
+	boolean shouldTransmit = false;
+
 	public UtbCarrierSession(BasicCarrier<UtbCostFunction> carrier, Function<DeviceComponentType<?>, DeviceComponent<?>> componentFunction) {
 		super(carrier, componentFunction);
 	}
@@ -30,8 +32,14 @@ public class UtbCarrierSession extends BasicCarrierSession<UtbCostFunction> {
 	}
 
 	boolean shouldTransmit() {
-		final int tickRange = carrier.effectiveCarrier().costFunction().backoffTickRange();
-		return tickRange == 1 ? true : ThreadLocalRandom.current().nextInt(tickRange) == 0;
+		final int thisTick = WorldTaskManager.tickCounter();
+
+		if(thisTick > lastTick) {
+			shouldTransmit = carrier.effectiveCarrier().costFunction().shouldTransmit();
+			lastTick = thisTick;
+		}
+
+		return shouldTransmit;
 	}
 
 	protected class UtbBroadcastSupplier extends BroadcastSupplier<UtbCostFunction> {

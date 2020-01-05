@@ -31,6 +31,7 @@ import net.minecraft.util.math.Direction;
 
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.device.BlockComponentContext;
+import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
@@ -74,6 +75,13 @@ public class ExporterBlockEntity extends PipeBlockEntity implements Tickable, Ca
 		targetPos = getPos().offset(face);
 		targetFace = face.getOpposite();
 
+		final Storage storage =  Storage.STORAGE_COMPONENT.get(world, targetPos).get();
+
+		if(storage != Storage.STORAGE_COMPONENT.absent()) {
+			tickHandler = this::handleStorage;
+			return;
+		}
+
 		final Inventory inv = HopperBlockEntity.getInventoryAt(world, targetPos);
 
 		if(inv != null) {
@@ -87,6 +95,34 @@ public class ExporterBlockEntity extends PipeBlockEntity implements Tickable, Ca
 
 	public void resetTickHandler() {
 		tickHandler = this::selectRunnable;
+	}
+
+	protected void handleStorage() {
+		final Storage storage =  Storage.STORAGE_COMPONENT.get(world, targetPos).get();
+
+		if(storage == Storage.STORAGE_COMPONENT.absent()) {
+			resetTickHandler();
+			return;
+		}
+
+		if(storage.isEmpty()) {
+			return;
+		}
+
+		storage.forEach(a -> !a.isEmpty(), a -> {
+
+			long howMany = internalSession.broadcastConsumer().apply(a.article(), a.count(), true);
+			howMany = storage.getSupplier().apply(a.article(), howMany, true);
+
+			if(howMany > 0) {
+				if(internalSession.broadcastConsumer().apply(a.article(), howMany, false) != howMany ||
+						storage.getSupplier().apply(a.article(), howMany, false) != howMany) {
+					// TODO: roll back
+				}
+			}
+
+			return false;
+		});
 	}
 
 	protected void handleVanillaInv() {
