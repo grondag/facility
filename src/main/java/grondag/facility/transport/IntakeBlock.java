@@ -30,8 +30,8 @@ import net.minecraft.world.World;
 
 import grondag.xm.api.block.XmProperties;
 
-public class ExporterBlock extends PipeBlock {
-	public ExporterBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
+public class IntakeBlock extends PipeBlock {
+	public IntakeBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
 		super(settings, beFactory);
 	}
 
@@ -51,7 +51,7 @@ public class ExporterBlock extends PipeBlock {
 		}
 
 		if(!world.isClient && BlockPos.offset(blockPos.asLong(), blockState.get(XmProperties.FACE)) == blockPos2.asLong()) {
-			((ExporterBlockEntity) world.getBlockEntity(blockPos)).resetTickHandler();
+			((IntakeBlockEntity) world.getBlockEntity(blockPos)).resetTickHandler();
 		}
 	}
 

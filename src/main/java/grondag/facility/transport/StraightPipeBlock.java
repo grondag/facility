@@ -26,8 +26,8 @@ import net.minecraft.state.StateManager.Builder;
 import grondag.fermion.modkeys.api.ModKeys;
 import grondag.xm.api.block.XmProperties;
 
-public class StrightPipeBlock extends PipeBlock {
-	public StrightPipeBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
+public class StraightPipeBlock extends PipeBlock {
+	public StraightPipeBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
 		super(settings, beFactory);
 	}
 

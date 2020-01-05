@@ -26,7 +26,7 @@ public enum ClientRegistrations {
 	;
 
 	static {
-		BlockEntityRendererRegistry.INSTANCE.register(CrateBlocks.BARREL_BLOCK_ENTITY_TYPE, d -> new StorageBlockRenderer<>(d));
+		BlockEntityRendererRegistry.INSTANCE.register(CrateBlocks.SLOTTED_CRATE_BLOCK_ENTITY_TYPE, d -> new StorageBlockRenderer<>(d));
 		BlockEntityRendererRegistry.INSTANCE.register(CrateBlocks.CRATE_BLOCK_ENTITY_TYPE, d -> new StorageBlockRenderer<>(d));
 		BlockEntityRendererRegistry.INSTANCE.register(BinBlocks.BIN_X1_BLOCK_ENTITY_TYPE, d -> new BinBlockRenderer(d, 1));
 		BlockEntityRendererRegistry.INSTANCE.register(BinBlocks.BIN_X2_BLOCK_ENTITY_TYPE, d -> new BinBlockRenderer(d, 2));

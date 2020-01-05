@@ -38,13 +38,13 @@ import grondag.fluidity.wip.api.transport.CarrierSession;
 import grondag.fluidity.wip.base.transport.SingleCarrierProvider;
 import grondag.xm.api.block.XmProperties;
 
-public class ExporterBlockEntity extends PipeBlockEntity implements Tickable, CarrierConnector {
+public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, CarrierConnector {
 	protected Runnable tickHandler = this::selectRunnable;
 	protected BlockPos targetPos = null;
 	Direction targetFace = null;
 	CarrierSession internalSession;
 
-	public ExporterBlockEntity(BlockEntityType<ExporterBlockEntity> type) {
+	public IntakeBlockEntity(BlockEntityType<IntakeBlockEntity> type) {
 		super(type);
 		internalSession = carrier.attach(this, ct -> ct.get(this));
 	}

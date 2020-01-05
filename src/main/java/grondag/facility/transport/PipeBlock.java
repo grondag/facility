@@ -15,17 +15,28 @@
  ******************************************************************************/
 package grondag.facility.transport;
 
+import java.util.List;
 import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.EntityContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import grondag.facility.block.FacilitySpeciesBlock;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
@@ -107,5 +118,13 @@ public class PipeBlock extends FacilitySpeciesBlock {
 	@Override
 	public VoxelShape getOutlineShape(BlockState blockState, BlockView blockView, BlockPos pos, EntityContext entityContext) {
 		return CollisionDispatcher.shapeFor(XmBlockState.modelState(blockState, blockView, pos, true));
+	}
+
+	@Override
+	@Environment(EnvType.CLIENT)
+	public void buildTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
+		super.buildTooltip(itemStack, blockView, list, tooltipContext);
+		list.add(new TranslatableText("tier.facility.utb1").formatted(Formatting.GOLD));
+		list.add(new TranslatableText("tier.facility.utb1.desc").formatted(Formatting.GOLD));
 	}
 }

@@ -41,40 +41,40 @@ import grondag.xm.api.primitive.simple.CubeWithFace;
 public enum BinBlocks {
 	;
 
-	public static final BinBlock BIN_X1 = REG.block("bin_x1", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), BinBlocks::binX1Be, 1, false));
+	public static final BinBlock BIN_X1 = REG.block("bin_1x", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), BinBlocks::binX1Be, 1, false));
 	public static final BlockEntityType<BinBlockEntity> BIN_X1_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x1", BinBlocks::binX1Be, BIN_X1);
 	private static BinBlockEntity binX1Be() {
-		return new BinBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, () -> new DividedDiscreteStorage(1, 2048).filter(CrateBlocks.FILTER_NESTING), "BINx1 ", 1);
+		return new BinBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, () -> new DividedDiscreteStorage(1, 2048).filter(CrateBlocks.FILTER_NESTING), "BIN 1x ", 1);
 	}
 
-	public static final BinBlock BIN_X2 = REG.block("bin_x2", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), BinBlocks::binX2Be, 2, false));
+	public static final BinBlock BIN_X2 = REG.block("bin_2x", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), BinBlocks::binX2Be, 2, false));
 	public static final BlockEntityType<BinBlockEntity> BIN_X2_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x2", BinBlocks::binX2Be, BIN_X2);
 	private static BinBlockEntity binX2Be() {
-		return new BinBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, () -> new DividedDiscreteStorage(2, 1024).filter(CrateBlocks.FILTER_NESTING), "BINx2 ", 2);
+		return new BinBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, () -> new DividedDiscreteStorage(2, 1024).filter(CrateBlocks.FILTER_NESTING), "BIN 2x ", 2);
 	}
 
-	public static final BinBlock BIN_X4 = REG.block("bin_x4", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), BinBlocks::binX4Be, 4, false));
+	public static final BinBlock BIN_X4 = REG.block("bin_4x", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), BinBlocks::binX4Be, 4, false));
 	public static final BlockEntityType<BinBlockEntity> BIN_X4_BLOCK_ENTITY_TYPE = REG.blockEntityType("bin_x4", BinBlocks::binX4Be, BIN_X4);
 	private static BinBlockEntity binX4Be() {
-		return new BinBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, () -> new DividedDiscreteStorage(4, 512).filter(CrateBlocks.FILTER_NESTING), "BINx4 ", 4);
+		return new BinBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, () -> new DividedDiscreteStorage(4, 512).filter(CrateBlocks.FILTER_NESTING), "BIN 4x ", 4);
 	}
 
-	public static final BinBlock CREATIVE_BIN_X1 = REG.block("creative_bin_x1", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), BinBlocks::creativeBinX1Be, 1, true));
+	public static final BinBlock CREATIVE_BIN_X1 = REG.block("creative_bin_1x", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), BinBlocks::creativeBinX1Be, 1, true));
 	public static final BlockEntityType<BinBlockEntity> CREATIVE_BIN_X1_BLOCK_ENTITY_TYPE = REG.blockEntityType("creative_bin_x1", BinBlocks::creativeBinX1Be, CREATIVE_BIN_X1);
 	private static BinBlockEntity creativeBinX1Be() {
-		return new BinBlockEntity(CREATIVE_BIN_X1_BLOCK_ENTITY_TYPE, () -> new CreativeBinStorage(1, 2048).filter(CrateBlocks.FILTER_NESTING), "CREATIVE BINx1 ", 1);
+		return new BinBlockEntity(CREATIVE_BIN_X1_BLOCK_ENTITY_TYPE, () -> new CreativeBinStorage(1, 2048).filter(CrateBlocks.FILTER_NESTING), "CREATIVE BIN 1x ", 1);
 	}
 
-	public static final BinBlock CREATIVE_BIN_X2 = REG.block("creative_bin_x2", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), BinBlocks::creativeBinX2Be, 2, true));
+	public static final BinBlock CREATIVE_BIN_X2 = REG.block("creative_bin_2x", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), BinBlocks::creativeBinX2Be, 2, true));
 	public static final BlockEntityType<BinBlockEntity> CREATIVE_BIN_X2_BLOCK_ENTITY_TYPE = REG.blockEntityType("creative_bin_x2", BinBlocks::creativeBinX2Be, CREATIVE_BIN_X2);
 	private static BinBlockEntity creativeBinX2Be() {
-		return new BinBlockEntity(CREATIVE_BIN_X2_BLOCK_ENTITY_TYPE, () -> new CreativeBinStorage(2, 1024).filter(CrateBlocks.FILTER_NESTING), "CREATIVE BINx2 ", 2);
+		return new BinBlockEntity(CREATIVE_BIN_X2_BLOCK_ENTITY_TYPE, () -> new CreativeBinStorage(2, 1024).filter(CrateBlocks.FILTER_NESTING), "CREATIVE BIN 2x ", 2);
 	}
 
-	public static final BinBlock CREATIVE_BIN_X4 = REG.block("creative_bin_x4", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), BinBlocks::creativeBinX4Be, 4, true));
+	public static final BinBlock CREATIVE_BIN_X4 = REG.block("creative_bin_4x", new BinBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), BinBlocks::creativeBinX4Be, 4, true));
 	public static final BlockEntityType<BinBlockEntity> CREATIVE_BIN_X4_BLOCK_ENTITY_TYPE = REG.blockEntityType("creative_bin_x4", BinBlocks::creativeBinX4Be, CREATIVE_BIN_X4);
 	private static BinBlockEntity creativeBinX4Be() {
-		return new BinBlockEntity(CREATIVE_BIN_X4_BLOCK_ENTITY_TYPE, () -> new CreativeBinStorage(4, 512).filter(CrateBlocks.FILTER_NESTING), "CREATIVE BINx4 ", 4);
+		return new BinBlockEntity(CREATIVE_BIN_X4_BLOCK_ENTITY_TYPE, () -> new CreativeBinStorage(4, 512).filter(CrateBlocks.FILTER_NESTING), "CREATIVE BIN 4x ", 4);
 	}
 
 	static {

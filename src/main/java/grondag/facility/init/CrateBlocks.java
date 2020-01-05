@@ -53,32 +53,32 @@ public enum CrateBlocks {
 	}
 
 
-	public static final CrateBlock BARREL = REG.block("barrel", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::barrelBe));
-	public static final BlockEntityType<CrateBlockEntity> BARREL_BLOCK_ENTITY_TYPE = REG.blockEntityType("barrel", CrateBlocks::barrelBe, BARREL);
-	static CrateBlockEntity barrelBe() {
-		return new CrateBlockEntity(BARREL_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStorage(32).filter(FILTER_NESTING), "BARREL ");
+	public static final CrateBlock SLOTTED_CRATE = REG.block("slotted_crate", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::slottedBe));
+	public static final BlockEntityType<CrateBlockEntity> SLOTTED_CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("slotted_crate", CrateBlocks::slottedBe, SLOTTED_CRATE);
+	static CrateBlockEntity slottedBe() {
+		return new CrateBlockEntity(SLOTTED_CRATE_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStorage(32).filter(FILTER_NESTING), "SLOTTED CRATE ");
 	}
 
 
-	public static final CreativeICrateBlock ITEM_SUPPLIER = REG.block("item_supplier", new CreativeICrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::itemSupplier));
-	public static final BlockEntityType<CreativeCrateBlockEntity> ITEM_SUPPLIER_BLOCK_ENTITY_TYPE = REG.blockEntityType("item_supplier", CrateBlocks::itemSupplier, ITEM_SUPPLIER);
+	public static final CreativeICrateBlock CREATIVE_CRATE = REG.block("creative_crate", new CreativeICrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::itemSupplier));
+	public static final BlockEntityType<CreativeCrateBlockEntity> CREATIVE_CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("creative_crate", CrateBlocks::itemSupplier, CREATIVE_CRATE);
 	static CreativeCrateBlockEntity itemSupplier() {
-		return new CreativeCrateBlockEntity(ITEM_SUPPLIER_BLOCK_ENTITY_TYPE, true);
+		return new CreativeCrateBlockEntity(CREATIVE_CRATE_BLOCK_ENTITY_TYPE, true);
 	}
 
 	public static final Predicate<Article> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.toItem()).getClass() != CrateBlock.class;
 
 	static {
-		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(CRATE, BARREL, ITEM_SUPPLIER);
+		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(CRATE, SLOTTED_CRATE, CREATIVE_CRATE);
 
-		Storage.STORAGE_COMPONENT.addProvider(ctx -> Storage.CREATIVE, ITEM_SUPPLIER);
-		Storage.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> Storage.CREATIVE, ITEM_SUPPLIER);
-		Storage.STORAGE_COMPONENT.addProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), CRATE, BARREL);
-		Storage.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), CRATE, BARREL);
+		Storage.STORAGE_COMPONENT.addProvider(ctx -> Storage.CREATIVE, CREATIVE_CRATE);
+		Storage.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> Storage.CREATIVE, CREATIVE_CRATE);
+		Storage.STORAGE_COMPONENT.addProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), CRATE, SLOTTED_CRATE);
+		Storage.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), CRATE, SLOTTED_CRATE);
 
 		final XmPaint basePaint = Textures.crateBaseFinder(2).find();
 
-		XmBlockRegistry.addBlockStates(BARREL, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(SLOTTED_CRATE, bs -> PrimitiveStateFunction.builder()
 				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
@@ -94,7 +94,7 @@ public enum CrateBlocks {
 						CubeWithFace.INSTANCE.newState().paintAll(basePaint), bs), bs))
 				.build());
 
-		XmBlockRegistry.addBlockStates(ITEM_SUPPLIER, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(CREATIVE_CRATE, bs -> PrimitiveStateFunction.builder()
 				.withDefaultState(Cube.INSTANCE.newState().paintAll(Textures.crateBaseFinder(2).textureColor(0, 0xFF00FFFF).find()))
 				.build());
 	}
