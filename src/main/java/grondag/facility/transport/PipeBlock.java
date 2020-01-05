@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019, 2020 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -22,6 +22,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.EntityContext;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
@@ -29,6 +30,7 @@ import net.minecraft.world.World;
 import grondag.facility.block.FacilitySpeciesBlock;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.xm.api.block.XmBlockState;
+import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.collision.CollisionDispatcher;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.connect.world.BlockTest;
@@ -57,7 +59,7 @@ public class PipeBlock extends FacilitySpeciesBlock {
 
 		if(fromPipe) {
 			if(toPipe) {
-				return fromEntity.getCachedState().get(SpeciesProperty.SPECIES) == toEntity.getCachedState().get(SpeciesProperty.SPECIES);
+				return canConnectSelf(fromEntity, toEntity);
 			} else {
 				return toEntity instanceof CarrierConnector;
 			}
@@ -65,6 +67,40 @@ public class PipeBlock extends FacilitySpeciesBlock {
 			return fromEntity instanceof CarrierConnector;
 		} else {
 			return false;
+		}
+	}
+
+	private static boolean canConnectSelf(BlockEntity fromEntity, BlockEntity toEntity) {
+		final BlockState fromState = fromEntity.getCachedState();
+		final BlockState toState = toEntity.getCachedState();
+
+		if(fromState.get(SpeciesProperty.SPECIES) != toState.get(SpeciesProperty.SPECIES)) {
+			return false;
+		}
+
+		final Comparable<?> fromAxis = fromState.getEntries().get(XmProperties.AXIS);
+		final Comparable<?> toAxis = fromState.getEntries().get(XmProperties.AXIS);
+
+		if(fromAxis == null) {
+			if(toAxis == null) {
+				// both are flexible
+				return true;
+			} else {
+				// require to-axis point to the flexible one
+				final BlockPos fromPos = fromEntity.getPos();
+				final BlockPos toPos = toEntity.getPos();
+				return toAxis == Direction.fromVector(toPos.getX() - fromPos.getX(), toPos.getY() - fromPos.getY(), toPos.getZ() - fromPos.getZ()).getAxis();
+			}
+		} else { // have from axis
+			if(toAxis == null) {
+				// require from-axis point to the flexible one
+				final BlockPos fromPos = fromEntity.getPos();
+				final BlockPos toPos = toEntity.getPos();
+				return fromAxis == Direction.fromVector(toPos.getX() - fromPos.getX(), toPos.getY() - fromPos.getY(), toPos.getZ() - fromPos.getZ()).getAxis();
+			} else {
+				// both straight, require same axis
+				return toAxis == fromAxis;
+			}
 		}
 	}
 

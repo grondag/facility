@@ -26,12 +26,14 @@ import grondag.facility.transport.ExporterBlock;
 import grondag.facility.transport.ExporterBlockEntity;
 import grondag.facility.transport.PipeBlock;
 import grondag.facility.transport.PipeBlockEntity;
+import grondag.facility.transport.StrightPipeBlock;
 import grondag.facility.transport.model.ExporterModel;
 import grondag.facility.transport.model.PipeModel;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
+import grondag.xm.api.connect.state.SimpleJoinState;
 import grondag.xm.api.modelstate.primitive.PrimitiveStateFunction;
 
 @SuppressWarnings("unchecked")
@@ -39,10 +41,12 @@ public enum PipeBlocks {
 	;
 
 	public static final PipeBlock PIPE = REG.block("basic_pipe", new PipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1).build(), PipeBlocks::pipeSupplier));
-	public static final BlockEntityType<PipeBlockEntity> PIPE_BLOCK_ENTITY_TYPE = REG.blockEntityType("basic_pipe", PipeBlocks::pipeSupplier, PIPE);
+	public static final PipeBlock STRAIGHT_PIPE = REG.block("straight_pipe", new StrightPipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1).build(), PipeBlocks::pipeSupplier));
+	public static final BlockEntityType<PipeBlockEntity> PIPE_BLOCK_ENTITY_TYPE = REG.blockEntityType("basic_pipe", PipeBlocks::pipeSupplier, PIPE, STRAIGHT_PIPE);
 	static PipeBlockEntity pipeSupplier() {
 		return new PipeBlockEntity(PIPE_BLOCK_ENTITY_TYPE);
 	}
+
 
 	public static final ExporterBlock EXPORT_PIPE = REG.block("export_pipe", new ExporterBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1).build(), PipeBlocks::exportSupplier));
 	public static final BlockEntityType<ExporterBlockEntity> EXPORTER_BLOCK_ENTITY_TYPE = REG.blockEntityType("export_pipe", PipeBlocks::exportSupplier, EXPORT_PIPE);
@@ -51,7 +55,7 @@ public enum PipeBlocks {
 	}
 
 	static {
-		CarrierProvider.CARRIER_PROVIDER_COMPONENT.addProvider(ctx -> ((PipeBlockEntity) ctx.blockEntity()).getCarrierProvider(ctx), PIPE, EXPORT_PIPE);
+		CarrierProvider.CARRIER_PROVIDER_COMPONENT.addProvider(ctx -> ((PipeBlockEntity) ctx.blockEntity()).getCarrierProvider(ctx), PIPE, STRAIGHT_PIPE, EXPORT_PIPE);
 
 		XmBlockRegistry.addBlockStates(PIPE, bs -> PrimitiveStateFunction.builder()
 				.withJoin(PipeBlock.JOIN_TEST)
@@ -59,6 +63,22 @@ public enum PipeBlocks {
 				.withUpdate(PipeModel.MODEL_STATE_UPDATE)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						PipeModel.PRIMITIVE.newState()
+						.simpleJoin(SimpleJoinState.ALL_JOINS)
+						.primitiveBits(0b111111)
+						.paint(PipeModel.SURFACE_SIDE, PipeModel.PAINT_SIDE)
+						.paint(PipeModel.SURFACE_END, PipeModel.PAINT_END)
+						.paint(PipeModel.SURFACE_CONNECTOR, PipeModel.PAINT_CONNECTOR), bs)))
+				.build());
+
+		XmBlockRegistry.addBlockStates(STRAIGHT_PIPE, bs -> PrimitiveStateFunction.builder()
+				.withJoin(PipeBlock.JOIN_TEST)
+				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
+				.withUpdate(PipeModel.MODEL_STATE_UPDATE)
+				.withUpdate(XmProperties.AXIS_MODIFIER)
+				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
+						PipeModel.PRIMITIVE.newState()
+						.simpleJoin(SimpleJoinState.Y_JOINS)
+						.primitiveBits(0b11)
 						.paint(PipeModel.SURFACE_SIDE, PipeModel.PAINT_SIDE)
 						.paint(PipeModel.SURFACE_END, PipeModel.PAINT_END)
 						.paint(PipeModel.SURFACE_CONNECTOR, PipeModel.PAINT_CONNECTOR), bs)))

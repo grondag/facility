@@ -17,27 +17,37 @@ package grondag.facility;
 
 /**
  * TODO: Things and stuff
- * make importer
- * make exporter
+ * -- next release
+ * straight pipe
+ * fix creative bin persistence
+ * localization
+ * placeholder recipes
+ * block drops
+ * implement transactions
+ *
+ * -- near releases
+ * inserter
  * make a pump
  * make a tank
  * controller/access block
  * crafting block
  * signal station
- *
- * java docs
- * wiki
- *
- * explicit device disconnect handling to allow retaining storage instances without wrapping
- * testing switch
+ * config screen
+ * api java docs
+ * api wiki
  * implement multiblock limits
+ *
+ * -- production release
+ * wood tar process
+ * better crafting
+ *
+ * -- maybe ever
  * throttle tick times
+ * explicit device disconnect handling to allow retaining storage instances without wrapping
  * article metadata loader
  *
- * fix semantic key config in mod keys
- * wood tar process
- * implement rollback for flexible storage
  */
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

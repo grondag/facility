@@ -20,6 +20,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import grondag.fermion.world.WorldTaskManager;
 import grondag.fluidity.api.device.BlockComponentContext;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.base.transport.SingleCarrierProvider;
@@ -30,6 +31,8 @@ public class PipeBlockEntity extends BlockEntity {
 	public final CarrierProvider carrierProvider;
 	protected final PipeMultiBlock.Member member;
 	protected PipeMultiBlock owner = null;
+	protected boolean isEnqued = false;
+	protected boolean isRegistered = false;
 
 	public PipeBlockEntity(BlockEntityType<? extends PipeBlockEntity> type) {
 		super(type);
@@ -41,7 +44,25 @@ public class PipeBlockEntity extends BlockEntity {
 		return SingleCarrierProvider.of(carrier);
 	}
 
-	protected boolean isRegistered = false;
+	protected final void enqueUpdate() {
+		if(!isEnqued && !world.isClient) {
+			isEnqued = true;
+			WorldTaskManager.enqueueImmediate(this::enquedUpdate);
+		}
+	}
+
+	protected void onEnquedUpdate() {
+
+	}
+
+	public final void enquedUpdate() {
+		if(world == null || world.isClient) {
+			return;
+		}
+
+		onEnquedUpdate();
+		isEnqued = false;
+	}
 
 	protected void registerDevice() {
 		if(!isRegistered && hasWorld() && !world.isClient) {
@@ -62,6 +83,7 @@ public class PipeBlockEntity extends BlockEntity {
 		unregisterDevice();
 		super.setWorld(world, blockPos);
 		registerDevice();
+		enqueUpdate();
 	}
 
 	@Override
@@ -74,6 +96,7 @@ public class PipeBlockEntity extends BlockEntity {
 	public void cancelRemoval() {
 		super.cancelRemoval();
 		registerDevice();
+		enqueUpdate();
 	}
 
 	public CarrierProvider getCarrierProvider(BlockComponentContext ctx) {

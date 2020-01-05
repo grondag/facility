@@ -92,6 +92,10 @@ public class ExporterBlockEntity extends PipeBlockEntity implements Tickable, Ca
 		tickHandler = Runnables.doNothing();
 	}
 
+	@Override
+	protected void onEnquedUpdate() {
+		resetTickHandler();
+	}
 
 	public void resetTickHandler() {
 		tickHandler = this::selectRunnable;
@@ -136,7 +140,6 @@ public class ExporterBlockEntity extends PipeBlockEntity implements Tickable, Ca
 		if(inv.isInvEmpty()) {
 			return;
 		}
-
 
 		final int limit = inv.getInvSize();
 
@@ -202,9 +205,7 @@ public class ExporterBlockEntity extends PipeBlockEntity implements Tickable, Ca
 					sidedInv.markDirty();
 				}
 			}
-
 		}
-
 	}
 
 	@Override
@@ -213,33 +214,11 @@ public class ExporterBlockEntity extends PipeBlockEntity implements Tickable, Ca
 			return;
 		}
 
-
 		// TODO: allow inversion or disable of redstone control
 		if(getCachedState().get(Properties.POWERED)) {
 			return;
 		}
 
-		// TODO: implement some kind of backoff mechanic to avoid checking empty inventories each tick
 		tickHandler.run();
-
-		//		final Random random =  ThreadLocalRandom.current();
-		//		final Item item = Registry.ITEM.getRandom(random);
-		//		ItemStack stack = new ItemStack(item);
-		//		stack.setCount(item.getMaxCount());
-		//
-		//		if(item.isDamageable()) {
-		//			stack.setDamage(random.nextInt(item.getMaxDamage()));
-		//		}
-		//
-		//		if(stack.isEnchantable() && random.nextBoolean()) {
-		//			stack = EnchantmentHelper.enchant(random, stack, 30, true);
-		//		}
-		//
-		//		if(isOutput) {
-		//			for(int i = 0; i < limit; i++) {
-		//				final CarrierSession s = getNeighbor(i);
-		//				s.broadcastConsumer().accept(stack, false);
-		//			}
-		//		}
 	}
 }

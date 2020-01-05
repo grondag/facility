@@ -39,12 +39,10 @@ dependencies {
 	}
 	include "io.github.cottonmc:Jankson-Fabric:${jankson_version}"
 	
-	modImplementation ("me.shedaniel.cloth:config-2:${clothconfig_version}") {
-        exclude group :"io.github.prospector.modmenu"
-        exclude group :"net.fabricmc.fabric-api"
-    }
-	include "me.shedaniel.cloth:config-2:${clothconfig_version}"
-    
+    modCompile "me.shedaniel.cloth:config-2:${project.cloth_config_version}"
+    include "me.shedaniel.cloth:config-2:${project.cloth_config_version}"
+
+
     modImplementation ("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
     	 exclude(module: "ModMenu")
     }
@@ -53,4 +51,6 @@ dependencies {
 	modImplementation ("io.github.prospector:modmenu:${project.modmenu_version}") {
         exclude group :"net.fabricmc.fabric-api"
     }
+    
+    
 }

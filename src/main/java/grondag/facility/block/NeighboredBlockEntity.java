@@ -29,10 +29,9 @@ import net.minecraft.world.World;
 import grondag.fermion.world.WorldTaskManager;
 
 public abstract class NeighboredBlockEntity<T> extends BlockEntity {
-
 	private final Object[] neighbors = new Object[12];
-
 	private int neighborCount;
+	protected boolean isEnqued = false;
 
 	public NeighboredBlockEntity(BlockEntityType<?> blockEntityType) {
 		super(blockEntityType);
@@ -71,15 +70,13 @@ public abstract class NeighboredBlockEntity<T> extends BlockEntity {
 
 	protected abstract void onClose(T existing);
 
-	protected boolean isEnqued = false;
-
 	@Override
 	public void setWorld(World world, BlockPos blockPos) {
 		super.setWorld(world, blockPos);
 		enqueUpdate();
 	}
 
-	private void enqueUpdate() {
+	protected void enqueUpdate() {
 		if(!isEnqued && !world.isClient) {
 			isEnqued = true;
 			WorldTaskManager.enqueueImmediate(this::updateNeighbors);

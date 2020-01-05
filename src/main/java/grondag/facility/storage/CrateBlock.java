@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019, 2020 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -50,6 +50,7 @@ import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
 import grondag.facility.block.FacilitySpeciesBlock;
 import grondag.facility.block.NeighboredBlockEntity;
+import grondag.fermion.modkeys.api.ModKeys;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
 import grondag.fluidity.base.storage.discrete.AbstractDiscreteStorage;
@@ -187,7 +188,8 @@ public class CrateBlock extends FacilitySpeciesBlock {
 
 	@Override
 	public BlockState getPlacementState(ItemPlacementContext context) {
-		return super.getPlacementState(context).with(XmProperties.FACE, context.getPlayerLookDirection());
+		return super.getPlacementState(context).with(XmProperties.FACE,
+				ModKeys.isSecondaryPressed(context.getPlayer()) && context.getSide() != null ? context.getSide().getOpposite() : context.getPlayerLookDirection());
 	}
 
 	@Override
