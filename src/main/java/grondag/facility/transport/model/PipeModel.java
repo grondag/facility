@@ -41,7 +41,6 @@ public class PipeModel extends BasePipeModel {
 
 			for(final Direction face : FACES) {
 				if(join.isJoined(face)) {
-					// TODO: make this more generic or move to registration
 					if(!(neighbors.blockEntity(face) instanceof PipeBlockEntity)) {
 						bits |= 1 << face.ordinal();
 					};

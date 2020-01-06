@@ -117,7 +117,6 @@ public class CrateBlock extends FacilitySpeciesBlock {
 		final BlockEntity blockEntity = world.getBlockEntity(blockPos);
 
 		if (blockEntity instanceof CrateBlockEntity) {
-			//TODO: move to helper method on storage
 			final Storage storage = ((CrateBlockEntity)blockEntity).getInternalStorage();
 
 			if(storage != null){
@@ -163,10 +162,9 @@ public class CrateBlock extends FacilitySpeciesBlock {
 		super.buildTooltip(itemStack, blockView, list, tooltipContext);
 		final CompoundTag beTag = itemStack.getSubTag("BlockEntityTag");
 
-		// TODO: move to shared helper method
 		if (beTag != null && beTag.contains(CrateBlockEntity.TAG_STORAGE)) {
 			final ListTag tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStorage.TAG_ITEMS, 10);
-			final int limit = Math.min(32,tagList.size());
+			final int limit = Math.min(9,tagList.size());
 			final StoredDiscreteArticle lookup = new StoredDiscreteArticle();
 
 			for(int i = 0; i < limit; i++) {
@@ -181,7 +179,6 @@ public class CrateBlock extends FacilitySpeciesBlock {
 
 			if(limit < tagList.size()) {
 				list.add(new LiteralText("..."));
-
 			}
 		}
 	}

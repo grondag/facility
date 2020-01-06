@@ -42,9 +42,6 @@ public abstract class CarrierSessionBlockEntity extends NeighboredBlockEntity<Ca
 
 		if(be != null) {
 			final CarrierSession session = getSession(be, neighborPos, neighborSide);
-			// TODO: remove or make this proper tracing
-			//		System.out.println(this.getClass().getCanonicalName() + " @" + pos.toString() + " assigned address " + session.address()
-			//		+ (session.isValid() ? " (valid)" : " (INVALID)" + " with carrier " + be.getClass().getCanonicalName()));
 
 			if(session != null) {
 				if(session.isValid()) {

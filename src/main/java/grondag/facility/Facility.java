@@ -18,7 +18,6 @@ package grondag.facility;
 /**
  * TODO: Things and stuff
  * -- next release
- * fix creative bin persistence
  * implement transactions
  *
  * -- near releases

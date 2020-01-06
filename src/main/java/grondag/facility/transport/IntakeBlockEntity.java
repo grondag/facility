@@ -18,6 +18,7 @@ package grondag.facility.transport;
 import java.util.Set;
 
 import com.google.common.util.concurrent.Runnables;
+import io.netty.util.internal.ThreadLocalRandom;
 
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.HopperBlockEntity;
@@ -39,10 +40,15 @@ import grondag.fluidity.wip.base.transport.SingleCarrierProvider;
 import grondag.xm.api.block.XmProperties;
 
 public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, CarrierConnector {
+
+	// TODO: make configurable
+	private static final int COOLDOWN_TICKS = 5;
+
 	protected Runnable tickHandler = this::selectRunnable;
 	protected BlockPos targetPos = null;
 	Direction targetFace = null;
 	CarrierSession internalSession;
+	protected int cooldownTicks = ThreadLocalRandom.current().nextInt(COOLDOWN_TICKS);
 
 	public IntakeBlockEntity(BlockEntityType<IntakeBlockEntity> type) {
 		super(type);
@@ -114,11 +120,11 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 		}
 
 		storage.forEach(a -> !a.isEmpty(), a -> {
-
 			long howMany = internalSession.broadcastConsumer().apply(a.article(), a.count(), true);
 			howMany = storage.getSupplier().apply(a.article(), howMany, true);
 
 			if(howMany > 0) {
+				cooldownTicks = COOLDOWN_TICKS;
 				if(internalSession.broadcastConsumer().apply(a.article(), howMany, false) != howMany ||
 						storage.getSupplier().apply(a.article(), howMany, false) != howMany) {
 					// TODO: roll back
@@ -155,6 +161,7 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 				final int howMany = (int) internalSession.broadcastConsumer().apply(targetStack, false);
 
 				if(howMany > 0) {
+					cooldownTicks = COOLDOWN_TICKS;
 					targetStack.decrement(howMany);
 
 					if(targetStack.isEmpty()) {
@@ -196,6 +203,7 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 				final int howMany = (int) internalSession.broadcastConsumer().apply(targetStack, false);
 
 				if(howMany > 0) {
+					cooldownTicks = COOLDOWN_TICKS;
 					targetStack.decrement(howMany);
 
 					if(targetStack.isEmpty()) {
@@ -219,6 +227,8 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 			return;
 		}
 
-		tickHandler.run();
+		if(--cooldownTicks < 0) {
+			tickHandler.run();
+		}
 	}
 }

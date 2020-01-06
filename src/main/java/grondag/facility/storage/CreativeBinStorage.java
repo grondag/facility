@@ -19,6 +19,9 @@ import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
 import org.apiguardian.api.API.Status;
 
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.storage.FixedArticleFunction;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
@@ -131,6 +134,50 @@ public class CreativeBinStorage extends AbstractDiscreteStorage<CreativeBinStora
 			final StoredDiscreteArticle a = articles.get(handle);
 
 			return a == null || a.isEmpty() || !a.article().equals(item) ? 0 : count;
+		}
+	}
+
+	@Override
+	public CompoundTag writeTag() {
+		final CompoundTag result = new CompoundTag();
+
+		if(!isEmpty()) {
+			final ListTag list = new ListTag();
+			final int limit = articles.handleCount();
+
+			for (int i = 0; i < limit; i++) {
+				final StoredDiscreteArticle a = articles.get(i);
+
+				if(!a.isEmpty()) {
+					final CompoundTag aTag = a.toTag();
+					aTag.putInt("handle", i);
+					list.add(aTag);
+				}
+			}
+
+			result.put(AbstractDiscreteStorage.TAG_ITEMS, list);
+		}
+
+		return result;
+	}
+
+	@Override
+	public void readTag(CompoundTag tag) {
+		clear();
+
+		if(tag.contains(AbstractDiscreteStorage.TAG_ITEMS)) {
+			final ListTag list = tag.getList(AbstractDiscreteStorage.TAG_ITEMS, 10);
+			final int limit = list.size();
+			final StoredDiscreteArticle lookup = new StoredDiscreteArticle();
+
+			for(int i = 0; i < limit; i++) {
+				final CompoundTag aTag = list.getCompound(i);
+				lookup.readTag(aTag);
+
+				if(!lookup.isEmpty()) {
+					consumer.apply(aTag.getInt("handle"), lookup.article(), lookup.count(), false);
+				}
+			}
 		}
 	}
 }
