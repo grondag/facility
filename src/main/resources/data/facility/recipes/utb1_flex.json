@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "facility:utb1_straight"
+    },
+    {
+      "item": "facility:utb1_straight"
+    },
+    {
+      "item": "minecraft:iron_nugget"
+    }
+  ],
+  "result": {
+    "item": "facility:utb1_flex",
+    "count": 1
+  }
+}

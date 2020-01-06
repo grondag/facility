@@ -1,0 +1,26 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"ibi",
+		"rgr",
+		"ibi"
+	],
+	"key": {
+		"b": {
+			"item": "minecraft:brick"
+		},
+		"g": {
+			"item": "minecraft:gold_nugget"
+		},
+		"r": {
+			"item": "minecraft:redstone"
+		},
+		"i": {
+			"item": "minecraft:iron_ingot"
+		}
+	},
+	"result": {
+		"item": "facility:utb1_straight",
+		"count": 8
+	}
+}

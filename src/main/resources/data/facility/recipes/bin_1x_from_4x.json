@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "facility:bin_4x"
+    },
+    {
+      "item": "facility:bin_4x"
+    },
+    {
+      "item": "facility:bin_4x"
+    },
+    {
+      "item": "facility:bin_4x"
+    }
+  ],
+  "result": {
+    "item": "facility:bin_1x",
+    "count": 4
+  }
+}

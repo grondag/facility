@@ -1,0 +1,28 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"igi",
+		"rcr",
+		"isi"
+	],
+	"key": {
+		"c": {
+			"item": "minecraft:chest"
+		},
+		"i": {
+			"item": "minecraft:iron_nugget"
+		},
+		"g": {
+			"item": "minecraft:gold_nugget"
+		},
+		"r": {
+			"item": "minecraft:redstone"
+		},
+		"s": {
+			"item": "minecraft:stick"
+		}
+	},
+	"result": {
+		"item": "facility:crate"
+	}
+}

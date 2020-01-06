@@ -19,13 +19,13 @@ package grondag.facility;
  * TODO: Things and stuff
  * -- next release
  * fix creative bin persistence
- * placeholder recipes
+ * fix straight pipe rendering / connections
  * implement transactions
  *
  * -- near releases
  * inserter
- * make a pump
- * make a tank
+ * basic pump
+ * basic tank
  * controller/access block
  * crafting block
  * signal station
