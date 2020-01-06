@@ -71,7 +71,7 @@ public enum PipeBlocks {
 				.build());
 
 		XmBlockRegistry.addBlockStates(UTB1_STRAIGHT_PIPE, bs -> PrimitiveStateFunction.builder()
-				.withJoin(PipeBlock.JOIN_TEST)
+				.withJoin(PipeBlock.JOIN_TEST_WITH_AXIS)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(PipeModel.MODEL_STATE_UPDATE)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(

@@ -54,6 +54,20 @@ public class PipeBlock extends FacilitySpeciesBlock {
 	@SuppressWarnings("rawtypes")
 	public static final BlockTest JOIN_TEST = ctx -> canConnect(ctx.fromBlockEntity(), ctx.toBlockEntity());
 
+	@SuppressWarnings("rawtypes")
+	public static final BlockTest JOIN_TEST_WITH_AXIS = ctx -> {
+		final BlockState fromState = ctx.fromBlockState();
+
+		if(fromState.getBlock() instanceof StraightPipeBlock) {
+			final BlockPos fromPos = ctx.fromPos();
+			final BlockPos toPos = ctx.toPos();
+
+			return fromState.get(XmProperties.AXIS) == Direction.fromVector(toPos.getX() - fromPos.getX(), toPos.getY() - fromPos.getY(), toPos.getZ() - fromPos.getZ()).getAxis();
+		} else {
+			return canConnect(ctx.fromBlockEntity(), ctx.toBlockEntity());
+		}
+	};
+
 	public static boolean canConnect(BlockEntity fromEntity, BlockEntity toEntity) {
 		if(fromEntity == null || toEntity == null) {
 			return false;

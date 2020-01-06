@@ -40,6 +40,6 @@ public class StraightPipeBlock extends PipeBlock {
 	@Override
 	public BlockState getPlacementState(ItemPlacementContext context) {
 		return super.getPlacementState(context).with(XmProperties.AXIS,
-				ModKeys.isSecondaryPressed(context.getPlayer()) && context.getSide() != null ? context.getSide().getAxis() : context.getPlayerLookDirection().getAxis());
+				ModKeys.isSecondaryPressed(context.getPlayer()) || context.getSide() == null ? context.getPlayerLookDirection().getAxis() : context.getSide().getAxis());
 	}
 }
