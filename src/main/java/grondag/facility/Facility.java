@@ -58,6 +58,7 @@ import grondag.facility.init.PipeBlocks;
 import grondag.facility.init.Textures;
 import grondag.facility.packet.BinActionC2S;
 import grondag.fermion.registrar.Registrar;
+import grondag.fluidity.impl.article.ArticleTypeRegistryImpl;
 
 public class Facility implements ModInitializer {
 	public static final Logger LOG = LogManager.getLogger("Facility");
@@ -71,7 +72,7 @@ public class Facility implements ModInitializer {
 		CrateBlocks.values();
 		BinBlocks.values();
 		PipeBlocks.values();
-
+		ArticleTypeRegistryImpl.init();
 		ServerSidePacketRegistry.INSTANCE.register(BinActionC2S.ID, BinActionC2S::accept);
 	}
 }

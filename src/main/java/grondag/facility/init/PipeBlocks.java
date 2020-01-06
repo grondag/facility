@@ -74,7 +74,6 @@ public enum PipeBlocks {
 				.withJoin(PipeBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(PipeModel.MODEL_STATE_UPDATE)
-				.withUpdate(XmProperties.AXIS_MODIFIER)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						PipeModel.PRIMITIVE.newState()
 						.simpleJoin(SimpleJoinState.Y_JOINS)
