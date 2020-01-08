@@ -38,9 +38,8 @@ dependencies {
 	}
 	include "io.github.cottonmc:Jankson-Fabric:${jankson_version}"
 	
-    modCompile "me.shedaniel.cloth:config-2:${project.cloth_config_version}"
-    include "me.shedaniel.cloth:config-2:${project.cloth_config_version}"
-
+    modCompile "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
+    include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
 
     modImplementation ("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
     	 exclude(module: "ModMenu")
@@ -50,9 +49,6 @@ dependencies {
 	modImplementation ("io.github.prospector:modmenu:${project.modmenu_version}") {
         exclude group :"net.fabricmc.fabric-api"
     }
-    
-    modApi "grondag.fluidit:config-2:${project.cloth_config_version}"
-    include "me.shedaniel.cloth:config-2:${project.cloth_config_version}"
     
     modImplementation ("grondag:fermion-${project.mc_tag}:${project.fermion_version}.+") { transitive = false }
 	include "grondag:fermion-${project.mc_tag}:${project.fermion_version}.+"
@@ -74,9 +70,4 @@ dependencies {
 
 	modImplementation ("grondag:fonthack-${project.mc_tag}:${project.fonthack_version}.+") { transitive = false }
 	include "grondag:fonthack-${project.mc_tag}:${project.fonthack_version}.+"
-	
-	modImplementation ("grondag:frex-${project.mc_tag}:${project.fluidity_version}.+") { transitive = false }
-	include "grondag:frex-${project.mc_tag}:${project.fluidity_version}.+"
-
-    
 }
