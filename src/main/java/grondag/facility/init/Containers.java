@@ -31,7 +31,7 @@ public enum Containers {
 	static {
 		ContainerProviderRegistry.INSTANCE.registerFactory(CrateContainer.ID, (syncId, identifier, player, buf) ->  {
 			final BlockPos pos = buf.readBlockPos();
-			final String label = buf.readString();
+			final String label = buf.readString(1024);
 			final World world = player.getEntityWorld();
 			final BlockEntity be = world.getBlockEntity(pos);
 
