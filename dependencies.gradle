@@ -70,4 +70,6 @@ dependencies {
 
 	modImplementation ("grondag:fonthack-${project.mc_tag}:${project.fonthack_version}.+") { transitive = false }
 	include "grondag:fonthack-${project.mc_tag}:${project.fonthack_version}.+"
+	
+	modImplementation ("grondag:exotic-matter-${project.mc_tag}:${project.exotic_matter_version}.+") { transitive = false }
 }
