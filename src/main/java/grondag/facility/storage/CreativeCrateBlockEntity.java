@@ -61,7 +61,7 @@ public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implemen
 		ItemStack stack = new ItemStack(item);
 		stack.setCount(item.getMaxCount());
 
-		if(item.isDamageable()) {
+		if(item.isDamageable() && item.getMaxDamage() > 0) {
 			stack.setDamage(random.nextInt(item.getMaxDamage()));
 		}
 
