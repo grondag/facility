@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019, 2020 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -15,15 +15,11 @@
  ******************************************************************************/
 package grondag.facility.storage;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.item.ItemStack;
-
 import grondag.facility.FacilityConfig;
 
-public class CrateClientState {
-	public final CrateBlockEntity owner;
-	public @Nullable ItemStack[] renderStacks = null;
+@SuppressWarnings("rawtypes")
+public class StorageClientState<T extends StorageBlockEntity> {
+	public final T owner;
 
 	/**
 	 * on client, caches last result from
@@ -32,7 +28,7 @@ public class CrateClientState {
 
 	private float displayAlpha = 1f;
 
-	public CrateClientState(CrateBlockEntity owner) {
+	public StorageClientState(T owner) {
 		this.owner = owner;
 	}
 
@@ -61,6 +57,6 @@ public class CrateClientState {
 	}
 
 	public String label() {
-		return owner.label;
+		return owner.getLabel();
 	}
 }

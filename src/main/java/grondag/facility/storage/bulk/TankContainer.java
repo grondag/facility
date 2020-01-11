@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.storage;
+package grondag.facility.storage.bulk;
 
 import java.util.List;
 
@@ -30,24 +30,24 @@ import net.minecraft.util.Identifier;
 
 import grondag.facility.Facility;
 import grondag.fluidity.api.storage.Storage;
-import grondag.fluidity.base.synch.ItemStorageServerDelegate;
+import grondag.fluidity.base.synch.BulkStorageServerDelegate;
 import grondag.fluidity.base.synch.StorageContainer;
 
-public class CrateContainer extends Container implements StorageContainer {
-	public static Identifier ID = Facility.REG.id("item_storage");
+public class TankContainer extends Container implements StorageContainer {
+	public static Identifier ID = Facility.REG.id("tank");
 
 	protected final @Nullable Storage storage;
 	protected String label;
-	protected ItemStorageServerDelegate delegate;
+	protected BulkStorageServerDelegate delegate;
 
-	public CrateContainer(PlayerEntity player, int synchId, @Nullable Storage storage, String label) {
+	public TankContainer(PlayerEntity player, int synchId, @Nullable Storage storage, String label) {
 		super(null, synchId);
 		this.storage = storage;
 		this.label = label;
 		final Inventory inv = player.inventory;
 
 		if(player instanceof ServerPlayerEntity) {
-			delegate = new ItemStorageServerDelegate((ServerPlayerEntity) player, storage);
+			delegate = new BulkStorageServerDelegate((ServerPlayerEntity) player, storage);
 		}
 
 		for(int p = 0; p < 3; ++p) {

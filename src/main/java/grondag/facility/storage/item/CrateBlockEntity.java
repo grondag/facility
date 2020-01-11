@@ -13,68 +13,37 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.storage;
+package grondag.facility.storage.item;
 
-import java.util.Random;
 import java.util.Set;
-
-import io.netty.util.internal.ThreadLocalRandom;
+import java.util.function.Supplier;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
 
-import grondag.facility.block.CarrierSessionBlockEntity;
+import grondag.facility.storage.StorageBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
+import grondag.fluidity.api.multiblock.MultiBlockManager;
+import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 
-public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implements Tickable {
-	protected final boolean isOutput;
-
-	public CreativeCrateBlockEntity(BlockEntityType<CreativeCrateBlockEntity> type, boolean isOutput) {
-		super(type);
-		this.isOutput = isOutput;
+public class CrateBlockEntity extends StorageBlockEntity<CrateClientState, CrateMultiBlock.Member> {
+	public CrateBlockEntity(BlockEntityType<? extends CrateBlockEntity> type, Supplier<Storage> storageSupplier, String labelRoot) {
+		super(type, storageSupplier, labelRoot);
 	}
 
 	@Override
-	public void tick() {
-		if(world.isClient) {
-			return;
-		}
+	protected CrateMultiBlock.Member createMember() {
+		return new CrateMultiBlock.Member(this, b -> b.getInternalStorage());
+	}
 
-		final int limit = neighborCount();
-
-		if(limit == 0 || !getCachedState().get(Properties.POWERED)) {
-			return;
-		}
-
-		final Random random =  ThreadLocalRandom.current();
-		final Item item = Registry.ITEM.getRandom(random);
-		ItemStack stack = new ItemStack(item);
-		stack.setCount(item.getMaxCount());
-
-		if(item.isDamageable() && item.getMaxDamage() > 0) {
-			stack.setDamage(random.nextInt(item.getMaxDamage()));
-		}
-
-		if(stack.isEnchantable() && random.nextBoolean()) {
-			stack = EnchantmentHelper.enchant(random, stack, 30, true);
-		}
-
-		if(isOutput) {
-			for(int i = 0; i < limit; i++) {
-				final CarrierSession s = getNeighbor(i);
-				s.broadcastConsumer().apply(stack, false);
-			}
-		}
+	@SuppressWarnings("rawtypes")
+	@Override
+	protected MultiBlockManager deviceManager() {
+		return CrateMultiBlock.DEVICE_MANAGER;
 	}
 
 	@Override
@@ -86,5 +55,10 @@ public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implemen
 	protected CarrierSession getSession(BlockEntity be, BlockPos neighborPos, Direction neighborSide) {
 		return CarrierProvider.CARRIER_PROVIDER_COMPONENT.get(be).applyIfPresent(neighborSide, p ->
 		p.attachIfPresent(ArticleType.ITEM, this, ct -> ct.get(this)));
+	}
+
+	@Override
+	protected CrateClientState createClientState() {
+		return new CrateClientState(this);
 	}
 }

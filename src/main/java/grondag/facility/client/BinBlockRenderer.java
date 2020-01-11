@@ -31,9 +31,9 @@ import net.minecraft.world.World;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import grondag.facility.storage.BinBlockEntity;
-import grondag.facility.storage.CrateBlockEntity;
-import grondag.facility.storage.CrateClientState;
+import grondag.facility.storage.item.BinBlockEntity;
+import grondag.facility.storage.item.CrateBlockEntity;
+import grondag.facility.storage.item.CrateClientState;
 import grondag.xm.api.block.XmProperties;
 
 @Environment(EnvType.CLIENT)

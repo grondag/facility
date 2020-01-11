@@ -21,8 +21,10 @@ import net.minecraft.world.World;
 
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
-import grondag.facility.storage.CrateBlockEntity;
-import grondag.facility.storage.CrateContainer;
+import grondag.facility.storage.bulk.TankBlockEntity;
+import grondag.facility.storage.bulk.TankContainer;
+import grondag.facility.storage.item.CrateBlockEntity;
+import grondag.facility.storage.item.CrateContainer;
 import grondag.fluidity.api.storage.Storage;
 
 public enum Containers {
@@ -43,5 +45,18 @@ public enum Containers {
 			return null;
 		});
 
+		ContainerProviderRegistry.INSTANCE.registerFactory(TankContainer.ID, (syncId, identifier, player, buf) ->  {
+			final BlockPos pos = buf.readBlockPos();
+			final String label = buf.readString(1024);
+			final World world = player.getEntityWorld();
+			final BlockEntity be = world.getBlockEntity(pos);
+
+			if (be instanceof TankBlockEntity) {
+				final TankBlockEntity myBe = (TankBlockEntity) be;
+				return new CrateContainer(player, syncId, world.isClient ? null : Storage.STORAGE_COMPONENT.get(myBe).get(), label);
+			}
+
+			return null;
+		});
 	}
 }

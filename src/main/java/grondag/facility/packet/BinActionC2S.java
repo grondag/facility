@@ -33,7 +33,7 @@ import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 
 import grondag.facility.Facility;
-import grondag.facility.storage.BinBlockEntity;
+import grondag.facility.storage.item.BinBlockEntity;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.StoredArticleView;
 import grondag.fluidity.api.storage.FixedStorage;

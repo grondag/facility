@@ -20,7 +20,7 @@ import net.fabricmc.fabric.api.client.screen.ScreenProviderRegistry;
 
 import grondag.facility.init.BinBlocks;
 import grondag.facility.init.CrateBlocks;
-import grondag.facility.storage.CrateContainer;
+import grondag.facility.storage.item.CrateContainer;
 
 public enum ClientRegistrations {
 	;

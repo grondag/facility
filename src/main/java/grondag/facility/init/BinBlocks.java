@@ -22,11 +22,11 @@ import net.minecraft.block.entity.BlockEntityType;
 
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
 
-import grondag.facility.storage.BinBlock;
-import grondag.facility.storage.BinBlockEntity;
-import grondag.facility.storage.CrateBlock;
-import grondag.facility.storage.CrateBlockEntity;
-import grondag.facility.storage.CreativeBinStorage;
+import grondag.facility.storage.item.BinBlock;
+import grondag.facility.storage.item.BinBlockEntity;
+import grondag.facility.storage.item.CrateBlock;
+import grondag.facility.storage.item.CrateBlockEntity;
+import grondag.facility.storage.item.CreativeBinStorage;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.storage.discrete.DividedDiscreteStorage;
 import grondag.fluidity.wip.api.transport.CarrierConnector;

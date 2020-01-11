@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.storage;
+package grondag.facility.storage.item;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -95,7 +95,7 @@ public class CrateBlock extends FacilitySpeciesBlock {
 			final BlockEntity be = world.getBlockEntity(pos);
 
 			if(be instanceof CrateBlockEntity) {
-				final String label = ((CrateBlockEntity) be).label;
+				final String label = ((CrateBlockEntity) be).getLabel();
 
 				ContainerProviderRegistry.INSTANCE.openContainer(CrateContainer.ID, player, p -> {
 					p.writeBlockPos(pos);

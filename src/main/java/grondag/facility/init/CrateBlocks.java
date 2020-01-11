@@ -25,10 +25,10 @@ import net.minecraft.block.entity.BlockEntityType;
 
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
 
-import grondag.facility.storage.CrateBlock;
-import grondag.facility.storage.CrateBlockEntity;
-import grondag.facility.storage.CreativeCrateBlockEntity;
-import grondag.facility.storage.CreativeICrateBlock;
+import grondag.facility.storage.item.CrateBlock;
+import grondag.facility.storage.item.CrateBlockEntity;
+import grondag.facility.storage.item.CreativeCrateBlockEntity;
+import grondag.facility.storage.item.CreativeICrateBlock;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStorage;

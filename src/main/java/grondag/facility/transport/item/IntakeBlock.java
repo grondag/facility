@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.transport;
+package grondag.facility.transport.item;
 
 import java.util.function.Supplier;
 
@@ -28,6 +28,7 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import grondag.facility.transport.PipeBlock;
 import grondag.xm.api.block.XmProperties;
 
 public class IntakeBlock extends PipeBlock {

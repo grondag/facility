@@ -22,11 +22,11 @@ import net.minecraft.block.entity.BlockEntityType;
 
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
 
-import grondag.facility.transport.IntakeBlock;
-import grondag.facility.transport.IntakeBlockEntity;
 import grondag.facility.transport.PipeBlock;
 import grondag.facility.transport.PipeBlockEntity;
 import grondag.facility.transport.StraightPipeBlock;
+import grondag.facility.transport.item.IntakeBlock;
+import grondag.facility.transport.item.IntakeBlockEntity;
 import grondag.facility.transport.model.ExporterModel;
 import grondag.facility.transport.model.PipeModel;
 import grondag.fluidity.wip.api.transport.CarrierProvider;

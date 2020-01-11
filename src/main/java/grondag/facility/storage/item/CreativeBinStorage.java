@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.storage;
+package grondag.facility.storage.item;
 
 import com.google.common.base.Preconditions;
 import org.apiguardian.api.API;
@@ -25,10 +25,10 @@ import net.minecraft.nbt.ListTag;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.storage.FixedArticleFunction;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
-import grondag.fluidity.base.storage.component.FixedArticleManager;
 import grondag.fluidity.base.storage.discrete.AbstractDiscreteStorage;
 import grondag.fluidity.base.storage.discrete.DividedDiscreteStorage;
 import grondag.fluidity.base.storage.discrete.FixedDiscreteStorage;
+import grondag.fluidity.base.storage.helper.FixedArticleManager;
 
 @API(status = Status.EXPERIMENTAL)
 public class CreativeBinStorage extends AbstractDiscreteStorage<CreativeBinStorage> implements FixedDiscreteStorage {

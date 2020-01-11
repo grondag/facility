@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.transport;
+package grondag.facility.transport.item;
 
 import java.util.Set;
 
@@ -30,6 +30,7 @@ import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
+import grondag.facility.transport.PipeBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.device.BlockComponentContext;
 import grondag.fluidity.api.storage.Storage;

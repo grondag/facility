@@ -25,7 +25,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import grondag.facility.storage.CrateBlockEntity;
+import grondag.facility.storage.item.CrateBlockEntity;
 
 @Environment(EnvType.CLIENT)
 public class StorageBlockRenderer<T extends CrateBlockEntity> extends BlockEntityRenderer<T> {

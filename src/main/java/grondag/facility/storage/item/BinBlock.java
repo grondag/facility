@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.storage;
+package grondag.facility.storage.item;
 
 import java.util.function.Supplier;
 

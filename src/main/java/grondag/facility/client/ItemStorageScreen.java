@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019, 2020 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -21,23 +21,26 @@ import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.text.TranslatableText;
 
-import grondag.facility.storage.CrateContainer;
+import grondag.facility.storage.item.CrateContainer;
 import grondag.fermion.gui.AbstractSimpleContainerScreen;
 import grondag.fermion.gui.GuiUtil;
 import grondag.fermion.gui.control.Button;
 import grondag.fermion.gui.control.ItemStackPicker;
 import grondag.fermion.gui.control.TextField;
-import grondag.fluidity.base.synch.ItemDisplayDelegate;
-import grondag.fluidity.base.synch.ItemStorageClientDelegate;
-import grondag.fluidity.base.synch.StorageAction;
-import grondag.fluidity.impl.ItemDisplayDelegateImpl;
+import grondag.fluidity.base.synch.DiscreteDisplayDelegate;
+import grondag.fluidity.base.synch.DiscreteStorageClientDelegate;
+import grondag.fluidity.base.synch.DisplayDelegate;
+import grondag.fluidity.base.synch.ItemStorageAction;
+import grondag.fluidity.impl.DiscreteDisplayDelegateImpl;
 import grondag.fonthack.FontHackClient;
 
 public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContainer> implements ContainerProvider<CrateContainer> {
+	private static DiscreteStorageClientDelegate DELEGATE = DiscreteStorageClientDelegate.INSTANCE;
+
 	protected int headerHeight;
 	protected int storageHeight;
 
-	protected ItemStackPicker<ItemDisplayDelegate> stackPicker;
+	protected ItemStackPicker<DiscreteDisplayDelegate> stackPicker;
 	protected TextField filterField;
 	protected int capacityBarLeft;
 	protected int itemPickerTop;
@@ -108,7 +111,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 	public void addControls() {
 		capacityBarLeft = x + theme.externalMargin;
 		itemPickerTop = y + headerHeight;
-		stackPicker = new ItemStackPicker<>(this, ItemStorageClientDelegate.LIST, StorageAction::selectAndSend, ItemDisplayDelegate::displayStack, ItemDisplayDelegate::getCount);
+		stackPicker = new ItemStackPicker<>(this, DELEGATE.LIST, ItemStorageAction::selectAndSend, d -> d.article().toStack(), DiscreteDisplayDelegate::getCount);
 		stackPicker.setItemsPerRow(9);
 
 		stackPicker.setLeft(x + inventoryLeft);
@@ -120,15 +123,15 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 		final Button butt = new Button(this,
 				x + containerWidth - 40 - theme.externalMargin, y + theme.externalMargin,
 				40, theme.singleLineWidgetHeight,
-				ItemDisplayDelegate.getSortLabel(ItemStorageClientDelegate.getSortIndex())) {
+				DisplayDelegate.getSortLabel(DELEGATE.getSortIndex())) {
 
 			@Override
 			public void onClick(double d, double e) {
-				final int oldSort = ItemStorageClientDelegate.getSortIndex();
-				final int newSort = (oldSort + 1) % ItemDisplayDelegateImpl.SORT_COUNT;
-				ItemStorageClientDelegate.setSortIndex(newSort);
-				setMessage(ItemDisplayDelegate.getSortLabel(newSort));
-				ItemStorageClientDelegate.refreshListIfNeeded();
+				final int oldSort = DELEGATE.getSortIndex();
+				final int newSort = (oldSort + 1) % DiscreteDisplayDelegateImpl.SORT_COUNT;
+				DELEGATE.setSortIndex(newSort);
+				setMessage(DisplayDelegate.getSortLabel(newSort));
+				DELEGATE.refreshListIfNeeded();
 			}
 		};
 
@@ -139,8 +142,8 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 				80, theme.singleLineWidgetHeight, "");
 		filterField.setMaxLength(32);
 		filterField.setSelected(true);
-		filterField.setText(ItemStorageClientDelegate.getFilter());
-		filterField.setChangedListener(s -> ItemStorageClientDelegate.setFilter(s));
+		filterField.setText(DELEGATE.getFilter());
+		filterField.setChangedListener(s -> DELEGATE.setFilter(s));
 
 		children.add(filterField);
 
@@ -150,12 +153,12 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 	@Override
 	protected void drawControls(int mouseX, int mouseY, float partialTicks) {
 		//PERF: do less frequently
-		ItemStorageClientDelegate.refreshListIfNeeded();
+		DELEGATE.refreshListIfNeeded();
 		stackPicker.drawControl(mouseX, mouseY, partialTicks);
 		filterField.render(mouseX, mouseY, partialTicks);
 
 		final int barHeight = containerHeight - theme.externalMargin * 2;
-		final int fillHeight = ItemStorageClientDelegate.capacity() == 0 ? 0 : (int) (barHeight * ItemStorageClientDelegate.usedCapacity() / ItemStorageClientDelegate.capacity());
+		final int fillHeight = DELEGATE.capacity() == 0 ? 0 : (int) (barHeight * DELEGATE.usedCapacity() / DELEGATE.capacity());
 
 		// capacity bar
 		final int barBottom = y + theme.externalMargin + barHeight;
@@ -165,11 +168,11 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 				capacityBarLeft + theme.capacityBarWidth, barBottom, theme.capacityFillColor);
 
 		// Draw here because drawforeground currently happens after this
-		if(ItemStorageClientDelegate.capacity() > 0 && mouseX >= x + theme.externalMargin && mouseX <= x + theme.externalMargin + theme.capacityBarWidth
+		if(DELEGATE.capacity() > 0 && mouseX >= x + theme.externalMargin && mouseX <= x + theme.externalMargin + theme.capacityBarWidth
 				&& mouseY >= y + theme.externalMargin && mouseY <= y + containerHeight - theme.externalMargin) {
 
 			//UGLY: standardize how tooltip coordinates work - wants screen relative but getting window relative as inputs here
-			this.drawToolTip(ItemStorageClientDelegate.usedCapacity() + " / " + ItemStorageClientDelegate.capacity(), mouseX - x, mouseY - y);
+			this.drawToolTip(DELEGATE.usedCapacity() + " / " + DELEGATE.capacity(), mouseX - x, mouseY - y);
 		}
 	}
 
