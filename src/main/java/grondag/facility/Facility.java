@@ -53,6 +53,7 @@ import grondag.facility.init.BinBlocks;
 import grondag.facility.init.Containers;
 import grondag.facility.init.CrateBlocks;
 import grondag.facility.init.PipeBlocks;
+import grondag.facility.init.TankBlocks;
 import grondag.facility.init.Textures;
 import grondag.facility.packet.BinActionC2S;
 import grondag.fermion.registrar.Registrar;
@@ -70,6 +71,7 @@ public class Facility implements ModInitializer {
 		CrateBlocks.values();
 		BinBlocks.values();
 		PipeBlocks.values();
+		TankBlocks.values();
 		ArticleTypeRegistryImpl.init();
 		ServerSidePacketRegistry.INSTANCE.register(BinActionC2S.ID, BinActionC2S::accept);
 	}

@@ -22,53 +22,34 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ShulkerBoxBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.state.StateManager.Builder;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
-import grondag.facility.block.FacilitySpeciesBlock;
-import grondag.facility.block.NeighboredBlockEntity;
-import grondag.fermion.modkeys.api.ModKeys;
-import grondag.fluidity.api.storage.Storage;
+import grondag.facility.storage.StorageBlock;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
 import grondag.fluidity.base.storage.discrete.AbstractDiscreteStorage;
-import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.connect.world.BlockTest;
 
-public class CrateBlock extends FacilitySpeciesBlock {
-	public static final Identifier CONTENTS  = ShulkerBoxBlock.CONTENTS;
-
+public class CrateBlock extends StorageBlock {
 	public CrateBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
 		super(settings, beFactory);
-	}
-
-	@Override
-	protected void appendProperties(Builder<Block, BlockState> builder) {
-		super.appendProperties(builder);
-		builder.add(XmProperties.FACE);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -108,55 +89,6 @@ public class CrateBlock extends FacilitySpeciesBlock {
 	}
 
 	@Override
-	public boolean hasComparatorOutput(BlockState blockState) {
-		return true;
-	}
-
-	@Override
-	public int getComparatorOutput(BlockState blockState, World world, BlockPos blockPos) {
-		final BlockEntity blockEntity = world.getBlockEntity(blockPos);
-
-		if (blockEntity instanceof CrateBlockEntity) {
-			final Storage storage = ((CrateBlockEntity)blockEntity).getInternalStorage();
-
-			if(storage != null){
-				return (int)(Math.floor(14.0 * storage.count() / storage.capacity())) + 1;
-			}
-		}
-
-		return 0;
-	}
-
-	@Override
-	public void onBreak(World world, BlockPos blockPos, BlockState blockState, PlayerEntity playerEntity) {
-		final BlockEntity blockEntity = world.getBlockEntity(blockPos);
-
-		if (blockEntity instanceof CrateBlockEntity) {
-			final CrateBlockEntity myBlockEntity = (CrateBlockEntity)blockEntity;
-
-			if (!world.isClient) {
-				final ItemStack stack = new ItemStack(this);
-
-				if(!myBlockEntity.getInternalStorage().isEmpty()) {
-					final CompoundTag tag = myBlockEntity.toContainerTag(new CompoundTag());
-
-					if (!tag.isEmpty()) {
-						stack.putSubTag("BlockEntityTag", tag);
-					}
-
-					stack.setCustomName(new LiteralText(myBlockEntity.getLabel()));
-				}
-
-				final ItemEntity itemEntity = new ItemEntity(world, blockPos.getX(), blockPos.getY(), blockPos.getZ(), stack);
-				itemEntity.setToDefaultPickupDelay();
-				world.spawnEntity(itemEntity);
-			}
-		}
-
-		super.onBreak(world, blockPos, blockState, playerEntity);
-	}
-
-	@Override
 	@Environment(EnvType.CLIENT)
 	public void buildTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
 		super.buildTooltip(itemStack, blockView, list, tooltipContext);
@@ -180,33 +112,6 @@ public class CrateBlock extends FacilitySpeciesBlock {
 			if(limit < tagList.size()) {
 				list.add(new LiteralText("..."));
 			}
-		}
-	}
-
-	@Override
-	public BlockState getPlacementState(ItemPlacementContext context) {
-		return super.getPlacementState(context).with(XmProperties.FACE,
-				ModKeys.isSecondaryPressed(context.getPlayer()) && context.getSide() != null ? context.getSide().getOpposite() : context.getPlayerLookDirection());
-	}
-
-	@Override
-	public BlockState getStateForNeighborUpdate(BlockState blockState, Direction direction, BlockState blockState2, IWorld iWorld, BlockPos blockPos, BlockPos blockPos2) {
-		updateBe(iWorld, blockPos);
-		return blockState;
-	}
-
-	@Override
-	public void onBlockAdded(BlockState blockState, World world, BlockPos blockPos, BlockState blockState2, boolean bl) {
-		updateBe(world, blockPos);
-		super.onBlockAdded(blockState, world, blockPos, blockState2, bl);
-	}
-
-	@SuppressWarnings("rawtypes")
-	protected void updateBe(IWorld world, BlockPos pos) {
-		final BlockEntity be = world.getBlockEntity(pos);
-
-		if(be instanceof NeighboredBlockEntity) {
-			((NeighboredBlockEntity) be).updateNeighbors();
 		}
 	}
 }

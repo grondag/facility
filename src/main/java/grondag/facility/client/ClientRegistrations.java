@@ -35,6 +35,8 @@ public enum ClientRegistrations {
 		BlockEntityRendererRegistry.INSTANCE.register(BinBlocks.CREATIVE_BIN_X2_BLOCK_ENTITY_TYPE, d -> new BinBlockRenderer(d, 2));
 		BlockEntityRendererRegistry.INSTANCE.register(BinBlocks.CREATIVE_BIN_X4_BLOCK_ENTITY_TYPE, d -> new BinBlockRenderer(d, 4));
 
+		BlockEntityRendererRegistry.INSTANCE.register(BinBlocks.CREATIVE_BIN_X4_BLOCK_ENTITY_TYPE, d -> new BinBlockRenderer(d, 4));
+
 		ScreenProviderRegistry.INSTANCE.registerFactory(CrateContainer.ID, ItemStorageScreen::new);
 	}
 }

@@ -17,24 +17,14 @@ package grondag.facility.storage.bulk;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.texture.Sprite;
 
-import grondag.facility.Facility;
-import grondag.facility.storage.FactilityStorageContainer;
-import grondag.fluidity.api.storage.Storage;
-import grondag.fluidity.base.synch.BulkStorageServerDelegate;
+import grondag.facility.storage.StorageClientState;
 
-public class TankContainer extends FactilityStorageContainer<BulkStorageServerDelegate> {
-	public static Identifier ID = Facility.REG.id("tank");
+public class TankClientState extends StorageClientState<TankBlockEntity> {
+	public @Nullable Sprite[] renderSprites = null;
 
-	public TankContainer(PlayerEntity player, int synchId, @Nullable Storage storage, String label) {
-		super(player, synchId, storage, label);
-	}
-
-	@Override
-	protected BulkStorageServerDelegate createDelegate(ServerPlayerEntity player, Storage storage) {
-		return new BulkStorageServerDelegate(player, storage);
+	public TankClientState(TankBlockEntity owner) {
+		super(owner);
 	}
 }

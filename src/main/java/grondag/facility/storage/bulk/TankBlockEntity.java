@@ -24,14 +24,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
 import grondag.facility.storage.StorageBlockEntity;
-import grondag.facility.storage.StorageClientState;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.multiblock.MultiBlockManager;
 import grondag.fluidity.api.storage.Storage;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 
-public class TankBlockEntity extends StorageBlockEntity<StorageClientState<TankBlockEntity>, TankMultiBlock.Member> {
+public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMultiBlock.Member> {
 	public TankBlockEntity(BlockEntityType<TankBlockEntity> type, Supplier<Storage> storageSupplier, String labelRoot) {
 		super(type, storageSupplier, labelRoot);
 	}
@@ -59,8 +58,8 @@ public class TankBlockEntity extends StorageBlockEntity<StorageClientState<TankB
 	}
 
 	@Override
-	protected StorageClientState<TankBlockEntity> createClientState() {
-		return new StorageClientState<>(this);
+	protected TankClientState createClientState() {
+		return new TankClientState(this);
 	}
 
 }
