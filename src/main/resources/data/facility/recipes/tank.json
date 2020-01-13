@@ -1,0 +1,28 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"igi",
+		"rbr",
+		"ipi"
+	],
+	"key": {
+		"b": {
+			"item": "minecraft:bucket"
+		},
+		"i": {
+			"item": "minecraft:iron_ingot"
+		},
+		"g": {
+			"item": "minecraft:gold_nugget"
+		},
+		"r": {
+			"item": "minecraft:redstone"
+		},
+		"p": {
+			"item": "minecraft:glass_pane"
+		}
+	},
+	"result": {
+		"item": "facility:tank"
+	}
+}

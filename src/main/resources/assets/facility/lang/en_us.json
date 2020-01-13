@@ -24,5 +24,7 @@
 	"block.facility.creative_bin_2x": "Bin 2X - Creative",
 	"block.facility.creative_bin_2x.desc": "Endless supply of two items.;For testing.",
 	"block.facility.creative_bin_4x": "Bin 4X - Creative",
-	"block.facility.creative_bin_4x.desc": "Endless supply of four items.;For testing."
+	"block.facility.creative_bin_4x.desc": "Endless supply of four items.;For testing.",
+	"block.facility.tank": "Tank - Standard",
+	"block.facility.tank.desc": "Holds 32 buckets of one fluid."
 }
