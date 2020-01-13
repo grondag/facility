@@ -25,11 +25,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -43,13 +42,10 @@ import net.minecraft.world.World;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.block.BlockAttackInteractionAware;
-import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
 import grondag.facility.storage.StorageBlock;
 import grondag.facility.storage.item.CrateBlockEntity;
-import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.storage.Storage;
-import grondag.fluidity.api.transact.Transaction;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
 import grondag.fluidity.base.storage.discrete.AbstractDiscreteStorage;
 import grondag.xm.api.connect.species.SpeciesProperty;
@@ -84,44 +80,18 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 			final BlockEntity be = world.getBlockEntity(pos);
 
 			if(be instanceof TankBlockEntity) {
+				final TankBlockEntity tankBe = (TankBlockEntity) be;
 
-				final TankBlockEntity myBe = (TankBlockEntity) be;
-
-				// TODO: item devices
-				if(stack.getItem() == Items.WATER_BUCKET) {
-					try(Transaction  tx = Transaction.open()) {
-						final Storage store = myBe.getInternalStorage();
-						tx.enlist(store);
-
-						if(store.getConsumer().apply(Article.of(Fluids.WATER), 1, 1, false) == 1) {
-							player.setStackInHand(hand, new ItemStack(Items.BUCKET, 1));
-							System.out.println("Tank usage = " + store.usage() * 100);
-							tx.commit();
-						} else {
-							tx.rollback();
-						}
-					}
-				} else if(stack.getItem() == Items.BUCKET) {
-					try(Transaction  tx = Transaction.open()) {
-						final Storage store = myBe.getInternalStorage();
-						tx.enlist(store);
-
-						if(store.getSupplier().apply(Article.of(Fluids.WATER), 1, 1, false) == 1) {
-							player.setStackInHand(hand, new ItemStack(Items.WATER_BUCKET, 1));
-							System.out.println("Tank usage = " + store.usage() * 100);
-							tx.commit();
-						} else {
-							tx.rollback();
-						}
-					}
-				} else {
-					final String label = myBe.getLabel();
-
-					ContainerProviderRegistry.INSTANCE.openContainer(TankContainer.ID, player, p -> {
-						p.writeBlockPos(pos);
-						p.writeString(label);
-					});
-				}
+				if(Storage.STORAGE_COMPONENT.applyActionsWithHeld(tankBe.getEffectiveStorage(), (ServerPlayerEntity)player)) {
+					return ActionResult.SUCCESS;
+				} //else {
+				//					final String label = tankBe.getLabel();
+				//
+				//					ContainerProviderRegistry.INSTANCE.openContainer(TankContainer.ID, player, p -> {
+				//						p.writeBlockPos(pos);
+				//						p.writeString(label);
+				//					});
+				//				}
 			}
 		}
 

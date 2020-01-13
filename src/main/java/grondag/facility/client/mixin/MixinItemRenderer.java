@@ -25,13 +25,13 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
 
-import grondag.facility.client.ItemRendererHook;
+import grondag.facility.client.RendererHooks;
 
 @Mixin(ItemRenderer.class)
 public abstract class MixinItemRenderer {
 	@Inject(at = @At("HEAD"), method = "getArmorVertexConsumer", cancellable = true)
 	private static void onGetArmorVertexConsumer(VertexConsumerProvider vertexConsumerProvider, RenderLayer renderLayer, boolean isWorld, boolean hasGlint, CallbackInfoReturnable<VertexConsumer> ci) {
-		final RenderLayer newLayer = ItemRendererHook.hook(renderLayer);
+		final RenderLayer newLayer = RendererHooks.hook(renderLayer);
 
 		// FIXME: Glint causes problems so disable for now
 		if (newLayer != null) {

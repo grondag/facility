@@ -37,6 +37,7 @@ public enum Textures { ;
 			.displayNameToken("crate_base").baseTextureName("facility:block/crate_base")
 			.versionCount(4).scale(SINGLE).layout(TextureLayoutMap.VERSIONED).transform(STONE_LIKE)
 			.renderIntent(BASE_ONLY).groups(STATIC_TILES).build("contained:crate_base");
+
 	public static final TextureSet OPEN_BOX = TextureSetHelper.addDecal(Facility.MODID, "open_box", "open_box", ROTATE_RANDOM);
 	public static final TextureSet FILLED_BOX = TextureSetHelper.addDecal(Facility.MODID, "filled_box", "filled_box", ROTATE_RANDOM);
 	public static final TextureSet BIN_FACE = TextureSetHelper.addDecal(Facility.MODID, "bin_face", "bin_face", IDENTITY);

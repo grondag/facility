@@ -20,6 +20,7 @@ import net.fabricmc.fabric.api.client.screen.ScreenProviderRegistry;
 
 import grondag.facility.init.BinBlocks;
 import grondag.facility.init.CrateBlocks;
+import grondag.facility.init.TankBlocks;
 import grondag.facility.storage.item.CrateContainer;
 
 public enum ClientRegistrations {
@@ -35,7 +36,7 @@ public enum ClientRegistrations {
 		BlockEntityRendererRegistry.INSTANCE.register(BinBlocks.CREATIVE_BIN_X2_BLOCK_ENTITY_TYPE, d -> new BinBlockRenderer(d, 2));
 		BlockEntityRendererRegistry.INSTANCE.register(BinBlocks.CREATIVE_BIN_X4_BLOCK_ENTITY_TYPE, d -> new BinBlockRenderer(d, 4));
 
-		BlockEntityRendererRegistry.INSTANCE.register(BinBlocks.CREATIVE_BIN_X4_BLOCK_ENTITY_TYPE, d -> new BinBlockRenderer(d, 4));
+		BlockEntityRendererRegistry.INSTANCE.register(TankBlocks.TANK_BLOCK_ENTITY_TYPE, d -> new TankBlockRenderer(d));
 
 		ScreenProviderRegistry.INSTANCE.registerFactory(CrateContainer.ID, ItemStorageScreen::new);
 	}

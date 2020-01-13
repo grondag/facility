@@ -20,8 +20,14 @@ import java.util.function.Supplier;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.registry.Registry;
+
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandler;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
 
 import grondag.facility.storage.StorageBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
@@ -62,4 +68,43 @@ public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMul
 		return new TankClientState(this);
 	}
 
+	@Override
+	public void fromClientTag(CompoundTag tag) {
+		label = tag.getString(TAG_LABEL);
+
+		final TankClientState clientState = clientState();
+		clientState.level = tag.getFloat("usage");
+
+		if(clientState.level == 0) {
+			clientState.fluidSprite = null;
+		} else {
+			final Fluid fluid = Registry.FLUID.get(tag.getInt("fluid"));
+			final FluidRenderHandler handler = FluidRenderHandlerRegistry.INSTANCE.get(fluid);
+			clientState.fluidColor = handler.getFluidColor(getWorld(), getPos(), fluid.getDefaultState());
+			clientState.fluidSprite = handler.getFluidSprites(getWorld(), getPos(), fluid.getDefaultState())[0];
+			clientState.glowing = fluid.getDefaultState().getBlockState().getLuminance() > 0;
+		}
+	}
+
+	@Override
+	public CompoundTag toClientTag(CompoundTag tag) {
+		tag.putString(TAG_LABEL, label);
+		final float usage = (float) storage.usage();
+		tag.putFloat("usage", usage);
+
+		if(usage != 0 && !storage.isEmpty()) {
+			tag.putInt("fluid", Registry.FLUID.getRawId((Fluid) storage.view(0).article().resource()));
+		}
+		return tag;
+	}
+
+	@Override
+	protected void markForSave() {
+		super.markForSave();
+
+		if(world != null && pos != null) {
+			// PERF: gate this somehow?
+			sync();
+		}
+	}
 }

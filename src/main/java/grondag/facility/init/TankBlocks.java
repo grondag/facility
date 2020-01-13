@@ -32,8 +32,10 @@ import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.modelstate.primitive.PrimitiveStateFunction;
+import grondag.xm.api.paint.PaintBlendMode;
 import grondag.xm.api.paint.XmPaint;
 import grondag.xm.api.primitive.simple.CubeWithFace;
+import grondag.xm.api.texture.XmTextures;
 
 @SuppressWarnings("unchecked")
 public enum TankBlocks {
@@ -50,7 +52,14 @@ public enum TankBlocks {
 		Storage.STORAGE_COMPONENT.addProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage(), TANK);
 		Storage.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getInternalStorage(), TANK);
 
-		final XmPaint basePaint = Textures.crateBaseFinder(2).find();
+		final XmPaint basePaint = XmPaint.finder()
+				.textureDepth(2)
+				.texture(0, XmTextures.TILE_NOISE_SUBTLE)
+				.textureColor(0, 0xFF404045)
+				.texture(1, XmTextures.BORDER_WEATHERED_LINE)
+				.blendMode(1, PaintBlendMode.TRANSLUCENT)
+				.textureColor(1, 0xA0000000)
+				.find();
 
 		XmBlockRegistry.addBlockStates(TANK, bs -> PrimitiveStateFunction.builder()
 				.withJoin(TankBlock.JOIN_TEST)
@@ -58,9 +67,7 @@ public enum TankBlocks {
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState(XmProperties.FACE_MODIFIER.mutate(SpeciesProperty.SPECIES_MODIFIER.mutate(
 						CubeWithFace.INSTANCE.newState()
-						.paintAll(basePaint)
-						.paint(CubeWithFace.SURFACE_TOP, Textures.cratePaintWithDecal(Textures.BIN_FACE, 0xFF88FFFF)), bs), bs))
+						.paintAll(basePaint), bs), bs))
 				.build());
-
 	}
 }

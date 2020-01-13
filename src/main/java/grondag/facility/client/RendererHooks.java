@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2019, 2020 grondag
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License.  You may obtain a copy
  * of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
@@ -27,9 +27,10 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 
-public class ItemRendererHook {
-	private static RenderLayer TRANSLUCENT = makeTranslucent();
-	private static RenderLayer CUTOUT = makeCutout();
+public class RendererHooks {
+	public static final RenderLayer TRANSLUCENT = makeTranslucent();
+	public static final RenderLayer CUTOUT = makeCutout();
+	public static final RenderLayer FLUID = makeFluid();
 
 	static class RenderSecrets extends RenderPhase {
 		public RenderSecrets(String string, Runnable runnable, Runnable runnable2) {
@@ -40,8 +41,10 @@ public class ItemRendererHook {
 		static final Transparency _TRANSLUCENT_TRANSPARENCY = TRANSLUCENT_TRANSPARENCY;
 		static final DiffuseLighting _ENABLE_DIFFUSE_LIGHTING = ENABLE_DIFFUSE_LIGHTING;
 		static final Alpha _ONE_TENTH_ALPHA = ONE_TENTH_ALPHA;
+		static final Alpha _ZERO_ALPHA = ZERO_ALPHA;
 		static final Lightmap _ENABLE_LIGHTMAP = ENABLE_LIGHTMAP;
 		static final Overlay _ENABLE_OVERLAY_COLOR = ENABLE_OVERLAY_COLOR;
+		static final Overlay _DISABLE_OVERLAY_COLOR = DISABLE_OVERLAY_COLOR;
 		static final Layering ITEM_OFFSET_LAYERING = new RenderPhase.Layering("item_offset_layering", () -> {
 			RenderSystem.polygonOffset(-1.0F, -1.0F);
 			RenderSystem.enablePolygonOffset();
@@ -53,7 +56,7 @@ public class ItemRendererHook {
 		});
 	}
 
-	public static RenderLayer makeCutout() {
+	private static RenderLayer makeCutout() {
 		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
 				.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEX, false, false))
 				.transparency(RenderSecrets._NO_TRANSPARENCY)
@@ -66,8 +69,7 @@ public class ItemRendererHook {
 		return RenderLayer.of("entity_cutout", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, 7, 256, true, false, multiPhaseParameters);
 	}
 
-
-	public static RenderLayer makeTranslucent() {
+	private static RenderLayer makeTranslucent() {
 		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
 				.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEX, false, false))
 				.transparency(RenderSecrets._TRANSLUCENT_TRANSPARENCY)
@@ -78,6 +80,19 @@ public class ItemRendererHook {
 				.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
 				.build(true);
 		return RenderLayer.of("entity_translucent_cull", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, 7, 256, true, true, multiPhaseParameters);
+	}
+
+	public static RenderLayer makeFluid() {
+		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
+				.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEX, false, false))
+				.transparency(RenderSecrets._NO_TRANSPARENCY)
+				.diffuseLighting(RenderSecrets._ENABLE_DIFFUSE_LIGHTING)
+				.alpha(RenderSecrets._ZERO_ALPHA)
+				.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
+				.overlay(RenderSecrets._DISABLE_OVERLAY_COLOR)
+				.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
+				.build(true);
+		return RenderLayer.of("fluid_overlay", VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL, 7, 256, false, false, multiPhaseParameters);
 	}
 
 	public static @Nullable RenderLayer hook(RenderLayer renderLayer) {
@@ -118,7 +133,7 @@ public class ItemRendererHook {
 		public VertexConsumer getBuffer(RenderLayer renderLayer) {
 			if(renderLayer == TRANSLUCENT && alpha < 255) {
 				wrappedConsumer = wrappedProvider.getBuffer(TRANSLUCENT);
-				System.out.println(alpha);
+				//System.out.println(alpha);
 				return FADER;
 			} else {
 				return wrappedProvider.getBuffer(renderLayer);

@@ -48,7 +48,7 @@ public class BinBlockRenderer extends StorageBlockRenderer<BinBlockEntity> {
 	@Override
 	public void render(BinBlockEntity bin, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int lightmap, int overlay) {
 		super.render(bin, tickDelta, matrixStack, vertexConsumerProvider, lightmap, overlay);
-		renderInner(bin, tickDelta, matrixStack, ItemRendererHook.wrap(vertexConsumerProvider), lightmap, overlay);
+		renderInner(bin, tickDelta, matrixStack, RendererHooks.wrap(vertexConsumerProvider), lightmap, overlay);
 	}
 
 	protected void renderInner(CrateBlockEntity bin, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int lightmap, int overlay) {
@@ -81,7 +81,7 @@ public class BinBlockRenderer extends StorageBlockRenderer<BinBlockEntity> {
 		matrixStack.multiply(face.getOpposite().getRotationQuaternion());
 		matrixStack.multiply(X_90);
 		matrixStack.translate(0, 0, 0.51);
-		ItemRendererHook.enable(a);
+		RendererHooks.enable(a);
 
 		if (divisionLevel == 1) {
 			renderFront1(stacks, 1 - a, face, matrixStack, vertexConsumerProvider, WorldRenderer.getLightmapCoordinates(world, occludingPos), overlay);
@@ -91,7 +91,7 @@ public class BinBlockRenderer extends StorageBlockRenderer<BinBlockEntity> {
 			renderFront4(stacks, 1 - a, face, matrixStack, vertexConsumerProvider, WorldRenderer.getLightmapCoordinates(world, occludingPos), overlay);
 		}
 
-		ItemRendererHook.disable();
+		RendererHooks.disable();
 		matrixStack.pop();
 	}
 

@@ -22,7 +22,10 @@ import net.minecraft.client.texture.Sprite;
 import grondag.facility.storage.StorageClientState;
 
 public class TankClientState extends StorageClientState<TankBlockEntity> {
-	public @Nullable Sprite[] renderSprites = null;
+	public @Nullable Sprite fluidSprite;
+	public int fluidColor = -1;
+	public float level;
+	public boolean glowing;
 
 	public TankClientState(TankBlockEntity owner) {
 		super(owner);
