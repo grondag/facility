@@ -43,7 +43,7 @@ import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
 import grondag.facility.storage.StorageBlock;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
-import grondag.fluidity.base.storage.discrete.AbstractDiscreteStorage;
+import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.connect.world.BlockTest;
 
@@ -95,7 +95,7 @@ public class CrateBlock extends StorageBlock {
 		final CompoundTag beTag = itemStack.getSubTag("BlockEntityTag");
 
 		if (beTag != null && beTag.contains(CrateBlockEntity.TAG_STORAGE)) {
-			final ListTag tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStorage.TAG_ITEMS, 10);
+			final ListTag tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStore.TAG_ITEMS, 10);
 			final int limit = Math.min(9,tagList.size());
 			final StoredDiscreteArticle lookup = new StoredDiscreteArticle();
 

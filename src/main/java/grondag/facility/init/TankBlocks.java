@@ -25,7 +25,7 @@ import net.fabricmc.fabric.api.block.FabricBlockSettings;
 import grondag.facility.storage.bulk.TankBlock;
 import grondag.facility.storage.bulk.TankBlockEntity;
 import grondag.fluidity.api.fraction.Fraction;
-import grondag.fluidity.api.storage.Storage;
+import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.storage.bulk.SimpleTank;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.xm.api.block.XmBlockRegistry;
@@ -49,8 +49,8 @@ public enum TankBlocks {
 
 	static {
 		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(TANK);
-		Storage.STORAGE_COMPONENT.addProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage(), TANK);
-		Storage.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getInternalStorage(), TANK);
+		Store.STORAGE_COMPONENT.addProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage(), TANK);
+		Store.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getInternalStorage(), TANK);
 
 		final XmPaint basePaint = XmPaint.finder()
 				.textureDepth(2)

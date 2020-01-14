@@ -18,19 +18,19 @@ package grondag.facility.storage.item;
 import java.util.function.Function;
 
 import grondag.fluidity.api.multiblock.MultiBlockManager;
-import grondag.fluidity.api.storage.Storage;
+import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.multiblock.AbstractBlockEntityMember;
 import grondag.fluidity.base.multiblock.AbstractStorageMultiBlock;
-import grondag.fluidity.base.storage.discrete.AggregateDiscreteStorage;
+import grondag.fluidity.base.storage.discrete.AggregateDiscreteStore;
 import grondag.xm.api.connect.species.SpeciesProperty;
 
 public class CrateMultiBlock extends AbstractStorageMultiBlock<CrateMultiBlock.Member, CrateMultiBlock> {
 	public CrateMultiBlock() {
-		super(new AggregateDiscreteStorage());
+		super(new AggregateDiscreteStore());
 	}
 
-	protected static class Member extends AbstractBlockEntityMember<Member, CrateMultiBlock, Storage, CrateBlockEntity> {
-		public Member(CrateBlockEntity blockEntity, Function<CrateBlockEntity, Storage> componentFunction) {
+	protected static class Member extends AbstractBlockEntityMember<Member, CrateMultiBlock, Store, CrateBlockEntity> {
+		public Member(CrateBlockEntity blockEntity, Function<CrateBlockEntity, Store> componentFunction) {
 			super(blockEntity, componentFunction);
 		}
 
@@ -53,6 +53,6 @@ public class CrateMultiBlock extends AbstractStorageMultiBlock<CrateMultiBlock.M
 		}
 	}
 
-	protected static final MultiBlockManager<Member, CrateMultiBlock, Storage> DEVICE_MANAGER = MultiBlockManager.create(
+	protected static final MultiBlockManager<Member, CrateMultiBlock, Store> DEVICE_MANAGER = MultiBlockManager.create(
 			CrateMultiBlock::new, (Member a, Member b) -> a != null && a.canConnect(b));
 }

@@ -45,9 +45,9 @@ import net.fabricmc.fabric.api.block.BlockAttackInteractionAware;
 
 import grondag.facility.storage.StorageBlock;
 import grondag.facility.storage.item.CrateBlockEntity;
-import grondag.fluidity.api.storage.Storage;
+import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
-import grondag.fluidity.base.storage.discrete.AbstractDiscreteStorage;
+import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.connect.world.BlockTest;
 
@@ -82,7 +82,7 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 			if(be instanceof TankBlockEntity) {
 				final TankBlockEntity tankBe = (TankBlockEntity) be;
 
-				if(Storage.STORAGE_COMPONENT.applyActionsWithHeld(tankBe.getEffectiveStorage(), (ServerPlayerEntity)player)) {
+				if(Store.STORAGE_COMPONENT.applyActionsWithHeld(tankBe.getEffectiveStorage(), (ServerPlayerEntity)player)) {
 					return ActionResult.SUCCESS;
 				} //else {
 				//					final String label = tankBe.getLabel();
@@ -123,7 +123,7 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 		final CompoundTag beTag = itemStack.getSubTag("BlockEntityTag");
 
 		if (beTag != null && beTag.contains(CrateBlockEntity.TAG_STORAGE)) {
-			final ListTag tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStorage.TAG_ITEMS, 10);
+			final ListTag tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStore.TAG_ITEMS, 10);
 			final int limit = Math.min(9,tagList.size());
 			final StoredDiscreteArticle lookup = new StoredDiscreteArticle();
 

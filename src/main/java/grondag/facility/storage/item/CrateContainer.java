@@ -23,18 +23,18 @@ import net.minecraft.util.Identifier;
 
 import grondag.facility.Facility;
 import grondag.facility.storage.FactilityStorageContainer;
-import grondag.fluidity.api.storage.Storage;
+import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
 
 public class CrateContainer extends FactilityStorageContainer<DiscreteStorageServerDelegate> {
 	public static Identifier ID = Facility.REG.id("item_storage");
 
-	public CrateContainer(PlayerEntity player, int synchId, @Nullable Storage storage, String label) {
+	public CrateContainer(PlayerEntity player, int synchId, @Nullable Store storage, String label) {
 		super(player, synchId, storage, label);
 	}
 
 	@Override
-	protected DiscreteStorageServerDelegate createDelegate(ServerPlayerEntity player, Storage storage) {
+	protected DiscreteStorageServerDelegate createDelegate(ServerPlayerEntity player, Store storage) {
 		return new DiscreteStorageServerDelegate(player, storage);
 	}
 }

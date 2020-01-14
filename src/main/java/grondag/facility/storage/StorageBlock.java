@@ -37,7 +37,7 @@ import net.minecraft.world.World;
 import grondag.facility.block.FacilitySpeciesBlock;
 import grondag.facility.block.NeighboredBlockEntity;
 import grondag.fermion.modkeys.api.ModKeys;
-import grondag.fluidity.api.storage.Storage;
+import grondag.fluidity.api.storage.Store;
 import grondag.xm.api.block.XmProperties;
 
 public abstract class StorageBlock extends FacilitySpeciesBlock {
@@ -64,7 +64,7 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 
 		if (blockEntity instanceof StorageBlockEntity) {
 			@SuppressWarnings("rawtypes")
-			final Storage storage = ((StorageBlockEntity)blockEntity).getInternalStorage();
+			final Store storage = ((StorageBlockEntity)blockEntity).getInternalStorage();
 
 			if(storage != null){
 				return (int)(Math.floor(14.0 * storage.usage())) + 1;

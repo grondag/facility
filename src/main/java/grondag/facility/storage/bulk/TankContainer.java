@@ -23,18 +23,18 @@ import net.minecraft.util.Identifier;
 
 import grondag.facility.Facility;
 import grondag.facility.storage.FactilityStorageContainer;
-import grondag.fluidity.api.storage.Storage;
+import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.BulkStorageServerDelegate;
 
 public class TankContainer extends FactilityStorageContainer<BulkStorageServerDelegate> {
 	public static Identifier ID = Facility.REG.id("tank");
 
-	public TankContainer(PlayerEntity player, int synchId, @Nullable Storage storage, String label) {
+	public TankContainer(PlayerEntity player, int synchId, @Nullable Store storage, String label) {
 		super(player, synchId, storage, label);
 	}
 
 	@Override
-	protected BulkStorageServerDelegate createDelegate(ServerPlayerEntity player, Storage storage) {
+	protected BulkStorageServerDelegate createDelegate(ServerPlayerEntity player, Store storage) {
 		return new BulkStorageServerDelegate(player, storage);
 	}
 }

@@ -25,7 +25,7 @@ import grondag.facility.storage.bulk.TankBlockEntity;
 import grondag.facility.storage.bulk.TankContainer;
 import grondag.facility.storage.item.CrateBlockEntity;
 import grondag.facility.storage.item.CrateContainer;
-import grondag.fluidity.api.storage.Storage;
+import grondag.fluidity.api.storage.Store;
 
 public enum Containers {
 	;
@@ -39,7 +39,7 @@ public enum Containers {
 
 			if (be instanceof CrateBlockEntity) {
 				final CrateBlockEntity myBe = (CrateBlockEntity) be;
-				return new CrateContainer(player, syncId, world.isClient ? null : Storage.STORAGE_COMPONENT.get(myBe).get(), label);
+				return new CrateContainer(player, syncId, world.isClient ? null : Store.STORAGE_COMPONENT.get(myBe).get(), label);
 			}
 
 			return null;
@@ -53,7 +53,7 @@ public enum Containers {
 
 			if (be instanceof TankBlockEntity) {
 				final TankBlockEntity myBe = (TankBlockEntity) be;
-				return new CrateContainer(player, syncId, world.isClient ? null : Storage.STORAGE_COMPONENT.get(myBe).get(), label);
+				return new CrateContainer(player, syncId, world.isClient ? null : Store.STORAGE_COMPONENT.get(myBe).get(), label);
 			}
 
 			return null;

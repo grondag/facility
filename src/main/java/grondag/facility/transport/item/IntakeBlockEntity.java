@@ -33,7 +33,7 @@ import net.minecraft.util.math.Direction;
 import grondag.facility.transport.PipeBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.device.BlockComponentContext;
-import grondag.fluidity.api.storage.Storage;
+import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
@@ -82,9 +82,9 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 		targetPos = getPos().offset(face);
 		targetFace = face.getOpposite();
 
-		final Storage storage =  Storage.STORAGE_COMPONENT.get(world, targetPos).get();
+		final Store storage =  Store.STORAGE_COMPONENT.get(world, targetPos).get();
 
-		if(storage != Storage.STORAGE_COMPONENT.absent()) {
+		if(storage != Store.STORAGE_COMPONENT.absent()) {
 			tickHandler = this::handleStorage;
 			return;
 		}
@@ -109,9 +109,9 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 	}
 
 	protected void handleStorage() {
-		final Storage storage =  Storage.STORAGE_COMPONENT.get(world, targetPos).get();
+		final Store storage =  Store.STORAGE_COMPONENT.get(world, targetPos).get();
 
-		if(storage == Storage.STORAGE_COMPONENT.absent()) {
+		if(storage == Store.STORAGE_COMPONENT.absent()) {
 			resetTickHandler();
 			return;
 		}

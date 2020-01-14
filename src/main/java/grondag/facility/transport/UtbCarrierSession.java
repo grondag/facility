@@ -7,7 +7,6 @@ import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.device.DeviceComponent;
 import grondag.fluidity.api.device.DeviceComponentType;
 import grondag.fluidity.api.fraction.Fraction;
-import grondag.fluidity.api.fraction.FractionView;
 import grondag.fluidity.wip.base.transport.BasicCarrier;
 import grondag.fluidity.wip.base.transport.BasicCarrierSession;
 import grondag.fluidity.wip.base.transport.BroadcastConsumer;
@@ -53,7 +52,7 @@ public class UtbCarrierSession extends BasicCarrierSession<UtbCostFunction> {
 		}
 
 		@Override
-		public FractionView apply(Article item, FractionView volume, boolean simulate) {
+		public Fraction apply(Article item, Fraction volume, boolean simulate) {
 			return shouldTransmit() ? super.apply(item, volume, simulate) : Fraction.ZERO;
 		}
 
@@ -74,7 +73,7 @@ public class UtbCarrierSession extends BasicCarrierSession<UtbCostFunction> {
 		}
 
 		@Override
-		public FractionView apply(Article item, FractionView volume, boolean simulate) {
+		public Fraction apply(Article item, Fraction volume, boolean simulate) {
 			return shouldTransmit() ? super.apply(item, volume, simulate) : Fraction.ZERO;
 		}
 

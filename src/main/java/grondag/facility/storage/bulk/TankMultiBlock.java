@@ -18,19 +18,19 @@ package grondag.facility.storage.bulk;
 import java.util.function.Function;
 
 import grondag.fluidity.api.multiblock.MultiBlockManager;
-import grondag.fluidity.api.storage.Storage;
+import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.multiblock.AbstractBlockEntityMember;
 import grondag.fluidity.base.multiblock.AbstractStorageMultiBlock;
-import grondag.fluidity.base.storage.bulk.AggregateBulkStorage;
+import grondag.fluidity.base.storage.bulk.AggregateBulkStore;
 import grondag.xm.api.connect.species.SpeciesProperty;
 
 public class TankMultiBlock extends AbstractStorageMultiBlock<TankMultiBlock.Member, TankMultiBlock> {
 	public TankMultiBlock() {
-		super(new AggregateBulkStorage());
+		super(new AggregateBulkStore());
 	}
 
-	protected static class Member extends AbstractBlockEntityMember<Member, TankMultiBlock, Storage, TankBlockEntity> {
-		public Member(TankBlockEntity blockEntity, Function<TankBlockEntity, Storage> componentFunction) {
+	protected static class Member extends AbstractBlockEntityMember<Member, TankMultiBlock, Store, TankBlockEntity> {
+		public Member(TankBlockEntity blockEntity, Function<TankBlockEntity, Store> componentFunction) {
 			super(blockEntity, componentFunction);
 		}
 
@@ -53,6 +53,6 @@ public class TankMultiBlock extends AbstractStorageMultiBlock<TankMultiBlock.Mem
 		}
 	}
 
-	protected static final MultiBlockManager<Member, TankMultiBlock, Storage> DEVICE_MANAGER = MultiBlockManager.create(
+	protected static final MultiBlockManager<Member, TankMultiBlock, Store> DEVICE_MANAGER = MultiBlockManager.create(
 			TankMultiBlock::new, (Member a, Member b) -> a != null && a.canConnect(b));
 }

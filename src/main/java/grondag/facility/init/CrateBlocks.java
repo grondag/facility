@@ -30,9 +30,9 @@ import grondag.facility.storage.item.CrateBlockEntity;
 import grondag.facility.storage.item.CreativeCrateBlockEntity;
 import grondag.facility.storage.item.CreativeICrateBlock;
 import grondag.fluidity.api.article.Article;
-import grondag.fluidity.api.storage.Storage;
-import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStorage;
-import grondag.fluidity.base.storage.discrete.SlottedInventoryStorage;
+import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStore;
+import grondag.fluidity.base.storage.discrete.SlottedInventoryStore;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
@@ -49,14 +49,14 @@ public enum CrateBlocks {
 	public static final CrateBlock CRATE = REG.block("crate", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::crateBe));
 	public static final BlockEntityType<CrateBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", CrateBlocks::crateBe, CRATE);
 	static CrateBlockEntity crateBe() {
-		return new CrateBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStorage(2048).filter(FILTER_NESTING), "CRATE ");
+		return new CrateBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStore(2048).filter(FILTER_NESTING), "CRATE ");
 	}
 
 
 	public static final CrateBlock SLOTTED_CRATE = REG.block("slotted_crate", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::slottedBe));
 	public static final BlockEntityType<CrateBlockEntity> SLOTTED_CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("slotted_crate", CrateBlocks::slottedBe, SLOTTED_CRATE);
 	static CrateBlockEntity slottedBe() {
-		return new CrateBlockEntity(SLOTTED_CRATE_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStorage(32).filter(FILTER_NESTING), "SLOTTED CRATE ");
+		return new CrateBlockEntity(SLOTTED_CRATE_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStore(32).filter(FILTER_NESTING), "SLOTTED CRATE ");
 	}
 
 
@@ -71,10 +71,10 @@ public enum CrateBlocks {
 	static {
 		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(CRATE, SLOTTED_CRATE, CREATIVE_CRATE);
 
-		Storage.STORAGE_COMPONENT.addProvider(ctx -> Storage.CREATIVE, CREATIVE_CRATE);
-		Storage.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> Storage.CREATIVE, CREATIVE_CRATE);
-		Storage.STORAGE_COMPONENT.addProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), CRATE, SLOTTED_CRATE);
-		Storage.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), CRATE, SLOTTED_CRATE);
+		Store.STORAGE_COMPONENT.addProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
+		Store.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
+		Store.STORAGE_COMPONENT.addProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), CRATE, SLOTTED_CRATE);
+		Store.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), CRATE, SLOTTED_CRATE);
 
 		final XmPaint basePaint = Textures.crateBaseFinder(2).find();
 

@@ -27,16 +27,16 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-import grondag.fluidity.api.storage.Storage;
+import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.AbstractStorageServerDelegate;
 import grondag.fluidity.base.synch.StorageContainer;
 
 public abstract class FactilityStorageContainer<T extends AbstractStorageServerDelegate<?>> extends Container implements StorageContainer {
-	protected final @Nullable Storage storage;
+	protected final @Nullable Store storage;
 	protected String label;
 	protected T delegate;
 
-	public FactilityStorageContainer(PlayerEntity player, int synchId, @Nullable Storage storage, String label) {
+	public FactilityStorageContainer(PlayerEntity player, int synchId, @Nullable Store storage, String label) {
 		super(null, synchId);
 		this.storage = storage;
 		this.label = label;
@@ -57,7 +57,7 @@ public abstract class FactilityStorageContainer<T extends AbstractStorageServerD
 		}
 	}
 
-	protected abstract T createDelegate(ServerPlayerEntity player, Storage storage);
+	protected abstract T createDelegate(ServerPlayerEntity player, Store storage);
 
 	@Override
 	public boolean canUse(PlayerEntity playerEntity) {
@@ -65,7 +65,7 @@ public abstract class FactilityStorageContainer<T extends AbstractStorageServerD
 	}
 
 	@Override
-	public Storage getStorage() {
+	public Store getStorage() {
 		return storage;
 	}
 

@@ -36,7 +36,7 @@ import grondag.facility.Facility;
 import grondag.facility.storage.item.BinBlockEntity;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.StoredArticleView;
-import grondag.fluidity.api.storage.FixedStorage;
+import grondag.fluidity.api.storage.FixedStore;
 
 public enum BinActionC2S {
 	;
@@ -81,7 +81,7 @@ public enum BinActionC2S {
 			return;
 		}
 
-		final FixedStorage storage = (FixedStorage) ((BinBlockEntity) be).getInternalStorage();
+		final FixedStore storage = (FixedStore) ((BinBlockEntity) be).getInternalStorage();
 		final StoredArticleView view = storage.view(handle);
 
 		if(view == null) {

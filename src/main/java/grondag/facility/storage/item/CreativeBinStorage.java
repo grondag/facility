@@ -25,13 +25,13 @@ import net.minecraft.nbt.ListTag;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.storage.FixedArticleFunction;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
-import grondag.fluidity.base.storage.discrete.AbstractDiscreteStorage;
-import grondag.fluidity.base.storage.discrete.DividedDiscreteStorage;
-import grondag.fluidity.base.storage.discrete.FixedDiscreteStorage;
+import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
+import grondag.fluidity.base.storage.discrete.DividedDiscreteStore;
+import grondag.fluidity.base.storage.discrete.FixedDiscreteStore;
 import grondag.fluidity.base.storage.helper.FixedArticleManager;
 
 @API(status = Status.EXPERIMENTAL)
-public class CreativeBinStorage extends AbstractDiscreteStorage<CreativeBinStorage> implements FixedDiscreteStorage {
+public class CreativeBinStorage extends AbstractDiscreteStore<CreativeBinStorage> implements FixedDiscreteStore {
 	protected final int divisionCount;
 	protected final long capacityPerDivision;
 
@@ -66,7 +66,7 @@ public class CreativeBinStorage extends AbstractDiscreteStorage<CreativeBinStora
 		return new Consumer();
 	}
 
-	protected class Consumer extends AbstractDiscreteStorage<DividedDiscreteStorage>.Consumer {
+	protected class Consumer extends AbstractDiscreteStore<DividedDiscreteStore>.Consumer {
 		@Override
 		public long apply(Article item, long count, boolean simulate) {
 			final StoredDiscreteArticle a = articles.get(item);
@@ -107,7 +107,7 @@ public class CreativeBinStorage extends AbstractDiscreteStorage<CreativeBinStora
 		return new Supplier();
 	}
 
-	protected class Supplier extends AbstractDiscreteStorage<DividedDiscreteStorage>.Supplier {
+	protected class Supplier extends AbstractDiscreteStore<DividedDiscreteStore>.Supplier {
 		@Override
 		public long apply(Article item, long count, boolean simulate) {
 			Preconditions.checkArgument(count >= 0, "Request to supply negative items. (%s)", count);
@@ -155,7 +155,7 @@ public class CreativeBinStorage extends AbstractDiscreteStorage<CreativeBinStora
 				}
 			}
 
-			result.put(AbstractDiscreteStorage.TAG_ITEMS, list);
+			result.put(AbstractDiscreteStore.TAG_ITEMS, list);
 		}
 
 		return result;
@@ -165,8 +165,8 @@ public class CreativeBinStorage extends AbstractDiscreteStorage<CreativeBinStora
 	public void readTag(CompoundTag tag) {
 		clear();
 
-		if(tag.contains(AbstractDiscreteStorage.TAG_ITEMS)) {
-			final ListTag list = tag.getList(AbstractDiscreteStorage.TAG_ITEMS, 10);
+		if(tag.contains(AbstractDiscreteStore.TAG_ITEMS)) {
+			final ListTag list = tag.getList(AbstractDiscreteStore.TAG_ITEMS, 10);
 			final int limit = list.size();
 			final StoredDiscreteArticle lookup = new StoredDiscreteArticle();
 

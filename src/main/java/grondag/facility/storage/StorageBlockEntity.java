@@ -16,25 +16,25 @@ import grondag.facility.block.CarrierSessionBlockEntity;
 import grondag.fermion.varia.Base32Namer;
 import grondag.fluidity.api.multiblock.MultiBlockManager;
 import grondag.fluidity.api.multiblock.MultiBlockMember;
-import grondag.fluidity.api.storage.Storage;
-import grondag.fluidity.base.storage.AbstractStorage;
-import grondag.fluidity.base.storage.ForwardingStorage;
+import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.storage.AbstractStore;
+import grondag.fluidity.base.storage.ForwardingStore;
 
 @SuppressWarnings("rawtypes")
 public abstract class StorageBlockEntity<T extends StorageClientState, U extends MultiBlockMember> extends CarrierSessionBlockEntity implements RenderAttachmentBlockEntity, BlockEntityClientSerializable  {
 	public static final String TAG_STORAGE = "storage";
 	public static final String TAG_LABEL = "label";
 
-	protected final Storage storage;
-	public final ForwardingStorage wrapper = new ForwardingStorage();
+	protected final Store storage;
+	public final ForwardingStore wrapper = new ForwardingStore();
 	protected String label = "UNKNOWN";
 	protected T clientState;
 	protected final U member;
 
-	public StorageBlockEntity(BlockEntityType<? extends StorageBlockEntity> type, Supplier<Storage> storageSupplier, String labelRoot) {
+	public StorageBlockEntity(BlockEntityType<? extends StorageBlockEntity> type, Supplier<Store> storageSupplier, String labelRoot) {
 		super(type);
 		storage = storageSupplier.get();
-		((AbstractStorage) storage).onDirty(this::markForSave);
+		((AbstractStore) storage).onDirty(this::markForSave);
 		wrapper.setWrapped(storage);
 		label = labelRoot + Base32Namer.makeFilteredName(ThreadLocalRandom.current().nextLong());
 		member = createMember();
@@ -88,11 +88,11 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	}
 
 	/** Do not call on client - will not crash but wastes memory */
-	public Storage getInternalStorage() {
+	public Store getInternalStorage() {
 		return storage;
 	}
 
-	public Storage getEffectiveStorage() {
+	public Store getEffectiveStorage() {
 		return wrapper;
 	}
 

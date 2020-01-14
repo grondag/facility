@@ -26,12 +26,12 @@ import net.minecraft.util.math.Direction;
 import grondag.facility.storage.StorageBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.multiblock.MultiBlockManager;
-import grondag.fluidity.api.storage.Storage;
+import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 
 public class CrateBlockEntity extends StorageBlockEntity<CrateClientState, CrateMultiBlock.Member> {
-	public CrateBlockEntity(BlockEntityType<? extends CrateBlockEntity> type, Supplier<Storage> storageSupplier, String labelRoot) {
+	public CrateBlockEntity(BlockEntityType<? extends CrateBlockEntity> type, Supplier<Store> storageSupplier, String labelRoot) {
 		super(type, storageSupplier, labelRoot);
 	}
 

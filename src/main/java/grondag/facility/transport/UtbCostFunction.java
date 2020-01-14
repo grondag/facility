@@ -3,7 +3,6 @@ package grondag.facility.transport;
 import grondag.fermion.world.WorldTaskManager;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.fraction.Fraction;
-import grondag.fluidity.api.fraction.FractionView;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 import grondag.fluidity.wip.base.transport.CarrierCostFunction;
 
@@ -68,14 +67,14 @@ public class UtbCostFunction implements CarrierCostFunction {
 	}
 
 	@Override
-	public FractionView apply(CarrierSession sender, Article item, FractionView volume, boolean simulate) {
+	public Fraction apply(CarrierSession sender, Article item, Fraction volume, boolean simulate) {
 		if(volume.isZero()) {
 			return volume.toImmutable();
 		}
 
 		refresh();
 
-		final FractionView result = volume.ceil() > balance ? (balance > 0 ? Fraction.of(balance) : Fraction.ZERO) : volume;
+		final Fraction result = volume.ceil() > balance ? (balance > 0 ? Fraction.of(balance) : Fraction.ZERO) : volume;
 
 		if(!simulate && !result.isZero()) {
 			balance -= result.whole();
