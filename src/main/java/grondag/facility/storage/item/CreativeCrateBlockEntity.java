@@ -84,7 +84,7 @@ public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implemen
 
 	@Override
 	protected CarrierSession getSession(BlockEntity be, BlockPos neighborPos, Direction neighborSide) {
-		return CarrierProvider.CARRIER_PROVIDER_COMPONENT.get(be).applyIfPresent(neighborSide, p ->
-		p.attachIfPresent(ArticleType.ITEM, this, ct -> ct.get(this)));
+		return CarrierProvider.CARRIER_PROVIDER_COMPONENT.getAccess(be).applyIfPresent(neighborSide, p ->
+		p.attachIfPresent(ArticleType.ITEM, this, ct -> ct.getAccess(this)));
 	}
 }

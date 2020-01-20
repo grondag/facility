@@ -59,8 +59,8 @@ public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMul
 
 	@Override
 	protected CarrierSession getSession(BlockEntity be, BlockPos neighborPos, Direction neighborSide) {
-		return CarrierProvider.CARRIER_PROVIDER_COMPONENT.get(be).applyIfPresent(neighborSide, p ->
-		p.attachIfPresent(ArticleType.FLUID, this, ct -> ct.get(this)));
+		return CarrierProvider.CARRIER_PROVIDER_COMPONENT.getAccess(be).applyIfPresent(neighborSide, p ->
+		p.attachIfPresent(ArticleType.FLUID, this, ct -> ct.getAccess(this)));
 	}
 
 	@Override

@@ -71,8 +71,8 @@ public abstract class NeighboredBlockEntity<T> extends BlockEntity {
 	protected abstract void onClose(T existing);
 
 	@Override
-	public void setWorld(World world, BlockPos blockPos) {
-		super.setWorld(world, blockPos);
+	public void setLocation(World world, BlockPos blockPos) {
+		super.setLocation(world, blockPos);
 		enqueUpdate();
 	}
 

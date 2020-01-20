@@ -71,10 +71,10 @@ public enum CrateBlocks {
 	static {
 		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(CRATE, SLOTTED_CRATE, CREATIVE_CRATE);
 
-		Store.STORAGE_COMPONENT.addProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
-		Store.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
-		Store.STORAGE_COMPONENT.addProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), CRATE, SLOTTED_CRATE);
-		Store.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), CRATE, SLOTTED_CRATE);
+		Store.STORAGE_COMPONENT.registerProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
+		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
+		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), CRATE, SLOTTED_CRATE);
+		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), CRATE, SLOTTED_CRATE);
 
 		final XmPaint basePaint = Textures.crateBaseFinder(2).find();
 

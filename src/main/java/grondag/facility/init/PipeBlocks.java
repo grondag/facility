@@ -55,7 +55,7 @@ public enum PipeBlocks {
 	}
 
 	static {
-		CarrierProvider.CARRIER_PROVIDER_COMPONENT.addProvider(ctx -> ((PipeBlockEntity) ctx.blockEntity()).getCarrierProvider(ctx), UTB1_PIPE, UTB1_STRAIGHT_PIPE, UTB1_INTAKE);
+		CarrierProvider.CARRIER_PROVIDER_COMPONENT.registerProvider(ctx -> ((PipeBlockEntity) ctx.blockEntity()).getCarrierProvider(ctx), UTB1_PIPE, UTB1_STRAIGHT_PIPE, UTB1_INTAKE);
 
 		XmBlockRegistry.addBlockStates(UTB1_PIPE, bs -> PrimitiveStateFunction.builder()
 				.withJoin(PipeBlock.JOIN_TEST)

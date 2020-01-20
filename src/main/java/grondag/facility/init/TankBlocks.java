@@ -49,8 +49,8 @@ public enum TankBlocks {
 
 	static {
 		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(TANK);
-		Store.STORAGE_COMPONENT.addProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage(), TANK);
-		Store.INTERNAL_STORAGE_COMPONENT.addProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getInternalStorage(), TANK);
+		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage(), TANK);
+		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getInternalStorage(), TANK);
 
 		final XmPaint basePaint = XmPaint.finder()
 				.textureDepth(2)

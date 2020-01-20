@@ -53,7 +53,7 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 
 	public IntakeBlockEntity(BlockEntityType<IntakeBlockEntity> type) {
 		super(type);
-		internalSession = carrier.attach(this, ct -> ct.get(this));
+		internalSession = carrier.attach(this, ct -> ct.getAccess(this));
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 		targetPos = getPos().offset(face);
 		targetFace = face.getOpposite();
 
-		final Store storage =  Store.STORAGE_COMPONENT.get(world, targetPos).get();
+		final Store storage =  Store.STORAGE_COMPONENT.getAccess(world, targetPos).get();
 
 		if(storage != Store.STORAGE_COMPONENT.absent()) {
 			tickHandler = this::handleStorage;
@@ -109,7 +109,7 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 	}
 
 	protected void handleStorage() {
-		final Store storage =  Store.STORAGE_COMPONENT.get(world, targetPos).get();
+		final Store storage =  Store.STORAGE_COMPONENT.getAccess(world, targetPos).get();
 
 		if(storage == Store.STORAGE_COMPONENT.absent()) {
 			resetTickHandler();

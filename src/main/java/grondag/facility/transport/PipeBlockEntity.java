@@ -79,9 +79,9 @@ public class PipeBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public void setWorld(World world, BlockPos blockPos) {
+	public void setLocation(World world, BlockPos blockPos) {
 		unregisterDevice();
-		super.setWorld(world, blockPos);
+		super.setLocation(world, blockPos);
 		registerDevice();
 		enqueUpdate();
 	}

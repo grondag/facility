@@ -4,7 +4,7 @@ import java.util.function.Function;
 
 import grondag.fermion.world.WorldTaskManager;
 import grondag.fluidity.api.article.Article;
-import grondag.fluidity.api.device.DeviceComponent;
+import grondag.fluidity.api.device.DeviceComponentAccess;
 import grondag.fluidity.api.device.DeviceComponentType;
 import grondag.fluidity.api.fraction.Fraction;
 import grondag.fluidity.wip.base.transport.BasicCarrier;
@@ -16,7 +16,7 @@ public class UtbCarrierSession extends BasicCarrierSession<UtbCostFunction> {
 	long lastTick = 0;
 	boolean shouldTransmit = false;
 
-	public UtbCarrierSession(BasicCarrier<UtbCostFunction> carrier, Function<DeviceComponentType<?>, DeviceComponent<?>> componentFunction) {
+	public UtbCarrierSession(BasicCarrier<UtbCostFunction> carrier, Function<DeviceComponentType<?>, DeviceComponentAccess<?>> componentFunction) {
 		super(carrier, componentFunction);
 	}
 

@@ -2,7 +2,7 @@ package grondag.facility.transport;
 
 import java.util.function.Function;
 
-import grondag.fluidity.api.device.DeviceComponent;
+import grondag.fluidity.api.device.DeviceComponentAccess;
 import grondag.fluidity.api.device.DeviceComponentType;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 import grondag.fluidity.wip.api.transport.CarrierType;
@@ -17,7 +17,7 @@ public class UtbSubCarrier extends SubCarrier<UtbCostFunction> {
 	}
 
 	@Override
-	protected CarrierSession createSession(Function<DeviceComponentType<?>, DeviceComponent<?>> componentFunction) {
+	protected CarrierSession createSession(Function<DeviceComponentType<?>, DeviceComponentAccess<?>> componentFunction) {
 		return new UtbCarrierSession(this, componentFunction);
 	}
 
