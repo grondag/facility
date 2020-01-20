@@ -22,10 +22,12 @@ import net.minecraft.block.entity.BlockEntityType;
 
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
 
+import grondag.facility.storage.bulk.PortableTankItem;
 import grondag.facility.storage.bulk.TankBlock;
 import grondag.facility.storage.bulk.TankBlockEntity;
 import grondag.fluidity.api.fraction.Fraction;
 import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.storage.bulk.PortableTank;
 import grondag.fluidity.base.storage.bulk.SimpleTank;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.xm.api.block.XmBlockRegistry;
@@ -47,10 +49,13 @@ public enum TankBlocks {
 		return new TankBlockEntity(TANK_BLOCK_ENTITY_TYPE, () -> new SimpleTank(Fraction.of(32)).filter(CrateBlocks.FILTER_NESTING), "TANK");
 	}
 
+	public static final PortableTankItem PORTABLE_TANK_ITEM = REG.item("portable_tank", new PortableTankItem(REG.itemSettings().maxCount(1)));
+
 	static {
 		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(TANK);
 		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage(), TANK);
 		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getInternalStorage(), TANK);
+		Store.STORAGE_COMPONENT.registerProvider(ctx -> new PortableTank(Fraction.of(16), "tank", ctx), PORTABLE_TANK_ITEM);
 
 		final XmPaint basePaint = XmPaint.finder()
 				.textureDepth(2)
