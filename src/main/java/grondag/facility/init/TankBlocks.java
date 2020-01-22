@@ -19,15 +19,16 @@ import static grondag.facility.Facility.REG;
 
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.item.Item;
 
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
 
+import grondag.facility.storage.bulk.PortableTank;
 import grondag.facility.storage.bulk.PortableTankItem;
 import grondag.facility.storage.bulk.TankBlock;
 import grondag.facility.storage.bulk.TankBlockEntity;
 import grondag.fluidity.api.fraction.Fraction;
 import grondag.fluidity.api.storage.Store;
-import grondag.fluidity.base.storage.bulk.PortableTank;
 import grondag.fluidity.base.storage.bulk.SimpleTank;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.xm.api.block.XmBlockRegistry;
@@ -43,19 +44,21 @@ import grondag.xm.api.texture.XmTextures;
 public enum TankBlocks {
 	;
 
-	public static final TankBlock TANK = REG.block("tank", new TankBlock(FabricBlockSettings.of(Material.METAL).strength(1, 1).build(), TankBlocks::tankBe, false));
+	public static final TankBlock TANK = REG.blockNoItem("tank", new TankBlock(FabricBlockSettings.of(Material.METAL).strength(1, 1).build(), TankBlocks::tankBe, false));
 	public static final BlockEntityType<TankBlockEntity> TANK_BLOCK_ENTITY_TYPE = REG.blockEntityType("tank", TankBlocks::tankBe, TANK);
 	private static TankBlockEntity tankBe() {
 		return new TankBlockEntity(TANK_BLOCK_ENTITY_TYPE, () -> new SimpleTank(Fraction.of(32)).filter(CrateBlocks.FILTER_NESTING), "TANK");
 	}
 
-	public static final PortableTankItem PORTABLE_TANK_ITEM = REG.item("portable_tank", new PortableTankItem(REG.itemSettings().maxCount(1)));
+	public static final PortableTankItem PORTABLE_TANK_ITEM = REG.item("tank", new PortableTankItem(TANK, REG.itemSettings().maxCount(1)));
 
 	static {
+		PORTABLE_TANK_ITEM.appendBlocks(Item.BLOCK_ITEMS, PORTABLE_TANK_ITEM);
+
 		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(TANK);
 		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage(), TANK);
 		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getInternalStorage(), TANK);
-		Store.STORAGE_COMPONENT.registerProvider(ctx -> new PortableTank(Fraction.of(16), "tank", ctx), PORTABLE_TANK_ITEM);
+		Store.STORAGE_COMPONENT.registerProvider(ctx -> new PortableTank(Fraction.of(32), ctx), PORTABLE_TANK_ITEM);
 
 		final XmPaint basePaint = XmPaint.finder()
 				.textureDepth(2)

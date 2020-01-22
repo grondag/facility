@@ -27,8 +27,8 @@ import net.minecraft.world.World;
 
 import grondag.facility.block.AbstractFunctionalBlock;
 
-public class CreativeICrateBlock extends AbstractFunctionalBlock {
-	public CreativeICrateBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
+public class CreativeCrateBlock extends AbstractFunctionalBlock {
+	public CreativeCrateBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
 		super(settings, beFactory);
 	}
 

@@ -50,6 +50,7 @@ public enum Textures { ;
 				.textureColor(2, color)
 				.find();
 	}
+
 	public static XmPaintFinder crateBaseFinder(int depth) {
 		return XmPaint.finder()
 				.textureDepth(depth)

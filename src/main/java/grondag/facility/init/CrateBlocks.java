@@ -27,8 +27,8 @@ import net.fabricmc.fabric.api.block.FabricBlockSettings;
 
 import grondag.facility.storage.item.CrateBlock;
 import grondag.facility.storage.item.CrateBlockEntity;
+import grondag.facility.storage.item.CreativeCrateBlock;
 import grondag.facility.storage.item.CreativeCrateBlockEntity;
-import grondag.facility.storage.item.CreativeICrateBlock;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStore;
@@ -38,9 +38,11 @@ import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.modelstate.primitive.PrimitiveStateFunction;
+import grondag.xm.api.paint.PaintBlendMode;
 import grondag.xm.api.paint.XmPaint;
 import grondag.xm.api.primitive.simple.Cube;
 import grondag.xm.api.primitive.simple.CubeWithFace;
+import grondag.xm.api.texture.XmTextures;
 
 @SuppressWarnings("unchecked")
 public enum CrateBlocks {
@@ -60,21 +62,27 @@ public enum CrateBlocks {
 	}
 
 
-	public static final CreativeICrateBlock CREATIVE_CRATE = REG.block("creative_crate", new CreativeICrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::itemSupplier));
+	public static final CreativeCrateBlock CREATIVE_CRATE = REG.block("creative_crate", new CreativeCrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::itemSupplier));
 	public static final BlockEntityType<CreativeCrateBlockEntity> CREATIVE_CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("creative_crate", CrateBlocks::itemSupplier, CREATIVE_CRATE);
 	static CreativeCrateBlockEntity itemSupplier() {
 		return new CreativeCrateBlockEntity(CREATIVE_CRATE_BLOCK_ENTITY_TYPE, true);
 	}
 
+	public static final CrateBlock HYPER_CRATE = REG.block("hyper_crate", new CrateBlock(FabricBlockSettings.of(Material.METAL).strength(1, 1).build(), CrateBlocks::hyperCrateBe));
+	public static final BlockEntityType<CrateBlockEntity> HYPER_CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("hyper_crate", CrateBlocks::hyperCrateBe, HYPER_CRATE);
+	static CrateBlockEntity hyperCrateBe() {
+		return new CrateBlockEntity(HYPER_CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_NESTING), "HYPERCRATE ");
+	}
+
 	public static final Predicate<Article> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.toItem()).getClass() != CrateBlock.class;
 
 	static {
-		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(CRATE, SLOTTED_CRATE, CREATIVE_CRATE);
+		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(CRATE, SLOTTED_CRATE, CREATIVE_CRATE, HYPER_CRATE);
 
 		Store.STORAGE_COMPONENT.registerProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
 		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
-		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), CRATE, SLOTTED_CRATE);
-		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), CRATE, SLOTTED_CRATE);
+		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
+		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
 
 		final XmPaint basePaint = Textures.crateBaseFinder(2).find();
 
@@ -96,6 +104,18 @@ public enum CrateBlocks {
 
 		XmBlockRegistry.addBlockStates(CREATIVE_CRATE, bs -> PrimitiveStateFunction.builder()
 				.withDefaultState(Cube.INSTANCE.newState().paintAll(Textures.crateBaseFinder(2).textureColor(0, 0xFF00FFFF).find()))
+				.build());
+
+		XmBlockRegistry.addBlockStates(HYPER_CRATE, bs -> PrimitiveStateFunction.builder()
+				.withDefaultState(Cube.INSTANCE.newState().paintAll(
+						XmPaint.finder()
+						.textureDepth(2)
+						.texture(0, XmTextures.TILE_NOISE_LIGHT)
+						.textureColor(0, 0xFFA0A0FF)
+						.texture(1, XmTextures.BORDER_LOGIC)
+						.blendMode(1, PaintBlendMode.TRANSLUCENT)
+						.emissive(1, true)
+						.textureColor(1, 0xFF00FFFF).find()))
 				.build());
 	}
 }

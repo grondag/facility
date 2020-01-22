@@ -9,6 +9,8 @@
 	"block.facility.utb1_intake.desc": "Pulls items onto UTB1 carrier from a single block/side.",
 	"block.facility.crate": "Crate - Standard",
 	"block.facility.crate.desc": "Holds 2048 items in any combination.;NOT compatible with hoppers.",
+	"block.facility.hyper_crate": "Hyper Crate",
+	"block.facility.hyper_crate.desc": "It's bigger on the inside.;NOT compatible with hoppers.",
 	"block.facility.slotted_crate": "Slotted Crate - Standard",
 	"block.facility.slotted_crate.desc": "Holds 32 item stacks.;Compatible with hoppers.",
 	"block.facility.creative_crate": "Crate - Creative",

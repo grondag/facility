@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.advancement.criterion.Criterions;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FluidDrainable;
 import net.minecraft.block.FluidFillable;
@@ -14,8 +15,9 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.BaseFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.Item;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsageContext;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
@@ -25,6 +27,7 @@ import net.minecraft.stat.Stats;
 import net.minecraft.tag.FluidTags;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
@@ -37,11 +40,22 @@ import net.minecraft.world.World;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.api.transact.Transaction;
-import grondag.fluidity.base.storage.bulk.PortableTank;
 
-public class PortableTankItem extends Item {
-	public PortableTankItem(Settings settings) {
-		super(settings);
+public class PortableTankItem extends BlockItem {
+	public static final PortableTank DISPLAY_TANK = new  PortableTank();
+
+	public PortableTankItem(Block block, Settings settings) {
+		super(block, settings);
+	}
+
+	@Override
+	public ActionResult useOnBlock(ItemUsageContext ctx) {
+		if(!ctx.getPlayer().isSneaking()) {
+			if(use(ctx.getWorld(), ctx.getPlayer(), ctx.getHand()).getResult().isAccepted()) {
+				return ActionResult.SUCCESS;
+			}
+		}
+		return super.useOnBlock(ctx);
 	}
 
 	@Override
@@ -162,8 +176,7 @@ public class PortableTankItem extends Item {
 	public void appendTooltip(ItemStack itemStack, World world, List<Text> list, TooltipContext tooltipContext) {
 		super.appendTooltip(itemStack, world, list, tooltipContext);
 		// TODO: localize
-		list.add(new LiteralText(PortableTank.getAmount(itemStack, "tank").toString()));
+		DISPLAY_TANK.readFromStack(itemStack);
+		list.add(new LiteralText(DISPLAY_TANK.amount().toString()));
 	}
-
-
 }
