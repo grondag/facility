@@ -142,4 +142,9 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 			}
 		}
 	}
+
+	@Override
+	protected void writeCustomStackData(ItemStack stack, Store store) {
+		PortableTank.writeDamage(stack, store);
+	}
 }

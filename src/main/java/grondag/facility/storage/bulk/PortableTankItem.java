@@ -16,6 +16,7 @@ import net.minecraft.fluid.BaseFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.ItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.particle.ParticleTypes;
@@ -29,17 +30,19 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.RayTraceContext;
 import net.minecraft.world.World;
 
+import grondag.facility.Facility;
+import grondag.facility.init.TankBlocks;
 import grondag.fluidity.api.article.Article;
+import grondag.fluidity.api.fraction.Fraction;
 import grondag.fluidity.api.storage.Store;
-import grondag.fluidity.api.transact.Transaction;
 
 public class PortableTankItem extends BlockItem {
 	public static final PortableTank DISPLAY_TANK = new  PortableTank();
@@ -62,15 +65,11 @@ public class PortableTankItem extends BlockItem {
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
 		final ItemStack itemStack = playerEntity.getStackInHand(hand);
 
-		if(world.isClient) {
+		if(itemStack.getItem() != TankBlocks.PORTABLE_TANK_ITEM) {
 			return TypedActionResult.pass(itemStack);
 		}
 
-		final Store store = Store.STORAGE_COMPONENT.getAccessForHeldItem(() -> playerEntity.getStackInHand(hand), s -> playerEntity.setStackInHand(hand, s), (ServerPlayerEntity) playerEntity).get();
-
-		if(store == Store.STORAGE_COMPONENT.absent()) {
-			return TypedActionResult.pass(itemStack);
-		}
+		final Store store = new PortableTank(Fraction.of(32), () -> playerEntity.getStackInHand(hand), s -> playerEntity.setStackInHand(hand, s));
 
 		final HitResult hitResult = rayTrace(world, playerEntity, RayTraceContext.FluidHandling.SOURCE_ONLY);
 
@@ -81,51 +80,86 @@ public class PortableTankItem extends BlockItem {
 		} else {
 			final BlockHitResult blockHitResult = (BlockHitResult)hitResult;
 			final BlockPos onPos = blockHitResult.getBlockPos();
-			final Direction direction = blockHitResult.getSide();
-			final BlockPos inPos = onPos.offset(direction);
 			final Fluid tankFluid = store.view(0).article().toFluid();
+			final BlockState blockState = world.getBlockState(onPos);
 
-			if (world.canPlayerModifyAt(playerEntity, onPos) && playerEntity.canPlaceOn(inPos, direction, itemStack)) {
+			//TODO: mixin to cauldron block?
+			// Cauldron onUse method consumes block item uses that aren't shulker boxes
+			// when the cauldron is full, so we don't get here in that case.
 
-				final BlockState blockState = world.getBlockState(onPos);
+			//			if(blockState.getBlock() == Blocks.CAULDRON) {
+			//				final int cauldronLevel = blockState.get(CauldronBlock.LEVEL);
+			//
+			//				if(store.isEmpty()) {
+			//					if(cauldronLevel > 0) {
+			//						final int drained = (int) store.getConsumer().apply(Article.of(Fluids.WATER), cauldronLevel, 3, false);
+			//
+			//						if(drained != 0) {
+			//							world.setBlockState(onPos, blockState.with(CauldronBlock.LEVEL, cauldronLevel - drained));
+			//							return TypedActionResult.success(playerEntity.getStackInHand(hand));
+			//						}
+			//					}
+			//				} else if(tankFluid == Fluids.WATER) {
+			//					if(cauldronLevel == 3) {
+			//						if(store.getConsumer().apply(Article.of(Fluids.WATER), 1, false) == 1) {
+			//							world.setBlockState(onPos, blockState.with(CauldronBlock.LEVEL, 0));
+			//							return TypedActionResult.success(playerEntity.getStackInHand(hand));
+			//						}
+			//					} else {
+			//						final int filled = (int) store.getSupplier().apply(Article.of(Fluids.WATER),  3 - cauldronLevel, 3, false);
+			//
+			//						if(filled != 0) {
+			//							world.setBlockState(onPos, blockState.with(CauldronBlock.LEVEL, cauldronLevel + filled));
+			//							return TypedActionResult.success(playerEntity.getStackInHand(hand));
+			//						}
+			//					}
+			//
+			//				}
+			//
+			//				return TypedActionResult.consume(playerEntity.getStackInHand(hand));
+			//			}
 
-				if (!store.isFull()) {
-					if (blockState.getBlock() instanceof FluidDrainable) {
-						final Fluid fluid = ((FluidDrainable)blockState.getBlock()).tryDrainFluid(world, onPos, blockState);
+			final Fluid worldFluid = blockState.getFluidState().getFluid();
 
-						if (fluid != Fluids.EMPTY && store.getConsumer().apply(Article.of(fluid), 1, false) == 1) {
+			if (world.canPlayerModifyAt(playerEntity, onPos)) {
+				if (blockState.getBlock() instanceof FluidDrainable && worldFluid != Fluids.EMPTY && store.getConsumer().apply(Article.of(worldFluid), 1, true) == 1) {
+					final Fluid fluid = ((FluidDrainable)blockState.getBlock()).tryDrainFluid(world, onPos, blockState);
 
-							playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
-							world.playSound(null, onPos, fluid.matches(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_FILL_LAVA : SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
-
-							return TypedActionResult.success(playerEntity.getStackInHand(hand));
+					if (fluid != Fluids.EMPTY) {
+						if(store.getConsumer().apply(Article.of(fluid), 1, false) != 1) {
+							Facility.LOG.warn("Tank item did not accept fluid when expected. Fluid drained from world has been lost. This is a bug.");
 						}
+
+						playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
+						world.playSound(playerEntity, onPos, fluid.matches(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_FILL_LAVA : SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
+
+						return TypedActionResult.success(playerEntity.getStackInHand(hand));
 					}
 				}
 
-				final BlockPos blockPos3 = blockState.getBlock() instanceof FluidFillable && tankFluid == Fluids.WATER ? onPos : inPos;
+				if(store.getSupplier().apply(Article.of(tankFluid), 1, true) == 1) {
+					if(worldFluid == Fluids.EMPTY) {
+						final BlockPos placePos = blockState.getBlock() instanceof FluidFillable && tankFluid == Fluids.WATER ? onPos : onPos.offset(blockHitResult.getSide());
 
-				try(Transaction tx = Transaction.open()) {
-					tx.enlist(store);
-
-					if(store.getSupplier().apply(Article.of(tankFluid), 1, false) == 1) {
-						if (placeFluid(tankFluid, playerEntity, world, blockPos3, blockHitResult)) {
-							tx.commit();
+						if (placeFluid(tankFluid, playerEntity, world, placePos, blockHitResult)) {
+							if(store.getSupplier().apply(Article.of(tankFluid), 1, false) != 1) {
+								Facility.LOG.warn("Tank item did not supply fluid when expected. Fluid added to world without draining tank. This is a bug.");
+							}
 
 							if (playerEntity instanceof ServerPlayerEntity) {
-								Criterions.PLACED_BLOCK.trigger((ServerPlayerEntity)playerEntity, blockPos3, itemStack);
+								Criterions.PLACED_BLOCK.trigger((ServerPlayerEntity)playerEntity, placePos, itemStack);
 							}
 
 							playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
 							return TypedActionResult.success(playerEntity.getStackInHand(hand));
-						} else {
-							tx.rollback();
 						}
 					}
+
+					return TypedActionResult.consume(playerEntity.getStackInHand(hand));
 				}
 			}
 
-			return TypedActionResult.fail(itemStack);
+			return TypedActionResult.pass(itemStack);
 		}
 	}
 
@@ -135,16 +169,16 @@ public class PortableTankItem extends BlockItem {
 		} else {
 			final BlockState blockState = world.getBlockState(blockPos);
 			final Material material = blockState.getMaterial();
-			final boolean bl = blockState.canBucketPlace(fluid);
+			final boolean canPlace = blockState.canBucketPlace(fluid);
 
-			if (!blockState.isAir() && !bl && (!(blockState.getBlock() instanceof FluidFillable) || !((FluidFillable)blockState.getBlock()).canFillWithFluid(world, blockPos, blockState, fluid))) {
-				return blockHitResult == null ? false : placeFluid(fluid, playerEntity, world, blockHitResult.getBlockPos().offset(blockHitResult.getSide()), (BlockHitResult)null);
+			if (!blockState.isAir() && !canPlace && (!(blockState.getBlock() instanceof FluidFillable) || !((FluidFillable)blockState.getBlock()).canFillWithFluid(world, blockPos, blockState, fluid))) {
+				return blockHitResult == null ? false : placeFluid(fluid, playerEntity, world, blockHitResult.getBlockPos().offset(blockHitResult.getSide()), null);
 			} else {
 				if (world.dimension.doesWaterVaporize() && fluid.matches(FluidTags.WATER)) {
 					final int i = blockPos.getX();
 					final int j = blockPos.getY();
 					final int k = blockPos.getZ();
-					world.playSound(null, blockPos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
+					world.playSound(playerEntity, blockPos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
 
 					for(int l = 0; l < 8; ++l) {
 						world.addParticle(ParticleTypes.LARGE_SMOKE, i + Math.random(), j + Math.random(), k + Math.random(), 0.0D, 0.0D, 0.0D);
@@ -154,7 +188,7 @@ public class PortableTankItem extends BlockItem {
 						playEmptyingSound(fluid, playerEntity, world, blockPos);
 					}
 				} else {
-					if (!world.isClient && bl && !material.isLiquid()) {
+					if (!world.isClient && canPlace && !material.isLiquid()) {
 						world.breakBlock(blockPos, true);
 					}
 
@@ -169,7 +203,7 @@ public class PortableTankItem extends BlockItem {
 
 	protected void playEmptyingSound(Fluid fluid, @Nullable PlayerEntity playerEntity, World world, BlockPos blockPos) {
 		final SoundEvent soundEvent = fluid.matches(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_EMPTY_LAVA : SoundEvents.ITEM_BUCKET_EMPTY;
-		world.playSound(null, blockPos, soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+		world.playSound(playerEntity, blockPos, soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
 	}
 
 	@Override
@@ -179,4 +213,12 @@ public class PortableTankItem extends BlockItem {
 		DISPLAY_TANK.readFromStack(itemStack);
 		list.add(new LiteralText(DISPLAY_TANK.amount().toString()));
 	}
+
+	@Override
+	public ItemPropertyGetter getPropertyGetter(Identifier identifier) {
+		// TODO Auto-generated method stub
+		return super.getPropertyGetter(identifier);
+	}
+
+
 }

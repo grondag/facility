@@ -50,7 +50,7 @@ public enum TankBlocks {
 		return new TankBlockEntity(TANK_BLOCK_ENTITY_TYPE, () -> new SimpleTank(Fraction.of(32)).filter(CrateBlocks.FILTER_NESTING), "TANK");
 	}
 
-	public static final PortableTankItem PORTABLE_TANK_ITEM = REG.item("tank", new PortableTankItem(TANK, REG.itemSettings().maxCount(1)));
+	public static final PortableTankItem PORTABLE_TANK_ITEM = REG.item("tank", new PortableTankItem(TANK, REG.itemSettings().maxCount(1).maxDamage(32768)));
 
 	static {
 		PORTABLE_TANK_ITEM.appendBlocks(Item.BLOCK_ITEMS, PORTABLE_TANK_ITEM);

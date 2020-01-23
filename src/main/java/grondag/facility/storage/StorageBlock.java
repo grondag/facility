@@ -95,6 +95,8 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 					stack.setCustomName(new LiteralText(myBlockEntity.getLabel()));
 				}
 
+				writeCustomStackData(stack, myBlockEntity.getInternalStorage());
+
 				final ItemEntity itemEntity = new ItemEntity(world, blockPos.getX(), blockPos.getY(), blockPos.getZ(), stack);
 				itemEntity.setToDefaultPickupDelay();
 				world.spawnEntity(itemEntity);
@@ -102,6 +104,10 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 		}
 
 		super.onBreak(world, blockPos, blockState, playerEntity);
+	}
+
+	protected void writeCustomStackData(ItemStack stack, Store store) {
+
 	}
 
 	@Override
