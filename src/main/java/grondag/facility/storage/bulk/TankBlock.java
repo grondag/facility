@@ -43,6 +43,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.block.BlockAttackInteractionAware;
 
+import grondag.facility.storage.PortableStore;
 import grondag.facility.storage.StorageBlock;
 import grondag.facility.storage.item.CrateBlockEntity;
 import grondag.fluidity.api.storage.Store;
@@ -145,6 +146,6 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 
 	@Override
 	protected void writeCustomStackData(ItemStack stack, Store store) {
-		PortableTank.writeDamage(stack, store);
+		PortableStore.writeDamage(stack, store);
 	}
 }

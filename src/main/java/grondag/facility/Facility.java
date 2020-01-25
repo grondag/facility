@@ -66,6 +66,7 @@ public class Facility implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		FacilityConfig.init();
 		Containers.values();
 		Textures.values();
 		CrateBlocks.values();

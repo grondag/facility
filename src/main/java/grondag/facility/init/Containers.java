@@ -16,6 +16,8 @@
 package grondag.facility.init;
 
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -25,9 +27,9 @@ import grondag.facility.storage.bulk.TankBlockEntity;
 import grondag.facility.storage.bulk.TankContainer;
 import grondag.facility.storage.item.CrateBlockEntity;
 import grondag.facility.storage.item.CrateContainer;
+import grondag.facility.storage.item.PortableCrateItem;
 import grondag.fluidity.api.storage.Store;
 
-@SuppressWarnings("resource")
 public enum Containers {
 	;
 
@@ -44,6 +46,20 @@ public enum Containers {
 			}
 
 			return null;
+		});
+
+		ContainerProviderRegistry.INSTANCE.registerFactory(CrateContainer.ID_ITEM, (syncId, identifier, player, buf) ->  {
+			final Hand hand = Hand.values()[buf.readVarInt()];
+			final String label = buf.readString(1024);
+			final World world = player.getEntityWorld();
+			final ItemStack stack  = player.getStackInHand(hand);
+			final boolean isPortableItem = stack.getItem() instanceof PortableCrateItem;
+			return new CrateContainer(
+					player,
+					syncId,
+					world.isClient || !isPortableItem ? null : ((PortableCrateItem) stack.getItem()).makeStore(player, hand),
+							label,
+							player.getStackInHand(hand));
 		});
 
 		ContainerProviderRegistry.INSTANCE.registerFactory(TankContainer.ID, (syncId, identifier, player, buf) ->  {

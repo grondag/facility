@@ -22,6 +22,8 @@ import java.util.function.Predicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 
 import net.fabricmc.fabric.api.block.FabricBlockSettings;
 
@@ -29,6 +31,7 @@ import grondag.facility.storage.item.CrateBlock;
 import grondag.facility.storage.item.CrateBlockEntity;
 import grondag.facility.storage.item.CreativeCrateBlock;
 import grondag.facility.storage.item.CreativeCrateBlockEntity;
+import grondag.facility.storage.item.PortableCrateItem;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStore;
@@ -37,29 +40,35 @@ import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
+import grondag.xm.api.item.XmItemRegistry;
 import grondag.xm.api.modelstate.primitive.PrimitiveStateFunction;
 import grondag.xm.api.paint.PaintBlendMode;
 import grondag.xm.api.paint.XmPaint;
 import grondag.xm.api.primitive.simple.Cube;
 import grondag.xm.api.primitive.simple.CubeWithFace;
-import grondag.xm.api.texture.XmTextures;
 
 @SuppressWarnings("unchecked")
 public enum CrateBlocks {
 	;
 
-	public static final CrateBlock CRATE = REG.block("crate", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::crateBe));
+	public static final Predicate<Article> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.toItem()).getClass() != CrateBlock.class;
+
+	public static final CrateBlock CRATE = REG.blockNoItem("crate", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::crateBe));
 	public static final BlockEntityType<CrateBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", CrateBlocks::crateBe, CRATE);
 	static CrateBlockEntity crateBe() {
 		return new CrateBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStore(2048).filter(FILTER_NESTING), "CRATE ");
 	}
+	public static final PortableCrateItem PORTABLE_CRATE_ITEM = REG.item("crate_item", new PortableCrateItem(CRATE, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new FlexibleDiscreteStore(2048).filter(FILTER_NESTING)));
+	public static final Item CRATE_ITEM = REG.item("crate", new BlockItem(CRATE, REG.itemSettings()));
 
 
-	public static final CrateBlock SLOTTED_CRATE = REG.block("slotted_crate", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::slottedBe));
+	public static final CrateBlock SLOTTED_CRATE = REG.blockNoItem("slotted_crate", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::slottedBe));
 	public static final BlockEntityType<CrateBlockEntity> SLOTTED_CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("slotted_crate", CrateBlocks::slottedBe, SLOTTED_CRATE);
 	static CrateBlockEntity slottedBe() {
 		return new CrateBlockEntity(SLOTTED_CRATE_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStore(32).filter(FILTER_NESTING), "SLOTTED CRATE ");
 	}
+	public static final PortableCrateItem PORTABLE_SLOTTED_CRATE_ITEM = REG.item("slotted_crate_item", new PortableCrateItem(SLOTTED_CRATE, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new SlottedInventoryStore(32).filter(FILTER_NESTING)));
+	public static final Item SLOTTED_CRATE_ITEM = REG.item("slotted_crate", new BlockItem(SLOTTED_CRATE, REG.itemSettings()));
 
 
 	public static final CreativeCrateBlock CREATIVE_CRATE = REG.block("creative_crate", new CreativeCrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::itemSupplier));
@@ -68,15 +77,20 @@ public enum CrateBlocks {
 		return new CreativeCrateBlockEntity(CREATIVE_CRATE_BLOCK_ENTITY_TYPE, true);
 	}
 
-	public static final CrateBlock HYPER_CRATE = REG.block("hyper_crate", new CrateBlock(FabricBlockSettings.of(Material.METAL).strength(1, 1).build(), CrateBlocks::hyperCrateBe));
+
+	public static final CrateBlock HYPER_CRATE = REG.blockNoItem("hyper_crate", new CrateBlock(FabricBlockSettings.of(Material.METAL).strength(1, 1).build(), CrateBlocks::hyperCrateBe));
 	public static final BlockEntityType<CrateBlockEntity> HYPER_CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("hyper_crate", CrateBlocks::hyperCrateBe, HYPER_CRATE);
 	static CrateBlockEntity hyperCrateBe() {
 		return new CrateBlockEntity(HYPER_CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_NESTING), "HYPERCRATE ");
 	}
-
-	public static final Predicate<Article> FILTER_NESTING = d -> !d.hasTag() || Block.getBlockFromItem(d.toItem()).getClass() != CrateBlock.class;
+	public static final PortableCrateItem PORTABLE_HYPER_CRATE_ITEM = REG.item("hyper_crate_item", new PortableCrateItem(HYPER_CRATE, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_NESTING)));
+	public static final Item HYPER_CRATE_ITEM = REG.item("hyper_crate", new BlockItem(HYPER_CRATE, REG.itemSettings()));
 
 	static {
+		CRATE.portableItem = PORTABLE_CRATE_ITEM;
+		SLOTTED_CRATE.portableItem = PORTABLE_SLOTTED_CRATE_ITEM;
+		HYPER_CRATE.portableItem = PORTABLE_HYPER_CRATE_ITEM;
+
 		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(CRATE, SLOTTED_CRATE, CREATIVE_CRATE, HYPER_CRATE);
 
 		Store.STORAGE_COMPONENT.registerProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
@@ -108,14 +122,18 @@ public enum CrateBlocks {
 
 		XmBlockRegistry.addBlockStates(HYPER_CRATE, bs -> PrimitiveStateFunction.builder()
 				.withDefaultState(Cube.INSTANCE.newState().paintAll(
-						XmPaint.finder()
-						.textureDepth(2)
-						.texture(0, XmTextures.TILE_NOISE_LIGHT)
-						.textureColor(0, 0xFFA0A0FF)
-						.texture(1, XmTextures.BORDER_LOGIC)
-						.blendMode(1, PaintBlendMode.TRANSLUCENT)
-						.emissive(1, true)
-						.textureColor(1, 0xFF00FFFF).find()))
+						Textures.crateBaseFinder(3)
+						.texture(2, Textures.FILLED_BOX)
+						.blendMode(2, PaintBlendMode.TRANSLUCENT)
+						.textureColor(2, 0xFF80FFFF)
+						.disableAo(2, true)
+						.disableDiffuse(2, true)
+						.emissive(2, true)
+						.find()))
 				.build());
+
+		XmItemRegistry.addItem(PORTABLE_CRATE_ITEM, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION);
+		XmItemRegistry.addItem(PORTABLE_SLOTTED_CRATE_ITEM, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION);
+		XmItemRegistry.addItem(PORTABLE_HYPER_CRATE_ITEM, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION);
 	}
 }

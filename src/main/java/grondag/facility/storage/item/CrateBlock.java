@@ -41,13 +41,18 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
+import grondag.facility.storage.PortableStore;
 import grondag.facility.storage.StorageBlock;
+import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
 import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.connect.world.BlockTest;
 
 public class CrateBlock extends StorageBlock {
+	// ugly but works
+	public PortableCrateItem portableItem;
+
 	public CrateBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
 		super(settings, beFactory);
 	}
@@ -112,6 +117,18 @@ public class CrateBlock extends StorageBlock {
 			if(limit < tagList.size()) {
 				list.add(new LiteralText("..."));
 			}
+		}
+	}
+
+	@Override
+	protected ItemStack getStack(boolean isEmpty) {
+		return isEmpty || portableItem == null ? new ItemStack(this) : new ItemStack(portableItem);
+	}
+
+	@Override
+	protected void writeCustomStackData(ItemStack stack, Store store) {
+		if(stack.getItem() == portableItem) {
+			PortableStore.writeDamage(stack, store);
 		}
 	}
 }

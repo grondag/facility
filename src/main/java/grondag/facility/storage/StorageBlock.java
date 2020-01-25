@@ -74,6 +74,11 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 		return 0;
 	}
 
+
+	protected ItemStack getStack(boolean isEmpty) {
+		return new ItemStack(this);
+	}
+
 	@Override
 	public void onBreak(World world, BlockPos blockPos, BlockState blockState, PlayerEntity playerEntity) {
 		final BlockEntity blockEntity = world.getBlockEntity(blockPos);
@@ -83,9 +88,11 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 			final StorageBlockEntity myBlockEntity = (StorageBlockEntity)blockEntity;
 
 			if (!world.isClient) {
-				final ItemStack stack = new ItemStack(this);
+				final boolean isEmpty = myBlockEntity.getInternalStorage().isEmpty();
 
-				if(!myBlockEntity.getInternalStorage().isEmpty()) {
+				final ItemStack stack = getStack(isEmpty);
+
+				if(!isEmpty) {
 					final CompoundTag tag = myBlockEntity.toContainerTag(new CompoundTag());
 
 					if (!tag.isEmpty()) {
@@ -93,9 +100,9 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 					}
 
 					stack.setCustomName(new LiteralText(myBlockEntity.getLabel()));
-				}
 
-				writeCustomStackData(stack, myBlockEntity.getInternalStorage());
+					writeCustomStackData(stack, myBlockEntity.getInternalStorage());
+				}
 
 				final ItemEntity itemEntity = new ItemEntity(world, blockPos.getX(), blockPos.getY(), blockPos.getZ(), stack);
 				itemEntity.setToDefaultPickupDelay();

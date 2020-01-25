@@ -39,5 +39,6 @@ public enum ClientRegistrations {
 		BlockEntityRendererRegistry.INSTANCE.register(TankBlocks.TANK_BLOCK_ENTITY_TYPE, d -> new TankBlockRenderer(d));
 
 		ScreenProviderRegistry.INSTANCE.registerFactory(CrateContainer.ID, ItemStorageScreen::new);
+		ScreenProviderRegistry.INSTANCE.registerFactory(CrateContainer.ID_ITEM, ItemStorageScreen::new);
 	}
 }

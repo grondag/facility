@@ -21,6 +21,9 @@ import net.minecraft.container.Slot;
 import net.minecraft.container.SlotActionType;
 import net.minecraft.text.TranslatableText;
 
+import net.fabricmc.loader.api.FabricLoader;
+
+import grondag.facility.FacilityConfig;
 import grondag.facility.storage.item.CrateContainer;
 import grondag.fermion.gui.AbstractSimpleContainerScreen;
 import grondag.fermion.gui.GuiUtil;
@@ -47,13 +50,13 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 	protected int inventoryLeft;
 
 	public ItemStorageScreen(CrateContainer container) {
-		super(container, MinecraftClient.getInstance().player.inventory, new TranslatableText("Smart Chest"));
+		// TODO: something something localization
+		super(container, MinecraftClient.getInstance().player.inventory, new TranslatableText("Facility Storage"));
 	}
 
 	@Override
 	public void init() {
-		//		font = minecraft.textRenderer;
-		font = minecraft.getFontManager().getTextRenderer(FontHackClient.READING_FONT);
+		font = FacilityConfig.useVanillaFonts ? minecraft.textRenderer : minecraft.getFontManager().getTextRenderer(FontHackClient.READING_FONT);
 		preInitLayout();
 		super.init();
 	}
@@ -99,7 +102,14 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 
 	@Override
 	protected void computeScreenBounds() {
-		super.computeScreenBounds();
+		y = (height - containerHeight) / 2;
+
+		// if using REI, center on left 2/3 of screen to allow more room for REI
+		if(FacilityConfig.shiftScreensLeftIfReiPresent &&  FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {
+			x = ((width * 2 / 3) - containerWidth) / 2;
+		} else {
+			x = (width - containerWidth) / 2;
+		}
 
 		// leave room for REI at bottom if vertical margins are tight
 		if(y <= 30) {

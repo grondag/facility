@@ -35,17 +35,20 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.RayTraceContext;
 import net.minecraft.world.World;
 
 import grondag.facility.Facility;
 import grondag.facility.init.TankBlocks;
+import grondag.facility.storage.PortableStore;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.fraction.Fraction;
 import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.storage.bulk.SimpleTank;
 
 public class PortableTankItem extends BlockItem {
-	public static final PortableTank DISPLAY_TANK = new  PortableTank();
+	public static final PortableStore DISPLAY_TANK = new  PortableStore(new SimpleTank(Fraction.of(32)));
 
 	public PortableTankItem(Block block, Settings settings) {
 		super(block, settings);
@@ -58,6 +61,7 @@ public class PortableTankItem extends BlockItem {
 				return ActionResult.SUCCESS;
 			}
 		}
+
 		return super.useOnBlock(ctx);
 	}
 
@@ -69,7 +73,7 @@ public class PortableTankItem extends BlockItem {
 			return TypedActionResult.pass(itemStack);
 		}
 
-		final Store store = new PortableTank(Fraction.of(32), () -> playerEntity.getStackInHand(hand), s -> playerEntity.setStackInHand(hand, s));
+		final Store store = new PortableStore(new SimpleTank(Fraction.of(32)), () -> playerEntity.getStackInHand(hand), s -> playerEntity.setStackInHand(hand, s));
 
 		final HitResult hitResult = rayTrace(world, playerEntity, RayTraceContext.FluidHandling.SOURCE_ONLY);
 
@@ -211,7 +215,13 @@ public class PortableTankItem extends BlockItem {
 		super.appendTooltip(itemStack, world, list, tooltipContext);
 		// TODO: localize
 		DISPLAY_TANK.readFromStack(itemStack);
-		list.add(new LiteralText(DISPLAY_TANK.amount().toString()));
+
+		if(DISPLAY_TANK.isEmpty()) {
+			list.add(new LiteralText("Empty"));
+		} else {
+			list.add(new LiteralText("Fluid: " + Registry.FLUID.getId(DISPLAY_TANK.view(0).article().toFluid()).toString()));
+			list.add(new LiteralText(DISPLAY_TANK.amount().toString()));
+		}
 	}
 
 	@Override

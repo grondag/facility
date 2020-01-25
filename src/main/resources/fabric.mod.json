@@ -16,15 +16,10 @@
   
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "grondag.facility.Facility"
-    ],
-    "client": [
-      "grondag.facility.client.FacilityClient"
-    ],
-    "rei_plugins_v0": [
-      "grondag.facility.compat.rei.FacilityReiPlugin"
-    ]
+    "main": [ "grondag.facility.Facility" ],
+    "client": [ "grondag.facility.client.FacilityClient" ],
+    "rei_plugins_v0": [ "grondag.facility.compat.rei.FacilityReiPlugin" ],
+    "modmenu": [ "grondag.facility.client.ModMenuHelper" ]
   },
   "mixins": [
     "facility.client.json"
