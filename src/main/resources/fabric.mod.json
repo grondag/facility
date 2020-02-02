@@ -22,13 +22,17 @@
     "modmenu": [ "grondag.facility.client.ModMenuHelper" ]
   },
   "mixins": [
-    "facility.client.json"
+    {
+      "config": "facility.client.json",
+      "environment": "client"
+    }
   ],
   "depends": {
     "fabricloader": ">=0.7.1",
-    "minecraft": "~1.15.2-pre2",
+    "minecraft": ">=1.15.2",
     "fabric": "*",
-    "fluidity": "*"
+    "fluidity": "*",
+    "exotic-matter": "*"
   },
   "custom": {
     "modmenu:api": false,
