@@ -96,7 +96,7 @@ public class RendererHooks {
 	}
 
 	public static @Nullable RenderLayer hook(RenderLayer renderLayer) {
-		return enabled ? renderLayer == TexturedRenderLayers.getEntityTranslucent() ? TRANSLUCENT : CUTOUT : null;
+		return enabled ? renderLayer == TexturedRenderLayers.getEntityTranslucentCull() ? TRANSLUCENT : CUTOUT : null;
 		//return enabled ? alpha < 255 || renderLayer == TexturedRenderLayers.getEntityTranslucent() ? TRANSLUCENT : CUTOUT : null;
 	}
 
