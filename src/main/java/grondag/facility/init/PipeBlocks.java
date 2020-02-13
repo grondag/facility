@@ -63,11 +63,12 @@ public enum PipeBlocks {
 				.withUpdate(PipeModel.MODEL_STATE_UPDATE)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						PipeModel.PRIMITIVE.newState()
-						.simpleJoin(SimpleJoinState.ALL_JOINS)
 						.primitiveBits(0b111111)
 						.paint(PipeModel.SURFACE_SIDE, PipeModel.PAINT_SIDE)
 						.paint(PipeModel.SURFACE_END, PipeModel.PAINT_END)
-						.paint(PipeModel.SURFACE_CONNECTOR, PipeModel.PAINT_CONNECTOR), bs)))
+						.paint(PipeModel.SURFACE_CONNECTOR, PipeModel.PAINT_CONNECTOR)
+						.simpleJoin(SimpleJoinState.ALL_JOINS), bs)))
+
 				.build());
 
 		XmBlockRegistry.addBlockStates(UTB1_STRAIGHT_PIPE, bs -> PrimitiveStateFunction.builder()
@@ -76,11 +77,11 @@ public enum PipeBlocks {
 				.withUpdate(PipeModel.MODEL_STATE_UPDATE)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						PipeModel.PRIMITIVE.newState()
-						.simpleJoin(SimpleJoinState.Y_JOINS)
 						.primitiveBits(0b11)
 						.paint(PipeModel.SURFACE_SIDE, PipeModel.PAINT_SIDE)
 						.paint(PipeModel.SURFACE_END, PipeModel.PAINT_END)
-						.paint(PipeModel.SURFACE_CONNECTOR, PipeModel.PAINT_CONNECTOR), bs)))
+						.paint(PipeModel.SURFACE_CONNECTOR, PipeModel.PAINT_CONNECTOR)
+						.simpleJoin(SimpleJoinState.ALL_JOINS), bs)))
 				.build());
 
 		XmBlockRegistry.addBlockStates(UTB1_INTAKE, bs -> PrimitiveStateFunction.builder()
