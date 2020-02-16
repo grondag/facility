@@ -32,6 +32,7 @@ import grondag.facility.storage.item.CrateBlockEntity;
 import grondag.facility.storage.item.CreativeCrateBlock;
 import grondag.facility.storage.item.CreativeCrateBlockEntity;
 import grondag.facility.storage.item.PortableCrateItem;
+import grondag.facility.storage.item.SlottedCrateBlockEntity;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStore;
@@ -63,9 +64,9 @@ public enum CrateBlocks {
 
 
 	public static final CrateBlock SLOTTED_CRATE = REG.blockNoItem("slotted_crate", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1).build(), CrateBlocks::slottedBe));
-	public static final BlockEntityType<CrateBlockEntity> SLOTTED_CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("slotted_crate", CrateBlocks::slottedBe, SLOTTED_CRATE);
-	static CrateBlockEntity slottedBe() {
-		return new CrateBlockEntity(SLOTTED_CRATE_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStore(32).filter(FILTER_NESTING), "SLOTTED CRATE ");
+	public static final BlockEntityType<SlottedCrateBlockEntity> SLOTTED_CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("slotted_crate", CrateBlocks::slottedBe, SLOTTED_CRATE);
+	static SlottedCrateBlockEntity slottedBe() {
+		return new SlottedCrateBlockEntity(SLOTTED_CRATE_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStore(32).filter(FILTER_NESTING), "SLOTTED CRATE ");
 	}
 	public static final PortableCrateItem PORTABLE_SLOTTED_CRATE_ITEM = REG.item("slotted_crate_item", new PortableCrateItem(SLOTTED_CRATE, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new SlottedInventoryStore(32).filter(FILTER_NESTING)));
 	public static final Item SLOTTED_CRATE_ITEM = REG.item("slotted_crate", new BlockItem(SLOTTED_CRATE, REG.itemSettings()));
