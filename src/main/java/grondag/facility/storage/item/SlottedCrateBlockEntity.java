@@ -17,6 +17,7 @@ package grondag.facility.storage.item;
  ******************************************************************************/
 import java.util.function.Supplier;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -77,5 +78,10 @@ public class SlottedCrateBlockEntity extends CrateBlockEntity implements Invento
 	public void markDirty() {
 		slottedStore.markDirty();
 		super.markDirty();
+	}
+
+	@Override
+	public boolean isValidInvStack(int slot, ItemStack stack) {
+		return !stack.hasTag() || Block.getBlockFromItem(stack.getItem()).getClass() != CrateBlock.class;
 	}
 }
