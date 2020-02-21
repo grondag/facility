@@ -2,6 +2,7 @@ package grondag.facility.transport;
 
 import java.util.function.Consumer;
 
+import grondag.facility.FacilityConfig;
 import grondag.fermion.world.WorldTaskManager;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.fraction.Fraction;
@@ -18,8 +19,7 @@ public class UtbCostFunction implements CarrierCostFunction {
 	int thisTickSaturationCounter = 0;
 	int rotation = 0;
 
-	// TODO: move to config
-	int balance = 1;
+	int balance = FacilityConfig.utb1ItemsPerTick;
 
 	/**
 	 * Implements a sort of fairness mechanism and assumes nodes will attempt to
@@ -40,11 +40,13 @@ public class UtbCostFunction implements CarrierCostFunction {
 
 	protected void refresh() {
 		final int thisTick = WorldTaskManager.tickCounter();
+		final int perTick = FacilityConfig.utb1ItemsPerTick;
 
 		if(thisTick > lastTick) {
-			balance += thisTick - lastTick;
-			if(balance > 1) {
-				balance = 1;
+			balance += (thisTick - lastTick) * perTick;
+
+			if(balance > perTick) {
+				balance = perTick;
 			}
 
 			lastTick = thisTick;

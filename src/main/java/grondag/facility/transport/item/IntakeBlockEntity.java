@@ -30,10 +30,12 @@ import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
+import grondag.facility.FacilityConfig;
 import grondag.facility.transport.PipeBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.device.BlockComponentContext;
 import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.api.transact.Transaction;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
@@ -41,15 +43,12 @@ import grondag.fluidity.wip.base.transport.SingleCarrierProvider;
 import grondag.xm.api.block.XmProperties;
 
 public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, CarrierConnector {
-
-	// TODO: make configurable
-	private static final int COOLDOWN_TICKS = 5;
-
 	protected Runnable tickHandler = this::selectRunnable;
 	protected BlockPos targetPos = null;
 	Direction targetFace = null;
 	CarrierSession internalSession;
-	protected int cooldownTicks = ThreadLocalRandom.current().nextInt(COOLDOWN_TICKS);
+	// set initial value so peer nodes don't all go at once
+	protected int cooldownTicks = ThreadLocalRandom.current().nextInt(FacilityConfig.utb1ImporterCooldownTicks);
 
 	public IntakeBlockEntity(BlockEntityType<IntakeBlockEntity> type) {
 		super(type);
@@ -125,10 +124,16 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 			howMany = storage.getSupplier().apply(a.article(), howMany, true);
 
 			if(howMany > 0) {
-				cooldownTicks = COOLDOWN_TICKS;
-				if(internalSession.broadcastConsumer().apply(a.article(), howMany, false) != howMany ||
-						storage.getSupplier().apply(a.article(), howMany, false) != howMany) {
-					// TODO: roll back
+				cooldownTicks = FacilityConfig.utb1ImporterCooldownTicks;
+
+				try (Transaction tx = Transaction.open()) {
+					tx.enlist(internalSession.broadcastConsumer());
+					tx.enlist(storage);
+
+					if(internalSession.broadcastConsumer().apply(a.article(), howMany, false) == howMany &&
+							storage.getSupplier().apply(a.article(), howMany, false) == howMany) {
+						tx.commit();
+					}
 				}
 			}
 
@@ -162,7 +167,7 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 				final int howMany = (int) internalSession.broadcastConsumer().apply(targetStack, false);
 
 				if(howMany > 0) {
-					cooldownTicks = COOLDOWN_TICKS;
+					cooldownTicks = FacilityConfig.utb1ImporterCooldownTicks;
 					targetStack.decrement(howMany);
 
 					if(targetStack.isEmpty()) {
@@ -204,7 +209,7 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 				final int howMany = (int) internalSession.broadcastConsumer().apply(targetStack, false);
 
 				if(howMany > 0) {
-					cooldownTicks = COOLDOWN_TICKS;
+					cooldownTicks = FacilityConfig.utb1ImporterCooldownTicks;
 					targetStack.decrement(howMany);
 
 					if(targetStack.isEmpty()) {
@@ -228,7 +233,7 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 			return;
 		}
 
-		if(--cooldownTicks < 0) {
+		if(--cooldownTicks <= 0) {
 			tickHandler.run();
 		}
 	}

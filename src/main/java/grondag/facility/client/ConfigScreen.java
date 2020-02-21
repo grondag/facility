@@ -19,6 +19,8 @@ package grondag.facility.client;
 import static grondag.facility.FacilityConfig.DEFAULTS;
 import static grondag.facility.FacilityConfig.shiftScreensLeftIfReiPresent;
 import static grondag.facility.FacilityConfig.useVanillaFonts;
+import static grondag.facility.FacilityConfig.utb1ImporterCooldownTicks;
+import static grondag.facility.FacilityConfig.utb1ItemsPerTick;
 
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
@@ -55,6 +57,20 @@ public class ConfigScreen {
 				.setDefaultValue(DEFAULTS.useVanillaFonts)
 				.setTooltip(I18n.translate("config.facility.help.use_vanilla_fonts").split(";"))
 				.setSaveConsumer(b -> useVanillaFonts = b)
+				.build());
+
+		misc.addEntry(ENTRY_BUILDER
+				.startIntSlider("config.facility.value.utb_cat1_rate", utb1ItemsPerTick, 1, 1024)
+				.setDefaultValue(DEFAULTS.utb1ItemsPerTick)
+				.setTooltip(I18n.translate("config.facility.help.utb_cat1_rate").split(";"))
+				.setSaveConsumer(i -> utb1ItemsPerTick = i)
+				.build());
+
+		misc.addEntry(ENTRY_BUILDER
+				.startIntSlider("config.facility.value.utb_cat1_import_cooldown", utb1ImporterCooldownTicks, 1, 20)
+				.setDefaultValue(DEFAULTS.utb1ImporterCooldownTicks)
+				.setTooltip(I18n.translate("config.facility.help.utb_cat1_import_cooldown").split(";"))
+				.setSaveConsumer(i -> utb1ImporterCooldownTicks = i)
 				.build());
 
 		return builder.build();
