@@ -16,7 +16,6 @@ import net.minecraft.fluid.BaseFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.particle.ParticleTypes;
@@ -30,7 +29,6 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
@@ -48,7 +46,7 @@ import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.storage.bulk.SimpleTank;
 
 public class PortableTankItem extends BlockItem {
-	public static final PortableStore DISPLAY_TANK = new  PortableStore(new SimpleTank(Fraction.of(32)));
+	public static final PortableStore DISPLAY_TANK = new  PortableStore(new SimpleTank(Fraction.of(32)).filter(TankBlocks.FILTER_TYPE));
 
 	public PortableTankItem(Block block, Settings settings) {
 		super(block, settings);
@@ -73,7 +71,7 @@ public class PortableTankItem extends BlockItem {
 			return TypedActionResult.pass(itemStack);
 		}
 
-		final Store store = new PortableStore(new SimpleTank(Fraction.of(32)), () -> playerEntity.getStackInHand(hand), s -> playerEntity.setStackInHand(hand, s));
+		final Store store = new PortableStore(new SimpleTank(Fraction.of(32)).filter(TankBlocks.FILTER_TYPE), () -> playerEntity.getStackInHand(hand), s -> playerEntity.setStackInHand(hand, s));
 
 		final HitResult hitResult = rayTrace(world, playerEntity, RayTraceContext.FluidHandling.SOURCE_ONLY);
 
@@ -223,12 +221,4 @@ public class PortableTankItem extends BlockItem {
 			list.add(new LiteralText(DISPLAY_TANK.amount().toString()));
 		}
 	}
-
-	@Override
-	public ItemPropertyGetter getPropertyGetter(Identifier identifier) {
-		// TODO Auto-generated method stub
-		return super.getPropertyGetter(identifier);
-	}
-
-
 }
