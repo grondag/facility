@@ -20,13 +20,14 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import grondag.facility.block.BlockEntityUnloadCallback;
 import grondag.fermion.world.WorldTaskManager;
 import grondag.fluidity.api.device.BlockComponentContext;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.base.transport.SingleCarrierProvider;
 import grondag.fluidity.wip.base.transport.SubCarrier;
 
-public class PipeBlockEntity extends BlockEntity {
+public class PipeBlockEntity extends BlockEntity implements BlockEntityUnloadCallback {
 	protected final SubCarrier<UtbCostFunction> carrier = new UtbSubCarrier(UniversalTransportBus.BASIC);
 	public final CarrierProvider carrierProvider;
 	protected final PipeMultiBlock.Member member;
@@ -90,6 +91,11 @@ public class PipeBlockEntity extends BlockEntity {
 	public void markRemoved() {
 		unregisterDevice();
 		super.markRemoved();
+	}
+
+	@Override
+	public void onBlockEntityUnloaded() {
+		unregisterDevice();
 	}
 
 	@Override
