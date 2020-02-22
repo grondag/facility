@@ -93,7 +93,8 @@ public enum PipeBlocks {
 						ExporterModel.PRIMITIVE.newState()
 						.paint(PipeModel.SURFACE_SIDE, PipeModel.PAINT_SIDE)
 						.paint(PipeModel.SURFACE_END, PipeModel.PAINT_END)
-						.paint(PipeModel.SURFACE_CONNECTOR, PipeModel.PAINT_CONNECTOR), bs)))
+						.paint(PipeModel.SURFACE_CONNECTOR, PipeModel.PAINT_CONNECTOR)
+						.simpleJoin(SimpleJoinState.NO_JOINS), bs)))
 				.build());
 	}
 }

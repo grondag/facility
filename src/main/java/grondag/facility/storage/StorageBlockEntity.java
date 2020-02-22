@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
+import grondag.facility.block.BlockEntityUnloadCallback;
 import grondag.facility.block.CarrierSessionBlockEntity;
 import grondag.fermion.varia.Base32Namer;
 import grondag.fluidity.api.multiblock.MultiBlockManager;
@@ -21,7 +22,7 @@ import grondag.fluidity.base.storage.AbstractStore;
 import grondag.fluidity.base.storage.ForwardingStore;
 
 @SuppressWarnings("rawtypes")
-public abstract class StorageBlockEntity<T extends StorageClientState, U extends MultiBlockMember> extends CarrierSessionBlockEntity implements RenderAttachmentBlockEntity, BlockEntityClientSerializable  {
+public abstract class StorageBlockEntity<T extends StorageClientState, U extends MultiBlockMember> extends CarrierSessionBlockEntity implements BlockEntityUnloadCallback, RenderAttachmentBlockEntity, BlockEntityClientSerializable  {
 	public static final String TAG_STORAGE = "storage";
 	public static final String TAG_LABEL = "label";
 
@@ -79,6 +80,11 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	public void markRemoved() {
 		unregisterDevice();
 		super.markRemoved();
+	}
+
+	@Override
+	public void onBlockEntityUnloaded() {
+		unregisterDevice();
 	}
 
 	@Override

@@ -56,6 +56,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 
 	@Override
 	public void init() {
+		DELEGATE.setFilter("");
 		font = FacilityConfig.useVanillaFonts ? minecraft.textRenderer : minecraft.getFontManager().getTextRenderer(FontHackClient.READING_FONT);
 		preInitLayout();
 		super.init();
@@ -152,7 +153,6 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 				80, theme.singleLineWidgetHeight, "");
 		filterField.setMaxLength(32);
 		filterField.setSelected(true);
-		filterField.setText(DELEGATE.getFilter());
 		filterField.setChangedListener(s -> DELEGATE.setFilter(s));
 
 		children.add(filterField);

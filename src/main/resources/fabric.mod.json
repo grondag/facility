@@ -25,6 +25,10 @@
     {
       "config": "facility.client.json",
       "environment": "client"
+    },
+    {
+      "config": "facility.common.json",
+      "environment": "*"
     }
   ],
   "depends": {

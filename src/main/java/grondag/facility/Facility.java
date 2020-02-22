@@ -17,8 +17,6 @@ package grondag.facility;
 
 /**
  * TODO: Things and stuff
- * -- next release
- * implement transactions
  *
  * -- near releases
  * inserter
@@ -28,13 +26,7 @@ package grondag.facility;
  * crafting block
  * signal station
  * config screen
- * api java docs
- * api wiki
  * implement multiblock limits
- *
- * -- production release
- * wood tar process
- * better crafting
  *
  * -- maybe ever
  * throttle tick times

@@ -35,6 +35,12 @@ public class FacilityConfig {
 
 		@Comment("Use Minecraft font in storage screens.")
 		public boolean useVanillaFonts = false;
+
+		@Comment("Item transfer rate for category 1 universal transport bus. 1 to 1024")
+		public int utb1ItemsPerTick = 4;
+
+		@Comment("Tick frequency for category 1 importer. 1 to 20. Higher values can reduce server impact but may need higher bus transfer rates.")
+		public int utb1ImporterCooldownTicks = 5;
 	}
 
 	public static final ConfigData DEFAULTS = new ConfigData();
@@ -47,9 +53,11 @@ public class FacilityConfig {
 	public static long keepaliveIntervalMilliseconds = 10000;
 	public static boolean  shiftScreensLeftIfReiPresent = DEFAULTS.shiftScreensLeftIfReiPresent;
 	public static boolean useVanillaFonts = DEFAULTS.useVanillaFonts;
+	public static int utb1ItemsPerTick = DEFAULTS.utb1ItemsPerTick;
+	public static int utb1ImporterCooldownTicks = DEFAULTS.utb1ImporterCooldownTicks;
 
 	public static void init() {
-		configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "exotic-blocks.json5");
+		configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "facility.json5");
 		if (configFile.exists()) {
 			loadConfig();
 		} else {
@@ -70,6 +78,8 @@ public class FacilityConfig {
 
 		shiftScreensLeftIfReiPresent =  config.shiftScreensLeftIfReiPresent;
 		useVanillaFonts = config.useVanillaFonts;
+		utb1ItemsPerTick = config.utb1ItemsPerTick;
+		utb1ImporterCooldownTicks = config.utb1ImporterCooldownTicks;
 	}
 
 	public static void saveConfig() {
@@ -77,6 +87,9 @@ public class FacilityConfig {
 
 		config.shiftScreensLeftIfReiPresent = shiftScreensLeftIfReiPresent;
 		config.useVanillaFonts = useVanillaFonts;
+		config.utb1ItemsPerTick = utb1ItemsPerTick;
+		config.utb1ImporterCooldownTicks = utb1ImporterCooldownTicks;
+
 
 		try {
 			final String result = JANKSON.toJson(config).toJson(true, true, 0);
