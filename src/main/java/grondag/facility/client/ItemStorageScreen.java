@@ -87,7 +87,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 				final Slot oldSlot = container.getSlot(i);
 				final Slot newSlot = new Slot(oldSlot.inventory, o + p * 9 + 9, inventoryLeft + o * theme.itemSlotSpacing, playerInventoryTop + p * theme.itemSlotSpacing);
 				newSlot.id = oldSlot.id;
-				container.slotList.set(i++, newSlot);
+				container.slots.set(i++, newSlot);
 			}
 		}
 
@@ -97,7 +97,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 			final Slot oldSlot = container.getSlot(i);
 			final Slot newSlot = new Slot(oldSlot.inventory, p, inventoryLeft + p * theme.itemSlotSpacing, rowTop);
 			newSlot.id = oldSlot.id;
-			container.slotList.set(i++, newSlot);
+			container.slots.set(i++, newSlot);
 		}
 	}
 

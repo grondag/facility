@@ -94,7 +94,7 @@ public abstract class FactilityStorageContainer<T extends AbstractStorageServerD
 
 	@Override
 	public ItemStack transferSlot(PlayerEntity playerEntity, int slotId) {
-		final Slot slot = slotList.get(slotId);
+		final Slot slot = slots.get(slotId);
 
 		if (slot != null && slot.hasStack()) {
 			final ItemStack sourceStack = slot.getStack();

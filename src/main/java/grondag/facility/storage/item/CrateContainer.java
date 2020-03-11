@@ -45,7 +45,7 @@ public class CrateContainer extends FactilityStorageContainer<DiscreteStorageSer
 		super(player, synchId, storage, label);
 		Slot slot = null;
 
-		for(final Slot s : slotList) {
+		for(final Slot s : slots) {
 			if(s.getStack() == storeStack) {
 				slot = s;
 				break;
@@ -63,7 +63,7 @@ public class CrateContainer extends FactilityStorageContainer<DiscreteStorageSer
 
 	@Override
 	public ItemStack transferSlot(PlayerEntity playerEntity, int slotId) {
-		if(slotId >= 0 && ((storeSlot != null && slotId == storeSlot.id) || (storeStack != null && slotList.get(slotId).getStack() == storeStack))) {
+		if(slotId >= 0 && ((storeSlot != null && slotId == storeSlot.id) || (storeStack != null && slots.get(slotId).getStack() == storeStack))) {
 			return ItemStack.EMPTY;
 		}
 
@@ -72,7 +72,7 @@ public class CrateContainer extends FactilityStorageContainer<DiscreteStorageSer
 
 	@Override
 	public ItemStack onSlotClick(int slotId, int mouseButton, SlotActionType slotActionType, PlayerEntity playerEntity) {
-		if(slotId >= 0 && ((storeSlot != null && slotId == storeSlot.id) || (storeStack != null && slotList.get(slotId).getStack() == storeStack))) {
+		if(slotId >= 0 && ((storeSlot != null && slotId == storeSlot.id) || (storeStack != null && slots.get(slotId).getStack() == storeStack))) {
 			return ItemStack.EMPTY;
 		}
 
