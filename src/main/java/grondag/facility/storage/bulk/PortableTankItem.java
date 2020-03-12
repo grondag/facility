@@ -133,7 +133,7 @@ public class PortableTankItem extends BlockItem {
 						}
 
 						playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
-						world.playSound(playerEntity, onPos, fluid.matches(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_FILL_LAVA : SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
+						world.playSound(playerEntity, onPos, fluid.isIn(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_FILL_LAVA : SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
 						return TypedActionResult.success(playerEntity.getStackInHand(hand));
 					}
@@ -176,7 +176,7 @@ public class PortableTankItem extends BlockItem {
 			if (!blockState.isAir() && !canPlace && (!(blockState.getBlock() instanceof FluidFillable) || !((FluidFillable)blockState.getBlock()).canFillWithFluid(world, blockPos, blockState, fluid))) {
 				return blockHitResult == null ? false : placeFluid(fluid, playerEntity, world, blockHitResult.getBlockPos().offset(blockHitResult.getSide()), null);
 			} else {
-				if (world.dimension.doesWaterVaporize() && fluid.matches(FluidTags.WATER)) {
+				if (world.dimension.doesWaterVaporize() && fluid.isIn(FluidTags.WATER)) {
 					final int i = blockPos.getX();
 					final int j = blockPos.getY();
 					final int k = blockPos.getZ();
@@ -204,7 +204,7 @@ public class PortableTankItem extends BlockItem {
 	}
 
 	protected void playEmptyingSound(Fluid fluid, @Nullable PlayerEntity playerEntity, World world, BlockPos blockPos) {
-		final SoundEvent soundEvent = fluid.matches(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_EMPTY_LAVA : SoundEvents.ITEM_BUCKET_EMPTY;
+		final SoundEvent soundEvent = fluid.isIn(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_EMPTY_LAVA : SoundEvents.ITEM_BUCKET_EMPTY;
 		world.playSound(playerEntity, blockPos, soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
 	}
 

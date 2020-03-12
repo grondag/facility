@@ -63,7 +63,7 @@ public class CreativeBinStorage extends AbstractDiscreteStore<CreativeBinStorage
 
 	@Override
 	protected FixedDiscreteArticleFunction createConsumer() {
-		return new Consumer();
+		return new CreativeBinStorage.Consumer();
 	}
 
 	protected class Consumer extends AbstractDiscreteStore<DividedDiscreteStore>.Consumer {
@@ -104,7 +104,7 @@ public class CreativeBinStorage extends AbstractDiscreteStore<CreativeBinStorage
 
 	@Override
 	protected FixedDiscreteArticleFunction createSupplier() {
-		return new Supplier();
+		return new CreativeBinStorage.Supplier();
 	}
 
 	protected class Supplier extends AbstractDiscreteStore<DividedDiscreteStore>.Supplier {
