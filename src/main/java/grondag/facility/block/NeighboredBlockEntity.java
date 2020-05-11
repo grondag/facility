@@ -131,12 +131,12 @@ public abstract class NeighboredBlockEntity<T> extends BlockEntity {
 		neighborCount = 0;
 
 		final BlockPos.Mutable p = SEARCH_POS.get();
-		refreshNeighbor(p.set(myPos).setOffset(Direction.EAST), Direction.WEST);
-		refreshNeighbor(p.set(myPos).setOffset(Direction.WEST), Direction.EAST);
-		refreshNeighbor(p.set(myPos).setOffset(Direction.NORTH), Direction.SOUTH);
-		refreshNeighbor(p.set(myPos).setOffset(Direction.SOUTH), Direction.NORTH);
-		refreshNeighbor(p.set(myPos).setOffset(Direction.UP), Direction.DOWN);
-		refreshNeighbor(p.set(myPos).setOffset(Direction.DOWN), Direction.UP);
+		refreshNeighbor(p.set(myPos).move(Direction.EAST), Direction.WEST);
+		refreshNeighbor(p.set(myPos).move(Direction.WEST), Direction.EAST);
+		refreshNeighbor(p.set(myPos).move(Direction.NORTH), Direction.SOUTH);
+		refreshNeighbor(p.set(myPos).move(Direction.SOUTH), Direction.NORTH);
+		refreshNeighbor(p.set(myPos).move(Direction.UP), Direction.DOWN);
+		refreshNeighbor(p.set(myPos).move(Direction.DOWN), Direction.UP);
 
 		// Don't hold refs in list-indexed entries (face indexed will already all be set or nulled)
 		Arrays.fill(neighbors, neighborCount, 6, null);

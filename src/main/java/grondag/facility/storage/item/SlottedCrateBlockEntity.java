@@ -40,38 +40,38 @@ public class SlottedCrateBlockEntity extends CrateBlockEntity implements Invento
 	}
 
 	@Override
-	public int getInvSize() {
-		return slottedStore.getInvSize();
+	public int size() {
+		return slottedStore.size();
 	}
 
 	@Override
-	public boolean isInvEmpty() {
-		return slottedStore.isInvEmpty();
+	public boolean isEmpty() {
+		return slottedStore.isEmpty();
 	}
 
 	@Override
-	public ItemStack getInvStack(int slot) {
-		return slottedStore.getInvStack(slot);
+	public ItemStack getStack(int slot) {
+		return slottedStore.getStack(slot);
 	}
 
 	@Override
-	public ItemStack takeInvStack(int slot, int count) {
-		return slottedStore.takeInvStack(slot, count);
+	public ItemStack removeStack(int slot, int count) {
+		return slottedStore.removeStack(slot, count);
 	}
 
 	@Override
-	public ItemStack removeInvStack(int slot) {
-		return slottedStore.removeInvStack(slot);
+	public ItemStack removeStack(int slot) {
+		return slottedStore.removeStack(slot);
 	}
 
 	@Override
-	public void setInvStack(int slot, ItemStack itemStack) {
-		slottedStore.setInvStack(slot, itemStack);
+	public void setStack(int slot, ItemStack itemStack) {
+		slottedStore.setStack(slot, itemStack);
 	}
 
 	@Override
-	public boolean canPlayerUseInv(PlayerEntity playerEntity) {
-		return slottedStore.canPlayerUseInv(playerEntity);
+	public boolean canPlayerUse(PlayerEntity playerEntity) {
+		return slottedStore.canPlayerUse(playerEntity);
 	}
 
 	@Override
@@ -81,7 +81,7 @@ public class SlottedCrateBlockEntity extends CrateBlockEntity implements Invento
 	}
 
 	@Override
-	public boolean isValidInvStack(int slot, ItemStack stack) {
+	public boolean isValid(int slot, ItemStack stack) {
 		return !stack.hasTag() || Block.getBlockFromItem(stack.getItem()).getClass() != CrateBlock.class;
 	}
 }

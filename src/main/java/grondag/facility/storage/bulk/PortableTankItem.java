@@ -3,8 +3,7 @@ package grondag.facility.storage.bulk;
 import java.util.List;
 
 import javax.annotation.Nullable;
-
-import net.minecraft.advancement.criterion.Criterions;
+import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FluidDrainable;
@@ -149,7 +148,7 @@ public class PortableTankItem extends BlockItem {
 							}
 
 							if (playerEntity instanceof ServerPlayerEntity) {
-								Criterions.PLACED_BLOCK.trigger((ServerPlayerEntity)playerEntity, placePos, itemStack);
+								Criteria.PLACED_BLOCK.trigger((ServerPlayerEntity)playerEntity, placePos, itemStack);
 							}
 
 							playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));

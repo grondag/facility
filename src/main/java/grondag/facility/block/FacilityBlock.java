@@ -50,11 +50,6 @@ public class FacilityBlock extends Block implements BlockEntityProvider {
 	}
 
 	@Override
-	public boolean hasBlockEntity() {
-		return true;
-	}
-
-	@Override
 	public PistonBehavior getPistonBehavior(BlockState blockState) {
 		return PistonBehavior.DESTROY;
 	}

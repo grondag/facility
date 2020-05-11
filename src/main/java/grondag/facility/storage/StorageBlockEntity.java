@@ -4,11 +4,15 @@ import java.util.function.Supplier;
 
 import io.netty.util.internal.ThreadLocalRandom;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
@@ -119,8 +123,8 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	}
 
 	@Override
-	public void fromTag(CompoundTag tag) {
-		super.fromTag(tag);
+	public void fromTag(BlockState state, CompoundTag tag) {
+		super.fromTag(state, tag);
 		fromContainerTag(tag);
 	}
 
@@ -168,15 +172,17 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	 * Rely on the fact that BE render dispath will call this each frame
 	 * and check for deltas to know if we should recompute distance.
 	 * Avoids checking/recomputing in block entity renderer.
+	 *
+	 * PERF: still any benefit to this because BERD computes anyway.
 	 */
+	@Environment(EnvType.CLIENT)
 	@Override
-	public double getSquaredDistance(double x, double y, double z) {
+	public double getSquaredRenderDistance() {
 		if (world.isClient) {
-			final double result = super.getSquaredDistance(x, y, z);
-			clientState().updateLastDistanceSquared(result);
-			return result;
-		} else {
-			return super.getSquaredDistance(x, y, z);
+			final BlockPos pos = this.pos;
+			clientState().updateLastDistanceSquared(BlockEntityRenderDispatcher.INSTANCE.camera.getPos().squaredDistanceTo(pos.getX(), pos.getY(), pos.getZ()));
 		}
+
+		return super.getSquaredRenderDistance();
 	}
 }

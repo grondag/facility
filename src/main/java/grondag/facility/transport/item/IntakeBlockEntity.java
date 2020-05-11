@@ -149,11 +149,11 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 			return;
 		}
 
-		if(inv.isInvEmpty()) {
+		if(inv.isEmpty()) {
 			return;
 		}
 
-		final int limit = inv.getInvSize();
+		final int limit = inv.size();
 
 		if(limit == 0) {
 			return;
@@ -161,7 +161,7 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 
 		for(int slot = 0; slot < limit; slot++) {
 
-			final ItemStack targetStack = inv.getInvStack(slot);
+			final ItemStack targetStack = inv.getStack(slot);
 
 			if (!targetStack.isEmpty()) {
 				final int howMany = (int) internalSession.broadcastConsumer().apply(targetStack, false);
@@ -171,7 +171,7 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 					targetStack.decrement(howMany);
 
 					if(targetStack.isEmpty()) {
-						inv.setInvStack(slot, ItemStack.EMPTY);
+						inv.setStack(slot, ItemStack.EMPTY);
 					}
 
 					inv.markDirty();
@@ -188,13 +188,13 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 			return;
 		}
 
-		if(inv.isInvEmpty()) {
+		if(inv.isEmpty()) {
 			return;
 		}
 
 		final SidedInventory sidedInv = (SidedInventory) inv;
 
-		final int[] slots = sidedInv.getInvAvailableSlots(targetFace);
+		final int[] slots = sidedInv.getAvailableSlots(targetFace);
 		final int limit = slots.length;
 
 		if(limit == 0) {
@@ -203,9 +203,9 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 
 		for(int i = 0; i < limit; i++) {
 			final int slot = slots[i];
-			final ItemStack targetStack = sidedInv.getInvStack(slot);
+			final ItemStack targetStack = sidedInv.getStack(slot);
 
-			if (!targetStack.isEmpty() && sidedInv.canExtractInvStack(slot, targetStack, targetFace)) {
+			if (!targetStack.isEmpty() && sidedInv.canExtract(slot, targetStack, targetFace)) {
 				final int howMany = (int) internalSession.broadcastConsumer().apply(targetStack, false);
 
 				if(howMany > 0) {
@@ -213,7 +213,7 @@ public class IntakeBlockEntity extends PipeBlockEntity implements Tickable, Carr
 					targetStack.decrement(howMany);
 
 					if(targetStack.isEmpty()) {
-						sidedInv.setInvStack(slot, ItemStack.EMPTY);
+						sidedInv.setStack(slot, ItemStack.EMPTY);
 					}
 
 					sidedInv.markDirty();
