@@ -30,6 +30,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -132,7 +133,7 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 				lookup.readTag(tagList.getCompound(i));
 
 				if(!lookup.isEmpty()) {
-					final Text text = lookup.article().toStack().getName().deepCopy();
+					final MutableText text = lookup.article().toStack().getName().copy();
 					text.append(" x").append(String.valueOf(lookup.count()));
 					list.add(text);
 				}

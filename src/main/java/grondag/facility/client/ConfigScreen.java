@@ -22,12 +22,18 @@ import static grondag.facility.FacilityConfig.useVanillaFonts;
 import static grondag.facility.FacilityConfig.utb1ImporterCooldownTicks;
 import static grondag.facility.FacilityConfig.utb1ItemsPerTick;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resource.language.I18n;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -38,38 +44,42 @@ import grondag.facility.FacilityConfig;
 public class ConfigScreen {
 	private static ConfigEntryBuilder ENTRY_BUILDER = ConfigEntryBuilder.create();
 
+	static Text[] parse(String key) {
+		return Arrays.stream(I18n.translate("config.xblocks.help.force_key").split(";")).map(s ->  new LiteralText(s)).collect(Collectors.toList()).toArray(new Text[0]);
+	}
+
 	static Screen getScreen(Screen parent) {
 
-		final ConfigBuilder builder = ConfigBuilder.create().setParentScreen(parent).setTitle("config.facility.title").setSavingRunnable(ConfigScreen::saveUserInput);
+		final ConfigBuilder builder = ConfigBuilder.create().setParentScreen(parent).setTitle(new TranslatableText("config.facility.title")).setSavingRunnable(ConfigScreen::saveUserInput);
 
 		// MISC
-		final ConfigCategory misc = builder.getOrCreateCategory("config.facility.category.misc");
+		final ConfigCategory misc = builder.getOrCreateCategory(new TranslatableText("config.facility.category.misc"));
 
 		misc.addEntry(ENTRY_BUILDER
-				.startBooleanToggle("config.facility.value.shift_screens_left_if_rei_present", shiftScreensLeftIfReiPresent)
+				.startBooleanToggle(new TranslatableText("config.facility.value.shift_screens_left_if_rei_present"), shiftScreensLeftIfReiPresent)
 				.setDefaultValue(DEFAULTS.shiftScreensLeftIfReiPresent)
-				.setTooltip(I18n.translate("config.facility.help.shift_screens_left_if_rei_present").split(";"))
+				.setTooltip(parse("config.facility.help.shift_screens_left_if_rei_present"))
 				.setSaveConsumer(b -> shiftScreensLeftIfReiPresent = b)
 				.build());
 
 		misc.addEntry(ENTRY_BUILDER
-				.startBooleanToggle("config.facility.value.use_vanilla_fonts", useVanillaFonts)
+				.startBooleanToggle(new TranslatableText("config.facility.value.use_vanilla_fonts"), useVanillaFonts)
 				.setDefaultValue(DEFAULTS.useVanillaFonts)
-				.setTooltip(I18n.translate("config.facility.help.use_vanilla_fonts").split(";"))
+				.setTooltip(parse("config.facility.help.use_vanilla_fonts"))
 				.setSaveConsumer(b -> useVanillaFonts = b)
 				.build());
 
 		misc.addEntry(ENTRY_BUILDER
-				.startIntSlider("config.facility.value.utb_cat1_rate", utb1ItemsPerTick, 1, 1024)
+				.startIntSlider(new TranslatableText("config.facility.value.utb_cat1_rate"), utb1ItemsPerTick, 1, 1024)
 				.setDefaultValue(DEFAULTS.utb1ItemsPerTick)
-				.setTooltip(I18n.translate("config.facility.help.utb_cat1_rate").split(";"))
+				.setTooltip(parse("config.facility.help.utb_cat1_rate"))
 				.setSaveConsumer(i -> utb1ItemsPerTick = i)
 				.build());
 
 		misc.addEntry(ENTRY_BUILDER
-				.startIntSlider("config.facility.value.utb_cat1_import_cooldown", utb1ImporterCooldownTicks, 1, 20)
+				.startIntSlider(new TranslatableText("config.facility.value.utb_cat1_import_cooldown"), utb1ImporterCooldownTicks, 1, 20)
 				.setDefaultValue(DEFAULTS.utb1ImporterCooldownTicks)
-				.setTooltip(I18n.translate("config.facility.help.utb_cat1_import_cooldown").split(";"))
+				.setTooltip(parse("config.facility.help.utb_cat1_import_cooldown"))
 				.setSaveConsumer(i -> utb1ImporterCooldownTicks = i)
 				.build());
 

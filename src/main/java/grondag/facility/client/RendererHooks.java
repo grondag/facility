@@ -27,6 +27,7 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 
+// TODO: remove and use AW instead
 public class RendererHooks {
 	public static final RenderLayer TRANSLUCENT = makeTranslucent();
 	public static final RenderLayer CUTOUT = makeCutout();

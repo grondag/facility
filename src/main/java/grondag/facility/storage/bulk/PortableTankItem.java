@@ -3,6 +3,7 @@ package grondag.facility.storage.bulk;
 import java.util.List;
 
 import javax.annotation.Nullable;
+
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -11,7 +12,7 @@ import net.minecraft.block.FluidFillable;
 import net.minecraft.block.Material;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.BaseFluid;
+import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.BlockItem;
@@ -165,7 +166,7 @@ public class PortableTankItem extends BlockItem {
 	}
 
 	protected boolean placeFluid(Fluid fluid, @Nullable PlayerEntity playerEntity, World world, BlockPos blockPos, @Nullable BlockHitResult blockHitResult) {
-		if (!(fluid instanceof BaseFluid)) {
+		if (!(fluid instanceof FlowableFluid)) {
 			return false;
 		} else {
 			final BlockState blockState = world.getBlockState(blockPos);
@@ -185,7 +186,7 @@ public class PortableTankItem extends BlockItem {
 						world.addParticle(ParticleTypes.LARGE_SMOKE, i + Math.random(), j + Math.random(), k + Math.random(), 0.0D, 0.0D, 0.0D);
 					}
 				} else if (blockState.getBlock() instanceof FluidFillable && fluid == Fluids.WATER) {
-					if (((FluidFillable)blockState.getBlock()).tryFillWithFluid(world, blockPos, blockState, ((BaseFluid)fluid).getStill(false))) {
+					if (((FluidFillable)blockState.getBlock()).tryFillWithFluid(world, blockPos, blockState, ((FlowableFluid)fluid).getStill(false))) {
 						playEmptyingSound(fluid, playerEntity, world, blockPos);
 					}
 				} else {

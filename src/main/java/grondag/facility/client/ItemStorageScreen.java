@@ -17,8 +17,10 @@ package grondag.facility.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -57,7 +59,8 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 	@Override
 	public void init() {
 		DELEGATE.setFilter("");
-		textRenderer = FacilityConfig.useVanillaFonts ? client.textRenderer : client.getFontManager().getTextRenderer(FontHackClient.READING_FONT);
+		textRenderer = FacilityConfig.useVanillaFonts ? client.textRenderer : FontHackClient.getTextRenderer(FontHackClient.READING_FONT);
+
 		preInitLayout();
 		super.init();
 	}
@@ -134,14 +137,14 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 		final Button butt = new Button(this,
 				x + backgroundWidth - 40 - theme.externalMargin, y + theme.externalMargin,
 				40, theme.singleLineWidgetHeight,
-				DisplayDelegate.getSortLabel(DELEGATE.getSortIndex())) {
+				DisplayDelegate.getSortText(DELEGATE.getSortIndex())) {
 
 			@Override
 			public void onClick(double d, double e) {
 				final int oldSort = DELEGATE.getSortIndex();
 				final int newSort = (oldSort + 1) % DiscreteDisplayDelegateImpl.SORT_COUNT;
 				DELEGATE.setSortIndex(newSort);
-				setMessage(DisplayDelegate.getSortLabel(newSort));
+				setMessage(DisplayDelegate.getSortText(newSort));
 				DELEGATE.refreshListIfNeeded();
 			}
 		};
@@ -150,7 +153,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 
 		filterField = new TextField(this,
 				x + inventoryLeft, y + theme.externalMargin,
-				80, theme.singleLineWidgetHeight, "");
+				80, theme.singleLineWidgetHeight, new LiteralText(""));
 		filterField.setMaxLength(32);
 		filterField.setSelected(true);
 		filterField.setChangedListener(s -> DELEGATE.setFilter(s));
@@ -161,11 +164,11 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 	}
 
 	@Override
-	protected void drawControls(int mouseX, int mouseY, float partialTicks) {
+	protected void drawControls(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		//PERF: do less frequently
 		DELEGATE.refreshListIfNeeded();
-		stackPicker.drawControl(mouseX, mouseY, partialTicks);
-		filterField.render(mouseX, mouseY, partialTicks);
+		stackPicker.drawControl(matrixStack, mouseX, mouseY, partialTicks);
+		filterField.render(matrixStack, mouseX, mouseY, partialTicks);
 
 		final int barHeight = backgroundHeight - theme.externalMargin * 2;
 		final int fillHeight = DELEGATE.capacity() == 0 ? 0 : (int) (barHeight * DELEGATE.usedCapacity() / DELEGATE.capacity());
@@ -182,19 +185,8 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 				&& mouseY >= y + theme.externalMargin && mouseY <= y + backgroundHeight - theme.externalMargin) {
 
 			//UGLY: standardize how tooltip coordinates work - wants screen relative but getting window relative as inputs here
-			this.drawToolTip(DELEGATE.usedCapacity() + " / " + DELEGATE.capacity(), mouseX - x, mouseY - y);
+			this.renderTooltip(matrixStack, new LiteralText(DELEGATE.usedCapacity() + " / " + DELEGATE.capacity()), mouseX - x, mouseY - y);
 		}
-	}
-
-	// Specific to containers - defined by vanilla
-	@Override
-	protected void drawBackground(float partialTicks, int mouseX, int mouseY) {
-		super.drawBackground(partialTicks, mouseX, mouseY);
-	}
-
-	@Override
-	protected void drawForeground(int mouseX, int mouseY) {
-		super.drawForeground(mouseX, mouseY);
 	}
 
 	@Override
