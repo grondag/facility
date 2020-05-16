@@ -31,8 +31,8 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 
 import grondag.facility.block.FacilitySpeciesBlock;
 import grondag.facility.block.NeighboredBlockEntity;
@@ -124,7 +124,7 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 	}
 
 	@Override
-	public BlockState getStateForNeighborUpdate(BlockState blockState, Direction direction, BlockState blockState2, IWorld iWorld, BlockPos blockPos, BlockPos blockPos2) {
+	public BlockState getStateForNeighborUpdate(BlockState blockState, Direction direction, BlockState blockState2, WorldAccess iWorld, BlockPos blockPos, BlockPos blockPos2) {
 		updateBe(iWorld, blockPos);
 		return blockState;
 	}
@@ -136,7 +136,7 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected void updateBe(IWorld world, BlockPos pos) {
+	protected void updateBe(WorldAccess world, BlockPos pos) {
 		final BlockEntity be = world.getBlockEntity(pos);
 
 		if(be instanceof NeighboredBlockEntity) {

@@ -176,7 +176,7 @@ public class PortableTankItem extends BlockItem {
 			if (!blockState.isAir() && !canPlace && (!(blockState.getBlock() instanceof FluidFillable) || !((FluidFillable)blockState.getBlock()).canFillWithFluid(world, blockPos, blockState, fluid))) {
 				return blockHitResult == null ? false : placeFluid(fluid, playerEntity, world, blockHitResult.getBlockPos().offset(blockHitResult.getSide()), null);
 			} else {
-				if (world.dimension.doesWaterVaporize() && fluid.isIn(FluidTags.WATER)) {
+				if (world.method_27983().method_27999() && fluid.isIn(FluidTags.WATER)) {
 					final int i = blockPos.getX();
 					final int j = blockPos.getY();
 					final int k = blockPos.getZ();
