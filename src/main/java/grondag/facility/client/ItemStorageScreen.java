@@ -51,6 +51,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 	protected int itemPickerTop;
 	protected int inventoryLeft;
 
+	@SuppressWarnings("resource")
 	public ItemStorageScreen(CrateContainer container) {
 		// TODO: something something localization
 		super(container, MinecraftClient.getInstance().player.inventory, new TranslatableText("Facility Storage"));
