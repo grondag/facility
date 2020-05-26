@@ -23,7 +23,7 @@ import grondag.xm.api.paint.SurfaceTopology;
 import grondag.xm.api.paint.XmPaint;
 import grondag.xm.api.primitive.surface.XmSurface;
 import grondag.xm.api.primitive.surface.XmSurfaceList;
-import grondag.xm.api.texture.XmTextures;
+import grondag.xm.api.texture.content.XmTextures;
 
 public class BasePipeModel {
 	protected static final XmSurfaceList SURFACES = XmSurfaceList.builder()

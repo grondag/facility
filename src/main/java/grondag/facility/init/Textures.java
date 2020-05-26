@@ -28,7 +28,7 @@ import grondag.xm.api.paint.XmPaint;
 import grondag.xm.api.paint.XmPaintFinder;
 import grondag.xm.api.texture.TextureLayoutMap;
 import grondag.xm.api.texture.TextureSet;
-import grondag.xm.api.texture.XmTextures;
+import grondag.xm.api.texture.content.CoreTextures;
 import grondag.xm.texture.TextureSetHelper;
 
 public enum Textures { ;
@@ -56,7 +56,7 @@ public enum Textures { ;
 				.textureDepth(depth)
 				.texture(0, CRATE_BASE)
 				.textureColor(0, 0xFFFFFFFF)
-				.texture(1, XmTextures.BORDER_WEATHERED_LINE)
+				.texture(1, CoreTextures.BORDER_WEATHERED_LINE)
 				.blendMode(1, PaintBlendMode.TRANSLUCENT)
 				.textureColor(1, 0xA0000000);
 	}
