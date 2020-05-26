@@ -20,7 +20,7 @@ import static grondag.facility.Facility.REG;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
 
-import net.fabricmc.fabric.api.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import grondag.facility.transport.PipeBlock;
 import grondag.facility.transport.PipeBlockEntity;
@@ -40,15 +40,15 @@ import grondag.xm.api.modelstate.primitive.PrimitiveStateFunction;
 public enum PipeBlocks {
 	;
 
-	public static final PipeBlock UTB1_PIPE = REG.block("utb1_flex", new PipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1).build(), PipeBlocks::pipeSupplier));
-	public static final PipeBlock UTB1_STRAIGHT_PIPE = REG.block("utb1_straight", new StraightPipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1).build(), PipeBlocks::pipeSupplier));
+	public static final PipeBlock UTB1_PIPE = REG.block("utb1_flex", new PipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::pipeSupplier));
+	public static final PipeBlock UTB1_STRAIGHT_PIPE = REG.block("utb1_straight", new StraightPipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::pipeSupplier));
 	public static final BlockEntityType<PipeBlockEntity> UTB1_BLOCK_ENTITY_TYPE = REG.blockEntityType("utb1", PipeBlocks::pipeSupplier, UTB1_PIPE, UTB1_STRAIGHT_PIPE);
 	static PipeBlockEntity pipeSupplier() {
 		return new PipeBlockEntity(UTB1_BLOCK_ENTITY_TYPE);
 	}
 
 
-	public static final IntakeBlock UTB1_INTAKE = REG.block("utb1_intake", new IntakeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1).build(), PipeBlocks::intakeSupplier));
+	public static final IntakeBlock UTB1_INTAKE = REG.block("utb1_intake", new IntakeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::intakeSupplier));
 	public static final BlockEntityType<IntakeBlockEntity> UTB1_INTAKE_BLOCK_ENTITY_TYPE = REG.blockEntityType("utb1_intake", PipeBlocks::intakeSupplier, UTB1_INTAKE);
 	static IntakeBlockEntity intakeSupplier() {
 		return new IntakeBlockEntity(UTB1_INTAKE_BLOCK_ENTITY_TYPE);

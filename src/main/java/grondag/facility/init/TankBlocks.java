@@ -23,7 +23,7 @@ import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 
-import net.fabricmc.fabric.api.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import grondag.facility.storage.PortableStore;
 import grondag.facility.storage.bulk.PortableTankItem;
@@ -50,7 +50,7 @@ public enum TankBlocks {
 
 	public static final Predicate<Article> FILTER_TYPE = d -> d.type() == ArticleType.FLUID;
 
-	public static final TankBlock TANK = REG.blockNoItem("tank", new TankBlock(FabricBlockSettings.of(Material.METAL).strength(1, 1).build(), TankBlocks::tankBe, false));
+	public static final TankBlock TANK = REG.blockNoItem("tank", new TankBlock(FabricBlockSettings.of(Material.METAL).strength(1, 1), TankBlocks::tankBe, false));
 	public static final BlockEntityType<TankBlockEntity> TANK_BLOCK_ENTITY_TYPE = REG.blockEntityType("tank", TankBlocks::tankBe, TANK);
 	private static TankBlockEntity tankBe() {
 		return new TankBlockEntity(TANK_BLOCK_ENTITY_TYPE, () -> new SimpleTank(Fraction.of(32)).filter(FILTER_TYPE), "TANK ");
