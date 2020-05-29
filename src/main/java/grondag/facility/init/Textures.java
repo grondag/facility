@@ -28,7 +28,7 @@ import grondag.xm.api.paint.XmPaint;
 import grondag.xm.api.paint.XmPaintFinder;
 import grondag.xm.api.texture.TextureLayoutMap;
 import grondag.xm.api.texture.TextureSet;
-import grondag.xm.api.texture.content.CoreTextures;
+import grondag.xm.api.texture.core.CoreTextures;
 import grondag.xm.texture.TextureSetHelper;
 
 public enum Textures { ;

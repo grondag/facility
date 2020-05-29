@@ -36,10 +36,10 @@ import net.fabricmc.fabric.api.block.BlockAttackInteractionAware;
 
 import grondag.facility.block.TracerAccess;
 import grondag.facility.packet.BinActionC2S;
+import grondag.fermion.orientation.api.FaceCorner;
+import grondag.fermion.orientation.api.FaceEdge;
 import grondag.fermion.world.WorldHelper;
 import grondag.xm.api.block.XmProperties;
-import grondag.xm.api.orientation.FaceCorner;
-import grondag.xm.api.orientation.FaceEdge;
 
 public class BinBlock extends CrateBlock implements BlockAttackInteractionAware {
 	public final int divisionLevel;

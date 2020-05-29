@@ -19,10 +19,10 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 
 import grondag.facility.Facility;
+import grondag.fermion.orientation.api.OrientationType;
 import grondag.xm.api.connect.state.SimpleJoinState;
 import grondag.xm.api.mesh.WritableMesh;
 import grondag.xm.api.modelstate.primitive.PrimitiveState;
-import grondag.xm.api.orientation.OrientationType;
 import grondag.xm.api.primitive.SimplePrimitive;
 
 public class ExporterModel extends BasePipeModel {
