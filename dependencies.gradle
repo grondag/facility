@@ -33,46 +33,50 @@ dependencies {
 	compileOnly "org.apiguardian:apiguardian-api:1.0.0"
 	compileOnly "com.google.code.findbugs:jsr305:3.0.2"
 		
+	modImplementation ("grondag:exotic-matter-${project.mc_tag}:${project.exotic_matter_version}.+") { transitive = false }
+	modImplementation ("grondag:exotic-art-core-${project.mc_tag}:${project.exotic_art_core_version}.+") { transitive = false }
+	modImplementation ("grondag:frex-${project.mc_tag}:${project.frex_version}.+") { transitive = false }
+	modImplementation ("grondag:fermion-${project.mc_tag}:${project.fermion_version}.+") { transitive = false }
+	modImplementation ("grondag:fermion-modkeys-${project.mc_tag}:${project.fermion_modkeys_version}.+") { transitive = false }
+	modImplementation ("grondag:fermion-gui-${project.mc_tag}:${project.fermion_gui_version}.+") { transitive = false }
+    modImplementation ("grondag:fermion-varia-${project.mc_tag}:${project.fermion_varia_version}.+") { transitive = false }
+    modImplementation ("grondag:fermion-orientation-${project.mc_tag}:${project.fermion_orientation_version}.+") { transitive = false }
+    modImplementation ("grondag:special-circumstances-${project.mc_tag}:${project.special_circumstances_version}.+") { transitive = false }
+    modImplementation ("grondag:fonthack-${project.mc_tag}:${project.fonthack_version}.+") { transitive = false }
+	modImplementation ("grondag:fluidity-${project.mc_tag}:${project.fluidity_version}.+") { transitive = false }
+    
     modImplementation ("io.github.cottonmc:Jankson-Fabric:${jankson_version}") {
-		exclude group :"net.fabricmc.fabric-api"
-	}
-	include "io.github.cottonmc:Jankson-Fabric:${jankson_version}"
+        exclude group :"net.fabricmc.fabric-api"
+        exclude group :"net.fabricmc.fabric-loader"
+    }
 	
-    modCompile "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
-    include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
-
+	modImplementation ("me.shedaniel.cloth:config-2:${clothconfig_version}") {
+        exclude group :"io.github.prospector.modmenu"
+        exclude group :"net.fabricmc.fabric-api"
+        exclude group :"net.fabricmc.fabric-loader"
+    }
+	
+	modImplementation ("io.github.prospector:modmenu:${project.modmenu_version}") {
+        exclude group :"net.fabricmc.fabric-api"
+        exclude group :"net.fabricmc.fabric-loader"
+    }
+    
     modImplementation ("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
     	 exclude(module: "ModMenu")
     }
-    
-	// For dev env testing 
-	modImplementation ("io.github.prospector:modmenu:${project.modmenu_version}") {
-        exclude group :"net.fabricmc.fabric-api"
-    }
-    
-    modImplementation ("grondag:fermion-${project.mc_tag}:${project.fermion_version}.+") { transitive = false }
-	include "grondag:fermion-${project.mc_tag}:${project.fermion_version}.+"
-
-	modImplementation ("grondag:fermion-modkeys-${project.mc_tag}:${project.fermion_modkeys_version}.+") { transitive = false }
-	include "grondag:fermion-modkeys-${project.mc_tag}:${project.fermion_modkeys_version}.+"
-
-    modImplementation ("grondag:fermion-varia-${project.mc_tag}:${project.fermion_varia_version}.+") { transitive = false }
-    include "grondag:fermion-varia-${project.mc_tag}:${project.fermion_varia_version}.+"
-
-    modImplementation ("grondag:fermion-simulator-${project.mc_tag}:${project.fermion_simulator_version}.+") { transitive = false }
-    //include "grondag:fermion-simulator-${project.mc_tag}:${project.fermion_simulator_version}.+"
-    
-    modImplementation ("grondag:special-circumstances-${project.mc_tag}:${project.special_circumstances_version}.+") { transitive = false }
-    //include "grondag:special-circumstances-${project.mc_tag}:${project.special_circumstances_version}.+"
-
-  	modImplementation ("grondag:fermion-gui-${project.mc_tag}:${project.fermion_gui_version}.+") { transitive = false }
-  	include "grondag:fermion-gui-${project.mc_tag}:${project.fermion_gui_version}.+"
-
-	modImplementation ("grondag:fonthack-${project.mc_tag}:${project.fonthack_version}.+") { transitive = false }
+	
+	include "io.github.cottonmc:Jankson-Fabric:${jankson_version}"
+    include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
 	include "grondag:fonthack-${project.mc_tag}:${project.fonthack_version}.+"
-	
-	modImplementation ("grondag:fluidity-${project.mc_tag}:${project.fluidity_version}.+") { transitive = false }
 	include "grondag:fluidity-${project.mc_tag}:${project.fluidity_version}.+"
-	
-	modImplementation ("grondag:exotic-matter-${project.mc_tag}:${project.exotic_matter_version}.+")
+	include "grondag:exotic-matter-${project.mc_tag}:${project.exotic_matter_version}.+"
+	include "grondag:exotic-art-core-${project.mc_tag}:${project.exotic_art_core_version}.+"
+	include "grondag:fermion-${project.mc_tag}:${project.fermion_version}.+"
+	include "grondag:fermion-modkeys-${project.mc_tag}:${project.fermion_modkeys_version}.+"
+	include "grondag:fermion-gui-${project.mc_tag}:${project.fermion_gui_version}.+"
+    include "grondag:fermion-varia-${project.mc_tag}:${project.fermion_varia_version}.+"
+    include "grondag:fermion-orientation-${project.mc_tag}:${project.fermion_orientation_version}.+"
+    include "grondag:special-circumstances-${project.mc_tag}:${project.special_circumstances_version}.+"
+	include "io.github.cottonmc:Jankson-Fabric:${jankson_version}"
+	include "me.shedaniel.cloth:config-2:${clothconfig_version}"
 }
