@@ -191,6 +191,12 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 	}
 
 	@Override
+	protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
+		// don't draw text
+		// NOOP
+	}
+
+	@Override
 	public boolean mouseClicked(double x, double y, int mouseButton) {
 		return super.mouseClicked(x, y, mouseButton);
 	}
