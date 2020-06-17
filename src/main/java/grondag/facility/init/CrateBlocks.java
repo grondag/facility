@@ -44,7 +44,6 @@ import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.item.XmItemRegistry;
 import grondag.xm.api.modelstate.primitive.PrimitiveStateFunction;
-import grondag.xm.api.paint.PaintBlendMode;
 import grondag.xm.api.paint.XmPaint;
 import grondag.xm.api.primitive.simple.Cube;
 import grondag.xm.api.primitive.simple.CubeWithFace;
@@ -126,7 +125,6 @@ public enum CrateBlocks {
 				.withDefaultState(Cube.INSTANCE.newState().paintAll(
 						Textures.crateBaseFinder(3)
 						.texture(2, Textures.FILLED_BOX)
-						.blendMode(2, PaintBlendMode.TRANSLUCENT)
 						.textureColor(2, 0xFF80FFFF)
 						.disableAo(2, true)
 						.disableDiffuse(2, true)

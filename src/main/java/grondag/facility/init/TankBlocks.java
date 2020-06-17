@@ -39,7 +39,6 @@ import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.modelstate.primitive.PrimitiveStateFunction;
-import grondag.xm.api.paint.PaintBlendMode;
 import grondag.xm.api.paint.XmPaint;
 import grondag.xm.api.primitive.simple.CubeWithFace;
 import grondag.xm.api.texture.XmTextures;
@@ -72,7 +71,6 @@ public enum TankBlocks {
 				.texture(0, XmTextures.TILE_NOISE_SUBTLE)
 				.textureColor(0, 0xFF404045)
 				.texture(1, CoreTextures.BORDER_WEATHERED_LINE)
-				.blendMode(1, PaintBlendMode.TRANSLUCENT)
 				.textureColor(1, 0xA0000000)
 				.find();
 

@@ -23,7 +23,6 @@ import static grondag.xm.api.texture.TextureTransform.ROTATE_RANDOM;
 import static grondag.xm.api.texture.TextureTransform.STONE_LIKE;
 
 import grondag.facility.Facility;
-import grondag.xm.api.paint.PaintBlendMode;
 import grondag.xm.api.paint.XmPaint;
 import grondag.xm.api.paint.XmPaintFinder;
 import grondag.xm.api.texture.TextureLayoutMap;
@@ -46,7 +45,6 @@ public enum Textures { ;
 	public static XmPaint cratePaintWithDecal(TextureSet decal, int color) {
 		return Textures.crateBaseFinder(3)
 				.texture(2, decal)
-				.blendMode(2, PaintBlendMode.TRANSLUCENT)
 				.textureColor(2, color)
 				.find();
 	}
@@ -57,7 +55,6 @@ public enum Textures { ;
 				.texture(0, CRATE_BASE)
 				.textureColor(0, 0xFFFFFFFF)
 				.texture(1, CoreTextures.BORDER_WEATHERED_LINE)
-				.blendMode(1, PaintBlendMode.TRANSLUCENT)
 				.textureColor(1, 0xA0000000);
 	}
 
