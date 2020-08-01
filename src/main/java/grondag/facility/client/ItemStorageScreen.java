@@ -16,17 +16,18 @@
 package grondag.facility.client;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.ScreenHandlerProvider;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 
 import net.fabricmc.loader.api.FabricLoader;
 
 import grondag.facility.FacilityConfig;
-import grondag.facility.storage.item.CrateContainer;
+import grondag.facility.storage.item.CrateScreenHandler;
 import grondag.fermion.gui.AbstractSimpleContainerScreen;
 import grondag.fermion.gui.GuiUtil;
 import grondag.fermion.gui.control.Button;
@@ -39,7 +40,7 @@ import grondag.fluidity.base.synch.ItemStorageAction;
 import grondag.fluidity.impl.DiscreteDisplayDelegateImpl;
 import grondag.fonthack.FontHackClient;
 
-public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContainer> implements ScreenHandlerProvider<CrateContainer> {
+public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateScreenHandler> {
 	private static DiscreteStorageClientDelegate DELEGATE = DiscreteStorageClientDelegate.INSTANCE;
 
 	protected int headerHeight;
@@ -51,10 +52,9 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateContai
 	protected int itemPickerTop;
 	protected int inventoryLeft;
 
-	@SuppressWarnings("resource")
-	public ItemStorageScreen(CrateContainer container) {
+	public ItemStorageScreen(CrateScreenHandler container, PlayerInventory inventory, Text title) {
 		// TODO: something something localization
-		super(container, MinecraftClient.getInstance().player.inventory, new TranslatableText("Facility Storage"));
+		super(container, inventory, new TranslatableText("Facility Storage"));
 	}
 
 	@Override

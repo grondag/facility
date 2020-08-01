@@ -19,8 +19,7 @@ import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
-import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
-
+import grondag.facility.init.ScreenHandlers;
 import grondag.facility.storage.PortableStore;
 import grondag.fluidity.api.storage.Store;
 
@@ -66,11 +65,7 @@ public class PortableCrateItem extends BlockItem {
 			if (!world.isClient) {
 				// TODO: get the label from BE tags, not currently displayed
 				final String label = "todo";
-
-				ContainerProviderRegistry.INSTANCE.openContainer(CrateContainer.ID_ITEM, (ServerPlayerEntity) playerEntity, p -> {
-					p.writeVarInt(hand.ordinal());
-					p.writeString(label);
-				});
+				((ServerPlayerEntity) playerEntity).openHandledScreen(ScreenHandlers.crateItemFactory(label, hand));
 			}
 
 			return TypedActionResult.success(itemStack);

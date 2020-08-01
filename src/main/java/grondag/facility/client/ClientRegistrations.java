@@ -16,12 +16,13 @@
 package grondag.facility.client;
 
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.api.client.screen.ScreenProviderRegistry;
+import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 
 import grondag.facility.init.BinBlocks;
 import grondag.facility.init.CrateBlocks;
+import grondag.facility.init.ScreenHandlers;
 import grondag.facility.init.TankBlocks;
-import grondag.facility.storage.item.CrateContainer;
+import grondag.facility.storage.item.CrateScreenHandler;
 
 public enum ClientRegistrations {
 	;
@@ -38,7 +39,10 @@ public enum ClientRegistrations {
 
 		BlockEntityRendererRegistry.INSTANCE.register(TankBlocks.TANK_BLOCK_ENTITY_TYPE, d -> new TankBlockRenderer(d));
 
-		ScreenProviderRegistry.INSTANCE.registerFactory(CrateContainer.ID, ItemStorageScreen::new);
-		ScreenProviderRegistry.INSTANCE.registerFactory(CrateContainer.ID_ITEM, ItemStorageScreen::new);
+		// Generic inference gets confused without
+		final ScreenRegistry.Factory<CrateScreenHandler, ItemStorageScreen> ITEM_SCREEN_FACTORY = (h, i, t) -> new ItemStorageScreen(h, i, t);
+
+		ScreenRegistry.register(ScreenHandlers.CRATE_BLOCK_TYPE, ITEM_SCREEN_FACTORY);
+		ScreenRegistry.register(ScreenHandlers.CRATE_ITEM_TYPE, ITEM_SCREEN_FACTORY);
 	}
 }

@@ -28,6 +28,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -40,8 +41,8 @@ import net.minecraft.world.World;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.container.ContainerProviderRegistry;
 
+import grondag.facility.init.ScreenHandlers;
 import grondag.facility.storage.PortableStore;
 import grondag.facility.storage.StorageBlock;
 import grondag.fluidity.api.storage.Store;
@@ -83,11 +84,7 @@ public class CrateBlock extends StorageBlock {
 
 			if(be instanceof CrateBlockEntity) {
 				final String label = ((CrateBlockEntity) be).getLabel();
-
-				ContainerProviderRegistry.INSTANCE.openContainer(CrateContainer.ID, player, p -> {
-					p.writeBlockPos(pos);
-					p.writeString(label);
-				});
+				((ServerPlayerEntity) player).openHandledScreen(ScreenHandlers.crateBlockFactory(label, pos));
 			}
 		}
 

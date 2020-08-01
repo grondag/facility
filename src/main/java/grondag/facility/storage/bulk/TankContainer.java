@@ -18,19 +18,20 @@ package grondag.facility.storage.bulk;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import grondag.facility.Facility;
-import grondag.facility.storage.FactilityStorageContainer;
+import grondag.facility.storage.FactilityStorageScreenHandler;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.BulkStorageServerDelegate;
 
-public class TankContainer extends FactilityStorageContainer<BulkStorageServerDelegate> {
+public class TankContainer extends FactilityStorageScreenHandler<BulkStorageServerDelegate> {
 	public static Identifier ID = Facility.REG.id("tank");
 
-	public TankContainer(PlayerEntity player, int synchId, @Nullable Store storage, String label) {
-		super(player, synchId, storage, label);
+	public TankContainer(ScreenHandlerType<?> type, PlayerEntity player, int synchId, @Nullable Store storage, String label) {
+		super(type, player, synchId, storage, label);
 	}
 
 	@Override

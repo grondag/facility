@@ -42,7 +42,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 
 import grondag.facility.init.BinBlocks;
-import grondag.facility.init.Containers;
+import grondag.facility.init.ScreenHandlers;
 import grondag.facility.init.CrateBlocks;
 import grondag.facility.init.PipeBlocks;
 import grondag.facility.init.TankBlocks;
@@ -59,7 +59,7 @@ public class Facility implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		FacilityConfig.init();
-		Containers.values();
+		ScreenHandlers.values();
 		Textures.values();
 		CrateBlocks.values();
 		BinBlocks.values();

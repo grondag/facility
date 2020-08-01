@@ -16,32 +16,34 @@
 package grondag.facility.storage.item;
 
 import javax.annotation.Nullable;
+
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import grondag.facility.Facility;
-import grondag.facility.storage.FactilityStorageContainer;
+import grondag.facility.storage.FactilityStorageScreenHandler;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
 
-public class CrateContainer extends FactilityStorageContainer<DiscreteStorageServerDelegate> {
+public class CrateScreenHandler extends FactilityStorageScreenHandler<DiscreteStorageServerDelegate> {
 	public static Identifier ID = Facility.REG.id("crate");
 	public static Identifier ID_ITEM = Facility.REG.id("crate_item");
 	protected final Slot storeSlot;
 	protected final ItemStack storeStack;
 
-	public CrateContainer(PlayerEntity player, int synchId, @Nullable Store storage, String label) {
-		super(player, synchId, storage, label);
+	public CrateScreenHandler(ScreenHandlerType<?> type, PlayerEntity player, int synchId, @Nullable Store storage, String label) {
+		super(type, player, synchId, storage, label);
 		storeSlot = null;
 		storeStack = null;
 	}
 
-	public CrateContainer(PlayerEntity player, int synchId, @Nullable Store storage, String label, ItemStack storeStack) {
-		super(player, synchId, storage, label);
+	public CrateScreenHandler(ScreenHandlerType<?> type, PlayerEntity player, int synchId, @Nullable Store storage, String label, ItemStack storeStack) {
+		super(type, player, synchId, storage, label);
 		Slot slot = null;
 
 		for(final Slot s : slots) {
