@@ -27,6 +27,7 @@ import net.minecraft.item.Item;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
+import grondag.facility.Facility;
 import grondag.facility.storage.item.CrateBlock;
 import grondag.facility.storage.item.CrateBlockEntity;
 import grondag.facility.storage.item.CreativeCrateBlock;
@@ -54,7 +55,7 @@ public enum CrateBlocks {
 
 	public static final Predicate<Article> FILTER_TYPE_AND_NESTING = d -> d.type() == ArticleType.ITEM && (!d.hasTag() || Block.getBlockFromItem(d.toItem()).getClass() != CrateBlock.class);
 
-	public static final CrateBlock CRATE = REG.blockNoItem("crate", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1), CrateBlocks::crateBe));
+	public static final CrateBlock CRATE = REG.blockNoItem("crate", new CrateBlock(FabricBlockSettings.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::crateBe));
 	public static final BlockEntityType<CrateBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", CrateBlocks::crateBe, CRATE);
 	static CrateBlockEntity crateBe() {
 		return new CrateBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING), "CRATE ");
@@ -63,7 +64,7 @@ public enum CrateBlocks {
 	public static final Item CRATE_ITEM = REG.item("crate", new BlockItem(CRATE, REG.itemSettings()));
 
 
-	public static final CrateBlock SLOTTED_CRATE = REG.blockNoItem("slotted_crate", new CrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1), CrateBlocks::slottedBe));
+	public static final CrateBlock SLOTTED_CRATE = REG.blockNoItem("slotted_crate", new CrateBlock(FabricBlockSettings.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::slottedBe));
 	public static final BlockEntityType<SlottedCrateBlockEntity> SLOTTED_CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("slotted_crate", CrateBlocks::slottedBe, SLOTTED_CRATE);
 	static SlottedCrateBlockEntity slottedBe() {
 		return new SlottedCrateBlockEntity(SLOTTED_CRATE_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING), "SLOTTED CRATE ");
@@ -72,7 +73,7 @@ public enum CrateBlocks {
 	public static final Item SLOTTED_CRATE_ITEM = REG.item("slotted_crate", new BlockItem(SLOTTED_CRATE, REG.itemSettings()));
 
 
-	public static final CreativeCrateBlock CREATIVE_CRATE = REG.block("creative_crate", new CreativeCrateBlock(FabricBlockSettings.of(Material.WOOD).strength(1, 1), CrateBlocks::itemSupplier));
+	public static final CreativeCrateBlock CREATIVE_CRATE = REG.block("creative_crate", new CreativeCrateBlock(FabricBlockSettings.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::itemSupplier));
 	public static final BlockEntityType<CreativeCrateBlockEntity> CREATIVE_CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("creative_crate", CrateBlocks::itemSupplier, CREATIVE_CRATE);
 	static CreativeCrateBlockEntity itemSupplier() {
 		return new CreativeCrateBlockEntity(CREATIVE_CRATE_BLOCK_ENTITY_TYPE, true);

@@ -38,13 +38,16 @@ package grondag.facility;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.block.Material;
+import net.minecraft.block.MaterialColor;
+
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 
 import grondag.facility.init.BinBlocks;
-import grondag.facility.init.ScreenHandlers;
 import grondag.facility.init.CrateBlocks;
 import grondag.facility.init.PipeBlocks;
+import grondag.facility.init.ScreenHandlers;
 import grondag.facility.init.TankBlocks;
 import grondag.facility.init.Textures;
 import grondag.facility.packet.BinActionC2S;
@@ -68,4 +71,6 @@ public class Facility implements ModInitializer {
 		ArticleTypeRegistryImpl.init();
 		ServerSidePacketRegistry.INSTANCE.register(BinActionC2S.ID, BinActionC2S::accept);
 	}
+
+	public static final Material CRATE_MATERIAL = (new Material.Builder(MaterialColor.WOOD)).build();
 }
