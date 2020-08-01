@@ -15,6 +15,8 @@
  ******************************************************************************/
 package grondag.facility.storage;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import net.minecraft.block.Block;
@@ -25,6 +27,8 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.state.StateManager.Builder;
 import net.minecraft.text.LiteralText;
@@ -34,6 +38,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
+import grondag.facility.Facility;
 import grondag.facility.block.FacilitySpeciesBlock;
 import grondag.facility.block.NeighboredBlockEntity;
 import grondag.fermion.modkeys.api.ModKeys;
@@ -75,42 +80,55 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 	}
 
 
-	protected ItemStack getStack(boolean isEmpty) {
-		return new ItemStack(this);
-	}
-
 	@Override
 	public void onBreak(World world, BlockPos blockPos, BlockState blockState, PlayerEntity playerEntity) {
-		final BlockEntity blockEntity = world.getBlockEntity(blockPos);
+		// Drop in creative mode
+		if (playerEntity.isCreative()) {
+			final BlockEntity blockEntity = world.getBlockEntity(blockPos);
 
-		if (blockEntity instanceof StorageBlockEntity) {
-			@SuppressWarnings("rawtypes")
-			final StorageBlockEntity myBlockEntity = (StorageBlockEntity)blockEntity;
-
-			if (!world.isClient) {
-				final boolean isEmpty = myBlockEntity.getInternalStorage().isEmpty();
-
-				final ItemStack stack = getStack(isEmpty);
-
-				if(!isEmpty) {
-					final CompoundTag tag = myBlockEntity.toContainerTag(new CompoundTag());
-
-					if (!tag.isEmpty()) {
-						stack.putSubTag("BlockEntityTag", tag);
-					}
-
-					stack.setCustomName(new LiteralText(myBlockEntity.getLabel()));
-
-					writeCustomStackData(stack, myBlockEntity.getInternalStorage());
+			if (blockEntity instanceof StorageBlockEntity) {
+				if (!world.isClient) {
+					final ItemStack stack = getDropStack((StorageBlockEntity<?, ?>) blockEntity);
+					final ItemEntity itemEntity = new ItemEntity(world, blockPos.getX(), blockPos.getY(), blockPos.getZ(), stack);
+					itemEntity.setToDefaultPickupDelay();
+					world.spawnEntity(itemEntity);
 				}
-
-				final ItemEntity itemEntity = new ItemEntity(world, blockPos.getX(), blockPos.getY(), blockPos.getZ(), stack);
-				itemEntity.setToDefaultPickupDelay();
-				world.spawnEntity(itemEntity);
 			}
 		}
 
 		super.onBreak(world, blockPos, blockState, playerEntity);
+	}
+
+	@Override
+	public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
+		final BlockEntity blockEntity = builder.getNullable(LootContextParameters.BLOCK_ENTITY);
+
+		if (blockEntity == null || !(blockEntity instanceof StorageBlockEntity)) {
+			Facility.LOG.error("Call to getDroppedStacks unable to retrieve block entity. Crashing to avoid loss of storage contents. This is usually a bug in another mod.");
+		}
+
+		final List<ItemStack> result = new ArrayList<>(1);
+		result.add(getDropStack((StorageBlockEntity<?, ?>) blockEntity));
+		return result;
+	}
+
+	private ItemStack getDropStack(StorageBlockEntity<?, ?> myBlockEntity) {
+		final boolean isEmpty = myBlockEntity.getInternalStorage().isEmpty();
+
+		final ItemStack stack = getStack(isEmpty);
+
+		if(!isEmpty) {
+			final CompoundTag tag = myBlockEntity.toContainerTag(new CompoundTag());
+
+			if (!tag.isEmpty()) {
+				stack.putSubTag("BlockEntityTag", tag);
+			}
+
+			stack.setCustomName(new LiteralText(myBlockEntity.getLabel()));
+			writeCustomStackData(stack, myBlockEntity.getInternalStorage());
+		}
+
+		return stack;
 	}
 
 	protected void writeCustomStackData(ItemStack stack, Store store) {
@@ -142,5 +160,9 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 		if(be instanceof NeighboredBlockEntity) {
 			((NeighboredBlockEntity) be).updateNeighbors();
 		}
+	}
+
+	protected ItemStack getStack(boolean isEmpty) {
+		return new ItemStack(this);
 	}
 }
