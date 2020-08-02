@@ -23,13 +23,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 
-import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.storage.AbstractStore;
 import grondag.fluidity.base.storage.discrete.SlottedInventoryStore;
 
 public class SlottedCrateBlockEntity extends CrateBlockEntity implements Inventory {
 	protected final SlottedInventoryStore slottedStore;
 
-	public SlottedCrateBlockEntity(BlockEntityType<? extends CrateBlockEntity> type, Supplier<Store> storageSupplier, String labelRoot) {
+	public SlottedCrateBlockEntity(BlockEntityType<? extends CrateBlockEntity> type, @SuppressWarnings("rawtypes") Supplier<AbstractStore> storageSupplier, String labelRoot) {
 		super(type, storageSupplier, labelRoot);
 		slottedStore = (SlottedInventoryStore) storage;
 	}

@@ -30,16 +30,16 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	public static final String TAG_STORAGE = "storage";
 	public static final String TAG_LABEL = "label";
 
-	protected final Store storage;
+	protected final AbstractStore storage;
 	public final ForwardingStore wrapper = new ForwardingStore();
 	protected String label = "UNKNOWN";
 	protected T clientState;
 	protected final U member;
 
-	public StorageBlockEntity(BlockEntityType<? extends StorageBlockEntity> type, Supplier<Store> storageSupplier, String labelRoot) {
+	public StorageBlockEntity(BlockEntityType<? extends StorageBlockEntity> type, Supplier<AbstractStore> storageSupplier, String labelRoot) {
 		super(type);
 		storage = storageSupplier.get();
-		((AbstractStore) storage).onDirty(this::markForSave);
+		storage.onDirty(this::markForSave);
 		wrapper.setWrapped(storage);
 		label = labelRoot + Base32Namer.makeFilteredName(ThreadLocalRandom.current().nextLong());
 		member = createMember();

@@ -32,12 +32,12 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry
 import grondag.facility.storage.StorageBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.multiblock.MultiBlockManager;
-import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.storage.AbstractStore;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 
 public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMultiBlock.Member> {
-	public TankBlockEntity(BlockEntityType<TankBlockEntity> type, Supplier<Store> storageSupplier, String labelRoot) {
+	public TankBlockEntity(BlockEntityType<TankBlockEntity> type, @SuppressWarnings("rawtypes") Supplier<AbstractStore> storageSupplier, String labelRoot) {
 		super(type, storageSupplier, labelRoot);
 	}
 

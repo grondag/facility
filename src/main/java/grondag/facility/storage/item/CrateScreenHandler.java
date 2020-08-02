@@ -64,6 +64,7 @@ public class CrateScreenHandler extends FactilityStorageScreenHandler<DiscreteSt
 
 	@Override
 	public ItemStack transferSlot(PlayerEntity playerEntity, int slotId) {
+		// prevent moving stack-based stores
 		if(slotId >= 0 && ((storeSlot != null && slotId == storeSlot.id) || (storeStack != null && slots.get(slotId).getStack() == storeStack))) {
 			return ItemStack.EMPTY;
 		}
@@ -73,6 +74,7 @@ public class CrateScreenHandler extends FactilityStorageScreenHandler<DiscreteSt
 
 	@Override
 	public ItemStack onSlotClick(int slotId, int mouseButton, SlotActionType slotActionType, PlayerEntity playerEntity) {
+		// prevent moving stack-based stores
 		if(slotId >= 0 && ((storeSlot != null && slotId == storeSlot.id) || (storeStack != null && slots.get(slotId).getStack() == storeStack))) {
 			return ItemStack.EMPTY;
 		}

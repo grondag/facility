@@ -26,12 +26,13 @@ import net.minecraft.nbt.CompoundTag;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.StoredArticleView;
 import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.storage.AbstractStore;
 
 public class BinBlockEntity extends CrateBlockEntity {
 	protected final int divisionLevel;
 	protected final Article[] items;
 
-	public BinBlockEntity(BlockEntityType<BinBlockEntity> type, Supplier<Store> storageSupplier, String labelRoot, int divisionLevel) {
+	public BinBlockEntity(BlockEntityType<BinBlockEntity> type, @SuppressWarnings("rawtypes") Supplier<AbstractStore> storageSupplier, String labelRoot, int divisionLevel) {
 		super(type, storageSupplier, labelRoot);
 		this.divisionLevel = divisionLevel;
 		items = new Article[divisionLevel];
