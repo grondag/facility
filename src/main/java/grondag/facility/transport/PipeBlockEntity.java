@@ -83,32 +83,6 @@ public class PipeBlockEntity extends TrackedBlockEntity {
 		}
 	}
 
-	//	@Override
-	//	public void setLocation(World world, BlockPos blockPos) {
-	//		unregisterDevice();
-	//		super.setLocation(world, blockPos);
-	//		registerDevice();
-	//		enqueUpdate();
-	//	}
-	//
-	//	@Override
-	//	public void markRemoved() {
-	//		unregisterDevice();
-	//		super.markRemoved();
-	//	}
-	//
-	//	@Override
-	//	public void onBlockEntityUnloaded() {
-	//		unregisterDevice();
-	//	}
-	//
-	//	@Override
-	//	public void cancelRemoval() {
-	//		super.cancelRemoval();
-	//		registerDevice();
-	//		enqueUpdate();
-	//	}
-
 	public CarrierProvider getCarrierProvider(BlockComponentContext ctx) {
 		return carrierProvider;
 	}

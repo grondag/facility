@@ -88,29 +88,6 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 		}
 	}
 
-	//	@Override
-	//	public void setLocation(World world, BlockPos blockPos) {
-	//		unregisterDevice();
-	//		super.setLocation(world, blockPos);
-	//		registerDevice();
-	//	}
-
-	//	@Override
-	//	public void markRemoved() {
-	//		unregisterDevice();
-	//		super.markRemoved();
-	//	}
-
-	//	public void onUnloaded() {
-	//		unregisterDevice();
-	//	}
-
-	//	@Override
-	//	public void cancelRemoval() {
-	//		super.cancelRemoval();
-	//		registerDevice();
-	//	}
-
 	/** Do not call on client - will not crash but wastes memory */
 	public Store getInternalStorage() {
 		return storage;
