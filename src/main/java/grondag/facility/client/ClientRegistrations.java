@@ -22,7 +22,8 @@ import grondag.facility.init.BinBlocks;
 import grondag.facility.init.CrateBlocks;
 import grondag.facility.init.ScreenHandlers;
 import grondag.facility.init.TankBlocks;
-import grondag.facility.storage.item.CrateScreenHandler;
+import grondag.facility.storage.FactilityStorageScreenHandler;
+import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
 
 public enum ClientRegistrations {
 	;
@@ -40,8 +41,7 @@ public enum ClientRegistrations {
 		BlockEntityRendererRegistry.INSTANCE.register(TankBlocks.TANK_BLOCK_ENTITY_TYPE, d -> new TankBlockRenderer(d));
 
 		// Generic inference gets confused without
-		final ScreenRegistry.Factory<CrateScreenHandler, ItemStorageScreen> ITEM_SCREEN_FACTORY = (h, i, t) -> new ItemStorageScreen(h, i, t);
-
+		final ScreenRegistry.Factory<FactilityStorageScreenHandler<DiscreteStorageServerDelegate>, ItemStorageScreen> ITEM_SCREEN_FACTORY = (h, i, t) -> new ItemStorageScreen(h, i, t);
 		ScreenRegistry.register(ScreenHandlers.CRATE_BLOCK_TYPE, ITEM_SCREEN_FACTORY);
 		ScreenRegistry.register(ScreenHandlers.CRATE_ITEM_TYPE, ITEM_SCREEN_FACTORY);
 	}

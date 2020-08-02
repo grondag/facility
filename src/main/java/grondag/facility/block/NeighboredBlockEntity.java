@@ -26,9 +26,10 @@ import net.minecraft.util.math.BlockPos.Mutable;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
+import grondag.facility.storage.TrackedBlockEntity;
 import grondag.fermion.world.WorldTaskManager;
 
-public abstract class NeighboredBlockEntity<T> extends BlockEntity {
+public abstract class NeighboredBlockEntity<T> extends TrackedBlockEntity {
 	private final Object[] neighbors = new Object[12];
 	private int neighborCount;
 	protected boolean isEnqued = false;

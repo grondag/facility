@@ -32,9 +32,9 @@ import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 
 import grondag.facility.storage.item.CrateBlockEntity;
+import grondag.facility.storage.item.CrateItemScreenHandler;
 import grondag.facility.storage.item.CrateScreenHandler;
 import grondag.facility.storage.item.PortableCrateItem;
-import grondag.fluidity.api.storage.Store;
 
 public enum ScreenHandlers {
 	;
@@ -64,7 +64,7 @@ public enum ScreenHandlers {
 
 			if (be instanceof CrateBlockEntity) {
 				final CrateBlockEntity myBe = (CrateBlockEntity) be;
-				return new CrateScreenHandler(CRATE_BLOCK_TYPE, player, syncId, Store.STORAGE_COMPONENT.getAccess(myBe).get(), label);
+				return new CrateScreenHandler(CRATE_BLOCK_TYPE, player, syncId, myBe, label);
 			}
 
 			return null;
@@ -87,12 +87,12 @@ public enum ScreenHandlers {
 
 	////  CRATE ITEM
 
-	public static final ScreenHandlerType<CrateScreenHandler> CRATE_ITEM_TYPE = ScreenHandlerRegistry.registerExtended(CrateScreenHandler.ID_ITEM, ScreenHandlers::clientCrateItemFactory);
+	public static final ScreenHandlerType<CrateItemScreenHandler> CRATE_ITEM_TYPE = ScreenHandlerRegistry.registerExtended(CrateItemScreenHandler.ID, ScreenHandlers::clientCrateItemFactory);
 
-	private static CrateScreenHandler clientCrateItemFactory(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
+	private static CrateItemScreenHandler clientCrateItemFactory(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
 		final Hand hand = Hand.values()[buf.readVarInt()];
 		final String label = buf.readString();
-		return new CrateScreenHandler(
+		return new CrateItemScreenHandler(
 				CRATE_ITEM_TYPE,
 				inventory.player,
 				syncId,
@@ -111,10 +111,10 @@ public enum ScreenHandlers {
 		}
 
 		@Override
-		public CrateScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+		public CrateItemScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
 			final ItemStack stack  = player.getStackInHand(hand);
 			final boolean isPortableItem = stack.getItem() instanceof PortableCrateItem;
-			return new CrateScreenHandler(
+			return new CrateItemScreenHandler(
 					CRATE_ITEM_TYPE,
 					player,
 					syncId,

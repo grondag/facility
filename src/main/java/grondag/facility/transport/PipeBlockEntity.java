@@ -15,19 +15,16 @@
  ******************************************************************************/
 package grondag.facility.transport;
 
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
-import grondag.facility.block.BlockEntityUnloadCallback;
+import grondag.facility.storage.TrackedBlockEntity;
 import grondag.fermion.world.WorldTaskManager;
 import grondag.fluidity.api.device.BlockComponentContext;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.base.transport.SingleCarrierProvider;
 import grondag.fluidity.wip.base.transport.SubCarrier;
 
-public class PipeBlockEntity extends BlockEntity implements BlockEntityUnloadCallback {
+public class PipeBlockEntity extends TrackedBlockEntity {
 	protected final SubCarrier<UtbCostFunction> carrier = new UtbSubCarrier(UniversalTransportBus.BASIC);
 	public final CarrierProvider carrierProvider;
 	protected final PipeMultiBlock.Member member;
@@ -65,45 +62,52 @@ public class PipeBlockEntity extends BlockEntity implements BlockEntityUnloadCal
 		isEnqued = false;
 	}
 
-	protected void registerDevice() {
+	@Override
+	public final void onLoaded() {
 		if(!isRegistered && hasWorld() && !world.isClient) {
 			PipeMultiBlock.DEVICE_MANAGER.connect(member);
 			isRegistered = true;
+			enqueUpdate();
+		} else {
+			assert false : "detected duplicate loading.";
 		}
 	}
 
-	protected void unregisterDevice() {
+	@Override
+	public final void onUnloaded() {
 		if(isRegistered && hasWorld() && !world.isClient) {
 			PipeMultiBlock.DEVICE_MANAGER.disconnect(member);
 			isRegistered = false;
+		} else {
+			assert false : "detected incorrected unloading.";
 		}
 	}
 
-	@Override
-	public void setLocation(World world, BlockPos blockPos) {
-		unregisterDevice();
-		super.setLocation(world, blockPos);
-		registerDevice();
-		enqueUpdate();
-	}
-
-	@Override
-	public void markRemoved() {
-		unregisterDevice();
-		super.markRemoved();
-	}
-
-	@Override
-	public void onBlockEntityUnloaded() {
-		unregisterDevice();
-	}
-
-	@Override
-	public void cancelRemoval() {
-		super.cancelRemoval();
-		registerDevice();
-		enqueUpdate();
-	}
+	//	@Override
+	//	public void setLocation(World world, BlockPos blockPos) {
+	//		unregisterDevice();
+	//		super.setLocation(world, blockPos);
+	//		registerDevice();
+	//		enqueUpdate();
+	//	}
+	//
+	//	@Override
+	//	public void markRemoved() {
+	//		unregisterDevice();
+	//		super.markRemoved();
+	//	}
+	//
+	//	@Override
+	//	public void onBlockEntityUnloaded() {
+	//		unregisterDevice();
+	//	}
+	//
+	//	@Override
+	//	public void cancelRemoval() {
+	//		super.cancelRemoval();
+	//		registerDevice();
+	//		enqueUpdate();
+	//	}
 
 	public CarrierProvider getCarrierProvider(BlockComponentContext ctx) {
 		return carrierProvider;

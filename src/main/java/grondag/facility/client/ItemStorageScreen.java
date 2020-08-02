@@ -27,7 +27,7 @@ import net.minecraft.text.TranslatableText;
 import net.fabricmc.loader.api.FabricLoader;
 
 import grondag.facility.FacilityConfig;
-import grondag.facility.storage.item.CrateScreenHandler;
+import grondag.facility.storage.FactilityStorageScreenHandler;
 import grondag.fermion.gui.AbstractSimpleContainerScreen;
 import grondag.fermion.gui.GuiUtil;
 import grondag.fermion.gui.control.Button;
@@ -35,12 +35,13 @@ import grondag.fermion.gui.control.ItemStackPicker;
 import grondag.fermion.gui.control.TextField;
 import grondag.fluidity.base.synch.DiscreteDisplayDelegate;
 import grondag.fluidity.base.synch.DiscreteStorageClientDelegate;
+import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
 import grondag.fluidity.base.synch.DisplayDelegate;
 import grondag.fluidity.base.synch.ItemStorageAction;
 import grondag.fluidity.impl.DiscreteDisplayDelegateImpl;
 import grondag.fonthack.FontHackClient;
 
-public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateScreenHandler> {
+public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilityStorageScreenHandler<DiscreteStorageServerDelegate>> {
 	private static DiscreteStorageClientDelegate DELEGATE = DiscreteStorageClientDelegate.INSTANCE;
 
 	protected int headerHeight;
@@ -52,7 +53,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<CrateScreen
 	protected int itemPickerTop;
 	protected int inventoryLeft;
 
-	public ItemStorageScreen(CrateScreenHandler container, PlayerInventory inventory, Text title) {
+	public ItemStorageScreen(FactilityStorageScreenHandler<DiscreteStorageServerDelegate> container, PlayerInventory inventory, Text title) {
 		// TODO: something something localization
 		super(container, inventory, new TranslatableText("Facility Storage"));
 	}

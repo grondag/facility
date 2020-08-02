@@ -87,4 +87,14 @@ public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implemen
 		return CarrierProvider.CARRIER_PROVIDER_COMPONENT.getAccess(be).applyIfPresent(neighborSide, p ->
 		p.attachIfPresent(ArticleType.ITEM, this, ct -> ct.getAccess(this)));
 	}
+
+	@Override
+	public void onLoaded() {
+		// NOOP
+	}
+
+	@Override
+	public void onUnloaded() {
+		// NOOP
+	}
 }

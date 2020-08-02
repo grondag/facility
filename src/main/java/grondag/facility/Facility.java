@@ -44,6 +44,7 @@ import net.minecraft.item.Item;
 import net.minecraft.tag.Tag;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 
 import grondag.facility.init.BinBlocks;
@@ -53,6 +54,7 @@ import grondag.facility.init.ScreenHandlers;
 import grondag.facility.init.TankBlocks;
 import grondag.facility.init.Textures;
 import grondag.facility.packet.BinActionC2S;
+import grondag.facility.storage.TrackedBlockEntity;
 import grondag.fermion.registrar.Registrar;
 import grondag.fluidity.impl.article.ArticleTypeRegistryImpl;
 
@@ -72,6 +74,14 @@ public class Facility implements ModInitializer {
 		TankBlocks.values();
 		ArticleTypeRegistryImpl.init();
 		ServerSidePacketRegistry.INSTANCE.register(BinActionC2S.ID, BinActionC2S::accept);
+
+		ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register((be, w) -> {
+			if (be instanceof TrackedBlockEntity) ((TrackedBlockEntity) be).onLoaded();
+		});
+
+		ServerBlockEntityEvents.BLOCK_ENTITY_UNLOAD.register((be, w) -> {
+			if (be instanceof TrackedBlockEntity) ((TrackedBlockEntity) be).onUnloaded();
+		});
 	}
 
 	public static final Material CRATE_MATERIAL = (new Material.Builder(MaterialColor.WOOD)).build();

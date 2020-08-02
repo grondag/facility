@@ -62,7 +62,7 @@ public abstract class FactilityStorageScreenHandler<T extends AbstractStorageSer
 
 	@Override
 	public boolean canUse(PlayerEntity playerEntity) {
-		return true;
+		return storage.isValid();
 	}
 
 	@Override

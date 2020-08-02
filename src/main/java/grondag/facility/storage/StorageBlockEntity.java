@@ -9,24 +9,23 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
-import grondag.facility.block.BlockEntityUnloadCallback;
 import grondag.facility.block.CarrierSessionBlockEntity;
 import grondag.fermion.varia.Base32Namer;
 import grondag.fluidity.api.multiblock.MultiBlockManager;
 import grondag.fluidity.api.multiblock.MultiBlockMember;
 import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.storage.AbstractAggregateStore;
 import grondag.fluidity.base.storage.AbstractStore;
 import grondag.fluidity.base.storage.ForwardingStore;
 
 @SuppressWarnings("rawtypes")
-public abstract class StorageBlockEntity<T extends StorageClientState, U extends MultiBlockMember> extends CarrierSessionBlockEntity implements BlockEntityUnloadCallback, RenderAttachmentBlockEntity, BlockEntityClientSerializable  {
+public abstract class StorageBlockEntity<T extends StorageClientState, U extends MultiBlockMember> extends CarrierSessionBlockEntity implements RenderAttachmentBlockEntity, BlockEntityClientSerializable  {
 	public static final String TAG_STORAGE = "storage";
 	public static final String TAG_LABEL = "label";
 
@@ -57,45 +56,60 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 
 	protected boolean isRegistered = false;
 
+	@Override
 	@SuppressWarnings("unchecked")
-	protected void registerDevice() {
+	public void onLoaded() {
 		if(!isRegistered && hasWorld() && !world.isClient) {
 			deviceManager().connect(member);
 			isRegistered = true;
+		} else {
+			assert false : "detected duplicate loading.";
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
-	protected void unregisterDevice() {
+	public void onUnloaded() {
 		if(isRegistered && hasWorld() && !world.isClient) {
+			// device manager happens later, so remove from aggregate right away to avoid possibility of duping
+			if (wrapper.getWrapped().isAggregate()) {
+				((AbstractAggregateStore) wrapper.getWrapped()).removeStore(storage);
+			}
+
+			// aggregate store should not get this because we removed from it
+			// above and it should no longer be listening
+			storage.disconnect();
+
 			deviceManager().disconnect(member);
+
 			isRegistered = false;
+		} else {
+			assert false : "detected incorrected unloading.";
 		}
 	}
 
-	@Override
-	public void setLocation(World world, BlockPos blockPos) {
-		unregisterDevice();
-		super.setLocation(world, blockPos);
-		registerDevice();
-	}
+	//	@Override
+	//	public void setLocation(World world, BlockPos blockPos) {
+	//		unregisterDevice();
+	//		super.setLocation(world, blockPos);
+	//		registerDevice();
+	//	}
 
-	@Override
-	public void markRemoved() {
-		unregisterDevice();
-		super.markRemoved();
-	}
+	//	@Override
+	//	public void markRemoved() {
+	//		unregisterDevice();
+	//		super.markRemoved();
+	//	}
 
-	@Override
-	public void onBlockEntityUnloaded() {
-		unregisterDevice();
-	}
+	//	public void onUnloaded() {
+	//		unregisterDevice();
+	//	}
 
-	@Override
-	public void cancelRemoval() {
-		super.cancelRemoval();
-		registerDevice();
-	}
+	//	@Override
+	//	public void cancelRemoval() {
+	//		super.cancelRemoval();
+	//		registerDevice();
+	//	}
 
 	/** Do not call on client - will not crash but wastes memory */
 	public Store getInternalStorage() {

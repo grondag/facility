@@ -18,67 +18,33 @@ package grondag.facility.storage.item;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 import grondag.facility.Facility;
 import grondag.facility.storage.FactilityStorageScreenHandler;
+import grondag.facility.storage.StorageBlockEntity;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
 
 public class CrateScreenHandler extends FactilityStorageScreenHandler<DiscreteStorageServerDelegate> {
 	public static Identifier ID = Facility.REG.id("crate");
-	public static Identifier ID_ITEM = Facility.REG.id("crate_item");
-	protected final Slot storeSlot;
-	protected final ItemStack storeStack;
+	protected final  StorageBlockEntity<?, ?> storageBe;
 
-	public CrateScreenHandler(ScreenHandlerType<?> type, PlayerEntity player, int synchId, @Nullable Store storage, String label) {
-		super(type, player, synchId, storage, label);
-		storeSlot = null;
-		storeStack = null;
+	/** BlockEntity is null on client */
+	public CrateScreenHandler(ScreenHandlerType<?> type, PlayerEntity player, int synchId, @Nullable StorageBlockEntity<?, ?> storageBe, String label) {
+		super(type, player, synchId, storageBe == null ? null : storageBe.getEffectiveStorage(), label);
+		this.storageBe = storageBe;
 	}
 
-	public CrateScreenHandler(ScreenHandlerType<?> type, PlayerEntity player, int synchId, @Nullable Store storage, String label, ItemStack storeStack) {
-		super(type, player, synchId, storage, label);
-		Slot slot = null;
-
-		for(final Slot s : slots) {
-			if(s.getStack() == storeStack) {
-				slot = s;
-				break;
-			}
-		}
-
-		this.storeStack = storeStack;
-		storeSlot = slot;
+	@Override
+	public boolean canUse(PlayerEntity playerEntity) {
+		return storageBe == null || !storageBe.isRemoved();
 	}
 
 	@Override
 	protected DiscreteStorageServerDelegate createDelegate(ServerPlayerEntity player, Store storage) {
 		return new DiscreteStorageServerDelegate(player, storage);
-	}
-
-	@Override
-	public ItemStack transferSlot(PlayerEntity playerEntity, int slotId) {
-		// prevent moving stack-based stores
-		if(slotId >= 0 && ((storeSlot != null && slotId == storeSlot.id) || (storeStack != null && slots.get(slotId).getStack() == storeStack))) {
-			return ItemStack.EMPTY;
-		}
-
-		return super.transferSlot(playerEntity, slotId);
-	}
-
-	@Override
-	public ItemStack onSlotClick(int slotId, int mouseButton, SlotActionType slotActionType, PlayerEntity playerEntity) {
-		// prevent moving stack-based stores
-		if(slotId >= 0 && ((storeSlot != null && slotId == storeSlot.id) || (storeStack != null && slots.get(slotId).getStack() == storeStack))) {
-			return ItemStack.EMPTY;
-		}
-
-		return super.onSlotClick(slotId, mouseButton, slotActionType, playerEntity);
 	}
 }
