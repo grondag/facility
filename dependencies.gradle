@@ -60,7 +60,12 @@ dependencies {
     modImplementation ("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
     	 exclude(module: "ModMenu")
     }
-	
+    
+    modRuntime ("io.github.cottonmc:LibCD:${project.libcd_version}") {
+        transitive = false
+    }
+    
+    include "io.github.cottonmc:LibCD:${project.libcd_version}"
 	include "io.github.cottonmc:Jankson-Fabric:${jankson_version}"
     include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
 	include "grondag:fonthack-${project.mc_tag}:${project.fonthack_version}.+"

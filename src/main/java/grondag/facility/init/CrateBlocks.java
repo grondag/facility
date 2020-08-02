@@ -19,7 +19,6 @@ import static grondag.facility.Facility.REG;
 
 import java.util.function.Predicate;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.BlockItem;
@@ -53,7 +52,17 @@ import grondag.xm.api.primitive.simple.CubeWithFace;
 public enum CrateBlocks {
 	;
 
-	public static final Predicate<Article> FILTER_TYPE_AND_NESTING = d -> d.type() == ArticleType.ITEM && (!d.hasTag() || Block.getBlockFromItem(d.toItem()).getClass() != CrateBlock.class);
+	public static final Predicate<Article> FILTER_TYPE_AND_NESTING = d -> {
+		if (d.type() != ArticleType.ITEM) return false;
+
+		final Item item = d.toItem();
+
+		if (d.hasTag() && item.isIn(Facility.STORAGE_BLACKLIST_WITH_CONTENT)) return false;
+
+		if (item.isIn(Facility.STORAGE_BLACKLIST_ALWAYS)) return false;
+
+		return true;
+	};
 
 	public static final CrateBlock CRATE = REG.blockNoItem("crate", new CrateBlock(FabricBlockSettings.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::crateBe));
 	public static final BlockEntityType<CrateBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", CrateBlocks::crateBe, CRATE);

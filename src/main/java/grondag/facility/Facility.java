@@ -40,6 +40,8 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.block.Material;
 import net.minecraft.block.MaterialColor;
+import net.minecraft.item.Item;
+import net.minecraft.tag.Tag;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
@@ -73,4 +75,6 @@ public class Facility implements ModInitializer {
 	}
 
 	public static final Material CRATE_MATERIAL = (new Material.Builder(MaterialColor.WOOD)).build();
+	public static Tag<Item> STORAGE_BLACKLIST_WITH_CONTENT = REG.itemTag("storage_blacklist_with_content");
+	public static Tag<Item> STORAGE_BLACKLIST_ALWAYS = REG.itemTag("storage_blacklist_always");
 }

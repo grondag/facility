@@ -1,0 +1,31 @@
+{
+  "_purpose": "Items included here will never be accepted in storage systems regardless of data.",
+  "replace": false,
+  "values": [
+    "minecraft:lava_bucket"
+  ],
+  "libcd": {
+    "entries": [
+      {
+        "when": [
+          {
+            "libcd:mod_loaded": "inmis"
+          }
+        ],
+        "values": [
+          	"inmis:baby_backpack",
+			"inmis:bejeweled_backpack",
+			"inmis:blazing_backpack",
+			"inmis:ender_pouch",
+			"inmis:endless_backpack",
+			"inmis:frayed_backpack",
+			"inmis:gilded_backpack",
+			"inmis:plated_backpack",
+			"inmis:withered_backpack",
+			"inmis:baby_backpack",
+			"inmis:baby_backpack"
+        ]
+      }
+    ]
+  }
+}
