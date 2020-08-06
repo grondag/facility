@@ -33,49 +33,58 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import grondag.facility.block.FacilitySpeciesBlock;
+import grondag.facility.transport.item.ItemMoverBlock;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.xm.api.block.XmBlockState;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.collision.CollisionDispatcher;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.connect.world.BlockTest;
+import grondag.xm.api.connect.world.BlockTestContext;
 
 public class PipeBlock extends FacilitySpeciesBlock {
-	public PipeBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
+	public final boolean hasGlow;
+
+	public PipeBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, boolean hasGlow) {
 		super(settings, beFactory);
+		this.hasGlow = hasGlow;
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static final BlockTest JOIN_TEST = ctx -> canConnect(ctx.fromBlockEntity(), ctx.toBlockEntity());
+	public static final BlockTest JOIN_TEST = ctx -> canConnect(ctx);
 
 	@SuppressWarnings("rawtypes")
 	public static final BlockTest JOIN_TEST_WITH_AXIS = ctx -> {
 		final BlockState fromState = ctx.fromBlockState();
 
 		if(fromState.getBlock() instanceof StraightPipeBlock) {
-			final BlockPos fromPos = ctx.fromPos();
-			final BlockPos toPos = ctx.toPos();
-
-			return fromState.get(XmProperties.AXIS) == Direction.fromVector(toPos.getX() - fromPos.getX(), toPos.getY() - fromPos.getY(), toPos.getZ() - fromPos.getZ()).getAxis();
+			final Direction toFace = ctx.toFace();
+			return toFace != null && toFace.getAxis() == fromState.get(XmProperties.AXIS);
 		} else {
-			return canConnect(ctx.fromBlockEntity(), ctx.toBlockEntity());
+			return canConnect(ctx);
 		}
 	};
 
-	public static boolean canConnect(BlockEntity fromEntity, BlockEntity toEntity) {
-		if(fromEntity == null || toEntity == null) {
+	public static boolean canConnect(BlockTestContext<?> ctx) {
+		final BlockEntity fromEntity = ctx.fromBlockEntity();
+		final BlockEntity toEntity = ctx.toBlockEntity();
+
+		if(fromEntity == null) {
 			return false;
 		}
 
-		final World fromWorld = fromEntity.getWorld();
+		final BlockState fromState = ctx.fromBlockState();
 
-		if(fromWorld == null || fromWorld != toEntity.getWorld()) {
+		if (fromState.getBlock() instanceof ItemMoverBlock && fromState.get(XmProperties.FACE) == ctx.toFace()) {
+			return true;
+		}
+
+		if(toEntity == null) {
 			return false;
 		}
 

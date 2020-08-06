@@ -10,6 +10,7 @@ import static net.minecraft.util.math.Direction.WEST;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 
+import grondag.facility.transport.PipeBlockEntity;
 import grondag.xm.api.connect.state.SimpleJoinState;
 import grondag.xm.api.mesh.Csg;
 import grondag.xm.api.mesh.CsgMesh;
@@ -18,58 +19,65 @@ import grondag.xm.api.mesh.XmMesh;
 import grondag.xm.api.mesh.XmMeshes;
 import grondag.xm.api.mesh.polygon.MutablePolygon;
 import grondag.xm.api.mesh.polygon.PolyTransform;
+import grondag.xm.api.modelstate.base.BaseModelState;
 import grondag.xm.api.modelstate.primitive.PrimitiveState;
+import grondag.xm.api.modelstate.primitive.PrimitiveStateMutator;
 import grondag.xm.api.paint.SurfaceTopology;
-import grondag.xm.api.paint.XmPaint;
 import grondag.xm.api.primitive.surface.XmSurface;
 import grondag.xm.api.primitive.surface.XmSurfaceList;
-import grondag.xm.api.texture.XmTextures;
 
 public class BasePipeModel {
 	protected static final XmSurfaceList SURFACES = XmSurfaceList.builder()
-			.add("side", SurfaceTopology.CUBIC, XmSurface.FLAG_NONE)
-			.add("end", SurfaceTopology.CUBIC, XmSurface.FLAG_NONE)
-			.add("connector", SurfaceTopology.CUBIC, XmSurface.FLAG_NONE)
+			.add("cable", SurfaceTopology.CUBIC, XmSurface.FLAG_ALLOW_BORDERS)
+			.add("connector_face", SurfaceTopology.CUBIC, XmSurface.FLAG_NONE)
+			.add("connector_side", SurfaceTopology.CUBIC, XmSurface.FLAG_NONE)
+			.add("connector_back", SurfaceTopology.CUBIC, XmSurface.FLAG_NONE)
 			.build();
 
+	public static final XmSurface SURFACE_CABLE = SURFACES.get(0);
+	public static final XmSurface SURFACE_CONNECTOR_FACE = SURFACES.get(1);
+	public static final XmSurface SURFACE_CONNECTOR_SIDE = SURFACES.get(2);
+	public static final XmSurface SURFACE_CONNECTOR_BACK = SURFACES.get(3);
 
-	public static final XmSurface SURFACE_SIDE = SURFACES.get(0);
-	public static final XmSurface SURFACE_END = SURFACES.get(1);
-	public static final XmSurface SURFACE_CONNECTOR = SURFACES.get(2);
+	protected static final float CABLE_THICKNESS = 6f / 16f;
 
-	public static final XmPaint PAINT_SIDE = XmPaint.finder()
-			.textureDepth(1)
-			.texture(0, XmTextures.TILE_NOISE_MODERATE)
-			.textureColor(0, 0xFF707080)
-			.find();
+	protected static final float CABLE_MIN = 0.5f - CABLE_THICKNESS * 0.5f;
+	protected static final float CABLE_MAX = 1f - CABLE_MIN;
+	protected static final float END_MIN = Math.max(0, CABLE_MIN - CABLE_THICKNESS);
+	protected static final float END_MAX = Math.min(1, CABLE_MAX + CABLE_THICKNESS);
 
-	public static final XmPaint PAINT_END = XmPaint.finder()
-			.textureDepth(1)
-			.texture(0, XmTextures.TILE_NOISE_SUBTLE)
-			.textureColor(0, 0xFF303030)
-			.find();
-
-	public static final XmPaint PAINT_CONNECTOR = XmPaint.finder()
-			.textureDepth(1)
-			.texture(0, XmTextures.TILE_NOISE_SUBTLE)
-			.textureColor(0, 0xFF404050)
-			.find();
-
-	// could be used to configure cable shape
-	protected static final float THICKNESS = 6f / 16f;
-
-	// these are derived
-	protected static final float MIN = 0.5f - THICKNESS * 0.5f;
-	protected static final float MAX = 1f - MIN;
-	protected static final float END_MIN = Math.max(0, MIN - THICKNESS);
-	protected static final float END_MAX = Math.min(1, MAX + THICKNESS);
-
-	protected static final float CONNECTOR_DEPTH = 0.1f;
-	protected static final float CONNECTOR_MARGIN = 0.1f;
-	protected static final float CONNECTOR_MIN = Math.max(0, MIN - CONNECTOR_MARGIN);
-	protected static final float CONNECTOR_MAX = Math.min(1, MAX + CONNECTOR_MARGIN);
+	protected static final float CONNECTOR_DEPTH = 1f / 16f;
+	protected static final float CONNECTOR_WIDTH = 8f / 16f;
+	protected static final float CONNECTOR_MIN = 0.5f - CONNECTOR_WIDTH * 0.5f;
+	protected static final float CONNECTOR_MAX = 1f - CONNECTOR_MIN;
 
 	protected static final Direction[] FACES = Direction.values();
+
+	/** six for connectors, 1 for emissive */
+	protected static final int PRIMITIVE_BIT_COUNT = 7;
+
+	protected static final int GLOW_BIT = 1 << 6;
+
+	public static boolean hasGlow(BaseModelState<?,?> modelState) {
+		return (modelState.primitiveBits() & GLOW_BIT) == GLOW_BIT;
+	}
+
+	public static final PrimitiveStateMutator GLOW_UPDATE = (modelState, xmBlockState, world, pos, neighbors, refreshFromWorld) -> {
+		if(refreshFromWorld) {
+			int bits = 0;
+			final SimpleJoinState join = modelState.simpleJoin();
+
+			for(final Direction face : FACES) {
+				if(join.isJoined(face)) {
+					if(!(neighbors.blockEntity(face) instanceof PipeBlockEntity)) {
+						bits |= 1 << face.ordinal();
+					};
+				}
+			}
+
+			modelState.primitiveBits(bits);
+		}
+	};
 
 	protected final boolean alwaysConnects;
 
@@ -80,71 +88,69 @@ public class BasePipeModel {
 	protected void emitSection(float from, float to, Axis axis, WritableMesh mesh) {
 		final MutablePolygon writer = mesh.writer();
 		final PolyTransform transform = PolyTransform.get(axis);
-		writer.lockUV(0, true).surface(SURFACE_SIDE).saveDefaults();
+		writer.lockUV(0, true).surface(SURFACE_CABLE).saveDefaults();
 
-		writer.setupFaceQuad(EAST, MIN, from, MAX, to, MIN, UP);
+		writer.setupFaceQuad(EAST, CABLE_MIN, from, CABLE_MAX, to, CABLE_MIN, UP);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(WEST, MIN, from, MAX, to, MIN, UP);
+		writer.setupFaceQuad(WEST, CABLE_MIN, from, CABLE_MAX, to, CABLE_MIN, UP);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(NORTH, MIN, from, MAX, to, MIN, UP);
+		writer.setupFaceQuad(NORTH, CABLE_MIN, from, CABLE_MAX, to, CABLE_MIN, UP);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(SOUTH, MIN, from, MAX, to, MIN, UP);
+		writer.setupFaceQuad(SOUTH, CABLE_MIN, from, CABLE_MAX, to, CABLE_MIN, UP);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(UP, MIN, MIN, MAX, MAX, 1 - to, NORTH);
-		writer.surface(to > MAX
-				? SURFACE_END
-						: SURFACE_SIDE);
+		writer.setupFaceQuad(UP, CABLE_MIN, CABLE_MIN, CABLE_MAX, CABLE_MAX, 1 - to, NORTH);
+		writer.surface(to > CABLE_MAX
+				? SURFACE_CONNECTOR_FACE
+						: SURFACE_CABLE);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(DOWN, MIN, MIN, MAX, MAX, from, NORTH);
-		writer.surface(from < MIN
-				? SURFACE_END
-						: SURFACE_SIDE);
+		writer.setupFaceQuad(DOWN, CABLE_MIN, CABLE_MIN, CABLE_MAX, CABLE_MAX, from, NORTH);
+		writer.surface(from < CABLE_MIN
+				? SURFACE_CONNECTOR_FACE
+						: SURFACE_CABLE);
 		transform.accept(writer);
 		writer.append();
 	}
 
 	protected void emitConnector(PrimitiveState modelState, Direction face, WritableMesh mesh) {
-		emitConnector(modelState, face, mesh, CONNECTOR_MIN, CONNECTOR_MAX, CONNECTOR_DEPTH);
-	}
-
-	protected void emitConnector(PrimitiveState modelState, Direction face, WritableMesh mesh, float connectorMin, float connectorMax, float connectorDepth) {
 		final MutablePolygon writer = mesh.writer();
 		final PolyTransform transform = PolyTransform.get(face);
-		writer.lockUV(0, true).surface(SURFACE_CONNECTOR);
+		writer.lockUV(0, true)
+		.surface(SURFACE_CONNECTOR_SIDE);
 		writer.saveDefaults();
 
-		writer.setupFaceQuad(EAST, connectorMin, 0, connectorMax, connectorDepth, connectorMin, UP);
+		writer.setupFaceQuad(EAST, CONNECTOR_MIN, 0, CONNECTOR_MAX, CONNECTOR_DEPTH, CONNECTOR_MIN, UP);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(WEST, connectorMin, 0, connectorMax, connectorDepth, connectorMin, UP);
+		writer.setupFaceQuad(WEST, CONNECTOR_MIN, 0, CONNECTOR_MAX, CONNECTOR_DEPTH, CONNECTOR_MIN, UP);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(NORTH, connectorMin, 0, connectorMax, connectorDepth, connectorMin, UP);
+		writer.setupFaceQuad(NORTH, CONNECTOR_MIN, 0, CONNECTOR_MAX, CONNECTOR_DEPTH, CONNECTOR_MIN, UP);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(SOUTH, connectorMin, 0, connectorMax, connectorDepth, connectorMin, UP);
+		writer.setupFaceQuad(SOUTH, CONNECTOR_MIN, 0, CONNECTOR_MAX, CONNECTOR_DEPTH, CONNECTOR_MIN, UP);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(UP, connectorMin, connectorMin, connectorMax, connectorMax, 1 - connectorDepth, NORTH);
+		writer.setupFaceQuad(UP, CONNECTOR_MIN, CONNECTOR_MIN, CONNECTOR_MAX, CONNECTOR_MAX, 1 - CONNECTOR_DEPTH, NORTH);
+		writer.surface(SURFACE_CONNECTOR_BACK);
 		transform.accept(writer);
 		writer.append();
 
-		writer.setupFaceQuad(DOWN, connectorMin, connectorMin, connectorMax, connectorMax, 0, NORTH);
-		writer.surface(SURFACE_END);
+		writer.setupFaceQuad(DOWN, CONNECTOR_MIN, CONNECTOR_MIN, CONNECTOR_MAX, CONNECTOR_MAX, 0, NORTH);
+		writer.surface(SURFACE_CONNECTOR_FACE);
 		transform.accept(writer);
 		writer.append();
 	}
@@ -190,15 +196,15 @@ public class BasePipeModel {
 
 			if(hasX) {
 				output = XmMeshes.claimCsg();
-				final float top = isJoined(modelState, joinState, WEST) ? 1 : (hasMultiple ? MAX : END_MAX);
-				final float bottom = isJoined(modelState, joinState, EAST) ? 0 : (hasMultiple ? MIN : END_MIN);
+				final float top = isJoined(modelState, joinState, WEST) ? 1 : (hasMultiple ? CABLE_MAX : END_MAX);
+				final float bottom = isJoined(modelState, joinState, EAST) ? 0 : (hasMultiple ? CABLE_MIN : END_MIN);
 				emitSection(bottom, top, Axis.X, output);
 			}
 
 			if(hasY) {
 				quadsA = XmMeshes.claimCsg();
-				final float top = isJoined(modelState, joinState, UP) ? 1 : (hasMultiple ? MAX : END_MAX);
-				final float bottom = isJoined(modelState, joinState, DOWN) ? 0 : (hasMultiple ? MIN : END_MIN);
+				final float top = isJoined(modelState, joinState, UP) ? 1 : (hasMultiple ? CABLE_MAX : END_MAX);
+				final float bottom = isJoined(modelState, joinState, DOWN) ? 0 : (hasMultiple ? CABLE_MIN : END_MIN);
 				emitSection(bottom, top, Axis.Y, quadsA);
 
 				if(output == null) {
@@ -218,8 +224,8 @@ public class BasePipeModel {
 				if(quadsA == null) {
 					quadsA = XmMeshes.claimCsg();
 				}
-				final float top = isJoined(modelState, joinState, SOUTH) ? 1 : (hasMultiple ? MAX : END_MAX);
-				final float bottom = isJoined(modelState, joinState, NORTH) ? 0 : (hasMultiple ? MIN : END_MIN);
+				final float top = isJoined(modelState, joinState, SOUTH) ? 1 : (hasMultiple ? CABLE_MAX : END_MAX);
+				final float bottom = isJoined(modelState, joinState, NORTH) ? 0 : (hasMultiple ? CABLE_MIN : END_MIN);
 				emitSection(bottom, top, Axis.Z, quadsA);
 
 				if(output == null) {

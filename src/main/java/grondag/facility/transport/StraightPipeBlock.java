@@ -27,8 +27,8 @@ import grondag.fermion.modkeys.api.ModKeys;
 import grondag.xm.api.block.XmProperties;
 
 public class StraightPipeBlock extends PipeBlock {
-	public StraightPipeBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
-		super(settings, beFactory);
+	public StraightPipeBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, boolean hasGlow) {
+		super(settings, beFactory, hasGlow);
 	}
 
 	@Override

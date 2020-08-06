@@ -15,12 +15,7 @@
  ******************************************************************************/
 package grondag.facility.transport.model;
 
-import net.minecraft.util.math.Direction;
-
 import grondag.facility.Facility;
-import grondag.facility.transport.PipeBlockEntity;
-import grondag.xm.api.connect.state.SimpleJoinState;
-import grondag.xm.api.modelstate.primitive.PrimitiveStateMutator;
 import grondag.xm.api.primitive.SimplePrimitive;
 
 public class PipeModel extends BasePipeModel {
@@ -29,27 +24,9 @@ public class PipeModel extends BasePipeModel {
 	public static final SimplePrimitive PRIMITIVE = SimplePrimitive.builder()
 			.surfaceList(SURFACES)
 			.polyFactory(INSTANCE::polyFactory)
-			.primitiveBitCount(6)
+			.primitiveBitCount(PRIMITIVE_BIT_COUNT)
 			.simpleJoin(true)
 			.build(Facility.REG.id("basic_pipe"));
-
-	public static final PrimitiveStateMutator MODEL_STATE_UPDATE = (modelState, xmBlockState, world, pos, neighbors, refreshFromWorld) -> {
-		// join should already be handled, so we just need to check if neighbors are inventory
-		if(refreshFromWorld) {
-			int bits = 0;
-			final SimpleJoinState join = modelState.simpleJoin();
-
-			for(final Direction face : FACES) {
-				if(join.isJoined(face)) {
-					if(!(neighbors.blockEntity(face) instanceof PipeBlockEntity)) {
-						bits |= 1 << face.ordinal();
-					};
-				}
-			}
-
-			modelState.primitiveBits(bits);
-		}
-	};
 
 	protected PipeModel() {
 		super(false);

@@ -31,9 +31,9 @@ import net.minecraft.world.World;
 import grondag.facility.transport.PipeBlock;
 import grondag.xm.api.block.XmProperties;
 
-public class IntakeBlock extends PipeBlock {
-	public IntakeBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
-		super(settings, beFactory);
+public class ItemMoverBlock extends PipeBlock {
+	public ItemMoverBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, boolean hasGlow) {
+		super(settings, beFactory, hasGlow);
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class IntakeBlock extends PipeBlock {
 		}
 
 		if(!world.isClient && BlockPos.offset(blockPos.asLong(), blockState.get(XmProperties.FACE)) == blockPos2.asLong()) {
-			((IntakeBlockEntity) world.getBlockEntity(blockPos)).resetTickHandler();
+			((ItemMoverBlockEntity) world.getBlockEntity(blockPos)).resetTickHandler();
 		}
 	}
 

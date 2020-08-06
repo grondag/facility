@@ -57,5 +57,4 @@ public enum Textures { ;
 				.texture(1, CoreTextures.BORDER_WEATHERED_LINE)
 				.textureColor(1, 0xA0000000);
 	}
-
 }
