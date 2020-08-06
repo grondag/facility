@@ -10,8 +10,10 @@
 	"config.facility.value.utb_cat1_import_cooldown": "UTB-1 Importer Tick Frequency",
 	"config.facility.help.utb_cat1_import_cooldown": "Freqeuncy of transfers for UTB-1 Importer;1 = every tick, 20 = every second;Higher values may protect server performance",
 	
-	"tier.facility.utb1": "Universal Transport Bus - Category 1",
-	"tier.facility.utb1.desc": "Carries items & containerized fluids.",
+	"transport.facility.circuit.num": "Circuit # %d",
+	"transport.facility.circuit.auto": "Circuit # - Auto Select",
+	"transport.facility.utb1": "Universal Transport Bus - Category 1",
+	"transport.facility.utb1.desc": "Carries items & containerized fluids.",
 	"block.facility.utb1_flex": "Flexible Pipe - UTB.1",
 	"block.facility.utb1_flex.desc": "Connects in any direction.;More expensive",
 	"block.facility.utb1_straight": "Straight Pipe - UTB.1",

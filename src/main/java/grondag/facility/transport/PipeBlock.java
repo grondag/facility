@@ -25,6 +25,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
@@ -39,10 +40,13 @@ import net.fabricmc.api.Environment;
 
 import grondag.facility.block.FacilitySpeciesBlock;
 import grondag.facility.transport.item.ItemMoverBlock;
+import grondag.fermion.modkeys.api.ModKeys;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.xm.api.block.XmBlockState;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.collision.CollisionDispatcher;
+import grondag.xm.api.connect.species.Species;
+import grondag.xm.api.connect.species.SpeciesMode;
 import grondag.xm.api.connect.species.SpeciesProperty;
 import grondag.xm.api.connect.world.BlockTest;
 import grondag.xm.api.connect.world.BlockTestContext;
@@ -51,7 +55,7 @@ public class PipeBlock extends FacilitySpeciesBlock {
 	public final boolean hasGlow;
 
 	public PipeBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, boolean hasGlow) {
-		super(settings, beFactory);
+		super(settings, beFactory, SpeciesProperty.speciesForBlockType(PipeBlock.class));
 		this.hasGlow = hasGlow;
 	}
 
@@ -147,7 +151,29 @@ public class PipeBlock extends FacilitySpeciesBlock {
 	@Environment(EnvType.CLIENT)
 	public void buildTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
 		super.buildTooltip(itemStack, blockView, list, tooltipContext);
-		list.add(new TranslatableText("tier.facility.utb1").formatted(Formatting.GOLD));
-		list.add(new TranslatableText("tier.facility.utb1.desc").formatted(Formatting.GOLD));
+		list.add(new TranslatableText("transport.facility.utb1").formatted(Formatting.GOLD));
+		list.add(new TranslatableText("transport.facility.utb1.desc").formatted(Formatting.GOLD));
+
+		final int species = PipeBlockItem.species(itemStack);
+
+		if (species == PipeBlockItem.AUTO_SELECT_SPECIES) {
+			list.add(new TranslatableText("transport.facility.circuit.auto").formatted(Formatting.AQUA));
+		} else {
+			list.add(new TranslatableText("transport.facility.circuit.num", species).formatted(Formatting.AQUA));
+		}
+	}
+
+	@Override
+	public BlockState getPlacementState(ItemPlacementContext context) {
+		int species = PipeBlockItem.species(context.getStack());
+
+		if (species == PipeBlockItem.AUTO_SELECT_SPECIES) {
+			final Direction face = context.getPlayerLookDirection();
+			final BlockPos onPos = context.getBlockPos().offset(context.getSide().getOpposite());
+			final SpeciesMode mode = ModKeys.isPrimaryPressed(context.getPlayer()) ? SpeciesMode.COUNTER_MOST : SpeciesMode.MATCH_MOST;
+			species = Species.speciesForPlacement(context.getWorld(), onPos, face.getOpposite(), mode, speciesFunc);
+		}
+
+		return getDefaultState().with(SpeciesProperty.SPECIES, species);
 	}
 }

@@ -32,10 +32,11 @@ import grondag.xm.api.connect.species.SpeciesMode;
 import grondag.xm.api.connect.species.SpeciesProperty;
 
 public class FacilitySpeciesBlock extends FacilityBlock {
-	public final SpeciesFunction speciesFunc = SpeciesProperty.speciesForBlockType(FacilitySpeciesBlock.class);
+	protected final SpeciesFunction speciesFunc;
 
-	public FacilitySpeciesBlock(Settings settings, Supplier<BlockEntity> beFactory) {
+	public FacilitySpeciesBlock(Settings settings, Supplier<BlockEntity> beFactory, SpeciesFunction speciesFunc) {
 		super(settings, beFactory);
+		this.speciesFunc = speciesFunc;
 	}
 
 	@Override

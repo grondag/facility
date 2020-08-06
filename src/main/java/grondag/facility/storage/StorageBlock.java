@@ -44,12 +44,13 @@ import grondag.facility.block.NeighboredBlockEntity;
 import grondag.fermion.modkeys.api.ModKeys;
 import grondag.fluidity.api.storage.Store;
 import grondag.xm.api.block.XmProperties;
+import grondag.xm.api.connect.species.SpeciesProperty;
 
 public abstract class StorageBlock extends FacilitySpeciesBlock {
 	public static final Identifier CONTENTS  = ShulkerBoxBlock.CONTENTS;
 
 	public StorageBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
-		super(settings, beFactory);
+		super(settings, beFactory, SpeciesProperty.speciesForBlockType(StorageBlock.class));
 	}
 
 	@Override

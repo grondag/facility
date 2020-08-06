@@ -28,6 +28,7 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import grondag.facility.transport.PipeBlock;
 import grondag.facility.transport.PipeBlockEntity;
+import grondag.facility.transport.PipeBlockItem;
 import grondag.facility.transport.StraightPipeBlock;
 import grondag.facility.transport.item.ExportBlockEntity;
 import grondag.facility.transport.item.IntakeBlockEntity;
@@ -48,25 +49,25 @@ import grondag.xm.api.modelstate.primitive.PrimitiveStateFunction;
 public enum PipeBlocks {
 	;
 
-	public static final PipeBlock UTB1_PIPE = REG.block("utb1_flex", new PipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::pipeSupplier, false));
-	public static final PipeBlock UTB1_STRAIGHT_PIPE = REG.block("utb1_straight", new StraightPipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::pipeSupplier, false));
-	public static final PipeBlock UTB1_PIPE_GLOW = REG.block("utb1_flex_g", new PipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::pipeSupplier, true));
-	public static final PipeBlock UTB1_STRAIGHT_PIPE_GLOW = REG.block("utb1_straight_g", new StraightPipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::pipeSupplier, true));
+	public static final PipeBlock UTB1_PIPE = REG.block("utb1_flex", new PipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::pipeSupplier, false), PipeBlockItem::new);
+	public static final PipeBlock UTB1_PIPE_GLOW = REG.block("utb1_flex_g", new PipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::pipeSupplier, true), PipeBlockItem::new);
+	public static final PipeBlock UTB1_STRAIGHT_PIPE = REG.block("utb1_straight", new StraightPipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::pipeSupplier, false), PipeBlockItem::new);
+	public static final PipeBlock UTB1_STRAIGHT_PIPE_GLOW = REG.block("utb1_straight_g", new StraightPipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::pipeSupplier, true), PipeBlockItem::new);
 	public static final BlockEntityType<PipeBlockEntity> UTB1_BLOCK_ENTITY_TYPE = REG.blockEntityType("utb1", PipeBlocks::pipeSupplier, UTB1_PIPE, UTB1_STRAIGHT_PIPE, UTB1_PIPE_GLOW, UTB1_STRAIGHT_PIPE_GLOW);
 	static PipeBlockEntity pipeSupplier() {
 		return new PipeBlockEntity(UTB1_BLOCK_ENTITY_TYPE);
 	}
 
 
-	public static final ItemMoverBlock UTB1_INTAKE = REG.block("utb1_intake", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::intakeSupplier, false));
-	public static final ItemMoverBlock UTB1_INTAKE_GLOW = REG.block("utb1_intake_g", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::intakeSupplier, true));
+	public static final ItemMoverBlock UTB1_INTAKE = REG.block("utb1_intake", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::intakeSupplier, false), PipeBlockItem::new);
+	public static final ItemMoverBlock UTB1_INTAKE_GLOW = REG.block("utb1_intake_g", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::intakeSupplier, true), PipeBlockItem::new);
 	public static final BlockEntityType<IntakeBlockEntity> UTB1_INTAKE_BLOCK_ENTITY_TYPE = REG.blockEntityType("utb1_intake", PipeBlocks::intakeSupplier, UTB1_INTAKE, UTB1_INTAKE_GLOW);
 	static IntakeBlockEntity intakeSupplier() {
 		return new IntakeBlockEntity(UTB1_INTAKE_BLOCK_ENTITY_TYPE);
 	}
 
-	public static final ItemMoverBlock UTB1_EXPORT = REG.block("utb1_export", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::exportSupplier, false));
-	public static final ItemMoverBlock UTB1_EXPORT_GLOW = REG.block("utb1_export_g", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::exportSupplier, true));
+	public static final ItemMoverBlock UTB1_EXPORT = REG.block("utb1_export", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::exportSupplier, false), PipeBlockItem::new);
+	public static final ItemMoverBlock UTB1_EXPORT_GLOW = REG.block("utb1_export_g", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::exportSupplier, true), PipeBlockItem::new);
 	public static final BlockEntityType<ExportBlockEntity> UTB1_EXPORT_BLOCK_ENTITY_TYPE = REG.blockEntityType("utb1_export", PipeBlocks::exportSupplier, UTB1_EXPORT, UTB1_EXPORT_GLOW);
 	static ExportBlockEntity exportSupplier() {
 		return new ExportBlockEntity(UTB1_EXPORT_BLOCK_ENTITY_TYPE);
