@@ -25,8 +25,8 @@ import grondag.facility.FacilityConfig;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.api.transact.Transaction;
 
-public class IntakeBlockEntity extends ItemMoverBlockEntity {
-	public IntakeBlockEntity(BlockEntityType<IntakeBlockEntity> type) {
+public class StorageToBusBlockEntity extends ItemMoverBlockEntity {
+	public StorageToBusBlockEntity(BlockEntityType<StorageToBusBlockEntity> type) {
 		super(type);
 	}
 

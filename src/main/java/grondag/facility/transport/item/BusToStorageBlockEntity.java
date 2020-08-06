@@ -28,8 +28,8 @@ import grondag.fluidity.api.transact.Transaction;
 import grondag.fluidity.wip.api.transport.CarrierNode;
 import grondag.fluidity.wip.base.transport.AssignedNumbersAuthority;
 
-public class ExportBlockEntity extends ItemMoverBlockEntity {
-	public ExportBlockEntity(BlockEntityType<ExportBlockEntity> type) {
+public class BusToStorageBlockEntity extends ItemMoverBlockEntity {
+	public BusToStorageBlockEntity(BlockEntityType<BusToStorageBlockEntity> type) {
 		super(type);
 	}
 

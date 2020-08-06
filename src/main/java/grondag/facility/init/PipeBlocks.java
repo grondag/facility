@@ -30,8 +30,8 @@ import grondag.facility.transport.PipeBlock;
 import grondag.facility.transport.PipeBlockEntity;
 import grondag.facility.transport.PipeBlockItem;
 import grondag.facility.transport.StraightPipeBlock;
-import grondag.facility.transport.item.ExportBlockEntity;
-import grondag.facility.transport.item.IntakeBlockEntity;
+import grondag.facility.transport.item.BusToStorageBlockEntity;
+import grondag.facility.transport.item.StorageToBusBlockEntity;
 import grondag.facility.transport.item.ItemMoverBlock;
 import grondag.facility.transport.model.ItemMoverModel;
 import grondag.facility.transport.model.PipeModel;
@@ -59,22 +59,22 @@ public enum PipeBlocks {
 	}
 
 
-	public static final ItemMoverBlock UTB1_INTAKE = REG.block("utb1_intake", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::intakeSupplier, false), PipeBlockItem::new);
-	public static final ItemMoverBlock UTB1_INTAKE_GLOW = REG.block("utb1_intake_g", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::intakeSupplier, true), PipeBlockItem::new);
-	public static final BlockEntityType<IntakeBlockEntity> UTB1_INTAKE_BLOCK_ENTITY_TYPE = REG.blockEntityType("utb1_intake", PipeBlocks::intakeSupplier, UTB1_INTAKE, UTB1_INTAKE_GLOW);
-	static IntakeBlockEntity intakeSupplier() {
-		return new IntakeBlockEntity(UTB1_INTAKE_BLOCK_ENTITY_TYPE);
+	public static final ItemMoverBlock UTB1_S2B = REG.block("utb1_intake", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::intakeSupplier, false), PipeBlockItem::new);
+	public static final ItemMoverBlock UTB1_S2B_GLOW = REG.block("utb1_intake_g", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::intakeSupplier, true), PipeBlockItem::new);
+	public static final BlockEntityType<StorageToBusBlockEntity> UTB1_S2B_BLOCK_ENTITY_TYPE = REG.blockEntityType("utb1_intake", PipeBlocks::intakeSupplier, UTB1_S2B, UTB1_S2B_GLOW);
+	static StorageToBusBlockEntity intakeSupplier() {
+		return new StorageToBusBlockEntity(UTB1_S2B_BLOCK_ENTITY_TYPE);
 	}
 
-	public static final ItemMoverBlock UTB1_EXPORT = REG.block("utb1_export", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::exportSupplier, false), PipeBlockItem::new);
-	public static final ItemMoverBlock UTB1_EXPORT_GLOW = REG.block("utb1_export_g", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::exportSupplier, true), PipeBlockItem::new);
-	public static final BlockEntityType<ExportBlockEntity> UTB1_EXPORT_BLOCK_ENTITY_TYPE = REG.blockEntityType("utb1_export", PipeBlocks::exportSupplier, UTB1_EXPORT, UTB1_EXPORT_GLOW);
-	static ExportBlockEntity exportSupplier() {
-		return new ExportBlockEntity(UTB1_EXPORT_BLOCK_ENTITY_TYPE);
+	public static final ItemMoverBlock UTB1_B2S = REG.block("utb1_export", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::exportSupplier, false), PipeBlockItem::new);
+	public static final ItemMoverBlock UTB1_B2S_GLOW = REG.block("utb1_export_g", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::exportSupplier, true), PipeBlockItem::new);
+	public static final BlockEntityType<BusToStorageBlockEntity> UTB1_B2S_BLOCK_ENTITY_TYPE = REG.blockEntityType("utb1_export", PipeBlocks::exportSupplier, UTB1_B2S, UTB1_B2S_GLOW);
+	static BusToStorageBlockEntity exportSupplier() {
+		return new BusToStorageBlockEntity(UTB1_B2S_BLOCK_ENTITY_TYPE);
 	}
 
 	static {
-		CarrierProvider.CARRIER_PROVIDER_COMPONENT.registerProvider(ctx -> ((PipeBlockEntity) ctx.blockEntity()).getCarrierProvider(ctx), UTB1_PIPE, UTB1_STRAIGHT_PIPE, UTB1_INTAKE, UTB1_EXPORT);
+		CarrierProvider.CARRIER_PROVIDER_COMPONENT.registerProvider(ctx -> ((PipeBlockEntity) ctx.blockEntity()).getCarrierProvider(ctx), UTB1_PIPE, UTB1_STRAIGHT_PIPE, UTB1_S2B, UTB1_B2S);
 
 		final Function<BlockState, PrimitiveStateFunction> UTB1_FUNC = bs -> PrimitiveStateFunction.builder()
 				.withJoin(PipeBlock.JOIN_TEST)
@@ -110,7 +110,7 @@ public enum PipeBlocks {
 		XmBlockRegistry.addBlockStates(UTB1_STRAIGHT_PIPE, UTB1_STRAIGHT_FUNC);
 		XmBlockRegistry.addBlockStates(UTB1_STRAIGHT_PIPE_GLOW, UTB1_STRAIGHT_FUNC);
 
-		final Function<BlockState, PrimitiveStateFunction> UTB1_INTAKE_FUNC = bs -> PrimitiveStateFunction.builder()
+		final Function<BlockState, PrimitiveStateFunction> utb1S2bFunc = bs -> PrimitiveStateFunction.builder()
 				.withJoin(PipeBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(PipeModifiers.MOVER_PIPE_UPDATE)
@@ -129,11 +129,11 @@ public enum PipeBlocks {
 						.simpleJoin(SimpleJoinState.Y_JOINS), bs)))
 				.build();
 
-		XmBlockRegistry.addBlockStates(UTB1_INTAKE, UTB1_INTAKE_FUNC);
-		XmBlockRegistry.addBlockStates(UTB1_INTAKE_GLOW, UTB1_INTAKE_FUNC);
+		XmBlockRegistry.addBlockStates(UTB1_S2B, utb1S2bFunc);
+		XmBlockRegistry.addBlockStates(UTB1_S2B_GLOW, utb1S2bFunc);
 
 
-		final Function<BlockState, PrimitiveStateFunction> UTB1_EXPORT_FUNC = bs -> PrimitiveStateFunction.builder()
+		final Function<BlockState, PrimitiveStateFunction> utb1B2sFunc = bs -> PrimitiveStateFunction.builder()
 				.withJoin(PipeBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(PipeModifiers.MOVER_PIPE_UPDATE)
@@ -152,7 +152,7 @@ public enum PipeBlocks {
 						.simpleJoin(SimpleJoinState.Y_JOINS), bs)))
 				.build();
 
-		XmBlockRegistry.addBlockStates(UTB1_EXPORT, UTB1_EXPORT_FUNC);
-		XmBlockRegistry.addBlockStates(UTB1_EXPORT_GLOW, UTB1_EXPORT_FUNC);
+		XmBlockRegistry.addBlockStates(UTB1_B2S, utb1B2sFunc);
+		XmBlockRegistry.addBlockStates(UTB1_B2S_GLOW, utb1B2sFunc);
 	}
 }
