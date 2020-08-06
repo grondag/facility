@@ -10,7 +10,6 @@ import static net.minecraft.util.math.Direction.WEST;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 
-import grondag.facility.transport.PipeBlockEntity;
 import grondag.xm.api.connect.state.SimpleJoinState;
 import grondag.xm.api.mesh.Csg;
 import grondag.xm.api.mesh.CsgMesh;
@@ -21,7 +20,6 @@ import grondag.xm.api.mesh.polygon.MutablePolygon;
 import grondag.xm.api.mesh.polygon.PolyTransform;
 import grondag.xm.api.modelstate.base.BaseModelState;
 import grondag.xm.api.modelstate.primitive.PrimitiveState;
-import grondag.xm.api.modelstate.primitive.PrimitiveStateMutator;
 import grondag.xm.api.paint.SurfaceTopology;
 import grondag.xm.api.primitive.surface.XmSurface;
 import grondag.xm.api.primitive.surface.XmSurfaceList;
@@ -53,31 +51,13 @@ public class BasePipeModel {
 
 	protected static final Direction[] FACES = Direction.values();
 
-	/** six for connectors, 1 for emissive */
-	protected static final int PRIMITIVE_BIT_COUNT = 7;
+	protected static final int PRIMITIVE_BIT_COUNT = 1;
 
-	protected static final int GLOW_BIT = 1 << 6;
+	protected static final int GLOW_BIT = 1;
 
 	public static boolean hasGlow(BaseModelState<?,?> modelState) {
 		return (modelState.primitiveBits() & GLOW_BIT) == GLOW_BIT;
 	}
-
-	public static final PrimitiveStateMutator GLOW_UPDATE = (modelState, xmBlockState, world, pos, neighbors, refreshFromWorld) -> {
-		if(refreshFromWorld) {
-			int bits = 0;
-			final SimpleJoinState join = modelState.simpleJoin();
-
-			for(final Direction face : FACES) {
-				if(join.isJoined(face)) {
-					if(!(neighbors.blockEntity(face) instanceof PipeBlockEntity)) {
-						bits |= 1 << face.ordinal();
-					};
-				}
-			}
-
-			modelState.primitiveBits(bits);
-		}
-	};
 
 	protected final boolean alwaysConnects;
 
@@ -242,7 +222,7 @@ public class BasePipeModel {
 			}
 		}
 
-		final int connectorBits = modelState.primitiveBits();
+		final int connectorBits = modelState.alternateJoinBits();
 
 		if(alwaysConnects || connectorBits != 0) {
 			if(quadsA == null) {

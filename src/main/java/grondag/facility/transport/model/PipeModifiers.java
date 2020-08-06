@@ -25,13 +25,10 @@ public abstract class PipeModifiers {
 				}
 			}
 
+			modelState.alternateJoinBits(bits);
+
 			final Block block = xmBlockState.getBlock();
-
-			if (block instanceof PipeBlock && ((PipeBlock) block).hasGlow) {
-				bits |= BasePipeModel.GLOW_BIT;
-			}
-
-			modelState.primitiveBits(bits);
+			modelState.primitiveBits(block instanceof PipeBlock && ((PipeBlock) block).hasGlow ? PipeModel.GLOW_BIT : 0);
 		}
 	};
 
@@ -49,13 +46,10 @@ public abstract class PipeModifiers {
 				}
 			}
 
+			modelState.alternateJoinBits(bits);
+
 			final Block block = xmBlockState.getBlock();
-
-			if (block instanceof PipeBlock && ((PipeBlock) block).hasGlow) {
-				bits |= BasePipeModel.GLOW_BIT;
-			}
-
-			modelState.primitiveBits(bits);
+			modelState.primitiveBits(block instanceof PipeBlock && ((PipeBlock) block).hasGlow ? PipeModel.GLOW_BIT : 0);
 		}
 	};
 
@@ -73,13 +67,10 @@ public abstract class PipeModifiers {
 				}
 			}
 
+			modelState.alternateJoinBits(bits);
+
 			final Block block = xmBlockState.getBlock();
-
-			if (block instanceof PipeBlock && ((PipeBlock) block).hasGlow) {
-				bits |= BasePipeModel.GLOW_BIT;
-			}
-
-			modelState.primitiveBits(bits);
+			modelState.primitiveBits(block instanceof PipeBlock && ((PipeBlock) block).hasGlow ? PipeModel.GLOW_BIT : 0);
 		}
 	};
 

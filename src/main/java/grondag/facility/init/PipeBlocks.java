@@ -81,7 +81,7 @@ public enum PipeBlocks {
 				.withUpdate(PipeModifiers.OMNI_PIPE_UPDATE)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						PipeModel.PRIMITIVE.newState()
-						.primitiveBits(0b111111)
+						.alternateJoinBits(0b111111)
 						.paint(PipeModel.SURFACE_CABLE, PipePaints.CABLE)
 						.paint(PipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
 						.paint(PipeModel.SURFACE_CONNECTOR_SIDE, PipePaints.STD_CONNECTOR_SIDE)
@@ -98,7 +98,7 @@ public enum PipeBlocks {
 				.withUpdate(PipeModifiers.AXIS_PIPE_UPDATE)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						PipeModel.PRIMITIVE.newState()
-						.primitiveBits(DirectionHelper.NORTH_BIT | DirectionHelper.SOUTH_BIT)
+						.alternateJoinBits(DirectionHelper.NORTH_BIT | DirectionHelper.SOUTH_BIT)
 						.paint(PipeModel.SURFACE_CABLE, PipePaints.CABLE)
 						.paint(PipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
 						.paint(PipeModel.SURFACE_CONNECTOR_BACK, PipePaints.STD_CONNECTOR_BACK)
@@ -116,7 +116,7 @@ public enum PipeBlocks {
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						ItemMoverModel.PRIMITIVE.newState()
-						.primitiveBits(DirectionHelper.DOWN_BIT | DirectionHelper.UP_BIT)
+						.alternateJoinBits(DirectionHelper.DOWN_BIT | DirectionHelper.UP_BIT)
 						.paint(PipeModel.SURFACE_CABLE, PipePaints.CABLE)
 						.paint(PipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
 						.paint(PipeModel.SURFACE_CONNECTOR_BACK, PipePaints.STD_CONNECTOR_BACK)
@@ -139,7 +139,7 @@ public enum PipeBlocks {
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						ItemMoverModel.PRIMITIVE.newState()
-						.primitiveBits(DirectionHelper.DOWN_BIT | DirectionHelper.UP_BIT)
+						.alternateJoinBits(DirectionHelper.DOWN_BIT | DirectionHelper.UP_BIT)
 						.paint(PipeModel.SURFACE_CABLE, PipePaints.CABLE)
 						.paint(PipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
 						.paint(PipeModel.SURFACE_CONNECTOR_BACK, PipePaints.STD_CONNECTOR_BACK)
