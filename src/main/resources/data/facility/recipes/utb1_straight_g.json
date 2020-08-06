@@ -1,0 +1,20 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		"ppp",
+		"pgp",
+		"ppp"
+	],
+	"key": {
+		"g": {
+			"item": "minecraft:glowstone_dust"
+		},
+		"p": {
+			"item": "facility:utb1_straight"
+		}
+	},
+	"result": {
+		"item": "facility:utb1_straight_g",
+		"count": 1
+	}
+}

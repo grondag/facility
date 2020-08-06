@@ -1,0 +1,26 @@
+{
+	"type": "minecraft:crafting_shaped",
+	"pattern": [
+		" s ",
+		"ipi",
+		"b b"
+	],
+	"key": {
+		"b": {
+			"item": "minecraft:brick"
+		},
+		"s": {
+			"item": "facility:utb1_straight"
+		},
+		"p": {
+			"item": "minecraft:sticky_piston"
+		},
+		"i": {
+			"item": "minecraft:iron_ingot"
+		}
+	},
+	"result": {
+		"item": "facility:utb1_export",
+		"count": 1
+	}
+}
