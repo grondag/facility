@@ -27,4 +27,10 @@ public interface TransportStorageContext {
 
 	long accept(Article storedArticle, long numerator, long divisor);
 
+	boolean canSupply(Article targetArticle);
+
+	long available(Article targetArticle, long units);
+
+	long supply(Article targetArticle, long howMany, long units);
+
 }

@@ -2,6 +2,7 @@ package grondag.facility.transport.buffer;
 
 import net.minecraft.nbt.CompoundTag;
 
+import grondag.facility.transport.handler.TransportCarrierContext;
 import grondag.facility.transport.storage.TransportStorageContext;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.transact.TransactionParticipant;
@@ -16,7 +17,10 @@ public abstract class TransportBuffer implements TransactionParticipant, Transac
 
 	public abstract long supply(Article targetArticle, long numerator, long denominatorr, boolean simulate);
 
+	/** tries to empty buffer into storage */
 	public abstract boolean clearBuffer(TransportStorageContext context);
+
+	public abstract boolean clearBuffer(TransportCarrierContext carrierContext);
 
 	public abstract CompoundTag toTag();
 
@@ -32,4 +36,5 @@ public abstract class TransportBuffer implements TransactionParticipant, Transac
 	public abstract boolean isEmpty();
 
 	public abstract void reset();
+
 }

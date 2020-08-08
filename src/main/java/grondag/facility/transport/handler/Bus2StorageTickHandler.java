@@ -35,6 +35,10 @@ public class Bus2StorageTickHandler implements TransportTickHandler {
 
 		final TransportCarrierContext carrierContext = context.carrierContext();
 
+		if(!carrierContext.isReady()) {
+			return true;
+		}
+
 		Article targetArticle = carrierContext.targetArticle;
 		CarrierNode targetNode = carrierContext.lastTarget();
 

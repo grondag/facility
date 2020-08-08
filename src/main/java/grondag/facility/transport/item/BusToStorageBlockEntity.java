@@ -18,7 +18,7 @@ package grondag.facility.transport.item;
 import net.minecraft.block.entity.BlockEntityType;
 
 import grondag.facility.transport.handler.Bus2StorageTickHandler;
-import grondag.facility.transport.handler.TransportContext;
+import grondag.facility.transport.handler.TransportTickHandler;
 
 public class BusToStorageBlockEntity extends ItemMoverBlockEntity {
 	public BusToStorageBlockEntity(BlockEntityType<BusToStorageBlockEntity> type) {
@@ -26,17 +26,7 @@ public class BusToStorageBlockEntity extends ItemMoverBlockEntity {
 	}
 
 	@Override
-	protected boolean handleStorage(TransportContext context) {
-		return Bus2StorageTickHandler.INSTANCE.tick(context);
-	}
-
-	@Override
-	protected boolean handleVanillaInv(TransportContext context) {
-		return true;
-	}
-
-	@Override
-	protected boolean handleVanillaSidedInv(TransportContext context) {
-		return true;
+	protected TransportTickHandler itemTickHandler() {
+		return Bus2StorageTickHandler.INSTANCE;
 	}
 }

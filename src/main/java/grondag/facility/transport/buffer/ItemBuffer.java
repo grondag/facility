@@ -4,9 +4,13 @@ import java.util.function.Consumer;
 
 import net.minecraft.nbt.CompoundTag;
 
+import grondag.facility.transport.handler.TransportCarrierContext;
 import grondag.facility.transport.storage.TransportStorageContext;
 import grondag.fluidity.api.article.Article;
+import grondag.fluidity.api.storage.ArticleFunction;
+import grondag.fluidity.api.transact.Transaction;
 import grondag.fluidity.api.transact.TransactionContext;
+import grondag.fluidity.wip.api.transport.CarrierNode;
 
 public class ItemBuffer extends TransportBuffer {
 	long quantity = 0;
@@ -54,6 +58,52 @@ public class ItemBuffer extends TransportBuffer {
 
 			return quantity == 0;
 		}
+	}
+
+	@Override
+	public boolean clearBuffer(TransportCarrierContext carrierContext) {
+		if (quantity == 0) {
+			return true;
+		}
+
+		if(!carrierContext.isReady()) {
+			return false;
+		}
+
+		CarrierNode targetNode = carrierContext.lastTarget();
+
+		if (!targetNode.isValid() || !targetNode.getComponent(ArticleFunction.CONSUMER_COMPONENT).get().canApply(article)) {
+			targetNode = carrierContext.consumerFor(article);
+		}
+
+		if (!targetNode.isValid()) {
+			return false;
+		}
+
+		final ArticleFunction consumer = targetNode.getComponent(ArticleFunction.CONSUMER_COMPONENT).get();
+
+		assert Transaction.current() == null;
+
+		try (Transaction tx = Transaction.open()) {
+			tx.enlist(consumer);
+			tx.enlist(this);
+
+			long howMany = carrierContext.throttle(article, quantity, 1, false);
+			howMany = consumer.apply(article, howMany, 1, false);
+
+			assert howMany >= 0;
+			assert howMany <= quantity;
+
+			if (howMany > 0) {
+				quantity -= howMany;
+				tx.commit();
+				carrierContext.resetCooldown();
+			}
+		}
+
+		assert quantity >= 0;
+
+		return quantity == 0;
 	}
 
 	@Override

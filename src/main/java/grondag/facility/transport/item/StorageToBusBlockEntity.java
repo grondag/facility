@@ -17,7 +17,9 @@ package grondag.facility.transport.item;
 
 import net.minecraft.block.entity.BlockEntityType;
 
-import grondag.facility.transport.handler.TransportContext;
+import grondag.facility.transport.handler.Storage2BusTickHandler;
+import grondag.facility.transport.handler.TransportTickHandler;
+import grondag.fluidity.api.storage.ArticleFunction;
 
 public class StorageToBusBlockEntity extends ItemMoverBlockEntity {
 	public StorageToBusBlockEntity(BlockEntityType<StorageToBusBlockEntity> type) {
@@ -25,17 +27,12 @@ public class StorageToBusBlockEntity extends ItemMoverBlockEntity {
 	}
 
 	@Override
-	protected boolean handleStorage(TransportContext context) {
-		return true;
+	protected TransportTickHandler itemTickHandler() {
+		return Storage2BusTickHandler.INSTANCE;
 	}
 
 	@Override
-	protected boolean handleVanillaInv(TransportContext context) {
-		return true;
-	}
-
-	@Override
-	protected boolean handleVanillaSidedInv(TransportContext context) {
-		return true;
+	public ArticleFunction getSupplier() {
+		return ArticleFunction.ALWAYS_RETURN_ZERO;
 	}
 }

@@ -63,4 +63,19 @@ public abstract class FluidityStorageContext implements TransportStorageContext 
 	public long accept(Article article, long numerator, long divisor) {
 		return store().getConsumer().apply(article, numerator, divisor, false);
 	}
+
+	@Override
+	public boolean canSupply(Article article) {
+		return store().getSupplier().canApply(article);
+	}
+
+	@Override
+	public long available(Article article, long divisor) {
+		return store().getSupplier().apply(article, Long.MAX_VALUE, divisor, true);
+	}
+
+	@Override
+	public long supply(Article article, long numerator, long divisor) {
+		return store().getSupplier().apply(article, numerator, divisor, true);
+	}
 }

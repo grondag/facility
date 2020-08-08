@@ -48,4 +48,14 @@ public abstract class TransportCarrierContext {
 	public void resetCooldown() {
 		cooldownTicks = FacilityConfig.utb1ImporterCooldownTicks;
 	}
+
+	public boolean isReady() {
+		return --cooldownTicks <= 0;
+	}
+
+	public CarrierNode consumerFor(Article article) {
+		final CarrierNode result = session().consumerOf(article);
+		targetAddress = result.isValid() ? result.nodeAddress() : AssignedNumbersAuthority.INVALID_ADDRESS;
+		return result;
+	}
 }
