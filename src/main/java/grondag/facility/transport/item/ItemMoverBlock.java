@@ -58,6 +58,8 @@ public class ItemMoverBlock extends PipeBlock {
 
 	@Override
 	public BlockState getPlacementState(ItemPlacementContext context) {
-		return super.getPlacementState(context).with(XmProperties.FACE, ObjectUtils.defaultIfNull(context.getSide(), context.getPlayerLookDirection().getOpposite()).getOpposite());
+		return super.getPlacementState(context)
+				.with(XmProperties.FACE, ObjectUtils.defaultIfNull(context.getSide(), context.getPlayerLookDirection().getOpposite()).getOpposite())
+				.with(Properties.POWERED, context.getWorld().isReceivingRedstonePower(context.getBlockPos()));
 	}
 }

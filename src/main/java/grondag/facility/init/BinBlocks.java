@@ -30,6 +30,7 @@ import grondag.facility.storage.item.CrateBlock;
 import grondag.facility.storage.item.CrateBlockEntity;
 import grondag.facility.storage.item.CreativeBinStorage;
 import grondag.facility.storage.item.PortableCrateItem;
+import grondag.fluidity.api.storage.ArticleFunction;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.storage.discrete.DividedDiscreteStore;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
@@ -98,6 +99,8 @@ public enum BinBlocks {
 		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(BIN_X1, BIN_X2, BIN_X4, CREATIVE_BIN_X1, CREATIVE_BIN_X2, CREATIVE_BIN_X4);
 		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), BIN_X1, BIN_X2, BIN_X4, CREATIVE_BIN_X1, CREATIVE_BIN_X2, CREATIVE_BIN_X4);
 		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), BIN_X1, BIN_X2, BIN_X4, CREATIVE_BIN_X1, CREATIVE_BIN_X2, CREATIVE_BIN_X4);
+		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage().getConsumer(), BIN_X1, BIN_X2, BIN_X4, CREATIVE_BIN_X1, CREATIVE_BIN_X2, CREATIVE_BIN_X4);
+		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage().getSupplier(), BIN_X1, BIN_X2, BIN_X4, CREATIVE_BIN_X1, CREATIVE_BIN_X2, CREATIVE_BIN_X4);
 
 		final XmPaint basePaint = Textures.crateBaseFinder(2).find();
 

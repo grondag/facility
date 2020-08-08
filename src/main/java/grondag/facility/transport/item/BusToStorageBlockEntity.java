@@ -23,6 +23,7 @@ import net.minecraft.item.ItemStack;
 
 import grondag.facility.FacilityConfig;
 import grondag.fluidity.api.article.Article;
+import grondag.fluidity.api.storage.ArticleFunction;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.api.transact.Transaction;
 import grondag.fluidity.wip.api.transport.CarrierNode;
@@ -53,7 +54,7 @@ public class BusToStorageBlockEntity extends ItemMoverBlockEntity {
 	}
 
 	protected Article randomArticle(CarrierNode sourceNode) {
-		return sourceNode.isValid() ? sourceNode.getComponent(Store.STORAGE_COMPONENT).get().getAnyArticle().article() : Article.NOTHING;
+		return sourceNode.isValid() ? sourceNode.getComponent(ArticleFunction.SUPPLIER_COMPONENT).get().suggestArticle() : Article.NOTHING;
 	}
 
 	@Override
@@ -73,26 +74,20 @@ public class BusToStorageBlockEntity extends ItemMoverBlockEntity {
 		CarrierNode sourceNode = lastSource();
 
 		// try to repeat what we did last time if possible
-		if (!targetArticle.isNothing() && sourceNode.isValid()) {
-			final long roomFor = storage.getConsumer().apply(targetArticle, Long.MAX_VALUE, true);
-
-			if (roomFor == 0) {
+		if (!targetArticle.isNothing()) {
+			if (!storage.getConsumer().canApply(targetArticle)) {
 				// need to pick a different article
 				targetArticle = Article.NOTHING;
-			} else { // roomFor > 0
-				final Store sourceStore = sourceNode.getComponent(Store.STORAGE_COMPONENT).get();
-
+			} else {
 				// try existing source first
-				final long available = sourceStore.getSupplier().apply(targetArticle, roomFor, true);
-
-				if (available == 0) {
+				if (!sourceNode.isValid() || !sourceNode.getComponent(ArticleFunction.SUPPLIER_COMPONENT).get().canApply(targetArticle)) {
 					// existing source is bust, look for a new source
 					sourceNode = sourceFor(targetArticle);
+				}
 
-					if (!sourceNode.isValid()) {
-						// what we want isn't available
-						targetArticle = Article.NOTHING;
-					}
+				if (!sourceNode.isValid()) {
+					// what we want isn't available
+					targetArticle = Article.NOTHING;
 				}
 			}
 		}

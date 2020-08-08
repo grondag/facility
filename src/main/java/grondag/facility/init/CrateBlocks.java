@@ -35,6 +35,7 @@ import grondag.facility.storage.item.PortableCrateItem;
 import grondag.facility.storage.item.SlottedCrateBlockEntity;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.ArticleType;
+import grondag.fluidity.api.storage.ArticleFunction;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStore;
 import grondag.fluidity.base.storage.discrete.SlottedInventoryStore;
@@ -106,8 +107,13 @@ public enum CrateBlocks {
 
 		Store.STORAGE_COMPONENT.registerProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
 		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
+		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> Store.CREATIVE.getConsumer(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
+		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> Store.CREATIVE.getSupplier(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
+
 		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
 		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
+		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage().getConsumer(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
+		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage().getSupplier(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
 
 		final XmPaint basePaint = Textures.crateBaseFinder(2).find();
 

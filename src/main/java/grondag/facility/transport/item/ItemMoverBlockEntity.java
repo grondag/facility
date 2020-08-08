@@ -5,10 +5,12 @@ import java.util.Set;
 import com.google.common.util.concurrent.Runnables;
 import io.netty.util.internal.ThreadLocalRandom;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.HopperBlockEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
@@ -18,7 +20,10 @@ import grondag.facility.FacilityConfig;
 import grondag.facility.transport.PipeBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.device.BlockComponentContext;
+import grondag.fluidity.api.fraction.Fraction;
+import grondag.fluidity.api.storage.ArticleFunction;
 import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.storage.bulk.SimpleTank;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
@@ -26,12 +31,15 @@ import grondag.fluidity.wip.base.transport.SingleCarrierProvider;
 import grondag.xm.api.block.XmProperties;
 
 public abstract  class ItemMoverBlockEntity extends PipeBlockEntity implements Tickable, CarrierConnector {
+	public static final String TAG_BUFFER = "buffer";
 	protected Runnable tickHandler = this::selectRunnable;
 	protected BlockPos targetPos = null;
 	Direction targetFace = null;
 	CarrierSession internalSession;
 	// set initial value so peer nodes don't all go at once
 	protected int cooldownTicks = ThreadLocalRandom.current().nextInt(FacilityConfig.utb1ImporterCooldownTicks);
+
+	protected final SimpleTank buffer = new SimpleTank(Fraction.MAX_VALUE);
 
 	public ItemMoverBlockEntity(BlockEntityType<? extends PipeBlockEntity> type) {
 		super(type);
@@ -43,7 +51,7 @@ public abstract  class ItemMoverBlockEntity extends PipeBlockEntity implements T
 		return SingleCarrierProvider.of(carrier);
 	}
 
-	// does not provide carrier to the export side
+	// does not provide carrier to the attached block
 	@Override
 	public final CarrierProvider getCarrierProvider(BlockComponentContext ctx) {
 		return world == null || pos == null || ctx.side() == getCachedState().get(XmProperties.FACE) ? CarrierProvider.CARRIER_PROVIDER_COMPONENT.absent() : carrierProvider;
@@ -110,5 +118,35 @@ public abstract  class ItemMoverBlockEntity extends PipeBlockEntity implements T
 		if(--cooldownTicks <= 0) {
 			tickHandler.run();
 		}
+	}
+
+	@Override
+	public CompoundTag toTag(CompoundTag tag) {
+		super.toTag(tag);
+
+		if (!buffer.isEmpty()) {
+			tag.put(TAG_BUFFER, buffer.writeTag());
+		}
+
+		return tag;
+	}
+
+	@Override
+	public void fromTag(BlockState state, CompoundTag tag) {
+		super.fromTag(state, tag);
+
+		if (tag.contains(TAG_BUFFER)) {
+			buffer.readTag(tag.getCompound(TAG_BUFFER));
+		} else {
+			buffer.clear();
+		}
+	}
+
+	public ArticleFunction getSupplier() {
+		return ArticleFunction.ALWAYS_RETURN_ZERO;
+	}
+
+	public ArticleFunction getConsumer() {
+		return ArticleFunction.ALWAYS_RETURN_ZERO;
 	}
 }

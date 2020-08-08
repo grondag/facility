@@ -99,6 +99,7 @@ public class PipeBlock extends FacilitySpeciesBlock {
 			if(toPipe) {
 				return canConnectSelf(fromEntity, toEntity);
 			} else {
+				// UGLY: not better to use CarrierConnector.CARRIER_CONNECTOR_COMPONENT.getAccess?
 				return toEntity instanceof CarrierConnector;
 			}
 		} else if(toPipe) {

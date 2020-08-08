@@ -31,13 +31,15 @@ import grondag.facility.transport.PipeBlockEntity;
 import grondag.facility.transport.PipeBlockItem;
 import grondag.facility.transport.StraightPipeBlock;
 import grondag.facility.transport.item.BusToStorageBlockEntity;
-import grondag.facility.transport.item.StorageToBusBlockEntity;
 import grondag.facility.transport.item.ItemMoverBlock;
+import grondag.facility.transport.item.ItemMoverBlockEntity;
+import grondag.facility.transport.item.StorageToBusBlockEntity;
 import grondag.facility.transport.model.ItemMoverModel;
 import grondag.facility.transport.model.PipeModel;
 import grondag.facility.transport.model.PipeModifiers;
 import grondag.facility.transport.model.PipePaints;
 import grondag.fermion.orientation.api.DirectionHelper;
+import grondag.fluidity.api.storage.ArticleFunction;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
@@ -75,6 +77,8 @@ public enum PipeBlocks {
 
 	static {
 		CarrierProvider.CARRIER_PROVIDER_COMPONENT.registerProvider(ctx -> ((PipeBlockEntity) ctx.blockEntity()).getCarrierProvider(ctx), UTB1_PIPE, UTB1_STRAIGHT_PIPE, UTB1_S2B, UTB1_B2S);
+		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((ItemMoverBlockEntity) ctx.blockEntity()).getConsumer(), UTB1_S2B, UTB1_B2S);
+		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> ((ItemMoverBlockEntity) ctx.blockEntity()).getSupplier(), UTB1_S2B, UTB1_B2S);
 
 		final Function<BlockState, PrimitiveStateFunction> UTB1_FUNC = bs -> PrimitiveStateFunction.builder()
 				.withJoin(PipeBlock.JOIN_TEST)
@@ -122,10 +126,10 @@ public enum PipeBlocks {
 						.paint(PipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
 						.paint(PipeModel.SURFACE_CONNECTOR_BACK, PipePaints.STD_CONNECTOR_BACK)
 						.paint(PipeModel.SURFACE_CONNECTOR_SIDE, PipePaints.STD_CONNECTOR_SIDE)
-						.paint(ItemMoverModel.SURFACE_MOVER_FACE, PipePaints.INPUT_CONNECTOR_FACE)
-						.paint(ItemMoverModel.SURFACE_MOVER_BACK, PipePaints.INPUT_CONNECTOR_BACK)
-						.paint(ItemMoverModel.SURFACE_MOVER_SIDE, PipePaints.INPUT_CONNECTOR_SIDE)
-						.orientationIndex(Direction.UP.ordinal())
+						.paint(ItemMoverModel.SURFACE_MOVER_FACE, PipePaints.OUTPUT_CONNECTOR_FACE)
+						.paint(ItemMoverModel.SURFACE_MOVER_BACK, PipePaints.OUTPUT_CONNECTOR_FACE)
+						.paint(ItemMoverModel.SURFACE_MOVER_SIDE, PipePaints.OUTPUT_CONNECTOR_FACE)
+						.orientationIndex(Direction.DOWN.ordinal())
 						.simpleJoin(SimpleJoinState.Y_JOINS), bs)))
 				.build();
 
@@ -145,10 +149,10 @@ public enum PipeBlocks {
 						.paint(PipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
 						.paint(PipeModel.SURFACE_CONNECTOR_BACK, PipePaints.STD_CONNECTOR_BACK)
 						.paint(PipeModel.SURFACE_CONNECTOR_SIDE, PipePaints.STD_CONNECTOR_SIDE)
-						.paint(ItemMoverModel.SURFACE_MOVER_FACE, PipePaints.OUTPUT_CONNECTOR_FACE)
-						.paint(ItemMoverModel.SURFACE_MOVER_BACK, PipePaints.OUTPUT_CONNECTOR_BACK)
-						.paint(ItemMoverModel.SURFACE_MOVER_SIDE, PipePaints.OUTPUT_CONNECTOR_SIDE)
-						.orientationIndex(Direction.DOWN.ordinal())
+						.paint(ItemMoverModel.SURFACE_MOVER_FACE, PipePaints.INPUT_CONNECTOR_SIDE)
+						.paint(ItemMoverModel.SURFACE_MOVER_BACK, PipePaints.INPUT_CONNECTOR_SIDE)
+						.paint(ItemMoverModel.SURFACE_MOVER_SIDE, PipePaints.INPUT_CONNECTOR_SIDE)
+						.orientationIndex(Direction.UP.ordinal())
 						.simpleJoin(SimpleJoinState.Y_JOINS), bs)))
 				.build();
 
