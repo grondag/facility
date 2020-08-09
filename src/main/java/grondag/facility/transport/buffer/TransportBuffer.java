@@ -4,7 +4,6 @@ import java.util.function.Consumer;
 
 import net.minecraft.nbt.CompoundTag;
 
-import grondag.facility.Facility;
 import grondag.facility.transport.handler.TransportCarrierContext;
 import grondag.facility.transport.storage.TransportStorageContext;
 import grondag.fluidity.api.article.Article;
@@ -139,7 +138,7 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 			state.itemQuantity -= howMany;
 
 			// TODO: remove
-			Facility.LOG.info(String.format("flushItemToStorage %d %s", howMany, state.itemArticle.toItem().getTranslationKey()));
+			//			Facility.LOG.info(String.format("flushItemToStorage %d %s", howMany, state.itemArticle.toItem().getTranslationKey()));
 
 			assert state.itemQuantity >= 0;
 
@@ -190,7 +189,7 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 				carrierContext.resetCooldown();
 
 				// TODO: remove
-				Facility.LOG.info(String.format("flushItemToCarrier %d %s", howMany, article.toItem().getTranslationKey()));
+				//				Facility.LOG.info(String.format("flushItemToCarrier %d %s", howMany, article.toItem().getTranslationKey()));
 			}
 		}
 	}

@@ -3,14 +3,17 @@ package grondag.facility.transport.storage;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 
-import grondag.facility.Facility;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.StoredArticleView;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
 
 public abstract class InventoryStorageContext implements TransportStorageContext {
-	int targetSlot = 0;
-	ItemStack targetStack = ItemStack.EMPTY;
+	int supplySlot = 0;
+	Article lastSupplyArticle = Article.NOTHING;
+
+	int acceptSlot = 0;
+	Article lastAcceptArticle = Article.NOTHING;
+
 	int nextSlot = 0;
 	final StoredDiscreteArticle view = new StoredDiscreteArticle();
 	protected Inventory inventory;
@@ -33,26 +36,27 @@ public abstract class InventoryStorageContext implements TransportStorageContext
 	}
 
 	protected boolean positionToAccept(Article article) {
+		if (article.isNothing()) {
+			return false;
+		}
+
 		final Inventory inv = inventory;
 		final int limit = inv.size();
 
-		if (!article.matches(targetStack)) {
-			targetStack = article.toStack();
-		}
-
-		final ItemStack stack = targetStack;
-
-		if (targetSlot < limit && InventoryHelper.canPlaceInSlot(stack, inv, targetSlot)) {
+		// restart position search from beginning if different article
+		if (acceptSlot < limit && article.equals(lastAcceptArticle) && InventoryHelper.canPlaceInSlot(article, inv, acceptSlot)) {
 			return true;
 		}
 
 		for (int i = 0; i < limit; ++i) {
-			if (InventoryHelper.canPlaceInSlot(stack, inv, i)) {
-				targetSlot = i;
+			if (InventoryHelper.canPlaceInSlot(article, inv, i)) {
+				lastAcceptArticle = article;
+				acceptSlot = i;
 				return true;
 			}
 		}
 
+		lastAcceptArticle = Article.NOTHING;
 		return false;
 	}
 
@@ -87,9 +91,11 @@ public abstract class InventoryStorageContext implements TransportStorageContext
 			return 0;
 		}
 
-		assert article.matches(targetStack);
+		final ItemStack stack = inventory.getStack(acceptSlot);
 
-		return targetStack.getMaxCount() - inventory.getStack(targetSlot).getCount();
+		assert article.matches(stack) || stack.isEmpty();
+
+		return stack.getMaxCount() - stack.getCount();
 	}
 
 	@Override
@@ -98,20 +104,21 @@ public abstract class InventoryStorageContext implements TransportStorageContext
 			return 0;
 		}
 
-		assert article.matches(targetStack);
-
 		final Inventory inv = inventory;
-		final ItemStack stack = inv.getStack(targetSlot);
-		final long count = Math.min(numerator, targetStack.getMaxCount() - stack.getCount());
+		final ItemStack stack = inventory.getStack(acceptSlot);
+
+		assert article.matches(stack) || stack.isEmpty();
+
+		final long count = Math.min(numerator, stack.getMaxCount() - stack.getCount());
 
 		if(stack.isEmpty()) {
-			inv.setStack(targetSlot, article.toStack(count));
+			inv.setStack(acceptSlot, article.toStack(count));
 		} else {
 			stack.increment((int) count);
 		}
 
 		// TODO: remove
-		Facility.LOG.info(String.format("Accepted %d %s", count, article.toItem().getTranslationKey()));
+		//		Facility.LOG.info(String.format("Accepted %d %s", count, article.toItem().getTranslationKey()));
 
 		inv.markDirty();
 
@@ -122,10 +129,11 @@ public abstract class InventoryStorageContext implements TransportStorageContext
 		final Inventory inv = inventory;
 		final int limit = inv.size();
 
-		if (targetSlot < limit) {
-			final ItemStack stack = inv.getStack(targetSlot);
+		// restart position search from beginning if different article
+		if (supplySlot < limit && article.equals(lastSupplyArticle)) {
+			final ItemStack stack = inv.getStack(supplySlot);
 
-			if (article.matches(stack) && !stack.isEmpty()) {
+			if (!stack.isEmpty() && article.matches(stack)) {
 				return true;
 			}
 		}
@@ -133,12 +141,14 @@ public abstract class InventoryStorageContext implements TransportStorageContext
 		for (int i = 0; i < limit; ++i) {
 			final ItemStack stack = inv.getStack(i);
 
-			if (article.matches(stack) && !stack.isEmpty()) {
-				targetSlot = i;
+			if (!stack.isEmpty() && article.matches(stack)) {
+				supplySlot = i;
+				lastSupplyArticle = article;
 				return true;
 			}
 		}
 
+		lastSupplyArticle = Article.NOTHING;
 		return false;
 	}
 
@@ -154,9 +164,9 @@ public abstract class InventoryStorageContext implements TransportStorageContext
 		}
 
 		final Inventory inv = inventory;
-		final ItemStack stack = inv.getStack(targetSlot);
+		final ItemStack stack = inv.getStack(supplySlot);
 
-		assert article.matches(stack);
+		assert !stack.isEmpty() && article.matches(stack);
 
 		return stack.getCount();
 	}
@@ -168,20 +178,20 @@ public abstract class InventoryStorageContext implements TransportStorageContext
 		}
 
 		final Inventory inv = inventory;
-		final ItemStack stack = inv.getStack(targetSlot);
+		final ItemStack stack = inv.getStack(supplySlot);
 
-		assert article.matches(stack);
+		assert !stack.isEmpty() && article.matches(stack);
 
 		final long count = Math.min(numerator, stack.getCount());
 
 		stack.decrement((int) count);
 
 		if (stack.isEmpty()) {
-			inv.setStack(targetSlot, ItemStack.EMPTY);
+			inv.setStack(supplySlot, ItemStack.EMPTY);
 		}
 
 		// TODO: remove
-		Facility.LOG.info(String.format("Supplied %d %s", count, article.toItem().getTranslationKey()));
+		//		Facility.LOG.info(String.format("Supplied %d %s", count, article.toItem().getTranslationKey()));
 
 		inv.markDirty();
 

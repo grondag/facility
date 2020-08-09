@@ -3,6 +3,8 @@ package grondag.facility.transport.storage;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 
+import grondag.fluidity.api.article.Article;
+
 public abstract class InventoryHelper {
 	private InventoryHelper() {}
 
@@ -20,14 +22,22 @@ public abstract class InventoryHelper {
 		return true;
 	}
 
-	public static boolean canPlaceInSlot(ItemStack stack, Inventory inv, int slot) {
-		if (!inv.isValid(slot, stack)) {
-			return false;
-		}
-
+	public static boolean canPlaceInSlot(Article article, Inventory inv, int slot) {
 		final ItemStack targetStack = inv.getStack(slot);
 
-		return targetStack.isEmpty() || canStacksCombine(targetStack, stack);
+		if(targetStack.isEmpty()) {
+			// TODO: remove
+			//			Facility.LOG.info(String.format("canPlaceInSlot yes, empty - slot=%d, stack=%s, article=%s", slot, targetStack.toString(), article.toItem().toString()));
+			return (inv.isValid(slot, article.toStack()));
+		}
+
+		if (article.matches(targetStack) && targetStack.getCount() < targetStack.getMaxCount() && inv.isValid(slot, targetStack)) {
+			//			Facility.LOG.info(String.format("canPlaceInSlot yes, combining - slot=%d, stack=%s, article=%s", slot, targetStack.toString(), article.toItem().toString()));
+			return true;
+		}
+
+		//		Facility.LOG.info(String.format("canPlaceInSlot no slot=%d, stack=%s, article=%s", slot, targetStack.toString(), article.toItem().toString()));
+		return false;
 	}
 
 	public static boolean canStacksCombine(ItemStack targetStack, ItemStack sourceStack) {
