@@ -16,7 +16,6 @@ import grondag.fluidity.api.transact.Transaction;
 import grondag.fluidity.api.transact.TransactionContext;
 import grondag.fluidity.api.transact.TransactionParticipant;
 import grondag.fluidity.api.transact.TransactionParticipant.TransactionDelegate;
-import grondag.fluidity.wip.api.transport.CarrierNode;
 
 public class TransportBuffer implements TransactionDelegate, TransactionParticipant {
 	public class BufferState {
@@ -163,17 +162,11 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 		}
 
 		final Article article = state.itemArticle;
-		CarrierNode targetNode = carrierContext.lastTarget();
+		final ArticleFunction consumer = carrierContext.consumerFor(article);
 
-		if (!targetNode.isValid() || !targetNode.getComponent(ArticleFunction.CONSUMER_COMPONENT).get().canApply(article)) {
-			targetNode = carrierContext.consumerFor(article);
-		}
-
-		if (!targetNode.isValid()) {
+		if (consumer == null) {
 			return;
 		}
-
-		final ArticleFunction consumer = targetNode.getComponent(ArticleFunction.CONSUMER_COMPONENT).get();
 
 		try (Transaction tx = Transaction.open()) {
 			tx.enlist(consumer);
@@ -210,17 +203,11 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 		}
 
 		final Article article = state.fluidArticle;
-		CarrierNode targetNode = carrierContext.lastTarget();
+		final ArticleFunction consumer = carrierContext.consumerFor(article);
 
-		if (!targetNode.isValid() || !targetNode.getComponent(ArticleFunction.CONSUMER_COMPONENT).get().canApply(article)) {
-			targetNode = carrierContext.consumerFor(article);
-		}
-
-		if (!targetNode.isValid()) {
+		if (consumer == null) {
 			return;
 		}
-
-		final ArticleFunction consumer = targetNode.getComponent(ArticleFunction.CONSUMER_COMPONENT).get();
 
 		final long div = amt.divisor();
 		long howMuch = amt.numerator() + amt.whole() * div;

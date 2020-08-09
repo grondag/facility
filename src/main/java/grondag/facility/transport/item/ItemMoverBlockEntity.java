@@ -22,6 +22,7 @@ import grondag.facility.transport.handler.TransportTickHandler;
 import grondag.facility.transport.storage.FluidityStorageContext;
 import grondag.facility.transport.storage.InventoryStorageContext;
 import grondag.facility.transport.storage.MissingStorageContext;
+import grondag.facility.transport.storage.SidedInventoryStorageContext;
 import grondag.facility.transport.storage.TransportStorageContext;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.device.BlockComponentContext;
@@ -118,9 +119,14 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 
 			if(inv != null) {
 				if (inv instanceof SidedInventory) {
-					itemStorage = MissingStorageContext.INSTANCE;
+					itemStorage = new SidedInventoryStorageContext(targetFace) {
+						@Override
+						protected SidedInventory inventory() {
+							return (SidedInventory) HopperBlockEntity.getInventoryAt(world, targetPos);
+						}
+					};
 				} else {
-					itemStorage = new InventoryStorageContext() {
+					itemStorage = new InventoryStorageContext<Inventory>() {
 						@Override
 						protected Inventory inventory() {
 							return HopperBlockEntity.getInventoryAt(world, targetPos);

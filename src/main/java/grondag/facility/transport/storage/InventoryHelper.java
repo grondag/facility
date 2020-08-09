@@ -26,17 +26,27 @@ public abstract class InventoryHelper {
 		final ItemStack targetStack = inv.getStack(slot);
 
 		if(targetStack.isEmpty()) {
-			// TODO: remove
-			//			Facility.LOG.info(String.format("canPlaceInSlot yes, empty - slot=%d, stack=%s, article=%s", slot, targetStack.toString(), article.toItem().toString()));
 			return (inv.isValid(slot, article.toStack()));
 		}
 
 		if (article.matches(targetStack) && targetStack.getCount() < targetStack.getMaxCount() && inv.isValid(slot, targetStack)) {
-			//			Facility.LOG.info(String.format("canPlaceInSlot yes, combining - slot=%d, stack=%s, article=%s", slot, targetStack.toString(), article.toItem().toString()));
 			return true;
 		}
 
-		//		Facility.LOG.info(String.format("canPlaceInSlot no slot=%d, stack=%s, article=%s", slot, targetStack.toString(), article.toItem().toString()));
+		return false;
+	}
+
+	public static boolean canPlaceInSlot(ItemStack stack, Inventory inv, int slot) {
+		final ItemStack targetStack = inv.getStack(slot);
+
+		if(targetStack.isEmpty()) {
+			return inv.isValid(slot, stack);
+		}
+
+		if (canStacksCombine(targetStack, stack) && inv.isValid(slot, targetStack)) {
+			return true;
+		}
+
 		return false;
 	}
 

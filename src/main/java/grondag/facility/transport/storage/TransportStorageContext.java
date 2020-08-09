@@ -1,7 +1,9 @@
 package grondag.facility.transport.storage;
 
+import javax.annotation.Nullable;
+
 import grondag.fluidity.api.article.Article;
-import grondag.fluidity.api.article.StoredArticleView;
+import grondag.fluidity.api.article.ArticleType;
 
 public interface TransportStorageContext {
 	void prepareForTick();
@@ -10,13 +12,27 @@ public interface TransportStorageContext {
 
 	boolean canAccept(Article targetArticle);
 
-	boolean hasContentPreference();
+	/**
+	 * Find an item the stora can supply.  Subsequent calls iterate choices. Eventually wraps.
+	 * @param type Fluid or Item (or others in future)
+	 * @return Article.NOTHING if not supplying anything at this time.
+	 */
+	Article proposeSupply(ArticleType<?> type);
 
-	void beginIterating();
+	/**
+	 * Find an item the stora can accept. Subsequent calls iterate choices. Eventually wraps.
+	 * @param type Fluid or Item (or others in future)
+	 * @return Article.NOTHING if no preference, null if not accepting anything at this time.
+	 */
+	@Nullable Article proposeAccept(ArticleType<?> type);
 
-	boolean hasNext();
-
-	StoredArticleView next();
+	/**
+	 * Called by handler when {@link #proposeAccept(ArticleType)} return a non-null, non-nothing
+	 * article and that article is not available. Signals storage context to propose something
+	 * different if possible.
+	 * @param articleType
+	 */
+	void advanceAcceptProposal(ArticleType<?> articleType);
 
 	long unitsFor(Article targetArticle);
 
@@ -29,5 +45,4 @@ public interface TransportStorageContext {
 	long available(Article targetArticle, long units);
 
 	long supply(Article targetArticle, long howMany, long units);
-
 }

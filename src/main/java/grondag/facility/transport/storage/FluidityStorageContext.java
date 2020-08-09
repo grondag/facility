@@ -1,11 +1,14 @@
 package grondag.facility.transport.storage;
 
 import grondag.fluidity.api.article.Article;
+import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.article.StoredArticleView;
 import grondag.fluidity.api.storage.Store;
 
 public abstract class FluidityStorageContext implements TransportStorageContext {
-	int nextHandle = 0;
+	int nextSupplyHandle = 0;
+
+	Article lastSupply = Article.NOTHING;
 
 	protected Store store;
 
@@ -27,23 +30,35 @@ public abstract class FluidityStorageContext implements TransportStorageContext 
 	}
 
 	@Override
-	public boolean hasContentPreference() {
-		return !(store.isAggregate() || store.isEmpty());
+	public Article proposeSupply(ArticleType<?> type) {
+		if (store.isEmpty()) {
+			return Article.NOTHING;
+		}
+
+		if (lastSupply.isNothing() || lastSupply.type() != type || !store.getSupplier().canApply(lastSupply)) {
+			// can't reuse last result so iterate content
+			final int limit = store.handleCount();
+
+			if (nextSupplyHandle >= limit) {
+				nextSupplyHandle = 0;
+			}
+
+			final StoredArticleView v = store.view(nextSupplyHandle++);
+			lastSupply = v.article().type() == type && !v.isEmpty() ? v.article() : Article.NOTHING;
+		}
+
+		return lastSupply;
 	}
 
 	@Override
-	public void beginIterating() {
-		nextHandle = 0;
+	public Article proposeAccept(ArticleType<?> type) {
+		// Fluidity stores will accept anything by default
+		return store.isFull() ? null : Article.NOTHING;
 	}
 
 	@Override
-	public boolean hasNext() {
-		return nextHandle < store.handleCount();
-	}
-
-	@Override
-	public StoredArticleView next() {
-		return store.view(nextHandle++);
+	public void advanceAcceptProposal(ArticleType<?> articleType) {
+		// NOOP
 	}
 
 	@Override
