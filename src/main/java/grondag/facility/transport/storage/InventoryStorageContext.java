@@ -41,6 +41,11 @@ public abstract class InventoryStorageContext implements TransportStorageContext
 		}
 
 		final Inventory inv = inventory;
+
+		if (inv == null) {
+			return false;
+		}
+
 		final int limit = inv.size();
 
 		// restart position search from beginning if different article
@@ -127,6 +132,11 @@ public abstract class InventoryStorageContext implements TransportStorageContext
 
 	protected boolean positionToSupply(Article article) {
 		final Inventory inv = inventory;
+
+		if (inv == null) {
+			return false;
+		}
+
 		final int limit = inv.size();
 
 		// restart position search from beginning if different article

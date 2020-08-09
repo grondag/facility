@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import net.minecraft.nbt.CompoundTag;
 
+import grondag.facility.transport.UtbHelper;
 import grondag.facility.transport.handler.TransportCarrierContext;
 import grondag.facility.transport.storage.TransportStorageContext;
 import grondag.fluidity.api.article.Article;
@@ -134,7 +135,8 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 		final BufferState state = this.state;
 
 		if (state.itemQuantity > 0) {
-			final long howMany = storageContext.accept(state.itemArticle, state.itemQuantity, 1);
+			long howMany = UtbHelper.throttleUtb1LocalItem(state.itemQuantity);
+			howMany = storageContext.accept(state.itemArticle, howMany, 1);
 			state.itemQuantity -= howMany;
 
 			// TODO: remove
@@ -177,7 +179,8 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 			tx.enlist(consumer);
 			tx.enlist(this);
 
-			long howMany = carrierContext.throttle(article, state.itemQuantity, 1, false);
+			long howMany = UtbHelper.throttleUtb1LocalItem(state.itemQuantity);
+			howMany = carrierContext.throttle(article, howMany, 1, false);
 			howMany = consumer.apply(article, howMany, 1, false);
 
 			assert howMany >= 0;
@@ -309,7 +312,7 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 				return 0;
 			}
 
-			final long result = Math.min(numerator, capacity);
+			final long result = UtbHelper.throttleUtb1LocalFluid(Math.min(numerator, capacity), divisor);
 
 			if (!simulate) {
 				state.fluidAmount.add(result, divisor);
@@ -337,7 +340,7 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 				return 0;
 			}
 
-			final long result = Math.min(qty, capacity);
+			final long result = UtbHelper.throttleUtb1LocalItem(Math.min(qty, capacity));
 
 			if (!simulate) {
 				state.itemQuantity += result;
@@ -360,7 +363,7 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 			}
 
 			final long avail = state.fluidAmount.toLong(divisor);
-			final long result = Math.min(numerator, avail);
+			final long result = UtbHelper.throttleUtb1LocalFluid(Math.min(numerator, avail), divisor);
 
 			if (!simulate) {
 				state.fluidAmount.subtract(result, divisor);
@@ -379,7 +382,7 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 				return 0;
 			}
 
-			final long result = Math.min(qty, state.itemQuantity);
+			final long result = UtbHelper.throttleUtb1LocalItem(Math.min(qty, state.itemQuantity));
 
 			if (!simulate) {
 				state.itemQuantity -= result;
