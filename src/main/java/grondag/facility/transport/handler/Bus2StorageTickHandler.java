@@ -1,6 +1,5 @@
 package grondag.facility.transport.handler;
 
-import grondag.facility.transport.buffer.TransportBuffer;
 import grondag.facility.transport.storage.TransportStorageContext;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.StoredArticleView;
@@ -21,16 +20,6 @@ public class Bus2StorageTickHandler implements TransportTickHandler {
 
 		if (!storageContext.isValid()) {
 			return false;
-		}
-
-		if(storageContext.isFull()) {
-			return true;
-		}
-
-		final TransportBuffer buffer = context.buffer();
-
-		if  (!buffer.clearBuffer(storageContext)) {
-			return true;
 		}
 
 		final TransportCarrierContext carrierContext = context.carrierContext();
@@ -117,27 +106,26 @@ public class Bus2StorageTickHandler implements TransportTickHandler {
 		}
 
 		final ArticleFunction supplier = targetNode.getComponent(ArticleFunction.SUPPLIER_COMPONENT).get();
+		final ArticleFunction bufferConsumer = context.buffer().consumer();
 		final long units  = storageContext.unitsFor(targetArticle);
-		final long roomFor = storageContext.capacityFor(targetArticle, units);
-		final long available = supplier.apply(targetArticle, roomFor, units, true);
+		long howMany = storageContext.capacityFor(targetArticle, units);
+		howMany = bufferConsumer.apply(targetArticle, howMany, units, true);
+		howMany = carrierContext.throttle(targetArticle, howMany, units, true);
+		howMany = supplier.apply(targetArticle, howMany, units, true);
 
-		if (available > 0) {
-			assert Transaction.current() == null;
-
+		if (howMany > 0) {
 			try (Transaction tx = Transaction.open()) {
 				tx.enlist(supplier);
-				tx.enlist(buffer);
+				tx.enlist(bufferConsumer);
 
-				long howMany = carrierContext.throttle(targetArticle, available, units, false);
+				howMany = carrierContext.throttle(targetArticle, howMany, units, false);
 				howMany = supplier.apply(targetArticle, howMany, units, false);
 
-				if (howMany > 0  && buffer.accept(targetArticle, howMany, units, false) ==  howMany) {
+				if (howMany > 0  && bufferConsumer.apply(targetArticle, howMany, units, false) == howMany) {
 					tx.commit();
 					carrierContext.resetCooldown();
 				}
 			}
-
-			buffer.clearBuffer(storageContext);
 		}
 
 		return true;

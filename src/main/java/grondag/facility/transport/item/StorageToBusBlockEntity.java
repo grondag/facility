@@ -33,6 +33,11 @@ public class StorageToBusBlockEntity extends ItemMoverBlockEntity {
 
 	@Override
 	public ArticleFunction getSupplier() {
-		return ArticleFunction.ALWAYS_RETURN_ZERO;
+		return transportBuffer.supplier();
+	}
+
+	@Override
+	protected void tickBuffer() {
+		transportBuffer.flushItemToCarrier(itemCarrierContext);
 	}
 }

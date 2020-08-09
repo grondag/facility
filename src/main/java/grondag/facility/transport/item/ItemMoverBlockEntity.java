@@ -15,12 +15,12 @@ import net.minecraft.util.math.Direction;
 
 import grondag.facility.transport.PipeBlockEntity;
 import grondag.facility.transport.UtbCostFunction;
-import grondag.facility.transport.buffer.ItemBuffer;
 import grondag.facility.transport.buffer.TransportBuffer;
 import grondag.facility.transport.handler.TransportCarrierContext;
 import grondag.facility.transport.handler.TransportContext;
 import grondag.facility.transport.handler.TransportTickHandler;
 import grondag.facility.transport.storage.FluidityStorageContext;
+import grondag.facility.transport.storage.InventoryStorageContext;
 import grondag.facility.transport.storage.MissingStorageContext;
 import grondag.facility.transport.storage.TransportStorageContext;
 import grondag.fluidity.api.article.ArticleType;
@@ -35,15 +35,15 @@ import grondag.fluidity.wip.base.transport.SubCarrier;
 import grondag.xm.api.block.XmProperties;
 
 public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Tickable, CarrierConnector {
-	public static final String TAG_ITEM_BUFFER = "itmbuf";
+	public static final String TAG_BUFFER = "buffer";
 	protected TransportTickHandler tickHandler = this::selectHandler;
 	protected BlockPos targetPos = null;
 	Direction targetFace = null;
 	CarrierSession internalSession;
-	protected final ItemBuffer itemBuffer = new ItemBuffer();
+	protected final TransportBuffer transportBuffer = new TransportBuffer();
 	protected TransportStorageContext itemStorage = MissingStorageContext.INSTANCE;
 
-	protected final TransportCarrierContext itemCarrierContext = new TransportCarrierContext() {
+	protected final TransportCarrierContext itemCarrierContext = new TransportCarrierContext(ArticleType.ITEM) {
 		@Override
 		public CarrierSession session() {
 			return internalSession;
@@ -58,7 +58,7 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 	protected final TransportContext itemContext = new TransportContext() {
 		@Override
 		public TransportBuffer buffer() {
-			return itemBuffer;
+			return transportBuffer;
 		}
 
 		@Override
@@ -120,7 +120,12 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 				if (inv instanceof SidedInventory) {
 					itemStorage = MissingStorageContext.INSTANCE;
 				} else {
-					itemStorage = MissingStorageContext.INSTANCE;
+					itemStorage = new InventoryStorageContext() {
+						@Override
+						protected Inventory inventory() {
+							return HopperBlockEntity.getInventoryAt(world, targetPos);
+						}
+					};
 				}
 			}
 		}
@@ -149,17 +154,24 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 			return;
 		}
 
+		itemStorage.prepareForTick();
+		tickBuffer();
+
 		if (!tickHandler.tick(itemContext)) {
 			resetTickHandler();
 		}
+
+		tickBuffer();
 	}
+
+	protected abstract void tickBuffer();
 
 	@Override
 	public CompoundTag toTag(CompoundTag tag) {
 		super.toTag(tag);
 
-		if (!itemBuffer.isEmpty()) {
-			tag.put(TAG_ITEM_BUFFER, itemBuffer.toTag());
+		if (!transportBuffer.state().shouldSave()) {
+			tag.put(TAG_BUFFER, transportBuffer.state().toTag());
 		}
 
 		return tag;
@@ -169,10 +181,10 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 	public void fromTag(BlockState state, CompoundTag tag) {
 		super.fromTag(state, tag);
 
-		if (tag.contains(TAG_ITEM_BUFFER)) {
-			itemBuffer.fromTag(tag.getCompound(TAG_ITEM_BUFFER));
+		if (tag.contains(TAG_BUFFER)) {
+			transportBuffer.state().fromTag(tag.getCompound(TAG_BUFFER));
 		} else {
-			itemBuffer.reset();
+			transportBuffer.state().reset();
 		}
 	}
 

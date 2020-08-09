@@ -4,14 +4,11 @@ import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.StoredArticleView;
 
 public interface TransportStorageContext {
+	void prepareForTick();
 
 	boolean isValid();
 
-	boolean isFull();
-
 	boolean canAccept(Article targetArticle);
-
-	boolean isEmpty();
 
 	boolean hasContentPreference();
 

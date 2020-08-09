@@ -19,6 +19,7 @@ import net.minecraft.block.entity.BlockEntityType;
 
 import grondag.facility.transport.handler.Bus2StorageTickHandler;
 import grondag.facility.transport.handler.TransportTickHandler;
+import grondag.fluidity.api.storage.ArticleFunction;
 
 public class BusToStorageBlockEntity extends ItemMoverBlockEntity {
 	public BusToStorageBlockEntity(BlockEntityType<BusToStorageBlockEntity> type) {
@@ -28,5 +29,15 @@ public class BusToStorageBlockEntity extends ItemMoverBlockEntity {
 	@Override
 	protected TransportTickHandler itemTickHandler() {
 		return Bus2StorageTickHandler.INSTANCE;
+	}
+
+	@Override
+	public ArticleFunction getConsumer() {
+		return transportBuffer.consumer();
+	}
+
+	@Override
+	protected void tickBuffer() {
+		transportBuffer.flushItemToStorage(itemStorage);
 	}
 }

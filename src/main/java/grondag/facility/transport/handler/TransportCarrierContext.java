@@ -5,6 +5,7 @@ import io.netty.util.internal.ThreadLocalRandom;
 import grondag.facility.FacilityConfig;
 import grondag.facility.transport.UtbCostFunction;
 import grondag.fluidity.api.article.Article;
+import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.storage.ArticleFunction;
 import grondag.fluidity.wip.api.transport.CarrierNode;
 import grondag.fluidity.wip.api.transport.CarrierSession;
@@ -16,11 +17,15 @@ public abstract class TransportCarrierContext {
 	protected long targetAddress = AssignedNumbersAuthority.INVALID_ADDRESS;
 	// set initial value so peer nodes don't all go at once
 	protected int cooldownTicks = ThreadLocalRandom.current().nextInt(FacilityConfig.utb1ImporterCooldownTicks);
+	protected final ArticleType<?> articleType;
 
 	abstract public CarrierSession session();
 
 	abstract public SubCarrier<UtbCostFunction> carrier();
 
+	protected TransportCarrierContext(ArticleType<?> articleType) {
+		this.articleType = articleType;
+	}
 	public CarrierNode lastTarget() {
 		return targetAddress == AssignedNumbersAuthority.INVALID_ADDRESS ? CarrierNode.INVALID : session().carrier().nodeByAddress(targetAddress);
 	}
@@ -38,11 +43,11 @@ public abstract class TransportCarrierContext {
 	}
 
 	public Article randomArticleFromSource(CarrierNode sourceNode) {
-		return sourceNode.isValid() ? sourceNode.getComponent(ArticleFunction.SUPPLIER_COMPONENT).get().suggestArticle() : Article.NOTHING;
+		return sourceNode.isValid() ? sourceNode.getComponent(ArticleFunction.SUPPLIER_COMPONENT).get().suggestArticle(articleType) : Article.NOTHING;
 	}
 
 	public long throttle(Article article, long numerator, long denominator, boolean simulate)  {
-		return carrier().costFunction().apply(session(), article, numerator, denominator, false);
+		return carrier().costFunction().apply(session(), article, numerator, denominator, simulate);
 	}
 
 	public void resetCooldown() {
