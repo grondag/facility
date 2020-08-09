@@ -30,8 +30,16 @@ import net.minecraft.world.World;
 
 import grondag.facility.transport.PipeBlock;
 import grondag.xm.api.block.XmProperties;
+import grondag.xm.api.connect.world.BlockTest;
 
 public class ItemMoverBlock extends PipeBlock {
+	@SuppressWarnings("rawtypes")
+	public static final BlockTest ITEM_MOVER_JOIN_TEST = ctx -> {
+		final BlockState fromState = ctx.fromBlockState();
+		assert fromState.getBlock() instanceof ItemMoverBlock : "Mismatched  block in ItemMoverBlock join test";
+		return fromState.get(XmProperties.FACE) == ctx.toFace() || canConnect(ctx);
+	};
+
 	public ItemMoverBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, boolean hasGlow) {
 		super(settings, beFactory, hasGlow);
 	}

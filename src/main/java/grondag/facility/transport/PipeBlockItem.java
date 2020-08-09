@@ -1,5 +1,7 @@
 package grondag.facility.transport;
 
+import java.util.function.BiFunction;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
@@ -8,6 +10,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
+
+import grondag.facility.transport.model.BasePipeModel;
+import grondag.xm.api.block.XmBlockState;
+import grondag.xm.api.modelstate.MutableModelState;
+import grondag.xm.api.modelstate.primitive.MutablePrimitiveState;
 
 
 public class PipeBlockItem extends BlockItem {
@@ -68,4 +75,26 @@ public class PipeBlockItem extends BlockItem {
 			return tag.getInt(SPECIES);
 		}
 	}
+
+	public static final BiFunction<ItemStack, World, MutableModelState> PIPE_ITEM_MODEL_FUNCTION  = (stack, world) -> {
+		MutablePrimitiveState result = null;
+
+		if (stack.getItem() instanceof PipeBlockItem) {
+			final Block block = ((BlockItem) stack.getItem()).getBlock();
+
+			result = (MutablePrimitiveState) XmBlockState.get(block);
+
+			if (result != null) {
+				final int species = species(stack);
+
+				if (species != AUTO_SELECT_SPECIES) {
+					result.species(species);
+				}
+
+				result.primitiveBits(block instanceof PipeBlock && ((PipeBlock) block).hasGlow ? BasePipeModel.GLOW_BIT : 0);
+			}
+		}
+
+		return result;
+	};
 }

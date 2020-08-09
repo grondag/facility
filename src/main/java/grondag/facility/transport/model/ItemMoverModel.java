@@ -40,10 +40,6 @@ public class ItemMoverModel extends BasePipeModel {
 	protected static final float FAT_CONNECTOR_MIN = 0.5f - FAT_CONNECTOR_WIDTH * 0.5f;
 	protected static final float FAT_CONNECTOR_MAX = 1f - FAT_CONNECTOR_MIN;
 
-	protected ItemMoverModel() {
-		super(true);
-	}
-
 	@Override
 	protected boolean hasJoins(PrimitiveState modelState, SimpleJoinState joinState, Axis axis) {
 		return FACES[modelState.orientationIndex()].getAxis() == axis || super.hasJoins(modelState, joinState, axis);
@@ -108,5 +104,6 @@ public class ItemMoverModel extends BasePipeModel {
 			.orientationType(OrientationType.FACE)
 			.primitiveBitCount(PRIMITIVE_BIT_COUNT)
 			.simpleJoin(true)
+			.alternateJoinAffectsGeometry(true)
 			.build(Facility.REG.id("export_pipe"));
 }

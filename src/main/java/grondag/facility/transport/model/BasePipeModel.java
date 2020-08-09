@@ -53,16 +53,10 @@ public class BasePipeModel {
 
 	protected static final int PRIMITIVE_BIT_COUNT = 1;
 
-	protected static final int GLOW_BIT = 1;
+	public static final int GLOW_BIT = 1;
 
 	public static boolean hasGlow(BaseModelState<?,?> modelState) {
 		return (modelState.primitiveBits() & GLOW_BIT) == GLOW_BIT;
-	}
-
-	protected final boolean alwaysConnects;
-
-	protected BasePipeModel(boolean alwaysConnects) {
-		this.alwaysConnects = alwaysConnects;
 	}
 
 	protected void emitSection(float from, float to, Axis axis, WritableMesh mesh) {
@@ -98,6 +92,29 @@ public class BasePipeModel {
 				? SURFACE_CONNECTOR_FACE
 						: SURFACE_CABLE);
 		transform.accept(writer);
+		writer.append();
+	}
+
+	protected void emitStub(PrimitiveState modelState, WritableMesh mesh) {
+		final MutablePolygon writer = mesh.writer();
+		writer.lockUV(0, true).surface(SURFACE_CONNECTOR_FACE).saveDefaults();
+
+		writer.setupFaceQuad(EAST, CABLE_MIN, CABLE_MIN, CABLE_MAX, CABLE_MAX, CABLE_MIN, UP);
+		writer.append();
+
+		writer.setupFaceQuad(WEST, CABLE_MIN, CABLE_MIN, CABLE_MAX, CABLE_MAX, CABLE_MIN, UP);
+		writer.append();
+
+		writer.setupFaceQuad(NORTH, CABLE_MIN, CABLE_MIN, CABLE_MAX, CABLE_MAX, CABLE_MIN, UP);
+		writer.append();
+
+		writer.setupFaceQuad(SOUTH, CABLE_MIN, CABLE_MIN, CABLE_MAX, CABLE_MAX, CABLE_MIN, UP);
+		writer.append();
+
+		writer.setupFaceQuad(UP, CABLE_MIN, CABLE_MIN, CABLE_MAX, CABLE_MAX, 1 - CABLE_MAX, NORTH);
+		writer.append();
+
+		writer.setupFaceQuad(DOWN, CABLE_MIN, CABLE_MIN, CABLE_MAX, CABLE_MAX, CABLE_MIN, NORTH);
 		writer.append();
 	}
 
@@ -148,83 +165,73 @@ public class BasePipeModel {
 	}
 
 	protected XmMesh polyFactory(PrimitiveState modelState) {
+		final SimpleJoinState joinState = modelState.simpleJoin();
+
+		if(joinState == SimpleJoinState.NO_JOINS) {
+			final WritableMesh output = XmMeshes.claimWritable();
+			emitStub(modelState, output);
+			return output.releaseToReader();
+		}
+
 		CsgMesh quadsA = null;
 		CsgMesh quadsB = null;
 		CsgMesh output = null;
 
-		final SimpleJoinState joinState = modelState.simpleJoin();
+		final boolean hasX = hasJoins(modelState, joinState, Axis.X);
+		final boolean hasY = hasJoins(modelState, joinState, Axis.Y);
+		final boolean hasZ = hasJoins(modelState, joinState, Axis.Z);
+		final boolean hasMultiple = (hasX ? 1 : 0) + (hasY ? 1 : 0) + (hasZ ? 1 : 0)  > 1;
 
-		if(joinState == SimpleJoinState.NO_JOINS && !alwaysConnects) {
+		if(hasX) {
+			output = XmMeshes.claimCsg();
+			final float top = isJoined(modelState, joinState, WEST) ? 1 : (hasMultiple ? CABLE_MAX : END_MAX);
+			final float bottom = isJoined(modelState, joinState, EAST) ? 0 : (hasMultiple ? CABLE_MIN : END_MIN);
+			emitSection(bottom, top, Axis.X, output);
+		}
+
+		if(hasY) {
 			quadsA = XmMeshes.claimCsg();
-			quadsB = XmMeshes.claimCsg();
-			output = XmMeshes.claimCsg();
+			final float top = isJoined(modelState, joinState, UP) ? 1 : (hasMultiple ? CABLE_MAX : END_MAX);
+			final float bottom = isJoined(modelState, joinState, DOWN) ? 0 : (hasMultiple ? CABLE_MIN : END_MIN);
+			emitSection(bottom, top, Axis.Y, quadsA);
 
-			emitSection(END_MIN, END_MAX, Axis.X, quadsA);
-			emitSection(END_MIN, END_MAX, Axis.Y, quadsB);
-			Csg.union(quadsA, quadsB, output);
-			quadsB.release();
-			quadsB = output;
-			output = XmMeshes.claimCsg();
-			quadsA.clear();
-			emitSection(END_MIN, END_MAX, Axis.Z, quadsA);
-			Csg.union(quadsA, quadsB, output);
-		} else {
-			final boolean hasX = hasJoins(modelState, joinState, Axis.X);
-			final boolean hasY = hasJoins(modelState, joinState, Axis.Y);
-			final boolean hasZ = hasJoins(modelState, joinState, Axis.Z);
-			final boolean hasMultiple = (hasX ? 1 : 0) + (hasY ? 1 : 0) + (hasZ ? 1 : 0)  > 1;
-
-			if(hasX) {
+			if(output == null) {
+				output = quadsA;
+				quadsA = null;
+			} else {
+				quadsB = output;
 				output = XmMeshes.claimCsg();
-				final float top = isJoined(modelState, joinState, WEST) ? 1 : (hasMultiple ? CABLE_MAX : END_MAX);
-				final float bottom = isJoined(modelState, joinState, EAST) ? 0 : (hasMultiple ? CABLE_MIN : END_MIN);
-				emitSection(bottom, top, Axis.X, output);
+				Csg.union(quadsA, quadsB, output);
+				quadsA.clear();
+				quadsB.release();
+				quadsB = null;
 			}
+		}
 
-			if(hasY) {
+		if(hasZ) {
+			if(quadsA == null) {
 				quadsA = XmMeshes.claimCsg();
-				final float top = isJoined(modelState, joinState, UP) ? 1 : (hasMultiple ? CABLE_MAX : END_MAX);
-				final float bottom = isJoined(modelState, joinState, DOWN) ? 0 : (hasMultiple ? CABLE_MIN : END_MIN);
-				emitSection(bottom, top, Axis.Y, quadsA);
-
-				if(output == null) {
-					output = quadsA;
-					quadsA = null;
-				} else {
-					quadsB = output;
-					output = XmMeshes.claimCsg();
-					Csg.union(quadsA, quadsB, output);
-					quadsA.clear();
-					quadsB.release();
-					quadsB = null;
-				}
 			}
+			final float top = isJoined(modelState, joinState, SOUTH) ? 1 : (hasMultiple ? CABLE_MAX : END_MAX);
+			final float bottom = isJoined(modelState, joinState, NORTH) ? 0 : (hasMultiple ? CABLE_MIN : END_MIN);
+			emitSection(bottom, top, Axis.Z, quadsA);
 
-			if(hasZ) {
-				if(quadsA == null) {
-					quadsA = XmMeshes.claimCsg();
-				}
-				final float top = isJoined(modelState, joinState, SOUTH) ? 1 : (hasMultiple ? CABLE_MAX : END_MAX);
-				final float bottom = isJoined(modelState, joinState, NORTH) ? 0 : (hasMultiple ? CABLE_MIN : END_MIN);
-				emitSection(bottom, top, Axis.Z, quadsA);
-
-				if(output == null) {
-					output = quadsA;
-					quadsA = null;
-				} else {
-					quadsB = output;
-					output = XmMeshes.claimCsg();
-					Csg.union(quadsA, quadsB, output);
-					quadsA.clear();
-					quadsB.release();
-					quadsB = null;
-				}
+			if(output == null) {
+				output = quadsA;
+				quadsA = null;
+			} else {
+				quadsB = output;
+				output = XmMeshes.claimCsg();
+				Csg.union(quadsA, quadsB, output);
+				quadsA.clear();
+				quadsB.release();
+				quadsB = null;
 			}
 		}
 
 		final int connectorBits = modelState.alternateJoinBits();
 
-		if(alwaysConnects || connectorBits != 0) {
+		if(connectorBits != 0) {
 			if(quadsA == null) {
 				quadsA = XmMeshes.claimCsg();
 			}
@@ -242,9 +249,11 @@ public class BasePipeModel {
 		if(quadsA != null) {
 			quadsA.release();
 		}
+
 		if(quadsB != null) {
 			quadsB.release();
 		}
+
 		return output.releaseToReader();
 	}
 }

@@ -34,6 +34,7 @@ import grondag.facility.transport.item.BusToStorageBlockEntity;
 import grondag.facility.transport.item.ItemMoverBlock;
 import grondag.facility.transport.item.ItemMoverBlockEntity;
 import grondag.facility.transport.item.StorageToBusBlockEntity;
+import grondag.facility.transport.model.BasePipeModel;
 import grondag.facility.transport.model.ItemMoverModel;
 import grondag.facility.transport.model.PipeModel;
 import grondag.facility.transport.model.PipeModifiers;
@@ -80,52 +81,52 @@ public enum PipeBlocks {
 		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((ItemMoverBlockEntity) ctx.blockEntity()).getConsumer(), UTB1_S2B, UTB1_B2S);
 		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> ((ItemMoverBlockEntity) ctx.blockEntity()).getSupplier(), UTB1_S2B, UTB1_B2S);
 
-		final Function<BlockState, PrimitiveStateFunction> UTB1_FUNC = bs -> PrimitiveStateFunction.builder()
+		final Function<BlockState, PrimitiveStateFunction> utb1FlexFunc = bs -> PrimitiveStateFunction.builder()
 				.withJoin(PipeBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
-				.withUpdate(PipeModifiers.OMNI_PIPE_UPDATE)
+				.withUpdate(PipeModifiers.PIPE_CONNECTOR_UPDATE)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						PipeModel.PRIMITIVE.newState()
-						.alternateJoinBits(0b111111)
-						.paint(PipeModel.SURFACE_CABLE, PipePaints.CABLE)
-						.paint(PipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
-						.paint(PipeModel.SURFACE_CONNECTOR_SIDE, PipePaints.STD_CONNECTOR_SIDE)
-						.paint(PipeModel.SURFACE_CONNECTOR_BACK, PipePaints.STD_CONNECTOR_BACK)
+						.alternateJoinBits(0)
+						.paint(BasePipeModel.SURFACE_CABLE, PipePaints.CABLE)
+						.paint(BasePipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
+						.paint(BasePipeModel.SURFACE_CONNECTOR_SIDE, PipePaints.STD_CONNECTOR_SIDE)
+						.paint(BasePipeModel.SURFACE_CONNECTOR_BACK, PipePaints.STD_CONNECTOR_BACK)
 						.simpleJoin(SimpleJoinState.ALL_JOINS), bs)))
 				.build();
 
-		XmBlockRegistry.addBlockStates(UTB1_PIPE, UTB1_FUNC);
-		XmBlockRegistry.addBlockStates(UTB1_PIPE_GLOW, UTB1_FUNC);
+		XmBlockRegistry.addBlockStates(UTB1_PIPE, utb1FlexFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
+		XmBlockRegistry.addBlockStates(UTB1_PIPE_GLOW, utb1FlexFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
 
-		final Function<BlockState, PrimitiveStateFunction> UTB1_STRAIGHT_FUNC = bs -> PrimitiveStateFunction.builder()
+		final Function<BlockState, PrimitiveStateFunction> utb1StraightFunc = bs -> PrimitiveStateFunction.builder()
 				.withJoin(PipeBlock.JOIN_TEST_WITH_AXIS)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
-				.withUpdate(PipeModifiers.AXIS_PIPE_UPDATE)
+				.withUpdate(PipeModifiers.STRAIGHT_PIPE_CONNECTOR_UPDATE)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						PipeModel.PRIMITIVE.newState()
-						.alternateJoinBits(DirectionHelper.NORTH_BIT | DirectionHelper.SOUTH_BIT)
-						.paint(PipeModel.SURFACE_CABLE, PipePaints.CABLE)
-						.paint(PipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
-						.paint(PipeModel.SURFACE_CONNECTOR_BACK, PipePaints.STD_CONNECTOR_BACK)
-						.paint(PipeModel.SURFACE_CONNECTOR_SIDE, PipePaints.STD_CONNECTOR_SIDE)
+						.alternateJoinBits(0)
+						.paint(BasePipeModel.SURFACE_CABLE, PipePaints.CABLE)
+						.paint(BasePipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
+						.paint(BasePipeModel.SURFACE_CONNECTOR_BACK, PipePaints.STD_CONNECTOR_BACK)
+						.paint(BasePipeModel.SURFACE_CONNECTOR_SIDE, PipePaints.STD_CONNECTOR_SIDE)
 						.simpleJoin(SimpleJoinState.Z_JOINS), bs)))
 				.build();
 
-		XmBlockRegistry.addBlockStates(UTB1_STRAIGHT_PIPE, UTB1_STRAIGHT_FUNC);
-		XmBlockRegistry.addBlockStates(UTB1_STRAIGHT_PIPE_GLOW, UTB1_STRAIGHT_FUNC);
+		XmBlockRegistry.addBlockStates(UTB1_STRAIGHT_PIPE, utb1StraightFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
+		XmBlockRegistry.addBlockStates(UTB1_STRAIGHT_PIPE_GLOW, utb1StraightFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
 
 		final Function<BlockState, PrimitiveStateFunction> utb1S2bFunc = bs -> PrimitiveStateFunction.builder()
-				.withJoin(PipeBlock.JOIN_TEST)
+				.withJoin(ItemMoverBlock.ITEM_MOVER_JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
-				.withUpdate(PipeModifiers.MOVER_PIPE_UPDATE)
+				.withUpdate(PipeModifiers.PIPE_CONNECTOR_UPDATE)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						ItemMoverModel.PRIMITIVE.newState()
-						.alternateJoinBits(DirectionHelper.DOWN_BIT | DirectionHelper.UP_BIT)
-						.paint(PipeModel.SURFACE_CABLE, PipePaints.CABLE)
-						.paint(PipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
-						.paint(PipeModel.SURFACE_CONNECTOR_BACK, PipePaints.STD_CONNECTOR_BACK)
-						.paint(PipeModel.SURFACE_CONNECTOR_SIDE, PipePaints.STD_CONNECTOR_SIDE)
+						.alternateJoinBits(DirectionHelper.DOWN_BIT)
+						.paint(BasePipeModel.SURFACE_CABLE, PipePaints.CABLE)
+						.paint(BasePipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
+						.paint(BasePipeModel.SURFACE_CONNECTOR_BACK, PipePaints.STD_CONNECTOR_BACK)
+						.paint(BasePipeModel.SURFACE_CONNECTOR_SIDE, PipePaints.STD_CONNECTOR_SIDE)
 						.paint(ItemMoverModel.SURFACE_MOVER_FACE, PipePaints.OUTPUT_CONNECTOR_FACE)
 						.paint(ItemMoverModel.SURFACE_MOVER_BACK, PipePaints.OUTPUT_CONNECTOR_BACK)
 						.paint(ItemMoverModel.SURFACE_MOVER_SIDE, PipePaints.OUTPUT_CONNECTOR_SIDE)
@@ -133,22 +134,21 @@ public enum PipeBlocks {
 						.simpleJoin(SimpleJoinState.Y_JOINS), bs)))
 				.build();
 
-		XmBlockRegistry.addBlockStates(UTB1_S2B, utb1S2bFunc);
-		XmBlockRegistry.addBlockStates(UTB1_S2B_GLOW, utb1S2bFunc);
-
+		XmBlockRegistry.addBlockStates(UTB1_S2B, utb1S2bFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
+		XmBlockRegistry.addBlockStates(UTB1_S2B_GLOW, utb1S2bFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
 
 		final Function<BlockState, PrimitiveStateFunction> utb1B2sFunc = bs -> PrimitiveStateFunction.builder()
-				.withJoin(PipeBlock.JOIN_TEST)
+				.withJoin(ItemMoverBlock.ITEM_MOVER_JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
-				.withUpdate(PipeModifiers.MOVER_PIPE_UPDATE)
+				.withUpdate(PipeModifiers.PIPE_CONNECTOR_UPDATE)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						ItemMoverModel.PRIMITIVE.newState()
-						.alternateJoinBits(DirectionHelper.DOWN_BIT | DirectionHelper.UP_BIT)
-						.paint(PipeModel.SURFACE_CABLE, PipePaints.CABLE)
-						.paint(PipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
-						.paint(PipeModel.SURFACE_CONNECTOR_BACK, PipePaints.STD_CONNECTOR_BACK)
-						.paint(PipeModel.SURFACE_CONNECTOR_SIDE, PipePaints.STD_CONNECTOR_SIDE)
+						.alternateJoinBits(DirectionHelper.UP_BIT)
+						.paint(BasePipeModel.SURFACE_CABLE, PipePaints.CABLE)
+						.paint(BasePipeModel.SURFACE_CONNECTOR_FACE, PipePaints.STD_CONNECTOR_FACE)
+						.paint(BasePipeModel.SURFACE_CONNECTOR_BACK, PipePaints.STD_CONNECTOR_BACK)
+						.paint(BasePipeModel.SURFACE_CONNECTOR_SIDE, PipePaints.STD_CONNECTOR_SIDE)
 						.paint(ItemMoverModel.SURFACE_MOVER_FACE, PipePaints.INPUT_CONNECTOR_FACE)
 						.paint(ItemMoverModel.SURFACE_MOVER_BACK, PipePaints.INPUT_CONNECTOR_BACK)
 						.paint(ItemMoverModel.SURFACE_MOVER_SIDE, PipePaints.INPUT_CONNECTOR_SIDE)
@@ -156,7 +156,7 @@ public enum PipeBlocks {
 						.simpleJoin(SimpleJoinState.Y_JOINS), bs)))
 				.build();
 
-		XmBlockRegistry.addBlockStates(UTB1_B2S, utb1B2sFunc);
-		XmBlockRegistry.addBlockStates(UTB1_B2S_GLOW, utb1B2sFunc);
+		XmBlockRegistry.addBlockStates(UTB1_B2S, utb1B2sFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
+		XmBlockRegistry.addBlockStates(UTB1_B2S_GLOW, utb1B2sFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
 	}
 }

@@ -26,10 +26,6 @@ public class PipeModel extends BasePipeModel {
 			.polyFactory(INSTANCE::polyFactory)
 			.primitiveBitCount(PRIMITIVE_BIT_COUNT)
 			.simpleJoin(true)
+			.alternateJoinAffectsGeometry(true)
 			.build(Facility.REG.id("basic_pipe"));
-
-	protected PipeModel() {
-		super(false);
-	}
-
 }

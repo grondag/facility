@@ -39,9 +39,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import grondag.facility.block.FacilitySpeciesBlock;
-import grondag.facility.transport.item.ItemMoverBlock;
+import grondag.facility.storage.StorageBlock;
 import grondag.fermion.modkeys.api.ModKeys;
-import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.xm.api.block.XmBlockState;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.collision.CollisionDispatcher;
@@ -64,61 +63,36 @@ public class PipeBlock extends FacilitySpeciesBlock {
 
 	@SuppressWarnings("rawtypes")
 	public static final BlockTest JOIN_TEST_WITH_AXIS = ctx -> {
-		final BlockState fromState = ctx.fromBlockState();
+		assert ctx.fromBlockState().getBlock() instanceof StraightPipeBlock : "Non-axis `from` block in JOIN_TEST_WITH_AXIS";
 
-		if(fromState.getBlock() instanceof StraightPipeBlock) {
-			final Direction toFace = ctx.toFace();
-			return toFace != null && toFace.getAxis() == fromState.get(XmProperties.AXIS);
-		} else {
-			return canConnect(ctx);
-		}
+		final Direction toFace = ctx.toFace();
+		return toFace != null && toFace.getAxis() == ctx.fromBlockState().get(XmProperties.AXIS);
 	};
 
 	public static boolean canConnect(BlockTestContext<?> ctx) {
-		final BlockEntity fromEntity = ctx.fromBlockEntity();
-		final BlockEntity toEntity = ctx.toBlockEntity();
-
-		if(fromEntity == null) {
-			return false;
-		}
-
 		final BlockState fromState = ctx.fromBlockState();
+		assert fromState.getBlock() instanceof PipeBlock : "Non-pipe `from` block in PipeBlock.canConnect";
 
-		if (fromState.getBlock() instanceof ItemMoverBlock && fromState.get(XmProperties.FACE) == ctx.toFace()) {
-			return true;
-		}
+		final BlockState toState = ctx.toBlockState();
 
-		if(toEntity == null) {
+		if(toState.isAir()) {
 			return false;
 		}
 
-		final boolean fromPipe = fromEntity instanceof PipeBlockEntity;
-		final boolean toPipe = toEntity instanceof PipeBlockEntity;
-
-		if(fromPipe) {
-			if(toPipe) {
-				return canConnectSelf(fromEntity, toEntity);
-			} else {
-				// UGLY: not better to use CarrierConnector.CARRIER_CONNECTOR_COMPONENT.getAccess?
-				return toEntity instanceof CarrierConnector;
-			}
-		} else if(toPipe) {
-			return fromEntity instanceof CarrierConnector;
+		if(toState.getBlock() instanceof PipeBlock) {
+			return canConnectSelf(fromState, ctx.fromPos(), toState, ctx.toPos());
 		} else {
-			return false;
+			return toState.getBlock() instanceof StorageBlock;
 		}
 	}
 
-	private static boolean canConnectSelf(BlockEntity fromEntity, BlockEntity toEntity) {
-		final BlockState fromState = fromEntity.getCachedState();
-		final BlockState toState = toEntity.getCachedState();
-
+	private static boolean canConnectSelf(BlockState fromState, BlockPos fromPos, BlockState toState, BlockPos toPos) {
 		if(fromState.get(SpeciesProperty.SPECIES) != toState.get(SpeciesProperty.SPECIES)) {
 			return false;
 		}
 
 		final Comparable<?> fromAxis = fromState.getEntries().get(XmProperties.AXIS);
-		final Comparable<?> toAxis = fromState.getEntries().get(XmProperties.AXIS);
+		final Comparable<?> toAxis = toState.getEntries().get(XmProperties.AXIS);
 
 		if(fromAxis == null) {
 			if(toAxis == null) {
@@ -126,15 +100,11 @@ public class PipeBlock extends FacilitySpeciesBlock {
 				return true;
 			} else {
 				// require to-axis point to the flexible one
-				final BlockPos fromPos = fromEntity.getPos();
-				final BlockPos toPos = toEntity.getPos();
 				return toAxis == Direction.fromVector(toPos.getX() - fromPos.getX(), toPos.getY() - fromPos.getY(), toPos.getZ() - fromPos.getZ()).getAxis();
 			}
 		} else { // have from axis
 			if(toAxis == null) {
 				// require from-axis point to the flexible one
-				final BlockPos fromPos = fromEntity.getPos();
-				final BlockPos toPos = toEntity.getPos();
 				return fromAxis == Direction.fromVector(toPos.getX() - fromPos.getX(), toPos.getY() - fromPos.getY(), toPos.getZ() - fromPos.getZ()).getAxis();
 			} else {
 				// both straight, require same axis

@@ -19,6 +19,8 @@ public abstract class PipePaints {
 		if (BasePipeModel.hasGlow(modelState)) {
 			poly.colorAll(textureIndex, FacilityColors.GLOW[modelState.species()]);
 			poly.emissive(textureIndex, true);
+			poly.disableDiffuse(textureIndex, true);
+			poly.disableAo(textureIndex, true);
 		} else {
 			poly.colorAll(textureIndex, FacilityColors.HIGHLIGHT[modelState.species()]);
 		}
@@ -42,6 +44,11 @@ public abstract class PipePaints {
 			.vertexProcessor(2, HIGHLIGHT_COLOR)
 			.find();
 
+	static {
+		assert CABLE.vertexProcessor(1) == BASE_COLOR;
+		assert CABLE.vertexProcessor(2) == HIGHLIGHT_COLOR;
+	}
+
 	public static final XmPaint STD_CONNECTOR_FACE = XmPaint.finder()
 			.textureDepth(1)
 			.texture(0, XmTextures.TILE_NOISE_SUBTLE)
@@ -56,7 +63,6 @@ public abstract class PipePaints {
 
 	public static final XmPaint STD_CONNECTOR_SIDE = XmPaint.finder().copy(STD_CONNECTOR_BACK).find();
 
-
 	public static final XmPaint INPUT_CONNECTOR_FACE = XmPaint.finder().copy(STD_CONNECTOR_FACE)
 			.textureDepth(2)
 			.texture(1, TechTextures.CABLE_INPUT_DECAL)
@@ -66,7 +72,6 @@ public abstract class PipePaints {
 
 	public static final XmPaint OUTPUT_CONNECTOR_FACE = XmPaint.finder().copy(INPUT_CONNECTOR_FACE)
 			.texture(1, TechTextures.CABLE_OUTPUT_DECAL).find();
-
 
 	public static final XmPaint INPUT_CONNECTOR_BACK = XmPaint.finder().copy(STD_CONNECTOR_BACK)
 			.textureDepth(2)
