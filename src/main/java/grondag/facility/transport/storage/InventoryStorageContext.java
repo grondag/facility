@@ -29,7 +29,8 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 	}
 
 	protected void setupSlots() {
-		final int limit = inventory.size();
+		final int limit = inventory == null ? 0 : inventory.size();
+
 		if (slots.length != limit) {
 			slots = new int[limit];
 

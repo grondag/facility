@@ -11,9 +11,4 @@ public class MissingStorageContext extends FluidityStorageContext {
 	protected Store store() {
 		return Store.EMPTY;
 	}
-
-	@Override
-	public void prepareForTick() {
-		// NOOP
-	}
 }
