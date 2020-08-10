@@ -31,7 +31,6 @@ import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
-import grondag.fluidity.wip.base.transport.SingleCarrierProvider;
 import grondag.fluidity.wip.base.transport.SubCarrier;
 import grondag.xm.api.block.XmProperties;
 
@@ -78,16 +77,10 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 		internalSession = carrier.attach(this, ct -> ct.getAccess(this));
 	}
 
-
-	@Override
-	protected final CarrierProvider createCarrierProvider() {
-		return SingleCarrierProvider.of(carrier);
-	}
-
 	// does not provide carrier to the attached block
 	@Override
 	public final CarrierProvider getCarrierProvider(BlockComponentContext ctx) {
-		return world == null || pos == null || ctx.side() == getCachedState().get(XmProperties.FACE) ? CarrierProvider.CARRIER_PROVIDER_COMPONENT.absent() : carrierProvider;
+		return ctx.side() == ctx.blockState().get(XmProperties.FACE) ? CarrierProvider.CARRIER_PROVIDER_COMPONENT.absent() : carrierProvider;
 	}
 
 	@Override
