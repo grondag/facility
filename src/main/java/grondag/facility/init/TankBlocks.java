@@ -32,6 +32,7 @@ import grondag.facility.storage.bulk.TankBlockEntity;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.fraction.Fraction;
+import grondag.fluidity.api.storage.ArticleFunction;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.storage.bulk.SimpleTank;
 import grondag.fluidity.wip.api.transport.CarrierConnector;
@@ -64,6 +65,9 @@ public enum TankBlocks {
 		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(TANK);
 		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage(), TANK);
 		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getInternalStorage(), TANK);
+		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage().getConsumer(), TANK);
+		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage().getSupplier(), TANK);
+
 		Store.STORAGE_COMPONENT.registerProvider(ctx -> new PortableStore(new SimpleTank(Fraction.of(32)), ctx), PORTABLE_TANK_ITEM);
 
 		final XmPaint basePaint = XmPaint.finder()
