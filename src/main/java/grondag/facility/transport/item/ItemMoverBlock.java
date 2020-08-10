@@ -32,6 +32,7 @@ import net.minecraft.state.StateManager.Builder;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -104,5 +105,25 @@ public class ItemMoverBlock extends PipeBlock {
 		}
 
 		return ActionResult.SUCCESS;
+	}
+
+	@Override
+	public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+		if (!world.isClient && !state.isOf(newState.getBlock())) {
+			final BlockEntity be = world.getBlockEntity(pos);
+
+			if(be instanceof ItemMoverBlockEntity) {
+				final TransportBuffer buffer = ((ItemMoverBlockEntity) be).transportBuffer;
+				final ItemStack stack = buffer.flushItemToWorld();
+
+				if (!stack.isEmpty()) {
+					ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), stack);
+				}
+			}
+
+			world.updateComparators(pos, this);
+		}
+
+		super.onStateReplaced(state, world, pos, newState, moved);
 	}
 }
