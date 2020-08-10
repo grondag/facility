@@ -82,7 +82,7 @@ public class PipeBlockItem extends BlockItem {
 		if (stack.getItem() instanceof PipeBlockItem) {
 			final Block block = ((BlockItem) stack.getItem()).getBlock();
 
-			result = (MutablePrimitiveState) XmBlockState.get(block);
+			result = XmBlockState.get(block).defaultModelState();
 
 			if (result != null) {
 				final int species = species(stack);
