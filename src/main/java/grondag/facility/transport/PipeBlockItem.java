@@ -7,6 +7,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -34,6 +36,10 @@ public class PipeBlockItem extends BlockItem {
 			final ItemStack itemStack = playerEntity.getStackInHand(hand);
 			itemStack.setTag(cycleTag(itemStack, playerEntity.isSneaking()));
 			playerEntity.setStackInHand(hand, itemStack);
+
+			final int spec = species(itemStack);
+			final Text msg = spec == AUTO_SELECT_SPECIES ? new TranslatableText("transport.facility.circuit.auto") : new TranslatableText("transport.facility.circuit.num", spec);
+			playerEntity.sendMessage(msg, true);
 			return TypedActionResult.success(itemStack);
 		}
 	}
