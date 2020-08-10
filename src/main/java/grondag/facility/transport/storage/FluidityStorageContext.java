@@ -88,6 +88,6 @@ public abstract class FluidityStorageContext implements TransportStorageContext 
 
 	@Override
 	public long supply(Article article, long numerator, long divisor) {
-		return store.getSupplier().apply(article, numerator, divisor, true);
+		return store.getSupplier().apply(article, numerator, divisor, false);
 	}
 }
