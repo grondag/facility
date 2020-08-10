@@ -22,13 +22,22 @@ import org.apache.commons.lang3.ObjectUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager.Builder;
 import net.minecraft.state.property.Properties;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import grondag.facility.transport.PipeBlock;
+import grondag.facility.transport.buffer.TransportBuffer;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.world.BlockTest;
 
@@ -69,5 +78,31 @@ public class ItemMoverBlock extends PipeBlock {
 		return super.getPlacementState(context)
 				.with(XmProperties.FACE, ObjectUtils.defaultIfNull(context.getSide(), context.getPlayerLookDirection().getOpposite()).getOpposite())
 				.with(Properties.POWERED, context.getWorld().isReceivingRedstonePower(context.getBlockPos()));
+	}
+
+	@Override
+	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+		if (!world.isClient) {
+			final BlockEntity be = world.getBlockEntity(pos);
+
+			if(be instanceof ItemMoverBlockEntity) {
+				final TransportBuffer buffer = ((ItemMoverBlockEntity) be).transportBuffer;
+				final ItemStack stack = buffer.flushItemToWorld();
+
+				if (!stack.isEmpty()) {
+					if (player.giveItemStack(stack)) {
+						player.world.playSound((PlayerEntity)null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+					} else {
+						final ItemEntity itemEntity = player.dropItem(stack, false);
+						if (itemEntity != null) {
+							itemEntity.resetPickupDelay();
+							itemEntity.setOwner(player.getUuid());
+						}
+					}
+				}
+			}
+		}
+
+		return ActionResult.SUCCESS;
 	}
 }

@@ -2,6 +2,7 @@ package grondag.facility.transport.buffer;
 
 import java.util.function.Consumer;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 
 import grondag.facility.transport.UtbHelper;
@@ -138,9 +139,6 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 			howMany = storageContext.accept(state.itemArticle, howMany, 1);
 			state.itemQuantity -= howMany;
 
-			// TODO: remove
-			//			Facility.LOG.info(String.format("flushItemToStorage %d %s", howMany, state.itemArticle.toItem().getTranslationKey()));
-
 			assert state.itemQuantity >= 0;
 
 			if (state.itemQuantity == 0) {
@@ -149,6 +147,18 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 		}
 	}
 
+	public ItemStack flushItemToWorld() {
+		final BufferState state = this.state;
+
+		if (state.itemQuantity > 0 && !state.itemArticle.isNothing()) {
+			final ItemStack result = state.itemArticle.toStack(state.itemQuantity);
+			state.itemQuantity = 0;
+			state.itemArticle = Article.NOTHING;
+			return result;
+		} else {
+			return ItemStack.EMPTY;
+		}
+	}
 
 	public void flushItemToCarrier(TransportCarrierContext carrierContext) {
 		if(!carrierContext.isReady()) {
@@ -183,9 +193,6 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 				state.itemQuantity -= howMany;
 				tx.commit();
 				carrierContext.resetCooldown();
-
-				// TODO: remove
-				//				Facility.LOG.info(String.format("flushItemToCarrier %d %s", howMany, article.toItem().getTranslationKey()));
 			}
 		}
 	}
