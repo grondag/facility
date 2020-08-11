@@ -14,14 +14,13 @@ public abstract class SidedInventoryStorageContext extends InventoryStorageConte
 	}
 
 	@Override
-	public void prepareForTick() {
-		super.prepareForTick();
-		slots = inventory.getAvailableSlots(targetFace);
-	}
-
-	@Override
-	public boolean isValid() {
-		return inventory != null && inventory instanceof SidedInventory;
+	public boolean prepareForTick() {
+		if (super.prepareForTick() && inventory instanceof SidedInventory) {
+			slots = inventory.getAvailableSlots(targetFace);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package grondag.facility.storage.bulk;
 
-import java.util.Set;
 import java.util.function.Supplier;
 
 import net.minecraft.block.entity.BlockEntity;
@@ -53,14 +52,9 @@ public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMul
 	}
 
 	@Override
-	public Set<ArticleType<?>> articleTypes() {
-		return ArticleType.SET_OF_FLUIDS;
-	}
-
-	@Override
 	protected CarrierSession getSession(BlockEntity be, BlockPos neighborPos, Direction neighborSide) {
 		return CarrierProvider.CARRIER_PROVIDER_COMPONENT.getAccess(be).applyIfPresent(neighborSide, p ->
-		p.attachIfPresent(ArticleType.FLUID, this, ct -> ct.getAccess(this)));
+		p.attachIfPresent(ArticleType.FLUID, ct -> ct.getAccess(this)));
 	}
 
 	@Override

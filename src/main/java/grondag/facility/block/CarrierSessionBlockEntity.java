@@ -20,10 +20,9 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 
-public abstract class CarrierSessionBlockEntity extends NeighboredBlockEntity<CarrierSession> implements CarrierConnector {
+public abstract class CarrierSessionBlockEntity extends NeighboredBlockEntity<CarrierSession> {
 	public CarrierSessionBlockEntity(BlockEntityType<? extends CarrierSessionBlockEntity> type) {
 		super(type);
 	}

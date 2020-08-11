@@ -16,7 +16,6 @@
 package grondag.facility.storage.item;
 
 import java.util.Random;
-import java.util.Set;
 
 import io.netty.util.internal.ThreadLocalRandom;
 
@@ -78,14 +77,9 @@ public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implemen
 	}
 
 	@Override
-	public Set<ArticleType<?>> articleTypes() {
-		return ArticleType.SET_OF_ITEMS;
-	}
-
-	@Override
 	protected CarrierSession getSession(BlockEntity be, BlockPos neighborPos, Direction neighborSide) {
 		return CarrierProvider.CARRIER_PROVIDER_COMPONENT.getAccess(be).applyIfPresent(neighborSide, p ->
-		p.attachIfPresent(ArticleType.ITEM, this, ct -> ct.getAccess(this)));
+		p.attachIfPresent(ArticleType.ITEM, ct -> ct.getAccess(this)));
 	}
 
 	@Override

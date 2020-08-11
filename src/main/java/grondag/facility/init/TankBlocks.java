@@ -17,8 +17,6 @@ package grondag.facility.init;
 
 import static grondag.facility.Facility.REG;
 
-import java.util.function.Predicate;
-
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
@@ -29,13 +27,11 @@ import grondag.facility.storage.PortableStore;
 import grondag.facility.storage.bulk.PortableTankItem;
 import grondag.facility.storage.bulk.TankBlock;
 import grondag.facility.storage.bulk.TankBlockEntity;
-import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.fraction.Fraction;
 import grondag.fluidity.api.storage.ArticleFunction;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.storage.bulk.SimpleTank;
-import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
@@ -49,12 +45,10 @@ import grondag.xm.api.texture.core.CoreTextures;
 public enum TankBlocks {
 	;
 
-	public static final Predicate<Article> FILTER_TYPE = d -> d.type() == ArticleType.FLUID;
-
 	public static final TankBlock TANK = REG.blockNoItem("tank", new TankBlock(FabricBlockSettings.of(Material.METAL).strength(1, 1), TankBlocks::tankBe, false));
 	public static final BlockEntityType<TankBlockEntity> TANK_BLOCK_ENTITY_TYPE = REG.blockEntityType("tank", TankBlocks::tankBe, TANK);
 	private static TankBlockEntity tankBe() {
-		return new TankBlockEntity(TANK_BLOCK_ENTITY_TYPE, () -> new SimpleTank(Fraction.of(32)).filter(FILTER_TYPE), "TANK ");
+		return new TankBlockEntity(TANK_BLOCK_ENTITY_TYPE, () -> new SimpleTank(Fraction.of(32)).filter(ArticleType.FLUID), "TANK ");
 	}
 
 	public static final PortableTankItem PORTABLE_TANK_ITEM = REG.item("tank", new PortableTankItem(TANK, REG.itemSettings().maxCount(1).maxDamage(32768)));
@@ -62,7 +56,7 @@ public enum TankBlocks {
 	static {
 		PORTABLE_TANK_ITEM.appendBlocks(Item.BLOCK_ITEMS, PORTABLE_TANK_ITEM);
 
-		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(TANK);
+		//CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(TANK);
 		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage(), TANK);
 		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getInternalStorage(), TANK);
 		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage().getConsumer(), TANK);

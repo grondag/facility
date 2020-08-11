@@ -39,7 +39,6 @@ import grondag.fluidity.api.storage.ArticleFunction;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.storage.discrete.FlexibleDiscreteStore;
 import grondag.fluidity.base.storage.discrete.SlottedInventoryStore;
-import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.xm.api.block.XmBlockRegistry;
 import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
@@ -68,18 +67,18 @@ public enum CrateBlocks {
 	public static final CrateBlock CRATE = REG.blockNoItem("crate", new CrateBlock(FabricBlockSettings.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::crateBe));
 	public static final BlockEntityType<CrateBlockEntity> CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("crate", CrateBlocks::crateBe, CRATE);
 	static CrateBlockEntity crateBe() {
-		return new CrateBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING), "CRATE ");
+		return new CrateBlockEntity(CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "CRATE ");
 	}
-	public static final PortableCrateItem PORTABLE_CRATE_ITEM = REG.item("crate_item", new PortableCrateItem(CRATE, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING)));
+	public static final PortableCrateItem PORTABLE_CRATE_ITEM = REG.item("crate_item", new PortableCrateItem(CRATE, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
 	public static final Item CRATE_ITEM = REG.item("crate", new BlockItem(CRATE, REG.itemSettings()));
 
 
 	public static final CrateBlock SLOTTED_CRATE = REG.blockNoItem("slotted_crate", new CrateBlock(FabricBlockSettings.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::slottedBe));
 	public static final BlockEntityType<SlottedCrateBlockEntity> SLOTTED_CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("slotted_crate", CrateBlocks::slottedBe, SLOTTED_CRATE);
 	static SlottedCrateBlockEntity slottedBe() {
-		return new SlottedCrateBlockEntity(SLOTTED_CRATE_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING), "SLOTTED CRATE ");
+		return new SlottedCrateBlockEntity(SLOTTED_CRATE_BLOCK_ENTITY_TYPE, () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "SLOTTED CRATE ");
 	}
-	public static final PortableCrateItem PORTABLE_SLOTTED_CRATE_ITEM = REG.item("slotted_crate_item", new PortableCrateItem(SLOTTED_CRATE, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING)));
+	public static final PortableCrateItem PORTABLE_SLOTTED_CRATE_ITEM = REG.item("slotted_crate_item", new PortableCrateItem(SLOTTED_CRATE, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
 	public static final Item SLOTTED_CRATE_ITEM = REG.item("slotted_crate", new BlockItem(SLOTTED_CRATE, REG.itemSettings()));
 
 
@@ -93,9 +92,9 @@ public enum CrateBlocks {
 	public static final CrateBlock HYPER_CRATE = REG.blockNoItem("hyper_crate", new CrateBlock(FabricBlockSettings.of(Material.METAL).strength(1, 1), CrateBlocks::hyperCrateBe));
 	public static final BlockEntityType<CrateBlockEntity> HYPER_CRATE_BLOCK_ENTITY_TYPE = REG.blockEntityType("hyper_crate", CrateBlocks::hyperCrateBe, HYPER_CRATE);
 	static CrateBlockEntity hyperCrateBe() {
-		return new CrateBlockEntity(HYPER_CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_TYPE_AND_NESTING), "HYPERCRATE ");
+		return new CrateBlockEntity(HYPER_CRATE_BLOCK_ENTITY_TYPE, () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "HYPERCRATE ");
 	}
-	public static final PortableCrateItem PORTABLE_HYPER_CRATE_ITEM = REG.item("hyper_crate_item", new PortableCrateItem(HYPER_CRATE, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_TYPE_AND_NESTING)));
+	public static final PortableCrateItem PORTABLE_HYPER_CRATE_ITEM = REG.item("hyper_crate_item", new PortableCrateItem(HYPER_CRATE, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
 	public static final Item HYPER_CRATE_ITEM = REG.item("hyper_crate", new BlockItem(HYPER_CRATE, REG.itemSettings()));
 
 	static {
@@ -103,7 +102,7 @@ public enum CrateBlocks {
 		SLOTTED_CRATE.portableItem = PORTABLE_SLOTTED_CRATE_ITEM;
 		HYPER_CRATE.portableItem = PORTABLE_HYPER_CRATE_ITEM;
 
-		CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(CRATE, SLOTTED_CRATE, CREATIVE_CRATE, HYPER_CRATE);
+		//CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(CRATE, SLOTTED_CRATE, CREATIVE_CRATE, HYPER_CRATE);
 
 		Store.STORAGE_COMPONENT.registerProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
 		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);

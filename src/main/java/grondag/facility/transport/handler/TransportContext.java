@@ -8,9 +8,5 @@ public interface TransportContext {
 
 	TransportStorageContext storageContext();
 
-	default boolean isValid() {
-		return storageContext().isValid();
-	}
-
 	TransportCarrierContext carrierContext();
 }

@@ -15,7 +15,6 @@
  ******************************************************************************/
 package grondag.facility.storage.item;
 
-import java.util.Set;
 import java.util.function.Supplier;
 
 import net.minecraft.block.entity.BlockEntity;
@@ -47,14 +46,9 @@ public class CrateBlockEntity extends StorageBlockEntity<CrateClientState, Crate
 	}
 
 	@Override
-	public Set<ArticleType<?>> articleTypes() {
-		return ArticleType.SET_OF_ITEMS;
-	}
-
-	@Override
 	protected CarrierSession getSession(BlockEntity be, BlockPos neighborPos, Direction neighborSide) {
 		return CarrierProvider.CARRIER_PROVIDER_COMPONENT.getAccess(be).applyIfPresent(neighborSide, p ->
-		p.attachIfPresent(ArticleType.ITEM, this, ct -> ct.getAccess(this)));
+		p.attachIfPresent(ArticleType.ITEM, ct -> ct.getAccess(this)));
 	}
 
 	@Override

@@ -41,12 +41,13 @@ import grondag.facility.Facility;
 import grondag.facility.init.TankBlocks;
 import grondag.facility.storage.PortableStore;
 import grondag.fluidity.api.article.Article;
+import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.fraction.Fraction;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.storage.bulk.SimpleTank;
 
 public class PortableTankItem extends BlockItem {
-	public static final PortableStore DISPLAY_TANK = new  PortableStore(new SimpleTank(Fraction.of(32)).filter(TankBlocks.FILTER_TYPE));
+	public static final PortableStore DISPLAY_TANK = new  PortableStore(new SimpleTank(Fraction.of(32)).filter(ArticleType.FLUID));
 
 	public PortableTankItem(Block block, Settings settings) {
 		super(block, settings);
@@ -71,7 +72,7 @@ public class PortableTankItem extends BlockItem {
 			return TypedActionResult.pass(itemStack);
 		}
 
-		final Store store = new PortableStore(new SimpleTank(Fraction.of(32)).filter(TankBlocks.FILTER_TYPE), () -> playerEntity.getStackInHand(hand), s -> playerEntity.setStackInHand(hand, s));
+		final Store store = new PortableStore(new SimpleTank(Fraction.of(32)).filter(ArticleType.FLUID), () -> playerEntity.getStackInHand(hand), s -> playerEntity.setStackInHand(hand, s));
 
 		final HitResult hitResult = rayTrace(world, playerEntity, RayTraceContext.FluidHandling.SOURCE_ONLY);
 

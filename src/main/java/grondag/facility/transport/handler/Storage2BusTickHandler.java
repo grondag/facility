@@ -9,13 +9,9 @@ public class Storage2BusTickHandler implements TransportTickHandler {
 
 	@Override
 	public boolean tick(TransportContext context)  {
-		if (!context.isValid())  {
-			return false;
-		}
-
 		final TransportStorageContext storageContext = context.storageContext();
 
-		if (!storageContext.isValid()) {
+		if (!storageContext.prepareForTick()) {
 			return false;
 		}
 

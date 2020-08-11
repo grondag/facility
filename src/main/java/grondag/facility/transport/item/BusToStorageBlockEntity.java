@@ -32,6 +32,11 @@ public class BusToStorageBlockEntity extends ItemMoverBlockEntity {
 	}
 
 	@Override
+	protected TransportTickHandler fluidTickHandler() {
+		return Bus2StorageTickHandler.INSTANCE;
+	}
+
+	@Override
 	public ArticleFunction getConsumer() {
 		return transportBuffer.consumer();
 	}
@@ -39,5 +44,7 @@ public class BusToStorageBlockEntity extends ItemMoverBlockEntity {
 	@Override
 	protected void tickBuffer() {
 		transportBuffer.flushItemToStorage(itemStorage);
+		transportBuffer.flushFluidToStorage(fluidStorage);
 	}
+
 }

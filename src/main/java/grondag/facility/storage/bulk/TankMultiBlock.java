@@ -17,6 +17,7 @@ package grondag.facility.storage.bulk;
 
 import java.util.function.Function;
 
+import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.multiblock.MultiBlockManager;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.multiblock.AbstractBlockEntityMember;
@@ -26,7 +27,7 @@ import grondag.xm.api.connect.species.SpeciesProperty;
 
 public class TankMultiBlock extends AbstractStorageMultiBlock<TankMultiBlock.Member, TankMultiBlock> {
 	public TankMultiBlock() {
-		super(new AggregateBulkStore());
+		super(new AggregateBulkStore().filter(ArticleType.FLUID));
 	}
 
 	protected static class Member extends AbstractBlockEntityMember<Member, TankMultiBlock, Store, TankBlockEntity> {

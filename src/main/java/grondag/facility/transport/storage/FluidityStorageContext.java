@@ -15,12 +15,8 @@ public abstract class FluidityStorageContext implements TransportStorageContext 
 	protected abstract Store store();
 
 	@Override
-	public void prepareForTick() {
+	public boolean prepareForTick() {
 		store = store();
-	}
-
-	@Override
-	public boolean isValid() {
 		return store.isValid();
 	}
 

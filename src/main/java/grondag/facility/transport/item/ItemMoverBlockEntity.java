@@ -1,7 +1,5 @@
 package grondag.facility.transport.item;
 
-import java.util.Set;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.HopperBlockEntity;
@@ -28,32 +26,31 @@ import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.device.BlockComponentContext;
 import grondag.fluidity.api.storage.ArticleFunction;
 import grondag.fluidity.api.storage.Store;
-import grondag.fluidity.wip.api.transport.CarrierConnector;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 import grondag.fluidity.wip.base.transport.SubCarrier;
 import grondag.xm.api.block.XmProperties;
 
-public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Tickable, CarrierConnector {
+public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Tickable {
 	public static final String TAG_BUFFER = "buffer";
-	protected TransportTickHandler tickHandler = this::selectHandler;
 	protected BlockPos targetPos = null;
 	Direction targetFace = null;
 	CarrierSession internalSession;
-	protected final TransportBuffer transportBuffer = new TransportBuffer();
-	protected TransportStorageContext itemStorage = MissingStorageContext.INSTANCE;
+	protected boolean resetTickHandler = true;
 
-	protected final TransportCarrierContext itemCarrierContext = new TransportCarrierContext(ArticleType.ITEM) {
+	/** may be used for fluid and/or item or not used at all */
+	protected final TransportStorageContext fluidityStorage = new FluidityStorageContext() {
 		@Override
-		public CarrierSession session() {
-			return internalSession;
-		}
-
-		@Override
-		public SubCarrier<UtbCostFunction> carrier() {
-			return carrier;
+		protected Store store() {
+			return Store.STORAGE_COMPONENT.getAccess(world, targetPos).get();
 		}
 	};
+
+	protected final TransportBuffer transportBuffer = new TransportBuffer();
+
+	protected TransportTickHandler itemTickHandler = TransportTickHandler.NOOP;
+	protected TransportStorageContext itemStorage = MissingStorageContext.INSTANCE;
+	protected final TransportCarrierContext itemCarrierContext = new CarrierContext(ArticleType.ITEM);
 
 	protected final TransportContext itemContext = new TransportContext() {
 		@Override
@@ -72,9 +69,46 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 		}
 	};
 
+	protected TransportTickHandler fluidTickHandler = TransportTickHandler.NOOP;
+	protected final TransportCarrierContext fluidCarrierContext = new CarrierContext(ArticleType.FLUID);
+	protected TransportStorageContext fluidStorage = MissingStorageContext.INSTANCE;
+
+	protected final TransportContext fluidContext = new TransportContext() {
+		@Override
+		public TransportBuffer buffer() {
+			return transportBuffer;
+		}
+
+		@Override
+		public TransportStorageContext storageContext() {
+			return fluidStorage;
+		}
+
+		@Override
+		public TransportCarrierContext carrierContext() {
+			return fluidCarrierContext;
+		}
+	};
+
+	private class CarrierContext extends TransportCarrierContext {
+		protected CarrierContext(ArticleType<?> articleType) {
+			super(articleType);
+		}
+
+		@Override
+		public CarrierSession session() {
+			return internalSession;
+		}
+
+		@Override
+		public SubCarrier<UtbCostFunction> carrier() {
+			return carrier;
+		}
+	}
+
 	public ItemMoverBlockEntity(BlockEntityType<? extends PipeBlockEntity> type) {
 		super(type);
-		internalSession = carrier.attach(this, ct -> ct.getAccess(this));
+		internalSession = carrier.attach(ct -> ct.getAccess(this));
 	}
 
 	// does not provide carrier to the attached block
@@ -83,31 +117,23 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 		return ctx.side() == ctx.blockState().get(XmProperties.FACE) ? CarrierProvider.CARRIER_PROVIDER_COMPONENT.absent() : carrierProvider;
 	}
 
-	@Override
-	public final Set<ArticleType<?>> articleTypes() {
-		return ArticleType.SET_OF_ITEMS;
-	}
-
-	protected final boolean selectHandler(TransportContext context) {
+	protected final void selectHandler() {
 		if(getWorld() == null || getPos() == null) {
-			return true;
+			return;
 		}
 
-		final Direction face = getCachedState().get(XmProperties.FACE);
+		resetTickHandler = false;
 
+		final Direction face = getCachedState().get(XmProperties.FACE);
 		targetPos = getPos().offset(face);
 		targetFace = face.getOpposite();
-
 		final Store storage =  Store.STORAGE_COMPONENT.getAccess(world, targetPos).get();
 
 		if(storage != Store.STORAGE_COMPONENT.absent()) {
-			itemStorage = new FluidityStorageContext() {
-				@Override
-				protected Store store() {
-					return Store.STORAGE_COMPONENT.getAccess(world, targetPos).get();
-				}
-			};
+			fluidStorage = storage.allowsType(ArticleType.FLUID).mayBeTrue ? fluidityStorage : MissingStorageContext.INSTANCE;
+			itemStorage = storage.allowsType(ArticleType.ITEM).mayBeTrue ? fluidityStorage : MissingStorageContext.INSTANCE;
 		} else {
+			fluidStorage = MissingStorageContext.INSTANCE;
 			final Inventory inv = HopperBlockEntity.getInventoryAt(world, targetPos);
 
 			if(inv != null) {
@@ -126,20 +152,18 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 						}
 					};
 				}
+			}  else {
+				itemStorage = MissingStorageContext.INSTANCE;
 			}
 		}
 
-		tickHandler = itemStorage == MissingStorageContext.INSTANCE ? TransportTickHandler.NOOP : itemTickHandler();
-		return true;
+		itemTickHandler = itemStorage == MissingStorageContext.INSTANCE ? TransportTickHandler.NOOP : itemTickHandler();
+		fluidTickHandler = fluidStorage == MissingStorageContext.INSTANCE ? TransportTickHandler.NOOP : fluidTickHandler();
 	}
 
 	@Override
 	protected final void onEnquedUpdate() {
-		resetTickHandler();
-	}
-
-	public final void resetTickHandler() {
-		tickHandler = this::selectHandler;
+		resetTickHandler = true;
 	}
 
 	@Override
@@ -153,11 +177,16 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 			return;
 		}
 
-		itemStorage.prepareForTick();
-		tickBuffer();
+		if (resetTickHandler) {
+			selectHandler();
+		}
 
-		if (!tickHandler.tick(itemContext)) {
-			resetTickHandler();
+		if (!itemTickHandler.tick(itemContext)) {
+			resetTickHandler = true;
+		}
+
+		if (!fluidTickHandler.tick(fluidContext)) {
+			resetTickHandler = true;
 		}
 
 		tickBuffer();
@@ -196,4 +225,6 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 	}
 
 	protected abstract TransportTickHandler itemTickHandler();
+
+	protected abstract TransportTickHandler fluidTickHandler();
 }

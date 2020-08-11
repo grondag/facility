@@ -70,7 +70,7 @@ public class ItemMoverBlock extends PipeBlock {
 		}
 
 		if(!world.isClient && BlockPos.offset(blockPos.asLong(), blockState.get(XmProperties.FACE)) == blockPos2.asLong()) {
-			((ItemMoverBlockEntity) world.getBlockEntity(blockPos)).resetTickHandler();
+			((ItemMoverBlockEntity) world.getBlockEntity(blockPos)).resetTickHandler = true;
 		}
 	}
 

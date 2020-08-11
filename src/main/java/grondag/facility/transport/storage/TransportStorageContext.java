@@ -6,9 +6,7 @@ import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.ArticleType;
 
 public interface TransportStorageContext {
-	void prepareForTick();
-
-	boolean isValid();
+	boolean prepareForTick();
 
 	boolean canAccept(Article targetArticle);
 

@@ -23,9 +23,10 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 	protected abstract T inventory();
 
 	@Override
-	public void prepareForTick() {
+	public boolean prepareForTick() {
 		inventory = inventory();
 		setupSlots();
+		return inventory != null && slots.length > 0;
 	}
 
 	protected void setupSlots() {
@@ -38,11 +39,6 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 				slots[i] = i;
 			}
 		}
-	}
-
-	@Override
-	public boolean isValid() {
-		return inventory != null;
 	}
 
 	@Override
