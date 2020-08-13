@@ -56,8 +56,8 @@ public class FacilityBlock extends Block implements BlockEntityProvider {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void buildTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
-		super.buildTooltip(itemStack, blockView, list, tooltipContext);
+	public void appendTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
+		super.appendTooltip(itemStack, blockView, list, tooltipContext);
 		final String[] lines = I18n.translate(getTranslationKey() + ".desc").split(";");
 
 		for(final String line : lines) {

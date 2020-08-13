@@ -110,7 +110,7 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 
 		if (worldChunk != null) {
 			entityList.clear();
-			worldChunk.getEntities(ItemEntity.class, bounds, entityList, Predicates.alwaysTrue());
+			worldChunk.collectEntitiesByClass(ItemEntity.class, bounds, entityList, Predicates.alwaysTrue());
 			entity = entityList.isEmpty() ? null : (ItemEntity) entityList.get(0);
 			stack = entity == null ? null : entity.getStack();
 		}

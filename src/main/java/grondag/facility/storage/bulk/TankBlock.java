@@ -120,8 +120,8 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void buildTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
-		super.buildTooltip(itemStack, blockView, list, tooltipContext);
+	public void appendTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
+		super.appendTooltip(itemStack, blockView, list, tooltipContext);
 		final CompoundTag beTag = itemStack.getSubTag("BlockEntityTag");
 
 		if (beTag != null && beTag.contains(CrateBlockEntity.TAG_STORAGE)) {

@@ -206,7 +206,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 	public boolean mouseDragged(double onX, double onY, int mouseButton, double fromX, double fromY) {
 		final Slot slot = getSlotAt(onX, onY);
 
-		if (!client.options.touchscreen && !isCursorDragging && slot != null && slot.hasStack() && hasShiftDown() && client.player.inventory.getCursorStack().isEmpty()) {
+		if (!client.options.touchscreen && !cursorDragging && slot != null && slot.hasStack() && hasShiftDown() && client.player.inventory.getCursorStack().isEmpty()) {
 			onMouseClick(slot, slot.id, mouseButton, SlotActionType.QUICK_MOVE);
 			return true;
 		}

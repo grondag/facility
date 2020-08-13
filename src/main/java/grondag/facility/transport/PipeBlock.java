@@ -120,8 +120,8 @@ public class PipeBlock extends FacilitySpeciesBlock {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void buildTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
-		super.buildTooltip(itemStack, blockView, list, tooltipContext);
+	public void appendTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
+		super.appendTooltip(itemStack, blockView, list, tooltipContext);
 		list.add(new TranslatableText("transport.facility.utb1").formatted(Formatting.GOLD));
 		list.add(new TranslatableText("transport.facility.utb1.desc").formatted(Formatting.GOLD));
 
