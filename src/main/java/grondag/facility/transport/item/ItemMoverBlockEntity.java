@@ -1,6 +1,10 @@
 package grondag.facility.transport.item;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.FluidBlock;
+import net.minecraft.block.FluidDrainable;
+import net.minecraft.block.FluidFillable;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.HopperBlockEntity;
 import net.minecraft.inventory.Inventory;
@@ -10,6 +14,7 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.World;
 
 import grondag.facility.transport.PipeBlockEntity;
 import grondag.facility.transport.UtbCostFunction;
@@ -22,6 +27,7 @@ import grondag.facility.transport.storage.InventoryStorageContext;
 import grondag.facility.transport.storage.MissingStorageContext;
 import grondag.facility.transport.storage.SidedInventoryStorageContext;
 import grondag.facility.transport.storage.TransportStorageContext;
+import grondag.facility.transport.storage.WorldStorageContext;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.device.BlockComponentContext;
 import grondag.fluidity.api.storage.ArticleFunction;
@@ -43,6 +49,18 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 		@Override
 		protected Store store() {
 			return Store.STORAGE_COMPONENT.getAccess(world, targetPos).get();
+		}
+	};
+
+	protected final TransportStorageContext worldStorage = new WorldStorageContext() {
+		@Override
+		protected World world() {
+			return getWorld();
+		}
+
+		@Override
+		protected BlockPos pos() {
+			return targetPos;
 		}
 	};
 
@@ -127,16 +145,18 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 		final Direction face = getCachedState().get(XmProperties.FACE);
 		targetPos = getPos().offset(face);
 		targetFace = face.getOpposite();
+
 		final Store storage =  Store.STORAGE_COMPONENT.getAccess(world, targetPos).get();
 
 		if(storage != Store.STORAGE_COMPONENT.absent()) {
 			fluidStorage = storage.allowsType(ArticleType.FLUID).mayBeTrue ? fluidityStorage : MissingStorageContext.INSTANCE;
 			itemStorage = storage.allowsType(ArticleType.ITEM).mayBeTrue ? fluidityStorage : MissingStorageContext.INSTANCE;
 		} else {
-			fluidStorage = MissingStorageContext.INSTANCE;
 			final Inventory inv = HopperBlockEntity.getInventoryAt(world, targetPos);
 
 			if(inv != null) {
+				fluidStorage = MissingStorageContext.INSTANCE;
+
 				if (inv instanceof SidedInventory) {
 					itemStorage = new SidedInventoryStorageContext(targetFace) {
 						@Override
@@ -153,7 +173,16 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 					};
 				}
 			}  else {
-				itemStorage = MissingStorageContext.INSTANCE;
+				final BlockState state = getWorld().getBlockState(targetPos);
+				final Block block = state.getBlock();
+				itemStorage = state.isFullCube(world, targetPos) ? MissingStorageContext.INSTANCE : worldStorage;
+
+				if (state.isAir() || (state.getBlock() instanceof FluidBlock && state.getFluidState().isStill())
+						|| block instanceof FluidDrainable || block instanceof FluidFillable) {
+					fluidStorage = worldStorage;
+				} else {
+					fluidStorage = MissingStorageContext.INSTANCE;
+				}
 			}
 		}
 

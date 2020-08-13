@@ -17,12 +17,13 @@ package grondag.facility.transport;
 
 import java.util.function.Function;
 
+import net.minecraft.block.entity.BlockEntity;
+
 import grondag.fluidity.api.multiblock.MultiBlockManager;
 import grondag.fluidity.base.multiblock.AbstractBlockEntityMember;
 import grondag.fluidity.wip.api.transport.CarrierType;
 import grondag.fluidity.wip.base.transport.AbstractCarrierMultiBlock;
 import grondag.fluidity.wip.base.transport.SubCarrier;
-import grondag.xm.api.connect.species.SpeciesProperty;
 
 public class PipeMultiBlock extends AbstractCarrierMultiBlock<PipeMultiBlock.Member, PipeMultiBlock> {
 
@@ -52,12 +53,12 @@ public class PipeMultiBlock extends AbstractCarrierMultiBlock<PipeMultiBlock.Mem
 			blockEntity.carrier.setParent(owner.carrier);
 		}
 
-		protected int species() {
-			return blockEntity.getCachedState().get(SpeciesProperty.SPECIES);
-		}
-
 		protected boolean canConnect(Member other) {
-			return other != null && blockEntity.hasWorld() && other.blockEntity.hasWorld() && species() == other.species();
+			final BlockEntity myBe = blockEntity;
+			final BlockEntity otherBe = other.blockEntity;
+
+			return myBe.hasWorld() && otherBe.hasWorld()
+					&&  PipeBlock.canConnectSelf(myBe.getCachedState(), myBe.getPos(), otherBe.getCachedState(), otherBe.getPos());
 		}
 	}
 

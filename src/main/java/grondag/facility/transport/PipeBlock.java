@@ -86,7 +86,7 @@ public class PipeBlock extends FacilitySpeciesBlock {
 		}
 	}
 
-	private static boolean canConnectSelf(BlockState fromState, BlockPos fromPos, BlockState toState, BlockPos toPos) {
+	public static boolean canConnectSelf(BlockState fromState, BlockPos fromPos, BlockState toState, BlockPos toPos) {
 		if(fromState.get(SpeciesProperty.SPECIES) != toState.get(SpeciesProperty.SPECIES)) {
 			return false;
 		}

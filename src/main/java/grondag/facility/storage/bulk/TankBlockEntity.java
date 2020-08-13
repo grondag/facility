@@ -74,9 +74,14 @@ public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMul
 		} else {
 			final Fluid fluid = Registry.FLUID.get(tag.getInt("fluid"));
 			final FluidRenderHandler handler = FluidRenderHandlerRegistry.INSTANCE.get(fluid);
-			clientState.fluidColor = handler.getFluidColor(getWorld(), getPos(), fluid.getDefaultState());
-			clientState.fluidSprite = handler.getFluidSprites(getWorld(), getPos(), fluid.getDefaultState())[0];
-			clientState.glowing = fluid.getDefaultState().getBlockState().getLuminance() > 0;
+
+			if (handler == null) {
+				clientState.fluidSprite = null;
+			} else {
+				clientState.fluidColor = handler.getFluidColor(getWorld(), getPos(), fluid.getDefaultState());
+				clientState.fluidSprite = handler.getFluidSprites(getWorld(), getPos(), fluid.getDefaultState())[0];
+				clientState.glowing = fluid.getDefaultState().getBlockState().getLuminance() > 0;
+			}
 		}
 	}
 
@@ -87,8 +92,9 @@ public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMul
 		tag.putFloat("usage", usage);
 
 		if(usage != 0 && !storage.isEmpty()) {
-			tag.putInt("fluid", Registry.FLUID.getRawId((Fluid) storage.view(0).article().resource()));
+			tag.putInt("fluid", Registry.FLUID.getRawId(storage.view(0).article().toFluid()));
 		}
+
 		return tag;
 	}
 

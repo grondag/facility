@@ -3,6 +3,7 @@ package grondag.facility.transport.handler;
 import grondag.facility.transport.storage.TransportStorageContext;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.storage.ArticleFunction;
+import grondag.fluidity.api.transact.Transaction;
 
 public class Storage2BusTickHandler implements TransportTickHandler {
 	public static final Storage2BusTickHandler INSTANCE = new Storage2BusTickHandler();
@@ -33,11 +34,20 @@ public class Storage2BusTickHandler implements TransportTickHandler {
 			final ArticleFunction bufferConsumer = context.buffer().consumer();
 			howMany = bufferConsumer.apply(targetArticle, howMany, units, true);
 
-			// move to buffer
-			howMany = storageContext.supply(targetArticle, howMany, units);
-			final long check  = bufferConsumer.apply(targetArticle, howMany, units, false);
+			if (howMany > 0) {
+				try(Transaction tx = Transaction.open()) {
+					tx.enlist(bufferConsumer);
+					final long bufferResult = bufferConsumer.apply(targetArticle, howMany, units, false);
 
-			assert check == howMany;
+					final long storageResult = storageContext.supply(targetArticle, howMany, units);
+
+					if (storageResult == bufferResult) {
+						tx.commit();
+					} else {
+						assert storageResult == 0;
+					}
+				}
+			}
 		}
 
 		return true;

@@ -101,7 +101,7 @@ public enum PipeBlocks {
 		final Function<BlockState, PrimitiveStateFunction> utb1StraightFunc = bs -> PrimitiveStateFunction.builder()
 				.withJoin(PipeBlock.JOIN_TEST_WITH_AXIS)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
-				.withUpdate(PipeModifiers.STRAIGHT_PIPE_CONNECTOR_UPDATE)
+				.withUpdate(PipeModifiers.PIPE_CONNECTOR_UPDATE)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						PipeModel.PRIMITIVE.newState()
 						.alternateJoinBits(0)
@@ -118,7 +118,7 @@ public enum PipeBlocks {
 		final Function<BlockState, PrimitiveStateFunction> utb1S2bFunc = bs -> PrimitiveStateFunction.builder()
 				.withJoin(ItemMoverBlock.ITEM_MOVER_JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
-				.withUpdate(PipeModifiers.PIPE_CONNECTOR_UPDATE)
+				.withUpdate(PipeModifiers.MOVER_CONNECTOR_UPDATE)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						ItemMoverModel.PRIMITIVE.newState()
@@ -140,7 +140,7 @@ public enum PipeBlocks {
 		final Function<BlockState, PrimitiveStateFunction> utb1B2sFunc = bs -> PrimitiveStateFunction.builder()
 				.withJoin(ItemMoverBlock.ITEM_MOVER_JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
-				.withUpdate(PipeModifiers.PIPE_CONNECTOR_UPDATE)
+				.withUpdate(PipeModifiers.MOVER_CONNECTOR_UPDATE)
 				.withUpdate(XmProperties.FACE_MODIFIER)
 				.withDefaultState((SpeciesProperty.SPECIES_MODIFIER.mutate(
 						ItemMoverModel.PRIMITIVE.newState()

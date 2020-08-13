@@ -27,7 +27,7 @@ public abstract class FluidityStorageContext implements TransportStorageContext 
 
 	@Override
 	public Article proposeSupply(ArticleType<?> type) {
-		if (store.isEmpty()) {
+		if (store.isEmpty() || !store.allowsType(type).mayBeTrue) {
 			return Article.NOTHING;
 		}
 
@@ -49,7 +49,7 @@ public abstract class FluidityStorageContext implements TransportStorageContext 
 	@Override
 	public Article proposeAccept(ArticleType<?> type) {
 		// Fluidity stores will accept anything by default
-		return store.isFull() ? null : Article.NOTHING;
+		return (store.isFull() || !store.allowsType(type).mayBeTrue) ? null : Article.NOTHING;
 	}
 
 	@Override

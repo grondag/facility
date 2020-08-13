@@ -204,7 +204,7 @@ public class PortableTankItem extends BlockItem {
 		}
 	}
 
-	protected void playEmptyingSound(Fluid fluid, @Nullable PlayerEntity playerEntity, World world, BlockPos blockPos) {
+	public void playEmptyingSound(Fluid fluid, @Nullable PlayerEntity playerEntity, World world, BlockPos blockPos) {
 		final SoundEvent soundEvent = fluid.isIn(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_EMPTY_LAVA : SoundEvents.ITEM_BUCKET_EMPTY;
 		world.playSound(playerEntity, blockPos, soundEvent, SoundCategory.BLOCKS, 1.0F, 1.0F);
 	}
