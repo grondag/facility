@@ -61,7 +61,7 @@ import grondag.fluidity.impl.article.ArticleTypeRegistryImpl;
 public class Facility implements ModInitializer {
 	public static final Logger LOG = LogManager.getLogger("Facility");
 	public static final String MODID = "facility";
-	public static Registrar REG  = new Registrar(MODID, "facility");
+	public static Registrar REG  = new Registrar(MODID, "hyper_crate");
 
 	@Override
 	public void onInitialize() {

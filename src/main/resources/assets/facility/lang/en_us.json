@@ -1,4 +1,5 @@
 {
+	"itemGroup.facility.group": "Facility",
 	"config.facility.title": "Facility Configuration",
 	"config.facility.category.misc": "Miscellaneous",
 	"config.facility.value.shift_screens_left_if_rei_present": "Shift Screens Left for REI",
