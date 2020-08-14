@@ -35,9 +35,9 @@ public class FacilityColors {
 
 			final float hueB = bStartHue + arc * i;
 			final int b = i  + 9;
-			HIGHLIGHT[b] = ColorUtil.hclToSrgb(hueB, 30, 50);
+			HIGHLIGHT[b] = ColorUtil.hclToSrgb(hueB, 35, 60);
 			BASE[b] = 0x80000000 | (ColorUtil.hclToSrgb(hueB + 2, 15, 35) & 0xFFFFFF);
-			GLOW[b] =ColorUtil.hcToSrgbGlow(hueB, 30);
+			GLOW[b] =ColorUtil.hcToSrgbGlow(hueB, 35);
 		}
 	}
 }
