@@ -34,7 +34,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.RayTraceContext;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 
 import grondag.facility.Facility;
@@ -74,7 +74,7 @@ public class PortableTankItem extends BlockItem {
 
 		final Store store = new PortableStore(new SimpleTank(Fraction.of(32)).filter(ArticleType.FLUID), () -> playerEntity.getStackInHand(hand), s -> playerEntity.setStackInHand(hand, s));
 
-		final HitResult hitResult = rayTrace(world, playerEntity, RayTraceContext.FluidHandling.SOURCE_ONLY);
+		final HitResult hitResult = raycast(world, playerEntity, RaycastContext.FluidHandling.SOURCE_ONLY);
 
 		if (hitResult.getType() == HitResult.Type.MISS) {
 			return TypedActionResult.pass(itemStack);
