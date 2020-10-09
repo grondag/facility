@@ -59,40 +59,40 @@ public class RendererHooks {
 
 	private static RenderLayer makeCutout() {
 		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
-				.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEX, false, false))
-				.transparency(RenderSecrets._NO_TRANSPARENCY)
-				.diffuseLighting(RenderSecrets._ENABLE_DIFFUSE_LIGHTING)
-				.alpha(RenderSecrets._ONE_TENTH_ALPHA)
-				.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
-				.overlay(RenderSecrets._ENABLE_OVERLAY_COLOR)
-				.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
-				.build(true);
+		.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
+		.transparency(RenderSecrets._NO_TRANSPARENCY)
+		.diffuseLighting(RenderSecrets._ENABLE_DIFFUSE_LIGHTING)
+		.alpha(RenderSecrets._ONE_TENTH_ALPHA)
+		.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
+		.overlay(RenderSecrets._ENABLE_OVERLAY_COLOR)
+		.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
+		.build(true);
 		return RenderLayer.of("entity_cutout", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, 7, 256, true, false, multiPhaseParameters);
 	}
 
 	private static RenderLayer makeTranslucent() {
 		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
-				.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEX, false, false))
-				.transparency(RenderSecrets._TRANSLUCENT_TRANSPARENCY)
-				.diffuseLighting(RenderSecrets._ENABLE_DIFFUSE_LIGHTING)
-				.alpha(RenderSecrets._ONE_TENTH_ALPHA)
-				.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
-				.overlay(RenderSecrets._ENABLE_OVERLAY_COLOR)
-				.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
-				.build(true);
+		.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
+		.transparency(RenderSecrets._TRANSLUCENT_TRANSPARENCY)
+		.diffuseLighting(RenderSecrets._ENABLE_DIFFUSE_LIGHTING)
+		.alpha(RenderSecrets._ONE_TENTH_ALPHA)
+		.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
+		.overlay(RenderSecrets._ENABLE_OVERLAY_COLOR)
+		.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
+		.build(true);
 		return RenderLayer.of("entity_translucent_cull", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, 7, 256, true, true, multiPhaseParameters);
 	}
 
 	public static RenderLayer makeFluid() {
 		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
-				.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEX, false, false))
-				.transparency(RenderSecrets._NO_TRANSPARENCY)
-				.diffuseLighting(RenderSecrets._ENABLE_DIFFUSE_LIGHTING)
-				.alpha(RenderSecrets._ZERO_ALPHA)
-				.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
-				.overlay(RenderSecrets._DISABLE_OVERLAY_COLOR)
-				.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
-				.build(true);
+		.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
+		.transparency(RenderSecrets._NO_TRANSPARENCY)
+		.diffuseLighting(RenderSecrets._ENABLE_DIFFUSE_LIGHTING)
+		.alpha(RenderSecrets._ZERO_ALPHA)
+		.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
+		.overlay(RenderSecrets._DISABLE_OVERLAY_COLOR)
+		.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
+		.build(true);
 		return RenderLayer.of("fluid_overlay", VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL, 7, 256, false, false, multiPhaseParameters);
 	}
 
