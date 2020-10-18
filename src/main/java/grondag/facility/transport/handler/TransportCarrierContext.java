@@ -1,9 +1,5 @@
 package grondag.facility.transport.handler;
 
-import javax.annotation.Nullable;
-
-import io.netty.util.internal.ThreadLocalRandom;
-
 import grondag.facility.FacilityConfig;
 import grondag.facility.transport.UtbCostFunction;
 import grondag.fluidity.api.article.Article;
@@ -13,6 +9,8 @@ import grondag.fluidity.wip.api.transport.CarrierNode;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 import grondag.fluidity.wip.base.transport.AssignedNumbersAuthority;
 import grondag.fluidity.wip.base.transport.SubCarrier;
+import io.netty.util.internal.ThreadLocalRandom;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class TransportCarrierContext {
 	private long consumerAddress = AssignedNumbersAuthority.INVALID_ADDRESS;

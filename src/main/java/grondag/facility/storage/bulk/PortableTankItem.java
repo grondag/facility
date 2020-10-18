@@ -2,7 +2,15 @@ package grondag.facility.storage.bulk;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
+import grondag.facility.Facility;
+import grondag.facility.init.TankBlocks;
+import grondag.facility.storage.PortableStore;
+import grondag.fluidity.api.article.Article;
+import grondag.fluidity.api.article.ArticleType;
+import grondag.fluidity.api.fraction.Fraction;
+import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.storage.bulk.SimpleTank;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.Block;
@@ -36,15 +44,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-
-import grondag.facility.Facility;
-import grondag.facility.init.TankBlocks;
-import grondag.facility.storage.PortableStore;
-import grondag.fluidity.api.article.Article;
-import grondag.fluidity.api.article.ArticleType;
-import grondag.fluidity.api.fraction.Fraction;
-import grondag.fluidity.api.storage.Store;
-import grondag.fluidity.base.storage.bulk.SimpleTank;
 
 public class PortableTankItem extends BlockItem {
 	public static final PortableStore DISPLAY_TANK = new  PortableStore(new SimpleTank(Fraction.of(32)).filter(ArticleType.FLUID));

@@ -15,18 +15,17 @@
  ******************************************************************************/
 package grondag.facility.storage.item;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-
 import grondag.facility.Facility;
 import grondag.facility.storage.FactilityStorageScreenHandler;
 import grondag.facility.storage.StorageBlockEntity;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 
 public class CrateScreenHandler extends FactilityStorageScreenHandler<DiscreteStorageServerDelegate> {
 	public static Identifier ID = Facility.REG.id("crate");

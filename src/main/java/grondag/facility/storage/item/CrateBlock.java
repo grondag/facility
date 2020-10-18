@@ -18,7 +18,15 @@ package grondag.facility.storage.item;
 import java.util.List;
 import java.util.function.Supplier;
 
-import javax.annotation.Nullable;
+import grondag.facility.init.ScreenHandlers;
+import grondag.facility.storage.PortableStore;
+import grondag.facility.storage.StorageBlock;
+import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.article.StoredDiscreteArticle;
+import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
+import grondag.xm.api.connect.species.SpeciesProperty;
+import grondag.xm.api.connect.world.BlockTest;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -42,15 +50,6 @@ import net.minecraft.world.World;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import grondag.facility.init.ScreenHandlers;
-import grondag.facility.storage.PortableStore;
-import grondag.facility.storage.StorageBlock;
-import grondag.fluidity.api.storage.Store;
-import grondag.fluidity.base.article.StoredDiscreteArticle;
-import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
-import grondag.xm.api.connect.species.SpeciesProperty;
-import grondag.xm.api.connect.world.BlockTest;
-
 public class CrateBlock extends StorageBlock {
 	// ugly but works
 	public PortableCrateItem portableItem;
@@ -64,8 +63,8 @@ public class CrateBlock extends StorageBlock {
 
 	public static boolean canConnect(BlockState fromState, BlockState toState) {
 		return fromState.getBlock() instanceof CrateBlock
-				&& toState.getBlock() instanceof CrateBlock
-				&& fromState.get(SpeciesProperty.SPECIES) == toState.get(SpeciesProperty.SPECIES);
+		&& toState.getBlock() instanceof CrateBlock
+		&& fromState.get(SpeciesProperty.SPECIES) == toState.get(SpeciesProperty.SPECIES);
 	}
 
 	public static boolean canConnect(CrateBlockEntity fromEntity, CrateBlockEntity toEntity) {

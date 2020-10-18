@@ -17,7 +17,10 @@ package grondag.facility.storage;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
+import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.synch.AbstractStorageServerDelegate;
+import grondag.fluidity.base.synch.StorageContainer;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
@@ -27,10 +30,6 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
-
-import grondag.fluidity.api.storage.Store;
-import grondag.fluidity.base.synch.AbstractStorageServerDelegate;
-import grondag.fluidity.base.synch.StorageContainer;
 
 public abstract class FactilityStorageScreenHandler<T extends AbstractStorageServerDelegate<?>> extends ScreenHandler implements StorageContainer {
 	protected final @Nullable Store storage;

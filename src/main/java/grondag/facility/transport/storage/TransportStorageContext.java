@@ -1,9 +1,8 @@
 package grondag.facility.transport.storage;
 
-import javax.annotation.Nullable;
-
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.ArticleType;
+import org.jetbrains.annotations.Nullable;
 
 public interface TransportStorageContext {
 	boolean prepareForTick();

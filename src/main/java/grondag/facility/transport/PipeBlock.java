@@ -18,7 +18,18 @@ package grondag.facility.transport;
 import java.util.List;
 import java.util.function.Supplier;
 
-import javax.annotation.Nullable;
+import grondag.facility.block.FacilitySpeciesBlock;
+import grondag.facility.storage.StorageBlock;
+import grondag.fermion.modkeys.api.ModKeys;
+import grondag.xm.api.block.XmBlockState;
+import grondag.xm.api.block.XmProperties;
+import grondag.xm.api.collision.CollisionDispatcher;
+import grondag.xm.api.connect.species.Species;
+import grondag.xm.api.connect.species.SpeciesMode;
+import grondag.xm.api.connect.species.SpeciesProperty;
+import grondag.xm.api.connect.world.BlockTest;
+import grondag.xm.api.connect.world.BlockTestContext;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -37,18 +48,6 @@ import net.minecraft.world.BlockView;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import grondag.facility.block.FacilitySpeciesBlock;
-import grondag.facility.storage.StorageBlock;
-import grondag.fermion.modkeys.api.ModKeys;
-import grondag.xm.api.block.XmBlockState;
-import grondag.xm.api.block.XmProperties;
-import grondag.xm.api.collision.CollisionDispatcher;
-import grondag.xm.api.connect.species.Species;
-import grondag.xm.api.connect.species.SpeciesMode;
-import grondag.xm.api.connect.species.SpeciesProperty;
-import grondag.xm.api.connect.world.BlockTest;
-import grondag.xm.api.connect.world.BlockTestContext;
 
 public class PipeBlock extends FacilitySpeciesBlock {
 	public final boolean hasGlow;

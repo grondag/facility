@@ -15,11 +15,10 @@
  ******************************************************************************/
 package grondag.facility.storage.bulk;
 
-import javax.annotation.Nullable;
+import grondag.facility.storage.StorageClientState;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.client.texture.Sprite;
-
-import grondag.facility.storage.StorageClientState;
 
 public class TankClientState extends StorageClientState<TankBlockEntity> {
 	public @Nullable Sprite fluidSprite;

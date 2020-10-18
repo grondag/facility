@@ -15,11 +15,10 @@
  ******************************************************************************/
 package grondag.facility.storage.item;
 
-import javax.annotation.Nullable;
+import grondag.facility.storage.StorageClientState;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.item.ItemStack;
-
-import grondag.facility.storage.StorageClientState;
 
 public class CrateClientState extends StorageClientState<CrateBlockEntity> {
 	public @Nullable ItemStack[] renderStacks = null;

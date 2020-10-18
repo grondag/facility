@@ -18,7 +18,15 @@ package grondag.facility.storage.bulk;
 import java.util.List;
 import java.util.function.Supplier;
 
-import javax.annotation.Nullable;
+import grondag.facility.storage.PortableStore;
+import grondag.facility.storage.StorageBlock;
+import grondag.facility.storage.item.CrateBlockEntity;
+import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.article.StoredDiscreteArticle;
+import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
+import grondag.xm.api.connect.species.SpeciesProperty;
+import grondag.xm.api.connect.world.BlockTest;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -44,15 +52,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.block.BlockAttackInteractionAware;
 
-import grondag.facility.storage.PortableStore;
-import grondag.facility.storage.StorageBlock;
-import grondag.facility.storage.item.CrateBlockEntity;
-import grondag.fluidity.api.storage.Store;
-import grondag.fluidity.base.article.StoredDiscreteArticle;
-import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
-import grondag.xm.api.connect.species.SpeciesProperty;
-import grondag.xm.api.connect.world.BlockTest;
-
 public class TankBlock extends StorageBlock implements BlockAttackInteractionAware {
 	public final boolean isCreative;
 
@@ -66,8 +65,8 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 
 	public static boolean canConnect(BlockState fromState, BlockState toState) {
 		return fromState.getBlock() instanceof TankBlock
-				&& toState.getBlock() instanceof TankBlock
-				&& fromState.get(SpeciesProperty.SPECIES) == toState.get(SpeciesProperty.SPECIES);
+		&& toState.getBlock() instanceof TankBlock
+		&& fromState.get(SpeciesProperty.SPECIES) == toState.get(SpeciesProperty.SPECIES);
 	}
 
 	@Override

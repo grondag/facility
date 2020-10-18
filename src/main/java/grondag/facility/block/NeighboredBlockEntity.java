@@ -17,7 +17,9 @@ package grondag.facility.block;
 
 import java.util.Arrays;
 
-import javax.annotation.Nullable;
+import grondag.facility.storage.TrackedBlockEntity;
+import grondag.fermion.world.WorldTaskManager;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -25,9 +27,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.Mutable;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-
-import grondag.facility.storage.TrackedBlockEntity;
-import grondag.fermion.world.WorldTaskManager;
 
 public abstract class NeighboredBlockEntity<T> extends TrackedBlockEntity {
 	private final Object[] neighbors = new Object[12];
