@@ -45,7 +45,7 @@ import net.minecraft.tag.Tag;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 import grondag.facility.init.BinBlocks;
 import grondag.facility.init.CrateBlocks;
@@ -73,7 +73,7 @@ public class Facility implements ModInitializer {
 		PipeBlocks.values();
 		TankBlocks.values();
 		ArticleTypeRegistryImpl.init();
-		ServerSidePacketRegistry.INSTANCE.register(BinActionC2S.ID, BinActionC2S::accept);
+		ServerPlayNetworking.registerGlobalReceiver(BinActionC2S.ID, BinActionC2S::accept);
 
 		ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register((be, w) -> {
 			if (be instanceof TrackedBlockEntity) ((TrackedBlockEntity) be).onLoaded();
