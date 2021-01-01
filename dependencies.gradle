@@ -84,5 +84,5 @@ dependencies {
 	    include "grondag:special-circumstances-${project.mc_tag}:${project.special_circumstances_version}.+"
 		include "io.github.cottonmc:Jankson-Fabric:${jankson_version}"
 		include "me.shedaniel.cloth:config-2:${clothconfig_version}"
-	)
+	}
 }
