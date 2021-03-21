@@ -15,15 +15,17 @@
  ******************************************************************************/
 package grondag.facility.transport.item;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.util.math.BlockPos;
 
 import grondag.facility.transport.handler.Storage2BusTickHandler;
 import grondag.facility.transport.handler.TransportTickHandler;
 import grondag.fluidity.api.storage.ArticleFunction;
 
 public class StorageToBusBlockEntity extends ItemMoverBlockEntity {
-	public StorageToBusBlockEntity(BlockEntityType<StorageToBusBlockEntity> type) {
-		super(type);
+	public StorageToBusBlockEntity(BlockEntityType<StorageToBusBlockEntity> type, BlockPos pos, BlockState state) {
+		super(type, pos, state);
 	}
 
 	@Override

@@ -13,28 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  ******************************************************************************/
-package grondag.facility.compat.rei;
+package grondag.facility.storage;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
-import grondag.facility.Facility;
+public interface TickableBlockEntity {
+	default void tick() {
+		// NOOP;
+	}
 
-// FIX: restore when REI available again
-public class FacilityReiPlugin { //implements REIPluginV0 {
-	public static final Identifier ID = Facility.REG.id("rei_plugin");
-
-//	@Override
-//	public Identifier getPluginIdentifier() {
-//		return ID;
-//	}
-//
-//	@Override
-//	public SemanticVersion getMinimumVersion() throws VersionParsingException {
-//		return SemanticVersion.parse("3.0");
-//	}
-//
-//	@Override
-//	public void registerEntries(EntryRegistry entryRegistry) {
-//		entryRegistry.getStacksList().removeIf(entry -> entry.getType() == EntryStack.Type.ITEM && entry.getItemStack().getItem() instanceof PortableCrateItem);
-//	}
+	static void tick(World world, BlockPos pos, BlockState state, BlockEntity blockEntity) {
+		((TickableBlockEntity) blockEntity).tick();
+	}
 }

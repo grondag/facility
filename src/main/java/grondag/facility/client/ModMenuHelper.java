@@ -16,26 +16,19 @@
 
 package grondag.facility.client;
 
-import java.util.function.Function;
-
-import io.github.prospector.modmenu.api.ModMenuApi;
-
-import net.minecraft.client.gui.screen.Screen;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import grondag.facility.Facility;
-
+// FIX: put back when ModMenu available
 @Environment(EnvType.CLIENT)
-public class ModMenuHelper implements ModMenuApi {
-	@Override
-	public Function<Screen, ? extends Screen> getConfigScreenFactory() {
-		return ConfigScreen::getScreen;
-	}
-
-	@Override
-	public String getModId() {
-		return Facility.MODID;
-	}
+public class ModMenuHelper { //implements ModMenuApi {
+//	@Override
+//	public Function<Screen, ? extends Screen> getConfigScreenFactory() {
+//		return ConfigScreen::getScreen;
+//	}
+//
+//	@Override
+//	public String getModId() {
+//		return Facility.MODID;
+//	}
 }

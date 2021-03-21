@@ -22,6 +22,7 @@ import java.util.function.Function;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -57,23 +58,23 @@ public enum PipeBlocks {
 	public static final PipeBlock UTB1_STRAIGHT_PIPE = REG.block("utb1_straight", new StraightPipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::pipeSupplier, false), PipeBlockItem::new);
 	public static final PipeBlock UTB1_STRAIGHT_PIPE_GLOW = REG.block("utb1_straight_g", new StraightPipeBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::pipeSupplier, true), PipeBlockItem::new);
 	public static final BlockEntityType<PipeBlockEntity> UTB1_BLOCK_ENTITY_TYPE = REG.blockEntityType("utb1", PipeBlocks::pipeSupplier, UTB1_PIPE, UTB1_STRAIGHT_PIPE, UTB1_PIPE_GLOW, UTB1_STRAIGHT_PIPE_GLOW);
-	static PipeBlockEntity pipeSupplier() {
-		return new PipeBlockEntity(UTB1_BLOCK_ENTITY_TYPE);
+	static PipeBlockEntity pipeSupplier(BlockPos pos, BlockState state) {
+		return new PipeBlockEntity(UTB1_BLOCK_ENTITY_TYPE, pos, state);
 	}
 
 
 	public static final ItemMoverBlock UTB1_S2B = REG.block("utb1_intake", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::intakeSupplier, false), PipeBlockItem::new);
 	public static final ItemMoverBlock UTB1_S2B_GLOW = REG.block("utb1_intake_g", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::intakeSupplier, true), PipeBlockItem::new);
 	public static final BlockEntityType<StorageToBusBlockEntity> UTB1_S2B_BLOCK_ENTITY_TYPE = REG.blockEntityType("utb1_intake", PipeBlocks::intakeSupplier, UTB1_S2B, UTB1_S2B_GLOW);
-	static StorageToBusBlockEntity intakeSupplier() {
-		return new StorageToBusBlockEntity(UTB1_S2B_BLOCK_ENTITY_TYPE);
+	static StorageToBusBlockEntity intakeSupplier(BlockPos pos, BlockState state) {
+		return new StorageToBusBlockEntity(UTB1_S2B_BLOCK_ENTITY_TYPE, pos, state);
 	}
 
 	public static final ItemMoverBlock UTB1_B2S = REG.block("utb1_export", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::exportSupplier, false), PipeBlockItem::new);
 	public static final ItemMoverBlock UTB1_B2S_GLOW = REG.block("utb1_export_g", new ItemMoverBlock(FabricBlockSettings.of(Material.METAL).dynamicBounds().strength(1, 1), PipeBlocks::exportSupplier, true), PipeBlockItem::new);
 	public static final BlockEntityType<BusToStorageBlockEntity> UTB1_B2S_BLOCK_ENTITY_TYPE = REG.blockEntityType("utb1_export", PipeBlocks::exportSupplier, UTB1_B2S, UTB1_B2S_GLOW);
-	static BusToStorageBlockEntity exportSupplier() {
-		return new BusToStorageBlockEntity(UTB1_B2S_BLOCK_ENTITY_TYPE);
+	static BusToStorageBlockEntity exportSupplier(BlockPos pos, BlockState state) {
+		return new BusToStorageBlockEntity(UTB1_B2S_BLOCK_ENTITY_TYPE, pos, state);
 	}
 
 	static {

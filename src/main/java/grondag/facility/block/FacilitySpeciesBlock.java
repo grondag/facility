@@ -15,8 +15,6 @@
  ******************************************************************************/
 package grondag.facility.block;
 
-import java.util.function.Supplier;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -24,6 +22,8 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager.Builder;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 
 import grondag.fermion.modkeys.api.ModKeys;
 import grondag.xm.api.connect.species.Species;
@@ -34,7 +34,7 @@ import grondag.xm.api.connect.species.SpeciesProperty;
 public class FacilitySpeciesBlock extends FacilityBlock {
 	protected final SpeciesFunction speciesFunc;
 
-	public FacilitySpeciesBlock(Settings settings, Supplier<BlockEntity> beFactory, SpeciesFunction speciesFunc) {
+	public FacilitySpeciesBlock(Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, SpeciesFunction speciesFunc) {
 		super(settings, beFactory);
 		this.speciesFunc = speciesFunc;
 	}

@@ -16,16 +16,7 @@
 package grondag.facility.storage.item;
 
 import java.util.List;
-import java.util.function.Supplier;
 
-import grondag.facility.init.ScreenHandlers;
-import grondag.facility.storage.PortableStore;
-import grondag.facility.storage.StorageBlock;
-import grondag.fluidity.api.storage.Store;
-import grondag.fluidity.base.article.StoredDiscreteArticle;
-import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
-import grondag.xm.api.connect.species.SpeciesProperty;
-import grondag.xm.api.connect.world.BlockTest;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.block.Block;
@@ -34,8 +25,8 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
@@ -49,12 +40,22 @@ import net.minecraft.world.World;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+
+import grondag.facility.init.ScreenHandlers;
+import grondag.facility.storage.PortableStore;
+import grondag.facility.storage.StorageBlock;
+import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.article.StoredDiscreteArticle;
+import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
+import grondag.xm.api.connect.species.SpeciesProperty;
+import grondag.xm.api.connect.world.BlockTest;
 
 public class CrateBlock extends StorageBlock {
 	// ugly but works
 	public PortableCrateItem portableItem;
 
-	public CrateBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
+	public CrateBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory) {
 		super(settings, beFactory);
 	}
 
@@ -94,10 +95,10 @@ public class CrateBlock extends StorageBlock {
 	@Environment(EnvType.CLIENT)
 	public void appendTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
 		super.appendTooltip(itemStack, blockView, list, tooltipContext);
-		final CompoundTag beTag = itemStack.getSubTag("BlockEntityTag");
+		final NbtCompound beTag = itemStack.getSubTag("BlockEntityTag");
 
 		if (beTag != null && beTag.contains(CrateBlockEntity.TAG_STORAGE)) {
-			final ListTag tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStore.TAG_ITEMS, 10);
+			final NbtList tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStore.TAG_ITEMS, 10);
 			final int limit = Math.min(9,tagList.size());
 			final StoredDiscreteArticle lookup = new StoredDiscreteArticle();
 

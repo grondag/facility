@@ -18,10 +18,12 @@ package grondag.facility.storage.item;
 import java.util.function.Supplier;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 
 import grondag.fluidity.base.storage.AbstractStore;
 import grondag.fluidity.base.storage.discrete.SlottedInventoryStore;
@@ -29,8 +31,8 @@ import grondag.fluidity.base.storage.discrete.SlottedInventoryStore;
 public class SlottedCrateBlockEntity extends CrateBlockEntity implements Inventory {
 	protected final SlottedInventoryStore slottedStore;
 
-	public SlottedCrateBlockEntity(BlockEntityType<? extends CrateBlockEntity> type, @SuppressWarnings("rawtypes") Supplier<AbstractStore> storageSupplier, String labelRoot) {
-		super(type, storageSupplier, labelRoot);
+	public SlottedCrateBlockEntity(BlockEntityType<? extends CrateBlockEntity> type, BlockPos pos, BlockState state, @SuppressWarnings("rawtypes") Supplier<AbstractStore> storageSupplier, String labelRoot) {
+		super(type, pos, state, storageSupplier, labelRoot);
 		slottedStore = (SlottedInventoryStore) storage;
 	}
 

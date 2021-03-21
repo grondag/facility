@@ -17,10 +17,9 @@ package grondag.facility.block;
 
 import java.util.Arrays;
 
-import grondag.facility.storage.TrackedBlockEntity;
-import grondag.fermion.world.WorldTaskManager;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
@@ -28,13 +27,16 @@ import net.minecraft.util.math.BlockPos.Mutable;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
+import grondag.facility.storage.TrackedBlockEntity;
+import grondag.fermion.world.WorldTaskManager;
+
 public abstract class NeighboredBlockEntity<T> extends TrackedBlockEntity {
 	private final Object[] neighbors = new Object[12];
 	private int neighborCount;
 	protected boolean isEnqued = false;
 
-	public NeighboredBlockEntity(BlockEntityType<?> blockEntityType) {
-		super(blockEntityType);
+	public NeighboredBlockEntity(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state) {
+		super(blockEntityType, pos, state);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -71,8 +73,8 @@ public abstract class NeighboredBlockEntity<T> extends TrackedBlockEntity {
 	protected abstract void onClose(T existing);
 
 	@Override
-	public void setLocation(World world, BlockPos blockPos) {
-		super.setLocation(world, blockPos);
+	public void setWorld(World world) {
+		super.setWorld(world);
 		enqueUpdate();
 	}
 
@@ -96,8 +98,8 @@ public abstract class NeighboredBlockEntity<T> extends TrackedBlockEntity {
 	}
 
 	@Override
-	public void markInvalid() {
-		super.markInvalid();
+	public void markDirty() {
+		super.markDirty();
 		enqueUpdate();
 	}
 

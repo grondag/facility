@@ -19,36 +19,33 @@ import java.util.Random;
 
 import io.netty.util.internal.ThreadLocalRandom;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 
 import grondag.facility.block.CarrierSessionBlockEntity;
+import grondag.facility.storage.TickableBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 
-public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implements Tickable {
+public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implements TickableBlockEntity {
 	protected final boolean isOutput;
 
-	public CreativeCrateBlockEntity(BlockEntityType<CreativeCrateBlockEntity> type, boolean isOutput) {
-		super(type);
+	public CreativeCrateBlockEntity(BlockEntityType<CreativeCrateBlockEntity> type, final BlockPos pos, final BlockState state, final boolean isOutput) {
+		super(type, pos, state);
 		this.isOutput = isOutput;
 	}
 
 	@Override
 	public void tick() {
-		if(world.isClient) {
-			return;
-		}
-
 		final int limit = neighborCount();
 
 		if(limit == 0 || !getCachedState().get(Properties.POWERED)) {

@@ -9,13 +9,13 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.HopperBlockEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SidedInventory;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.Tickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
+import grondag.facility.storage.TickableBlockEntity;
 import grondag.facility.transport.PipeBlockEntity;
 import grondag.facility.transport.UtbCostFunction;
 import grondag.facility.transport.buffer.TransportBuffer;
@@ -37,7 +37,7 @@ import grondag.fluidity.wip.api.transport.CarrierSession;
 import grondag.fluidity.wip.base.transport.SubCarrier;
 import grondag.xm.api.block.XmProperties;
 
-public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Tickable {
+public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements TickableBlockEntity {
 	public static final String TAG_BUFFER = "buffer";
 	protected BlockPos targetPos = null;
 	Direction targetFace = null;
@@ -124,8 +124,8 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 		}
 	}
 
-	public ItemMoverBlockEntity(BlockEntityType<? extends PipeBlockEntity> type) {
-		super(type);
+	public ItemMoverBlockEntity(BlockEntityType<? extends PipeBlockEntity> type, BlockPos pos, BlockState state) {
+		super(type, pos, state);
 		internalSession = carrier.attach(ct -> ct.getAccess(this));
 	}
 
@@ -197,10 +197,6 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 
 	@Override
 	public final void tick() {
-		if(world.isClient) {
-			return;
-		}
-
 		// TODO: allow inversion or disable of redstone control
 		if(getCachedState().get(Properties.POWERED)) {
 			return;
@@ -224,8 +220,8 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 	protected abstract void tickBuffer();
 
 	@Override
-	public CompoundTag toTag(CompoundTag tag) {
-		super.toTag(tag);
+	public NbtCompound writeNbt(NbtCompound tag) {
+		super.writeNbt(tag);
 
 		if (!transportBuffer.state().shouldSave()) {
 			tag.put(TAG_BUFFER, transportBuffer.state().toTag());
@@ -235,8 +231,8 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 	}
 
 	@Override
-	public void fromTag(BlockState state, CompoundTag tag) {
-		super.fromTag(state, tag);
+	public void readNbt(NbtCompound tag) {
+		super.readNbt(tag);
 
 		if (tag.contains(TAG_BUFFER)) {
 			transportBuffer.state().fromTag(tag.getCompound(TAG_BUFFER));

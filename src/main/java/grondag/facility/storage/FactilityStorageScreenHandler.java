@@ -17,9 +17,6 @@ package grondag.facility.storage;
 
 import java.util.List;
 
-import grondag.fluidity.api.storage.Store;
-import grondag.fluidity.base.synch.AbstractStorageServerDelegate;
-import grondag.fluidity.base.synch.StorageContainer;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,6 +28,10 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.synch.AbstractStorageServerDelegate;
+import grondag.fluidity.base.synch.StorageContainer;
+
 public abstract class FactilityStorageScreenHandler<T extends AbstractStorageServerDelegate<?>> extends ScreenHandler implements StorageContainer {
 	protected final @Nullable Store storage;
 	protected String label;
@@ -40,7 +41,7 @@ public abstract class FactilityStorageScreenHandler<T extends AbstractStorageSer
 		super(type, synchId);
 		this.storage = storage;
 		this.label = label;
-		final Inventory inv = player.inventory;
+		final Inventory inv = player.getInventory();
 
 		if(player instanceof ServerPlayerEntity) {
 			delegate = createDelegate((ServerPlayerEntity) player, storage);
@@ -108,7 +109,7 @@ public abstract class FactilityStorageScreenHandler<T extends AbstractStorageSer
 				if(qty < sourceStack.getCount()) {
 					final ItemStack giveBack = sourceStack.copy();
 					giveBack.decrement(qty);
-					playerEntity.inventory.offerOrDrop(playerEntity.world, giveBack);
+					playerEntity.getInventory().offerOrDrop(giveBack);
 				}
 			}
 		}
@@ -117,8 +118,8 @@ public abstract class FactilityStorageScreenHandler<T extends AbstractStorageSer
 	}
 
 	@Override
-	public ItemStack onSlotClick(int slotId, int mouseButton, SlotActionType slotActionType, PlayerEntity playerEntity) {
-		return super.onSlotClick(slotId, mouseButton, slotActionType, playerEntity);
+	public void onSlotClick(int slotId, int mouseButton, SlotActionType slotActionType, PlayerEntity playerEntity) {
+		super.onSlotClick(slotId, mouseButton, slotActionType, playerEntity);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ package grondag.facility.storage.item;
 
 import java.util.function.Supplier;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
@@ -30,8 +31,8 @@ import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 
 public class CrateBlockEntity extends StorageBlockEntity<CrateClientState, CrateMultiBlock.Member> {
-	public CrateBlockEntity(BlockEntityType<? extends CrateBlockEntity> type, @SuppressWarnings("rawtypes") Supplier<AbstractStore> storageSupplier, String labelRoot) {
-		super(type, storageSupplier, labelRoot);
+	public CrateBlockEntity(BlockEntityType<? extends CrateBlockEntity> type, BlockPos pos, BlockState state, @SuppressWarnings("rawtypes") Supplier<AbstractStore> storageSupplier, String labelRoot) {
+		super(type, pos, state, storageSupplier, labelRoot);
 	}
 
 	@Override

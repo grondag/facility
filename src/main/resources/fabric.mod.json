@@ -28,8 +28,8 @@
     }
   ],
   "depends": {
-    "fabricloader": "\u003e\u003d0.9.1",
-    "minecraft": "~1.16.2",
+    "fabricloader": "\u003e\u003d0.11.3",
+    "minecraft": "~1.17-alpha.21.11.a",
     "fabric": "*",
     "fluidity": "*",
     "exotic-matter": "*"
@@ -37,5 +37,6 @@
   "custom": {
     "modmenu:api": false,
     "modmenu:clientsideOnly": false
-  }
+  },
+  "accessWidener": "facility.accesswidener"
 }

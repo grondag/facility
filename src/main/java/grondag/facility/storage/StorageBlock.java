@@ -17,7 +17,6 @@ package grondag.facility.storage;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -29,7 +28,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.state.StateManager.Builder;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Identifier;
@@ -37,6 +36,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
+
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 
 import grondag.facility.Facility;
 import grondag.facility.block.FacilitySpeciesBlock;
@@ -49,7 +50,7 @@ import grondag.xm.api.connect.species.SpeciesProperty;
 public abstract class StorageBlock extends FacilitySpeciesBlock {
 	public static final Identifier CONTENTS  = ShulkerBoxBlock.CONTENTS;
 
-	public StorageBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
+	public StorageBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory) {
 		super(settings, beFactory, SpeciesProperty.speciesForBlockType(StorageBlock.class));
 	}
 
@@ -119,7 +120,7 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 		final ItemStack stack = getStack(isEmpty);
 
 		if(!isEmpty) {
-			final CompoundTag tag = myBlockEntity.toContainerTag(new CompoundTag());
+			final NbtCompound tag = myBlockEntity.toContainerTag(new NbtCompound());
 
 			if (!tag.isEmpty()) {
 				stack.putSubTag("BlockEntityTag", tag);

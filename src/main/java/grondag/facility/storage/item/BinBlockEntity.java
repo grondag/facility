@@ -19,9 +19,11 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.BlockPos;
 
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.StoredArticleView;
@@ -32,15 +34,15 @@ public class BinBlockEntity extends CrateBlockEntity {
 	protected final int divisionLevel;
 	protected final Article[] items;
 
-	public BinBlockEntity(BlockEntityType<BinBlockEntity> type, @SuppressWarnings("rawtypes") Supplier<AbstractStore> storageSupplier, String labelRoot, int divisionLevel) {
-		super(type, storageSupplier, labelRoot);
+	public BinBlockEntity(BlockEntityType<BinBlockEntity> type, BlockPos pos, BlockState state, @SuppressWarnings("rawtypes") Supplier<AbstractStore> storageSupplier, String labelRoot, int divisionLevel) {
+		super(type, pos, state, storageSupplier, labelRoot);
 		this.divisionLevel = divisionLevel;
 		items = new Article[divisionLevel];
 		Arrays.fill(items, Article.NOTHING);
 	}
 
 	@Override
-	public void fromClientTag(CompoundTag tag) {
+	public void fromClientTag(NbtCompound tag) {
 		label = tag.getString(TAG_LABEL);
 
 		boolean hasAny = false;
@@ -67,7 +69,7 @@ public class BinBlockEntity extends CrateBlockEntity {
 	}
 
 	@Override
-	public CompoundTag toClientTag(CompoundTag tag) {
+	public NbtCompound toClientTag(NbtCompound tag) {
 		tag.putString(TAG_LABEL, label);
 
 		for(int i = 0; i < divisionLevel; i++) {

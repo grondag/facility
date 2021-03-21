@@ -15,20 +15,23 @@
  ******************************************************************************/
 package grondag.facility.storage.item;
 
-import java.util.function.Supplier;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.state.StateManager.Builder;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+
 import grondag.facility.block.AbstractFunctionalBlock;
+import grondag.facility.storage.TickableBlockEntity;
 
 public class CreativeCrateBlock extends AbstractFunctionalBlock {
-	public CreativeCrateBlock(Block.Settings settings, Supplier<BlockEntity> beFactory) {
+	public CreativeCrateBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory) {
 		super(settings, beFactory);
 	}
 
@@ -47,4 +50,8 @@ public class CreativeCrateBlock extends AbstractFunctionalBlock {
 		}
 	}
 
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+		return world.isClient ? null : TickableBlockEntity::tick;
+	}
 }

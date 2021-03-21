@@ -32,6 +32,7 @@ public class StorageClientState<T extends StorageBlockEntity> {
 		this.owner = owner;
 	}
 
+	// FIX: call this or remove it - no longer called as part of render loop
 	public void updateLastDistanceSquared(double dSq) {
 		final long d = (long) dSq;
 		final long lastD = lastDistanceSquared;

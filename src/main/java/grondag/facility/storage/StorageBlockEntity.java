@@ -6,12 +6,9 @@ import io.netty.util.internal.ThreadLocalRandom;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
@@ -35,8 +32,8 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	protected T clientState;
 	protected final U member;
 
-	public StorageBlockEntity(BlockEntityType<? extends StorageBlockEntity> type, Supplier<AbstractStore> storageSupplier, String labelRoot) {
-		super(type);
+	public StorageBlockEntity(BlockEntityType<? extends StorageBlockEntity> type, BlockPos pos, BlockState state, Supplier<AbstractStore> storageSupplier, String labelRoot) {
+		super(type, pos, state);
 		storage = storageSupplier.get();
 		storage.onDirty(this::markForSave);
 		wrapper.setWrapped(storage);
@@ -50,7 +47,7 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 
 	protected void markForSave() {
 		if(world != null && pos != null) {
-			world.markDirty(pos, this);
+			world.markDirty(pos);
 		}
 	}
 
@@ -108,35 +105,35 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	}
 
 	@Override
-	public CompoundTag toTag(CompoundTag tag) {
-		super.toTag(tag);
+	public NbtCompound writeNbt(NbtCompound tag) {
+		super.writeNbt(tag);
 		return toContainerTag(tag);
 	}
 
 	@Override
-	public void fromTag(BlockState state, CompoundTag tag) {
-		super.fromTag(state, tag);
+	public void readNbt(NbtCompound tag) {
+		super.readNbt(tag);
 		fromContainerTag(tag);
 	}
 
-	public CompoundTag toContainerTag(CompoundTag tag) {
+	public NbtCompound toContainerTag(NbtCompound tag) {
 		tag.put(TAG_STORAGE, getInternalStorage().writeTag());
 		tag.putString(TAG_LABEL, label);
 		return tag;
 	}
 
-	public void fromContainerTag(CompoundTag tag) {
+	public void fromContainerTag(NbtCompound tag) {
 		label = tag.getString(TAG_LABEL);
 		getInternalStorage().readTag(tag.getCompound(TAG_STORAGE));
 	}
 
 	@Override
-	public void fromClientTag(CompoundTag tag) {
+	public void fromClientTag(NbtCompound tag) {
 		label = tag.getString(TAG_LABEL);
 	}
 
 	@Override
-	public CompoundTag toClientTag(CompoundTag tag) {
+	public NbtCompound toClientTag(NbtCompound tag) {
 		tag.putString(TAG_LABEL, label);
 		return tag;
 	}
@@ -158,22 +155,4 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	}
 
 	protected abstract T createClientState();
-
-	/**
-	 * Rely on the fact that BE render dispath will call this each frame
-	 * and check for deltas to know if we should recompute distance.
-	 * Avoids checking/recomputing in block entity renderer.
-	 *
-	 * PERF: still any benefit to this because BERD computes anyway.
-	 */
-	@Environment(EnvType.CLIENT)
-	@Override
-	public double getSquaredRenderDistance() {
-		if (world.isClient) {
-			final BlockPos pos = this.pos;
-			clientState().updateLastDistanceSquared(BlockEntityRenderDispatcher.INSTANCE.camera.getPos().squaredDistanceTo(pos.getX(), pos.getY(), pos.getZ()));
-		}
-
-		return super.getSquaredRenderDistance();
-	}
 }

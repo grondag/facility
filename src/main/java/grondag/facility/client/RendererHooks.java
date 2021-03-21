@@ -18,11 +18,13 @@ package grondag.facility.client;
 import com.mojang.blaze3d.systems.RenderSystem;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderPhase;
 import net.minecraft.client.render.TexturedRenderLayers;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 
@@ -39,60 +41,57 @@ public class RendererHooks {
 
 		static final Transparency _NO_TRANSPARENCY = NO_TRANSPARENCY;
 		static final Transparency _TRANSLUCENT_TRANSPARENCY = TRANSLUCENT_TRANSPARENCY;
-		static final DiffuseLighting _ENABLE_DIFFUSE_LIGHTING = ENABLE_DIFFUSE_LIGHTING;
-		static final Alpha _ONE_TENTH_ALPHA = ONE_TENTH_ALPHA;
-		static final Alpha _ZERO_ALPHA = ZERO_ALPHA;
+		//static final DiffuseLighting _ENABLE_DIFFUSE_LIGHTING = ENABLE_DIFFUSE_LIGHTING;
+		//static final Alpha _ONE_TENTH_ALPHA = ONE_TENTH_ALPHA;
+		//static final Alpha _ZERO_ALPHA = ZERO_ALPHA;
 		static final Lightmap _ENABLE_LIGHTMAP = ENABLE_LIGHTMAP;
 		static final Overlay _ENABLE_OVERLAY_COLOR = ENABLE_OVERLAY_COLOR;
 		static final Overlay _DISABLE_OVERLAY_COLOR = DISABLE_OVERLAY_COLOR;
 		static final Layering ITEM_OFFSET_LAYERING = new RenderPhase.Layering("item_offset_layering", () -> {
 			RenderSystem.polygonOffset(-1.0F, -1.0F);
 			RenderSystem.enablePolygonOffset();
-			RenderSystem.disableRescaleNormal();
+			//RenderSystem.disableRescaleNormal();
 		}, () -> {
 			RenderSystem.polygonOffset(0.0F, 0.0F);
 			RenderSystem.disablePolygonOffset();
-			RenderSystem.enableRescaleNormal();
+			//RenderSystem.enableRescaleNormal();
 		});
 	}
 
 	private static RenderLayer makeCutout() {
 		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
-		.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
+		.method_34577(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
+		.method_34578(new RenderPhase.class_5942(GameRenderer::getRenderTypeEntityCutoutShader))
 		.transparency(RenderSecrets._NO_TRANSPARENCY)
-		.diffuseLighting(RenderSecrets._ENABLE_DIFFUSE_LIGHTING)
-		.alpha(RenderSecrets._ONE_TENTH_ALPHA)
 		.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
 		.overlay(RenderSecrets._ENABLE_OVERLAY_COLOR)
 		.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
 		.build(true);
-		return RenderLayer.of("entity_cutout", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, 7, 256, true, false, multiPhaseParameters);
+		return RenderLayer.of("entity_cutout", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, VertexFormat.DrawMode.QUADS, 256, true, false, multiPhaseParameters);
 	}
 
 	private static RenderLayer makeTranslucent() {
 		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
-		.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
+		.method_34577(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
+		.method_34578(new RenderPhase.class_5942(GameRenderer::getRenderTypeEntityTranslucentShader))
 		.transparency(RenderSecrets._TRANSLUCENT_TRANSPARENCY)
-		.diffuseLighting(RenderSecrets._ENABLE_DIFFUSE_LIGHTING)
-		.alpha(RenderSecrets._ONE_TENTH_ALPHA)
 		.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
 		.overlay(RenderSecrets._ENABLE_OVERLAY_COLOR)
 		.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
 		.build(true);
-		return RenderLayer.of("entity_translucent_cull", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, 7, 256, true, true, multiPhaseParameters);
+		return RenderLayer.of("entity_translucent_cull", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, VertexFormat.DrawMode.QUADS, 256, true, true, multiPhaseParameters);
 	}
 
 	public static RenderLayer makeFluid() {
 		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
-		.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
+		.method_34577(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
+		.method_34578(new RenderPhase.class_5942(GameRenderer::getRenderTypeSolidShader))
 		.transparency(RenderSecrets._NO_TRANSPARENCY)
-		.diffuseLighting(RenderSecrets._ENABLE_DIFFUSE_LIGHTING)
-		.alpha(RenderSecrets._ZERO_ALPHA)
 		.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
 		.overlay(RenderSecrets._DISABLE_OVERLAY_COLOR)
 		.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
 		.build(true);
-		return RenderLayer.of("fluid_overlay", VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL, 7, 256, false, false, multiPhaseParameters);
+		return RenderLayer.of("fluid_overlay", VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL, VertexFormat.DrawMode.QUADS, 256, false, false, multiPhaseParameters);
 	}
 
 	public static @Nullable RenderLayer hook(RenderLayer renderLayer) {

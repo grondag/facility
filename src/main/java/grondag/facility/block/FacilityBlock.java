@@ -16,7 +16,6 @@
 package grondag.facility.block;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -31,22 +30,24 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 
 public class FacilityBlock extends Block implements BlockEntityProvider {
-	protected final Supplier<BlockEntity> beFactory;
+	protected final FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory;
 
-	public FacilityBlock(Settings settings, Supplier<BlockEntity> beFactory) {
+	public FacilityBlock(Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory) {
 		super(settings);
 		this.beFactory = beFactory;
 	}
 
 	@Override
-	public BlockEntity createBlockEntity(BlockView blockView) {
-		return beFactory.get();
+	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+		return beFactory.create(pos, state);
 	}
 
 	@Override

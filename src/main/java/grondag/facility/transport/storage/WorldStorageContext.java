@@ -25,7 +25,6 @@ import net.minecraft.tag.FluidTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.WorldChunk;
 
 import grondag.facility.FacilityConfig;
 import grondag.fluidity.api.article.Article;
@@ -106,14 +105,11 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 
 		canDropItems = !state.isFullCube(world, pos);
 
-		final WorldChunk worldChunk = world.getChunkManager().getWorldChunk(pos.getX() >> 4, pos.getZ() >> 4, false);
-
-		if (worldChunk != null) {
-			entityList.clear();
-			worldChunk.collectEntitiesByClass(ItemEntity.class, bounds, entityList, Predicates.alwaysTrue());
-			entity = entityList.isEmpty() ? null : (ItemEntity) entityList.get(0);
-			stack = entity == null ? null : entity.getStack();
-		}
+		entityList.clear();
+		// PERF: avoid letting vanilla allocate new list each time
+		entityList.addAll(world.getEntitiesByClass(ItemEntity.class, bounds, Predicates.alwaysTrue()));
+		entity = entityList.isEmpty() ? null : (ItemEntity) entityList.get(0);
+		stack = entity == null ? null : entity.getStack();
 
 		return true;
 	}
@@ -304,9 +300,9 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 		if (article.isFluid()) {
 			if(fluid != null && article.toFluid().equals(fluid)) {
 				if (drainable) {
-					final Fluid result = ((FluidDrainable) block).tryDrainFluid(world, pos, blockState);
+					final ItemStack result = ((FluidDrainable) block).tryDrainFluid(world, pos, blockState);
 
-					if (article.toFluid().equals(result)) {
+					if (!result.isEmpty()) {
 						fluidCooldownTicks = FLUID_COOLDOWN_TICKS;
 						return 1;
 					} else {

@@ -17,8 +17,8 @@ package grondag.facility.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 
@@ -28,12 +28,12 @@ import net.fabricmc.api.Environment;
 import grondag.facility.storage.StorageBlockEntity;
 
 @Environment(EnvType.CLIENT)
-public class StorageBlockRenderer<T extends StorageBlockEntity<?, ?>> extends BlockEntityRenderer<T> {
+public class StorageBlockRenderer<T extends StorageBlockEntity<?, ?>> implements BlockEntityRenderer<T> {
 	protected final MinecraftClient mc = MinecraftClient.getInstance();
 	protected final ItemRenderer ir = mc.getItemRenderer();
 
-	public StorageBlockRenderer(BlockEntityRenderDispatcher blockEntityRenderDispatcher) {
-		super(blockEntityRenderDispatcher);
+	public StorageBlockRenderer(BlockEntityRendererFactory.Context ctx) {
+		// NOOP
 	}
 
 	@Override

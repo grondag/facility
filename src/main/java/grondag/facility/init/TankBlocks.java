@@ -17,9 +17,11 @@ package grondag.facility.init;
 
 import static grondag.facility.Facility.REG;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
+import net.minecraft.util.math.BlockPos;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
@@ -47,8 +49,8 @@ public enum TankBlocks {
 
 	public static final TankBlock TANK = REG.blockNoItem("tank", new TankBlock(FabricBlockSettings.of(Material.METAL).strength(1, 1), TankBlocks::tankBe, false));
 	public static final BlockEntityType<TankBlockEntity> TANK_BLOCK_ENTITY_TYPE = REG.blockEntityType("tank", TankBlocks::tankBe, TANK);
-	private static TankBlockEntity tankBe() {
-		return new TankBlockEntity(TANK_BLOCK_ENTITY_TYPE, () -> new SimpleTank(Fraction.of(32)).filter(ArticleType.FLUID), "TANK ");
+	private static TankBlockEntity tankBe(BlockPos pos, BlockState state) {
+		return new TankBlockEntity(TANK_BLOCK_ENTITY_TYPE, pos, state, () -> new SimpleTank(Fraction.of(32)).filter(ArticleType.FLUID), "TANK ");
 	}
 
 	public static final PortableTankItem PORTABLE_TANK_ITEM = REG.item("tank", new PortableTankItem(TANK, REG.itemSettings().maxCount(1).maxDamage(32768)));

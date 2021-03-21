@@ -17,10 +17,11 @@ package grondag.facility.storage.bulk;
 
 import java.util.function.Supplier;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.fluid.Fluid;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
@@ -36,8 +37,8 @@ import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 
 public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMultiBlock.Member> {
-	public TankBlockEntity(BlockEntityType<TankBlockEntity> type, @SuppressWarnings("rawtypes") Supplier<AbstractStore> storageSupplier, String labelRoot) {
-		super(type, storageSupplier, labelRoot);
+	public TankBlockEntity(BlockEntityType<TankBlockEntity> type, BlockPos pos, BlockState state, @SuppressWarnings("rawtypes") Supplier<AbstractStore> storageSupplier, String labelRoot) {
+		super(type, pos, state, storageSupplier, labelRoot);
 	}
 
 	@Override
@@ -63,7 +64,7 @@ public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMul
 	}
 
 	@Override
-	public void fromClientTag(CompoundTag tag) {
+	public void fromClientTag(NbtCompound tag) {
 		label = tag.getString(TAG_LABEL);
 
 		final TankClientState clientState = clientState();
@@ -86,7 +87,7 @@ public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMul
 	}
 
 	@Override
-	public CompoundTag toClientTag(CompoundTag tag) {
+	public NbtCompound toClientTag(NbtCompound tag) {
 		tag.putString(TAG_LABEL, label);
 		final float usage = (float) storage.usage();
 		tag.putFloat("usage", usage);

@@ -6,7 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Hand;
@@ -44,11 +44,11 @@ public class PipeBlockItem extends BlockItem {
 		}
 	}
 
-	private static CompoundTag cycleTag(ItemStack itemStack, boolean reverse) {
-		CompoundTag tag = itemStack.getTag();
+	private static NbtCompound cycleTag(ItemStack itemStack, boolean reverse) {
+		NbtCompound tag = itemStack.getTag();
 
 		if (tag == null) {
-			tag = new CompoundTag();
+			tag = new NbtCompound();
 			tag.putInt(SPECIES, 0);
 		} else if (tag.contains(SPECIES)) {
 			// has species, so increment
@@ -73,7 +73,7 @@ public class PipeBlockItem extends BlockItem {
 	}
 
 	public static int species(ItemStack itemStack) {
-		final CompoundTag tag = itemStack.getTag();
+		final NbtCompound tag = itemStack.getTag();
 
 		if (tag == null || !tag.contains(SPECIES)) {
 			return AUTO_SELECT_SPECIES;

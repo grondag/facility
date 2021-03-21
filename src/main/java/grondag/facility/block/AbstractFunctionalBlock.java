@@ -15,8 +15,6 @@
  ******************************************************************************/
 package grondag.facility.block;
 
-import java.util.function.Supplier;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.util.math.BlockPos;
@@ -24,9 +22,11 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+
 public class AbstractFunctionalBlock extends FacilityBlock {
 
-	public AbstractFunctionalBlock(Settings settings, Supplier<BlockEntity> beFactory) {
+	public AbstractFunctionalBlock(Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory) {
 		super(settings, beFactory);
 	}
 

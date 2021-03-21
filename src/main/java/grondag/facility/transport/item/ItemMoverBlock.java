@@ -15,13 +15,13 @@
  ******************************************************************************/
 package grondag.facility.transport.item;
 
-import java.util.function.Supplier;
-
 import org.apache.commons.lang3.ObjectUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
@@ -37,6 +37,9 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+
+import grondag.facility.storage.TickableBlockEntity;
 import grondag.facility.transport.PipeBlock;
 import grondag.facility.transport.buffer.TransportBuffer;
 import grondag.xm.api.block.XmProperties;
@@ -50,7 +53,7 @@ public class ItemMoverBlock extends PipeBlock {
 		return fromState.get(XmProperties.FACE) == ctx.toFace() || canConnect(ctx);
 	};
 
-	public ItemMoverBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, boolean hasGlow) {
+	public ItemMoverBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, boolean hasGlow) {
 		super(settings, beFactory, hasGlow);
 	}
 
@@ -125,5 +128,10 @@ public class ItemMoverBlock extends PipeBlock {
 		}
 
 		super.onStateReplaced(state, world, pos, newState, moved);
+	}
+
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+		return world.isClient ? null : TickableBlockEntity::tick;
 	}
 }

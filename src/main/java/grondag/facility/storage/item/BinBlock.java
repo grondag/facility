@@ -15,8 +15,6 @@
  ******************************************************************************/
 package grondag.facility.storage.item;
 
-import java.util.function.Supplier;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.Block;
@@ -33,6 +31,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import net.fabricmc.fabric.api.block.BlockAttackInteractionAware;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 
 import grondag.facility.block.TracerAccess;
 import grondag.facility.packet.BinActionC2S;
@@ -45,7 +44,7 @@ public class BinBlock extends CrateBlock implements BlockAttackInteractionAware 
 	public final int divisionLevel;
 	public final boolean isCreative;
 
-	public BinBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, int divisionLevel, boolean isCreative) {
+	public BinBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, int divisionLevel, boolean isCreative) {
 		super(settings, beFactory);
 		this.divisionLevel = divisionLevel;
 		this.isCreative = isCreative;

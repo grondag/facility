@@ -15,19 +15,19 @@
  ******************************************************************************/
 package grondag.facility.transport;
 
-import java.util.function.Supplier;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager.Builder;
 
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+
 import grondag.fermion.modkeys.api.ModKeys;
 import grondag.xm.api.block.XmProperties;
 
 public class StraightPipeBlock extends PipeBlock {
-	public StraightPipeBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, boolean hasGlow) {
+	public StraightPipeBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, boolean hasGlow) {
 		super(settings, beFactory, hasGlow);
 	}
 

@@ -39,7 +39,6 @@ import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
 import grondag.fluidity.base.synch.DisplayDelegate;
 import grondag.fluidity.base.synch.ItemStorageAction;
 import grondag.fluidity.impl.DiscreteDisplayDelegateImpl;
-import grondag.fonthack.FontHackClient;
 
 public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilityStorageScreenHandler<DiscreteStorageServerDelegate>> {
 	private static DiscreteStorageClientDelegate DELEGATE = DiscreteStorageClientDelegate.INSTANCE;
@@ -61,8 +60,9 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 	@Override
 	public void init() {
 		DELEGATE.setFilter("");
-		textRenderer = FacilityConfig.useVanillaFonts ? client.textRenderer : FontHackClient.getTextRenderer(FontHackClient.READING_FONT);
-
+		// FIXME: put back when TTF font rendering works again - may be a Vanilla issue?
+		//textRenderer = FacilityConfig.useVanillaFonts ? client.textRenderer : FontHackClient.getTextRenderer(FontHackClient.READING_FONT);
+		textRenderer = client.textRenderer;
 		preInitLayout();
 		super.init();
 	}
@@ -177,9 +177,10 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 
 		// capacity bar
 		final int barBottom = y + theme.externalMargin + barHeight;
-		GuiUtil.drawRect(capacityBarLeft, y + theme.externalMargin,
+		GuiUtil.drawRect(matrixStack.peek().getModel(), capacityBarLeft, y + theme.externalMargin,
 				capacityBarLeft + theme.capacityBarWidth, barBottom, theme.capacityEmptyColor);
-		GuiUtil.drawRect(capacityBarLeft, barBottom - fillHeight,
+
+		GuiUtil.drawRect(matrixStack.peek().getModel(), capacityBarLeft, barBottom - fillHeight,
 				capacityBarLeft + theme.capacityBarWidth, barBottom, theme.capacityFillColor);
 
 		// Draw here because drawforeground currently happens after this
@@ -206,7 +207,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 	public boolean mouseDragged(double onX, double onY, int mouseButton, double fromX, double fromY) {
 		final Slot slot = getSlotAt(onX, onY);
 
-		if (!client.options.touchscreen && !cursorDragging && slot != null && slot.hasStack() && hasShiftDown() && client.player.inventory.getCursorStack().isEmpty()) {
+		if (!client.options.touchscreen && !cursorDragging && slot != null && slot.hasStack() && hasShiftDown() && client.player.currentScreenHandler.getCursorStack().isEmpty()) {
 			onMouseClick(slot, slot.id, mouseButton, SlotActionType.QUICK_MOVE);
 			return true;
 		}

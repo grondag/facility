@@ -1,7 +1,7 @@
 package grondag.facility.storage;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 
 import grondag.fluidity.api.device.ItemComponentContext;
 import grondag.fluidity.api.storage.Store;
@@ -21,12 +21,12 @@ public class PortableStore extends AbstractPortableStore {
 	}
 
 	@Override
-	protected CompoundTag readTagFromStack(ItemStack stack) {
+	protected NbtCompound readTagFromStack(ItemStack stack) {
 		return stack.getOrCreateSubTag("BlockEntityTag").getCompound(StorageBlockEntity.TAG_STORAGE);
 	}
 
 	@Override
-	protected void writeTagToStack(ItemStack stack, CompoundTag tag) {
+	protected void writeTagToStack(ItemStack stack, NbtCompound tag) {
 		if(isEmpty()) {
 			stack.setTag(null);
 		} else {
@@ -37,6 +37,6 @@ public class PortableStore extends AbstractPortableStore {
 
 	public static void writeDamage(ItemStack stack, Store store) {
 		final int max = stack.getMaxDamage();
-		stack.setDamage(store.isEmpty() ? 0 : max - (int) (store.usage() * (max - 1)));
+		stack.setDamage(store.isEmpty() ? 0 : (max - (int) (store.usage() * (max - 1))));
 	}
 }

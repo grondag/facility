@@ -18,7 +18,7 @@ package grondag.facility.client;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
+import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.model.json.ModelTransformation.Mode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -40,8 +40,8 @@ import grondag.xm.api.block.XmProperties;
 public class BinBlockRenderer extends StorageBlockRenderer<BinBlockEntity> {
 	protected final int divisionLevel;
 
-	public BinBlockRenderer(BlockEntityRenderDispatcher blockEntityRenderDispatcher, int divisionLevel) {
-		super(blockEntityRenderDispatcher);
+	public BinBlockRenderer(BlockEntityRendererFactory.Context ctx, int divisionLevel) {
+		super(ctx);
 		this.divisionLevel = divisionLevel;
 	}
 
@@ -105,7 +105,7 @@ public class BinBlockRenderer extends StorageBlockRenderer<BinBlockEntity> {
 
 			//TODO: rotate normal up for generated items - improve the lighting - or maybe disable diffuse
 			matrixStack.peek().getModel().multiply(Matrix4f.scale(0.65f, 0.65f, 0.001f + d * 0.2f));
-			ir.renderItem(stacks[0], Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			ir.renderItem(stacks[0], Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider, 42);
 		}
 	}
 
@@ -116,14 +116,14 @@ public class BinBlockRenderer extends StorageBlockRenderer<BinBlockEntity> {
 		ItemStack stack = stacks[0];
 
 		if(stack != null && !stack.isEmpty()) {
-			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider, 42);
 		}
 
 		matrixStack.translate(0, -0.46 / 0.36, 0);
 		stack = stacks[1];
 
 		if(stack != null && !stack.isEmpty()) {
-			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider, 42);
 		}
 	}
 
@@ -134,28 +134,28 @@ public class BinBlockRenderer extends StorageBlockRenderer<BinBlockEntity> {
 		ItemStack stack = stacks[0];
 
 		if(stack != null && !stack.isEmpty()) {
-			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider, 42);
 		}
 
 		matrixStack.translate(0.46 / 0.32, 0, 0);
 		stack = stacks[1];
 
 		if(stack != null && !stack.isEmpty()) {
-			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider, 42);
 		}
 
 		matrixStack.translate(-0.46 / 0.32, -0.46 / 0.32, 0);
 		stack = stacks[2];
 
 		if(stack != null && !stack.isEmpty()) {
-			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider, 42);
 		}
 
 		matrixStack.translate(0.46 / 0.32, 0, 0);
 		stack = stacks[3];
 
 		if(stack != null && !stack.isEmpty()) {
-			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider);
+			ir.renderItem(stack, Mode.GUI, lightMap, overlay, matrixStack, vertexConsumerProvider, 42);
 		}
 	}
 }

@@ -15,10 +15,6 @@
  ******************************************************************************/
 package grondag.facility.storage.item;
 
-import grondag.facility.Facility;
-import grondag.facility.storage.FactilityStorageScreenHandler;
-import grondag.fluidity.api.storage.Store;
-import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.entity.player.PlayerEntity;
@@ -28,6 +24,11 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+
+import grondag.facility.Facility;
+import grondag.facility.storage.FactilityStorageScreenHandler;
+import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
 
 public class CrateItemScreenHandler extends FactilityStorageScreenHandler<DiscreteStorageServerDelegate> {
 	public static Identifier ID = Facility.REG.id("crate_item");
@@ -65,12 +66,12 @@ public class CrateItemScreenHandler extends FactilityStorageScreenHandler<Discre
 	}
 
 	@Override
-	public ItemStack onSlotClick(int slotId, int mouseButton, SlotActionType slotActionType, PlayerEntity playerEntity) {
+	public void onSlotClick(int slotId, int mouseButton, SlotActionType slotActionType, PlayerEntity playerEntity) {
 		// prevent moving stack-based stores
 		if(slotId >= 0 && ((storeSlot != null && slotId == storeSlot.id) || (storeStack != null && slots.get(slotId).getStack() == storeStack))) {
-			return ItemStack.EMPTY;
+			return;
 		}
 
-		return super.onSlotClick(slotId, mouseButton, slotActionType, playerEntity);
+		super.onSlotClick(slotId, mouseButton, slotActionType, playerEntity);
 	}
 }

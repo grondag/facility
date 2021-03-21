@@ -1,5 +1,6 @@
 repositories {
 	mavenLocal()
+	maven { url "https://maven.shedaniel.me/"}
     jcenter();
     maven { 
     	name = "Fabric"
@@ -25,10 +26,6 @@ dependencies {
 	modApi "net.fabricmc:fabric-loader:${project.loader_version}"
 	modApi "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	
-	// dev env annotation support
-	compileOnly "org.apiguardian:apiguardian-api:1.0.0"
-	compileOnly "com.google.code.findbugs:jsr305:3.0.2"
-		
 	modImplementation ("grondag:exotic-matter-${project.mc_tag}:${project.exotic_matter_version}.+") { transitive = false }
 	modImplementation ("grondag:exotic-art-core-${project.mc_tag}:${project.exotic_art_core_version}.+") { transitive = false }
 	modImplementation ("grondag:exotic-art-tech-${project.mc_tag}:${project.exotic_art_tech_version}.+") { transitive = false }
@@ -47,29 +44,27 @@ dependencies {
         exclude group :"net.fabricmc.fabric-loader"
     }
 	
-	modImplementation ("me.shedaniel.cloth:config-2:${clothconfig_version}") {
+	modImplementation ("me.shedaniel.cloth:cloth-config-fabric:${clothconfig_version}") {
         exclude group :"io.github.prospector.modmenu"
         exclude group :"net.fabricmc.fabric-api"
         exclude group :"net.fabricmc.fabric-loader"
     }
 	
-	modImplementation ("io.github.prospector:modmenu:${project.modmenu_version}") {
-        exclude group :"net.fabricmc.fabric-api"
-        exclude group :"net.fabricmc.fabric-loader"
-    }
+	//modImplementation ("io.github.prospector:modmenu:${project.modmenu_version}") {
+    //    exclude group :"net.fabricmc.fabric-api"
+    //    exclude group :"net.fabricmc.fabric-loader"
+    //}
     
-    modImplementation ("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
-    	 exclude(module: "ModMenu")
-    }
+    //modImplementation ("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
+    //	 exclude(module: "ModMenu")
+    //}
     
-    modRuntime ("io.github.cottonmc:LibCD:${project.libcd_version}") {
-        transitive = false
-    }
+    // modRuntime ("io.github.cottonmc:LibCD:${project.libcd_version}") {
+    //    transitive = false
+    //}
     
     if (!(gradle.startParameter.taskNames.contains("publish") || gradle.startParameter.taskNames.contains("publishToMavenLocal"))) {
-	    include "io.github.cottonmc:LibCD:${project.libcd_version}"
-		include "io.github.cottonmc:Jankson-Fabric:${jankson_version}"
-	    include "me.shedaniel.cloth:config-2:${project.clothconfig_version}"
+	    //include "io.github.cottonmc:LibCD:${project.libcd_version}"
 		include "grondag:fonthack-${project.mc_tag}:${project.fonthack_version}.+"
 		include "grondag:fluidity-${project.mc_tag}:${project.fluidity_version}.+"
 		include "grondag:exotic-matter-${project.mc_tag}:${project.exotic_matter_version}.+"
@@ -82,6 +77,6 @@ dependencies {
 	    include "grondag:fermion-orientation-${project.mc_tag}:${project.fermion_orientation_version}.+"
 	    include "grondag:special-circumstances-${project.mc_tag}:${project.special_circumstances_version}.+"
 		include "io.github.cottonmc:Jankson-Fabric:${jankson_version}"
-		include "me.shedaniel.cloth:config-2:${clothconfig_version}"
+		include "me.shedaniel.cloth:cloth-config-fabric:${clothconfig_version}"
 	}
 }

@@ -3,7 +3,7 @@ package grondag.facility.transport.buffer;
 import java.util.function.Consumer;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 
 import grondag.facility.transport.UtbHelper;
 import grondag.facility.transport.handler.TransportCarrierContext;
@@ -28,8 +28,8 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 		Article fluidArticle = Article.NOTHING;
 		MutableFraction fluidAmount = new MutableFraction();
 
-		public CompoundTag toTag() {
-			final CompoundTag tag = new CompoundTag();
+		public NbtCompound toTag() {
+			final NbtCompound tag = new NbtCompound();
 
 			if (itemQuantity != 0 && !itemArticle.isNothing()) {
 				tag.put("itm", itemArticle.toTag());
@@ -44,7 +44,7 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 			return tag;
 		}
 
-		public void fromTag(CompoundTag tag) {
+		public void fromTag(NbtCompound tag) {
 			reset();
 
 			if (tag.contains("itm")) {

@@ -2,14 +2,6 @@ package grondag.facility.storage.bulk;
 
 import java.util.List;
 
-import grondag.facility.Facility;
-import grondag.facility.init.TankBlocks;
-import grondag.facility.storage.PortableStore;
-import grondag.fluidity.api.article.Article;
-import grondag.fluidity.api.article.ArticleType;
-import grondag.fluidity.api.fraction.Fraction;
-import grondag.fluidity.api.storage.Store;
-import grondag.fluidity.base.storage.bulk.SimpleTank;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.advancement.criterion.Criteria;
@@ -44,6 +36,15 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
+
+import grondag.facility.Facility;
+import grondag.facility.init.TankBlocks;
+import grondag.facility.storage.PortableStore;
+import grondag.fluidity.api.article.Article;
+import grondag.fluidity.api.article.ArticleType;
+import grondag.fluidity.api.fraction.Fraction;
+import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.storage.bulk.SimpleTank;
 
 public class PortableTankItem extends BlockItem {
 	public static final PortableStore DISPLAY_TANK = new  PortableStore(new SimpleTank(Fraction.of(32)).filter(ArticleType.FLUID));
@@ -125,15 +126,15 @@ public class PortableTankItem extends BlockItem {
 
 			if (world.canPlayerModifyAt(playerEntity, onPos)) {
 				if (blockState.getBlock() instanceof FluidDrainable && worldFluid != Fluids.EMPTY && store.getConsumer().apply(Article.of(worldFluid), 1, true) == 1) {
-					final Fluid fluid = ((FluidDrainable)blockState.getBlock()).tryDrainFluid(world, onPos, blockState);
+					final ItemStack stack = ((FluidDrainable)blockState.getBlock()).tryDrainFluid(world, onPos, blockState);
 
-					if (fluid != Fluids.EMPTY) {
-						if(store.getConsumer().apply(Article.of(fluid), 1, false) != 1) {
+					if (!stack.isEmpty()) {
+						if(store.getConsumer().apply(Article.of(worldFluid), 1, false) != 1) {
 							Facility.LOG.warn("Tank item did not accept fluid when expected. Fluid drained from world has been lost. This is a bug.");
 						}
 
 						playerEntity.incrementStat(Stats.USED.getOrCreateStat(this));
-						world.playSound(playerEntity, onPos, fluid.isIn(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_FILL_LAVA : SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
+						world.playSound(playerEntity, onPos, worldFluid.isIn(FluidTags.LAVA) ? SoundEvents.ITEM_BUCKET_FILL_LAVA : SoundEvents.ITEM_BUCKET_FILL, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
 						return TypedActionResult.success(playerEntity.getStackInHand(hand));
 					}

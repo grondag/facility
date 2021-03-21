@@ -16,16 +16,7 @@
 package grondag.facility.storage.bulk;
 
 import java.util.List;
-import java.util.function.Supplier;
 
-import grondag.facility.storage.PortableStore;
-import grondag.facility.storage.StorageBlock;
-import grondag.facility.storage.item.CrateBlockEntity;
-import grondag.fluidity.api.storage.Store;
-import grondag.fluidity.base.article.StoredDiscreteArticle;
-import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
-import grondag.xm.api.connect.species.SpeciesProperty;
-import grondag.xm.api.connect.world.BlockTest;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.block.Block;
@@ -34,8 +25,8 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
@@ -51,11 +42,21 @@ import net.minecraft.world.World;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.block.BlockAttackInteractionAware;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+
+import grondag.facility.storage.PortableStore;
+import grondag.facility.storage.StorageBlock;
+import grondag.facility.storage.item.CrateBlockEntity;
+import grondag.fluidity.api.storage.Store;
+import grondag.fluidity.base.article.StoredDiscreteArticle;
+import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
+import grondag.xm.api.connect.species.SpeciesProperty;
+import grondag.xm.api.connect.world.BlockTest;
 
 public class TankBlock extends StorageBlock implements BlockAttackInteractionAware {
 	public final boolean isCreative;
 
-	public TankBlock(Block.Settings settings, Supplier<BlockEntity> beFactory, boolean isCreative) {
+	public TankBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, boolean isCreative) {
 		super(settings, beFactory);
 		this.isCreative = isCreative;
 	}
@@ -121,10 +122,10 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 	@Environment(EnvType.CLIENT)
 	public void appendTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
 		super.appendTooltip(itemStack, blockView, list, tooltipContext);
-		final CompoundTag beTag = itemStack.getSubTag("BlockEntityTag");
+		final NbtCompound beTag = itemStack.getSubTag("BlockEntityTag");
 
 		if (beTag != null && beTag.contains(CrateBlockEntity.TAG_STORAGE)) {
-			final ListTag tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStore.TAG_ITEMS, 10);
+			final NbtList tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStore.TAG_ITEMS, 10);
 			final int limit = Math.min(9,tagList.size());
 			final StoredDiscreteArticle lookup = new StoredDiscreteArticle();
 

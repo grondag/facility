@@ -15,7 +15,9 @@
  ******************************************************************************/
 package grondag.facility.transport;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.util.math.BlockPos;
 
 import grondag.facility.storage.TrackedBlockEntity;
 import grondag.fermion.world.WorldTaskManager;
@@ -32,8 +34,8 @@ public class PipeBlockEntity extends TrackedBlockEntity {
 	protected boolean isEnqued = false;
 	protected boolean isRegistered = false;
 
-	public PipeBlockEntity(BlockEntityType<? extends PipeBlockEntity> type) {
-		super(type);
+	public PipeBlockEntity(BlockEntityType<? extends PipeBlockEntity> type, BlockPos pos, BlockState state) {
+		super(type, pos, state);
 		member = new PipeMultiBlock.Member(this, b -> b.carrier);
 		carrierProvider = createCarrierProvider();
 	}

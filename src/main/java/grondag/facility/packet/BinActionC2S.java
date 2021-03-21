@@ -98,8 +98,8 @@ public enum BinActionC2S {
 				final int q = (int) storage.getSupplier().apply(handle, hitResource, requested, false);
 
 				if(q > 0) {
-					player.inventory.offerOrDrop(world, hitResource.toStack(q));
-					player.inventory.markDirty();
+					player.getInventory().offerOrDrop(hitResource.toStack(q));
+					player.getInventory().markDirty();
 				}
 			}
 		} else {
@@ -112,11 +112,11 @@ public enum BinActionC2S {
 				if(q != 0) {
 					stack.decrement(q);
 					player.setStackInHand(Hand.MAIN_HAND, stack.isEmpty() ? ItemStack.EMPTY : stack);
-					player.inventory.markDirty();
+					player.getInventory().markDirty();
 				}
 			} else if(!view.isEmpty()) {
 				boolean didSucceed = false;
-				final DefaultedList<ItemStack> main = player.inventory.main;
+				final DefaultedList<ItemStack> main = player.getInventory().main;
 				final int limit = main.size();
 
 				for(int i = 0; i < limit; i++) {
@@ -153,7 +153,7 @@ public enum BinActionC2S {
 				}
 
 				if(didSucceed) {
-					player.inventory.markDirty();
+					player.getInventory().markDirty();
 				}
 			}
 		}
