@@ -140,7 +140,7 @@ public class PipeBlock extends FacilitySpeciesBlock {
 
 		if (species == PipeBlockItem.AUTO_SELECT_SPECIES) {
 			final Direction face = context.getPlayerLookDirection();
-			final BlockPos onPos = context.getBlockPos().offset(context.getSide().getOpposite());
+			final BlockPos onPos = context.getBlockPos().method_35851(context.getSide().getOpposite());
 			final SpeciesMode mode = ModKeys.isPrimaryPressed(context.getPlayer()) ? SpeciesMode.COUNTER_MOST : SpeciesMode.MATCH_MOST;
 			species = Species.speciesForPlacement(context.getWorld(), onPos, face.getOpposite(), mode, speciesFunc);
 		}

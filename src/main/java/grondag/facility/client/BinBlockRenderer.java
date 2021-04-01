@@ -69,7 +69,7 @@ public class BinBlockRenderer extends StorageBlockRenderer<BinBlockEntity> {
 		// PERF - save this in render state
 		final Direction face = bin.getCachedState().get(XmProperties.FACE);
 		final World world = bin.getWorld();
-		final BlockPos occludingPos = bin.getPos().offset(face.getOpposite());
+		final BlockPos occludingPos = bin.getPos().method_35851(face.getOpposite());
 		final BlockState occludingState = world.getBlockState(occludingPos);
 
 		if(occludingState.isOpaqueFullCube(world, occludingPos)) {

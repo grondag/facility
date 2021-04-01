@@ -108,36 +108,36 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 
 	@Override
 	protected void computeScreenBounds() {
-		y = (height - backgroundHeight) / 2;
+		field_2800 = (height - backgroundHeight) / 2;
 
 		// if using REI, center on left 2/3 of screen to allow more room for REI
 		if(FacilityConfig.shiftScreensLeftIfReiPresent &&  FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {
-			x = ((width * 2 / 3) - backgroundWidth) / 2;
+			field_2776 = ((width * 2 / 3) - backgroundWidth) / 2;
 		} else {
-			x = (width - backgroundWidth) / 2;
+			field_2776 = (width - backgroundWidth) / 2;
 		}
 
 		// leave room for REI at bottom if vertical margins are tight
-		if(y <= 30) {
-			y = 10;
+		if(field_2800 <= 30) {
+			field_2800 = 10;
 		}
 	}
 
 	@Override
 	public void addControls() {
-		capacityBarLeft = x + theme.externalMargin;
-		itemPickerTop = y + headerHeight;
+		capacityBarLeft = field_2776 + theme.externalMargin;
+		itemPickerTop = field_2800 + headerHeight;
 		stackPicker = new ItemStackPicker<>(this, DELEGATE.LIST, ItemStorageAction::selectAndSend, d -> d.article().toStack(), DiscreteDisplayDelegate::getCount);
 		stackPicker.setItemsPerRow(9);
 
-		stackPicker.setLeft(x + inventoryLeft);
+		stackPicker.setLeft(field_2776 + inventoryLeft);
 		stackPicker.setWidth(ItemStackPicker.idealWidth(theme, 9));
 		stackPicker.setTop(itemPickerTop);
 		stackPicker.setHeight(storageHeight);
 		children.add(stackPicker);
 
 		final Button butt = new Button(this,
-				x + backgroundWidth - 40 - theme.externalMargin, y + theme.externalMargin,
+				field_2776 + backgroundWidth - 40 - theme.externalMargin, field_2800 + theme.externalMargin,
 				40, theme.singleLineWidgetHeight,
 				DisplayDelegate.getSortText(DELEGATE.getSortIndex())) {
 
@@ -154,7 +154,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 		this.addButton(butt);
 
 		filterField = new TextField(this,
-				x + inventoryLeft, y + theme.externalMargin,
+				field_2776 + inventoryLeft, field_2800 + theme.externalMargin,
 				80, theme.singleLineWidgetHeight, new LiteralText(""));
 		filterField.setMaxLength(32);
 		filterField.setSelected(true);
@@ -176,19 +176,19 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 		final int fillHeight = DELEGATE.capacity() == 0 ? 0 : (int) (barHeight * DELEGATE.usedCapacity() / DELEGATE.capacity());
 
 		// capacity bar
-		final int barBottom = y + theme.externalMargin + barHeight;
-		GuiUtil.drawRect(matrixStack.peek().getModel(), capacityBarLeft, y + theme.externalMargin,
+		final int barBottom = field_2800 + theme.externalMargin + barHeight;
+		GuiUtil.drawRect(matrixStack.peek().getModel(), capacityBarLeft, field_2800 + theme.externalMargin,
 				capacityBarLeft + theme.capacityBarWidth, barBottom, theme.capacityEmptyColor);
 
 		GuiUtil.drawRect(matrixStack.peek().getModel(), capacityBarLeft, barBottom - fillHeight,
 				capacityBarLeft + theme.capacityBarWidth, barBottom, theme.capacityFillColor);
 
 		// Draw here because drawforeground currently happens after this
-		if(DELEGATE.capacity() > 0 && mouseX >= x + theme.externalMargin && mouseX <= x + theme.externalMargin + theme.capacityBarWidth
-				&& mouseY >= y + theme.externalMargin && mouseY <= y + backgroundHeight - theme.externalMargin) {
+		if(DELEGATE.capacity() > 0 && mouseX >= field_2776 + theme.externalMargin && mouseX <= field_2776 + theme.externalMargin + theme.capacityBarWidth
+				&& mouseY >= field_2800 + theme.externalMargin && mouseY <= field_2800 + backgroundHeight - theme.externalMargin) {
 
 			//UGLY: standardize how tooltip coordinates work - wants screen relative but getting window relative as inputs here
-			this.renderTooltip(matrixStack, new LiteralText(DELEGATE.usedCapacity() + " / " + DELEGATE.capacity()), mouseX - x, mouseY - y);
+			this.renderTooltip(matrixStack, new LiteralText(DELEGATE.usedCapacity() + " / " + DELEGATE.capacity()), mouseX - field_2776, mouseY - field_2800);
 		}
 	}
 

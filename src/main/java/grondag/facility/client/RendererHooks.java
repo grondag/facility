@@ -60,8 +60,8 @@ public class RendererHooks {
 
 	private static RenderLayer makeCutout() {
 		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
-		.method_34577(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
-		.method_34578(new RenderPhase.class_5942(GameRenderer::getRenderTypeEntityCutoutShader))
+		.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
+		.shader(new RenderPhase.Shader(GameRenderer::getRenderTypeEntityCutoutShader))
 		.transparency(RenderSecrets._NO_TRANSPARENCY)
 		.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
 		.overlay(RenderSecrets._ENABLE_OVERLAY_COLOR)
@@ -72,8 +72,8 @@ public class RendererHooks {
 
 	private static RenderLayer makeTranslucent() {
 		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
-		.method_34577(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
-		.method_34578(new RenderPhase.class_5942(GameRenderer::getRenderTypeEntityTranslucentShader))
+		.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
+		.shader(new RenderPhase.Shader(GameRenderer::getRenderTypeEntityTranslucentShader))
 		.transparency(RenderSecrets._TRANSLUCENT_TRANSPARENCY)
 		.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
 		.overlay(RenderSecrets._ENABLE_OVERLAY_COLOR)
@@ -84,8 +84,8 @@ public class RendererHooks {
 
 	public static RenderLayer makeFluid() {
 		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
-		.method_34577(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
-		.method_34578(new RenderPhase.class_5942(GameRenderer::getRenderTypeSolidShader))
+		.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
+		.shader(new RenderPhase.Shader(GameRenderer::getRenderTypeSolidShader))
 		.transparency(RenderSecrets._NO_TRANSPARENCY)
 		.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
 		.overlay(RenderSecrets._DISABLE_OVERLAY_COLOR)
@@ -174,12 +174,22 @@ public class RendererHooks {
 		@Override
 		public VertexConsumer normal(float f, float g, float h) {
 			wrappedConsumer.normal(f, g, h);
-			return null;
+			return this;
 		}
 
 		@Override
 		public void next() {
 			wrappedConsumer.next();
+		}
+
+		@Override
+		public void fixedColor(int i, int j, int k, int l) {
+			wrappedConsumer.fixedColor(i, j, k, l);
+		}
+
+		@Override
+		public void method_35666() {
+			wrappedConsumer.method_35666();
 		}
 	}
 }
