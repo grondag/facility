@@ -142,7 +142,7 @@ public class PortableTankItem extends BlockItem {
 
 				if(store.getSupplier().apply(Article.of(tankFluid), 1, true) == 1) {
 					if(worldFluid == Fluids.EMPTY) {
-						final BlockPos placePos = blockState.getBlock() instanceof FluidFillable && tankFluid == Fluids.WATER ? onPos : onPos.method_35851(blockHitResult.getSide());
+						final BlockPos placePos = blockState.getBlock() instanceof FluidFillable && tankFluid == Fluids.WATER ? onPos : onPos.offset(blockHitResult.getSide());
 
 						if (placeFluid(tankFluid, playerEntity, world, placePos, blockHitResult)) {
 							if(store.getSupplier().apply(Article.of(tankFluid), 1, false) != 1) {
@@ -175,7 +175,7 @@ public class PortableTankItem extends BlockItem {
 			final boolean canPlace = blockState.canBucketPlace(fluid);
 
 			if (!blockState.isAir() && !canPlace && (!(blockState.getBlock() instanceof FluidFillable) || !((FluidFillable)blockState.getBlock()).canFillWithFluid(world, blockPos, blockState, fluid))) {
-				return blockHitResult == null ? false : placeFluid(fluid, playerEntity, world, blockHitResult.getBlockPos().method_35851(blockHitResult.getSide()), null);
+				return blockHitResult == null ? false : placeFluid(fluid, playerEntity, world, blockHitResult.getBlockPos().offset(blockHitResult.getSide()), null);
 			} else {
 				if (world.getDimension().isUltrawarm() && fluid.isIn(FluidTags.WATER)) {
 					final int i = blockPos.getX();

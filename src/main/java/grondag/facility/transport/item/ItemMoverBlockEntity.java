@@ -143,7 +143,7 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 		resetTickHandler = false;
 
 		final Direction face = getCachedState().get(XmProperties.FACE);
-		targetPos = getPos().method_35851(face);
+		targetPos = getPos().offset(face);
 		targetFace = face.getOpposite();
 
 		final Store storage =  Store.STORAGE_COMPONENT.getAccess(world, targetPos).get();

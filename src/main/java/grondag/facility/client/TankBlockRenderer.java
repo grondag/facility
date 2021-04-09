@@ -77,25 +77,25 @@ public class TankBlockRenderer extends StorageBlockRenderer<TankBlockEntity> {
 		final float yMax = 0.1f + renderState.level * 0.8f;
 		final float vMax = sprite.getMinV() + (sprite.getMaxV() - sprite.getMinV()) * renderState.level;
 
-		int light = renderState.glowing ? 0xF000F0 : WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().method_35861());
+		int light = renderState.glowing ? 0xF000F0 : WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().north());
 		vc.vertex(mat, 0.9f, 0.1f, 0).color(r, g, b, 255).texture(sprite.getMinU(), sprite.getMinV()).light(light).normal(nMat, 0, 0, -1).next();
 		vc.vertex(mat, 0.1f, 0.1f, 0).color(r, g, b, 255).texture(sprite.getMaxU(), sprite.getMinV()).light(light).normal(nMat, 0, 0, -1).next();
 		vc.vertex(mat, 0.1f, yMax, 0).color(r, g, b, 255).texture(sprite.getMaxU(), vMax).light(light).normal(nMat, 0, 0, -1).next();
 		vc.vertex(mat, 0.9f, yMax, 0).color(r, g, b, 255).texture(sprite.getMinU(), vMax).light(light).normal(nMat, 0, 0, -1).next();
 
-		light = renderState.glowing ? 0xF000F0 : WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().method_35859());
+		light = renderState.glowing ? 0xF000F0 : WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().south());
 		vc.vertex(mat, 0.1f, 0.1f, 1).color(r, g, b, 255).texture(sprite.getMinU(), sprite.getMinV()).light(light).normal(nMat, 0, 0, 1).next();
 		vc.vertex(mat, 0.9f, 0.1f, 1).color(r, g, b, 255).texture(sprite.getMaxU(), sprite.getMinV()).light(light).normal(nMat, 0, 0, 1).next();
 		vc.vertex(mat, 0.9f, yMax, 1).color(r, g, b, 255).texture(sprite.getMaxU(), vMax).light(light).normal(nMat, 0, 0, 1).next();
 		vc.vertex(mat, 0.1f, yMax, 1).color(r, g, b, 255).texture(sprite.getMinU(), vMax).light(light).normal(nMat, 0, 0, 1).next();
 
-		light = renderState.glowing ? 0xF000F0 : WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().method_35857());
+		light = renderState.glowing ? 0xF000F0 : WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().west());
 		vc.vertex(mat, 0, 0.1f, 0.1f).color(r, g, b, 255).texture(sprite.getMinU(), sprite.getMinV()).light(light).normal(nMat, -1, 0, 0).next();
 		vc.vertex(mat, 0, 0.1f, 0.9f).color(r, g, b, 255).texture(sprite.getMaxU(), sprite.getMinV()).light(light).normal(nMat, -1, 0, 0).next();
 		vc.vertex(mat, 0, yMax, 0.9f).color(r, g, b, 255).texture(sprite.getMaxU(), vMax).light(light).normal(nMat, -1, 0, 0).next();
 		vc.vertex(mat, 0, yMax, 0.1f).color(r, g, b, 255).texture(sprite.getMinU(), vMax).light(light).normal(nMat, -1, 0, 0).next();
 
-		light = renderState.glowing ? 0xF000F0 : WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().method_35855());
+		light = renderState.glowing ? 0xF000F0 : WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().east());
 		vc.vertex(mat, 1, 0.1f, 0.9f).color(r, g, b, 255).texture(sprite.getMinU(), sprite.getMinV()).light(light).normal(nMat, 1, 0, 0).next();
 		vc.vertex(mat, 1, 0.1f, 0.1f).color(r, g, b, 255).texture(sprite.getMaxU(), sprite.getMinV()).light(light).normal(nMat, 1, 0, 0).next();
 		vc.vertex(mat, 1, yMax, 0.1f).color(r, g, b, 255).texture(sprite.getMaxU(), vMax).light(light).normal(nMat, 1, 0, 0).next();

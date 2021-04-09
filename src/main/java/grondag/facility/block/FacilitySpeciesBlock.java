@@ -48,7 +48,7 @@ public class FacilitySpeciesBlock extends FacilityBlock {
 	@Override
 	public BlockState getPlacementState(ItemPlacementContext context) {
 		final Direction face = context.getPlayerLookDirection();
-		final BlockPos onPos = context.getBlockPos().method_35851(context.getSide().getOpposite());
+		final BlockPos onPos = context.getBlockPos().offset(context.getSide().getOpposite());
 		final SpeciesMode mode = ModKeys.isPrimaryPressed(context.getPlayer()) ? SpeciesMode.COUNTER_MOST : SpeciesMode.MATCH_MOST;
 		final int species = Species.speciesForPlacement(context.getWorld(), onPos, face.getOpposite(), mode, speciesFunc);
 		return getDefaultState().with(SpeciesProperty.SPECIES, species);
