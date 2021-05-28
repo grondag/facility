@@ -188,8 +188,8 @@ public class RendererHooks {
 		}
 
 		@Override
-		public void method_35666() {
-			wrappedConsumer.method_35666();
+		public void unfixColor() {
+			wrappedConsumer.unfixColor();
 		}
 	}
 }
