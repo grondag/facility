@@ -134,7 +134,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 		stackPicker.setWidth(ItemStackPicker.idealWidth(theme, 9));
 		stackPicker.setTop(itemPickerTop);
 		stackPicker.setHeight(storageHeight);
-		addChild(stackPicker);
+		addDrawable(stackPicker);
 
 		final Button butt = new Button(this,
 				x + backgroundWidth - 40 - theme.externalMargin, y + theme.externalMargin,
@@ -151,7 +151,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 			}
 		};
 
-		method_37063(butt);
+		addDrawableChild(butt);
 
 		filterField = new TextField(this,
 				x + inventoryLeft, y + theme.externalMargin,
@@ -160,7 +160,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 		filterField.setSelected(true);
 		filterField.setChangedListener(s -> DELEGATE.setFilter(s));
 
-		this.addChild(filterField);
+		this.addDrawable(filterField);
 
 		setInitialFocus(filterField);
 	}
