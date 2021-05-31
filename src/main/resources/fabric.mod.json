@@ -35,9 +35,5 @@
     "fluidity": "*",
     "exotic-matter": "*"
   },
-  "custom": {
-    "modmenu:api": false,
-    "modmenu:clientsideOnly": false
-  },
   "accessWidener": "facility.accesswidener"
 }
