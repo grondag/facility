@@ -62,9 +62,12 @@ dependencies {
 		exclude group: "net.fabricmc.fabric-loader"
 	}
     
-    //modImplementation ("me.shedaniel:RoughlyEnoughItems:${project.rei_version}") {
-    //	 exclude(module: "ModMenu")
-    //}
+    modCompileOnly ("me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}") {
+    	 exclude(module: "ModMenu")
+    }
+    modRuntime ("me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}") {
+        exclude(module: "ModMenu")
+    }
     
     // modRuntime ("io.github.cottonmc:LibCD:${project.libcd_version}") {
     //    transitive = false

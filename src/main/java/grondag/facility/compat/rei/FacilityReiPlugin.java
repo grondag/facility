@@ -15,26 +15,15 @@
  ******************************************************************************/
 package grondag.facility.compat.rei;
 
-import net.minecraft.util.Identifier;
+import grondag.facility.storage.item.PortableCrateItem;
+import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
+import me.shedaniel.rei.api.client.registry.entry.EntryRegistry;
+import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
+import net.minecraft.item.ItemStack;
 
-import grondag.facility.Facility;
-
-// FIX: restore when REI available again
-public class FacilityReiPlugin { //implements REIPluginV0 {
-	public static final Identifier ID = Facility.REG.id("rei_plugin");
-
-//	@Override
-//	public Identifier getPluginIdentifier() {
-//		return ID;
-//	}
-//
-//	@Override
-//	public SemanticVersion getMinimumVersion() throws VersionParsingException {
-//		return SemanticVersion.parse("3.0");
-//	}
-//
-//	@Override
-//	public void registerEntries(EntryRegistry entryRegistry) {
-//		entryRegistry.getStacksList().removeIf(entry -> entry.getType() == EntryStack.Type.ITEM && entry.getItemStack().getItem() instanceof PortableCrateItem);
-//	}
+public class FacilityReiPlugin implements REIClientPlugin {
+	@Override
+	public void registerEntries(EntryRegistry registry) {
+		registry.removeEntryIf(entry -> entry.getType() == VanillaEntryTypes.ITEM && entry.<ItemStack>castValue().getItem() instanceof PortableCrateItem);
+	}
 }
