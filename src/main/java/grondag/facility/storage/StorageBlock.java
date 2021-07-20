@@ -123,7 +123,7 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 			final NbtCompound tag = myBlockEntity.toContainerTag(new NbtCompound());
 
 			if (!tag.isEmpty()) {
-				stack.putSubTag("BlockEntityTag", tag);
+				stack.setSubNbt("BlockEntityTag", tag);
 			}
 
 			stack.setCustomName(new LiteralText(myBlockEntity.getLabel()));

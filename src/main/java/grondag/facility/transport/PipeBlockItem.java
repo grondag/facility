@@ -34,7 +34,7 @@ public class PipeBlockItem extends BlockItem {
 			return super.use(world, playerEntity, hand);
 		} else {
 			final ItemStack itemStack = playerEntity.getStackInHand(hand);
-			itemStack.setTag(cycleTag(itemStack, playerEntity.isSneaking()));
+			itemStack.setNbt(cycleTag(itemStack, playerEntity.isSneaking()));
 			playerEntity.setStackInHand(hand, itemStack);
 
 			final int spec = species(itemStack);
@@ -45,7 +45,7 @@ public class PipeBlockItem extends BlockItem {
 	}
 
 	private static NbtCompound cycleTag(ItemStack itemStack, boolean reverse) {
-		NbtCompound tag = itemStack.getTag();
+		NbtCompound tag = itemStack.getNbt();
 
 		if (tag == null) {
 			tag = new NbtCompound();
@@ -73,7 +73,7 @@ public class PipeBlockItem extends BlockItem {
 	}
 
 	public static int species(ItemStack itemStack) {
-		final NbtCompound tag = itemStack.getTag();
+		final NbtCompound tag = itemStack.getNbt();
 
 		if (tag == null || !tag.contains(SPECIES)) {
 			return AUTO_SELECT_SPECIES;

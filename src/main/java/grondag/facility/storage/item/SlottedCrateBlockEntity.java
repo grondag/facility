@@ -84,6 +84,6 @@ public class SlottedCrateBlockEntity extends CrateBlockEntity implements Invento
 
 	@Override
 	public boolean isValid(int slot, ItemStack stack) {
-		return !stack.hasTag() || Block.getBlockFromItem(stack.getItem()).getClass() != CrateBlock.class;
+		return !stack.hasNbt() || Block.getBlockFromItem(stack.getItem()).getClass() != CrateBlock.class;
 	}
 }

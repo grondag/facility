@@ -22,15 +22,15 @@ public class PortableStore extends AbstractPortableStore {
 
 	@Override
 	protected NbtCompound readTagFromStack(ItemStack stack) {
-		return stack.getOrCreateSubTag("BlockEntityTag").getCompound(StorageBlockEntity.TAG_STORAGE);
+		return stack.getOrCreateSubNbt("BlockEntityTag").getCompound(StorageBlockEntity.TAG_STORAGE);
 	}
 
 	@Override
 	protected void writeTagToStack(ItemStack stack, NbtCompound tag) {
 		if(isEmpty()) {
-			stack.setTag(null);
+			stack.setNbt(null);
 		} else {
-			stack.getOrCreateSubTag("BlockEntityTag").put(StorageBlockEntity.TAG_STORAGE, tag);
+			stack.getOrCreateSubNbt("BlockEntityTag").put(StorageBlockEntity.TAG_STORAGE, tag);
 			writeDamage(stack, this);
 		}
 	}

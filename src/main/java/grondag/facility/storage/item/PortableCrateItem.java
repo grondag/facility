@@ -61,7 +61,7 @@ public class PortableCrateItem extends BlockItem {
 			return TypedActionResult.pass(itemStack);
 		}
 
-		if(itemStack.hasTag()) {
+		if(itemStack.hasNbt()) {
 			if (!world.isClient) {
 				// TODO: get the label from BE tags, not currently displayed
 				final String label = "todo";

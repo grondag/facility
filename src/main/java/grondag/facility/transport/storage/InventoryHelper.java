@@ -53,6 +53,6 @@ public abstract class InventoryHelper {
 	public static boolean canStacksCombine(ItemStack targetStack, ItemStack sourceStack) {
 		return targetStack.getItem() == sourceStack.getItem()
 				&&  targetStack.getCount() < targetStack.getMaxCount()
-				&& ItemStack.areTagsEqual(targetStack, sourceStack);
+				&& ItemStack.areNbtEqual(targetStack, sourceStack);
 	}
 }

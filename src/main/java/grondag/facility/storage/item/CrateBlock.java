@@ -95,7 +95,7 @@ public class CrateBlock extends StorageBlock {
 	@Environment(EnvType.CLIENT)
 	public void appendTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
 		super.appendTooltip(itemStack, blockView, list, tooltipContext);
-		final NbtCompound beTag = itemStack.getSubTag("BlockEntityTag");
+		final NbtCompound beTag = itemStack.getSubNbt("BlockEntityTag");
 
 		if (beTag != null && beTag.contains(CrateBlockEntity.TAG_STORAGE)) {
 			final NbtList tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStore.TAG_ITEMS, 10);

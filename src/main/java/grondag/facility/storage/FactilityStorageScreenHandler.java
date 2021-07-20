@@ -128,13 +128,13 @@ public abstract class FactilityStorageScreenHandler<T extends AbstractStorageSer
 	}
 
 	@Override
-	public void setStackInSlot(int i, ItemStack itemStack) {
-		super.setStackInSlot(i, itemStack);
+	public void setStackInSlot(int i, int j, ItemStack itemStack) {
+		super.setStackInSlot(i, j, itemStack);
 	}
 
 	@Override
-	public void updateSlotStacks(List<ItemStack> list) {
-		super.updateSlotStacks(list);
+	public void updateSlotStacks(int i, List<ItemStack> list, ItemStack itemStack) {
+		super.updateSlotStacks(i, list, itemStack);
 	}
 
 	@Override
