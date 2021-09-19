@@ -19,25 +19,25 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -56,7 +56,7 @@ import grondag.xm.api.connect.world.BlockTest;
 public class TankBlock extends StorageBlock implements BlockAttackInteractionAware {
 	public final boolean isCreative;
 
-	public TankBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, boolean isCreative) {
+	public TankBlock(Block.Properties settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, boolean isCreative) {
 		super(settings, beFactory);
 		this.isCreative = isCreative;
 	}
@@ -67,25 +67,23 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 	public static boolean canConnect(BlockState fromState, BlockState toState) {
 		return fromState.getBlock() instanceof TankBlock
 		&& toState.getBlock() instanceof TankBlock
-		&& fromState.get(SpeciesProperty.SPECIES) == toState.get(SpeciesProperty.SPECIES);
+		&& fromState.getValue(SpeciesProperty.SPECIES) == toState.getValue(SpeciesProperty.SPECIES);
 	}
 
 	@Override
-	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-		final ItemStack stack = player.getStackInHand(hand);
+	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		final ItemStack stack = player.getItemInHand(hand);
 
-		if(Block.getBlockFromItem(stack.getItem()) instanceof TankBlock) {
-			return ActionResult.PASS;
+		if(Block.byItem(stack.getItem()) instanceof TankBlock) {
+			return InteractionResult.PASS;
 		}
 
-		if (!world.isClient) {
+		if (!world.isClientSide) {
 			final BlockEntity be = world.getBlockEntity(pos);
 
-			if(be instanceof TankBlockEntity) {
-				final TankBlockEntity tankBe = (TankBlockEntity) be;
-
-				if(Store.STORAGE_COMPONENT.applyActionsWithHeld(tankBe.getEffectiveStorage(), (ServerPlayerEntity)player)) {
-					return ActionResult.SUCCESS;
+			if(be instanceof TankBlockEntity tankBe) {
+				if(Store.STORAGE_COMPONENT.applyActionsWithHeld(tankBe.getEffectiveStorage(), (ServerPlayer)player)) {
+					return InteractionResult.SUCCESS;
 				} //else {
 				//					final String label = tankBe.getLabel();
 				//
@@ -97,13 +95,13 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 			}
 		}
 
-		return ActionResult.SUCCESS;
+		return InteractionResult.SUCCESS;
 	}
 
 	protected static long lastClickMs = 0;
 
 	@Override
-	public boolean onAttackInteraction(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, Direction face) {
+	public boolean onAttackInteraction(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, Direction face) {
 		//TODO: implement
 		//		if(world.isClient && state.getBlock() == this) {
 		//			final long t = System.currentTimeMillis();
@@ -120,12 +118,12 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void appendTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
-		super.appendTooltip(itemStack, blockView, list, tooltipContext);
-		final NbtCompound beTag = itemStack.getSubNbt("BlockEntityTag");
+	public void appendHoverText(ItemStack itemStack, @Nullable BlockGetter blockView, List<Component> list, TooltipFlag tooltipContext) {
+		super.appendHoverText(itemStack, blockView, list, tooltipContext);
+		final CompoundTag beTag = itemStack.getTagElement("BlockEntityTag");
 
 		if (beTag != null && beTag.contains(CrateBlockEntity.TAG_STORAGE)) {
-			final NbtList tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStore.TAG_ITEMS, 10);
+			final ListTag tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStore.TAG_ITEMS, 10);
 			final int limit = Math.min(9,tagList.size());
 			final StoredDiscreteArticle lookup = new StoredDiscreteArticle();
 
@@ -133,14 +131,14 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 				lookup.readTag(tagList.getCompound(i));
 
 				if(!lookup.isEmpty()) {
-					final MutableText text = lookup.article().toStack().getName().copy();
+					final MutableComponent text = lookup.article().toStack().getHoverName().plainCopy();
 					text.append(" x").append(String.valueOf(lookup.count()));
 					list.add(text);
 				}
 			}
 
 			if(limit < tagList.size()) {
-				list.add(new LiteralText("..."));
+				list.add(new TextComponent("..."));
 			}
 		}
 	}

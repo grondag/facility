@@ -19,20 +19,20 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -53,7 +53,7 @@ import grondag.xm.api.connect.world.BlockTestContext;
 public class PipeBlock extends FacilitySpeciesBlock {
 	public final boolean hasGlow;
 
-	public PipeBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, boolean hasGlow) {
+	public PipeBlock(Block.Properties settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, boolean hasGlow) {
 		super(settings, beFactory, SpeciesProperty.speciesForBlockType(PipeBlock.class));
 		this.hasGlow = hasGlow;
 	}
@@ -66,7 +66,7 @@ public class PipeBlock extends FacilitySpeciesBlock {
 		assert ctx.fromBlockState().getBlock() instanceof StraightPipeBlock : "Non-axis `from` block in JOIN_TEST_WITH_AXIS";
 
 		final Direction toFace = ctx.toFace();
-		return toFace != null && toFace.getAxis() == ctx.fromBlockState().get(XmProperties.AXIS);
+		return toFace != null && toFace.getAxis() == ctx.fromBlockState().getValue(XmProperties.AXIS);
 	};
 
 	public static boolean canConnect(BlockTestContext<?> ctx) {
@@ -87,12 +87,12 @@ public class PipeBlock extends FacilitySpeciesBlock {
 	}
 
 	public static boolean canConnectSelf(BlockState fromState, BlockPos fromPos, BlockState toState, BlockPos toPos) {
-		if(fromState.get(SpeciesProperty.SPECIES) != toState.get(SpeciesProperty.SPECIES)) {
+		if(fromState.getValue(SpeciesProperty.SPECIES) != toState.getValue(SpeciesProperty.SPECIES)) {
 			return false;
 		}
 
-		final Comparable<?> fromAxis = fromState.getEntries().get(XmProperties.AXIS);
-		final Comparable<?> toAxis = toState.getEntries().get(XmProperties.AXIS);
+		final Comparable<?> fromAxis = fromState.getValues().get(XmProperties.AXIS);
+		final Comparable<?> toAxis = toState.getValues().get(XmProperties.AXIS);
 
 		if(fromAxis == null) {
 			if(toAxis == null) {
@@ -100,12 +100,12 @@ public class PipeBlock extends FacilitySpeciesBlock {
 				return true;
 			} else {
 				// require to-axis point to the flexible one
-				return toAxis == Direction.fromVector(toPos.getX() - fromPos.getX(), toPos.getY() - fromPos.getY(), toPos.getZ() - fromPos.getZ()).getAxis();
+				return toAxis == Direction.fromNormal(toPos.getX() - fromPos.getX(), toPos.getY() - fromPos.getY(), toPos.getZ() - fromPos.getZ()).getAxis();
 			}
 		} else { // have from axis
 			if(toAxis == null) {
 				// require from-axis point to the flexible one
-				return fromAxis == Direction.fromVector(toPos.getX() - fromPos.getX(), toPos.getY() - fromPos.getY(), toPos.getZ() - fromPos.getZ()).getAxis();
+				return fromAxis == Direction.fromNormal(toPos.getX() - fromPos.getX(), toPos.getY() - fromPos.getY(), toPos.getZ() - fromPos.getZ()).getAxis();
 			} else {
 				// both straight, require same axis
 				return toAxis == fromAxis;
@@ -114,37 +114,37 @@ public class PipeBlock extends FacilitySpeciesBlock {
 	}
 
 	@Override
-	public VoxelShape getOutlineShape(BlockState blockState, BlockView blockView, BlockPos pos, ShapeContext entityContext) {
+	public VoxelShape getShape(BlockState blockState, BlockGetter blockView, BlockPos pos, CollisionContext entityContext) {
 		return CollisionDispatcher.shapeFor(XmBlockState.modelState(blockState, blockView, pos, true));
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void appendTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
-		super.appendTooltip(itemStack, blockView, list, tooltipContext);
-		list.add(new TranslatableText("transport.facility.utb1").formatted(Formatting.GOLD));
-		list.add(new TranslatableText("transport.facility.utb1.desc").formatted(Formatting.GOLD));
+	public void appendHoverText(ItemStack itemStack, @Nullable BlockGetter blockView, List<Component> list, TooltipFlag tooltipContext) {
+		super.appendHoverText(itemStack, blockView, list, tooltipContext);
+		list.add(new TranslatableComponent("transport.facility.utb1").withStyle(ChatFormatting.GOLD));
+		list.add(new TranslatableComponent("transport.facility.utb1.desc").withStyle(ChatFormatting.GOLD));
 
 		final int species = PipeBlockItem.species(itemStack);
 
 		if (species == PipeBlockItem.AUTO_SELECT_SPECIES) {
-			list.add(new TranslatableText("transport.facility.circuit.auto").formatted(Formatting.AQUA));
+			list.add(new TranslatableComponent("transport.facility.circuit.auto").withStyle(ChatFormatting.AQUA));
 		} else {
-			list.add(new TranslatableText("transport.facility.circuit.num", species).formatted(Formatting.AQUA));
+			list.add(new TranslatableComponent("transport.facility.circuit.num", species).withStyle(ChatFormatting.AQUA));
 		}
 	}
 
 	@Override
-	public BlockState getPlacementState(ItemPlacementContext context) {
-		int species = PipeBlockItem.species(context.getStack());
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		int species = PipeBlockItem.species(context.getItemInHand());
 
 		if (species == PipeBlockItem.AUTO_SELECT_SPECIES) {
-			final Direction face = context.getPlayerLookDirection();
-			final BlockPos onPos = context.getBlockPos().offset(context.getSide().getOpposite());
+			final Direction face = context.getNearestLookingDirection();
+			final BlockPos onPos = context.getClickedPos().relative(context.getClickedFace().getOpposite());
 			final SpeciesMode mode = ModKeys.isPrimaryPressed(context.getPlayer()) ? SpeciesMode.COUNTER_MOST : SpeciesMode.MATCH_MOST;
-			species = Species.speciesForPlacement(context.getWorld(), onPos, face.getOpposite(), mode, speciesFunc);
+			species = Species.speciesForPlacement(context.getLevel(), onPos, face.getOpposite(), mode, speciesFunc);
 		}
 
-		return getDefaultState().with(SpeciesProperty.SPECIES, species);
+		return defaultBlockState().setValue(SpeciesProperty.SPECIES, species);
 	}
 }

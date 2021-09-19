@@ -2,23 +2,21 @@ package grondag.facility.storage.item;
 
 import java.util.List;
 import java.util.function.Supplier;
-
-import net.minecraft.block.Block;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.world.World;
-
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import grondag.facility.init.ScreenHandlers;
 import grondag.facility.storage.PortableStore;
 import grondag.fluidity.api.storage.Store;
@@ -27,63 +25,63 @@ public class PortableCrateItem extends BlockItem {
 	public final PortableStore displayCrate;
 	protected final Supplier<Store> storeFactory;
 
-	public PortableCrateItem(Block block, Settings settings, Supplier<Store> storeFactory) {
+	public PortableCrateItem(Block block, Properties settings, Supplier<Store> storeFactory) {
 		super(block, settings);
 		displayCrate = new PortableStore(storeFactory.get());
 		this.storeFactory = storeFactory;
 	}
 
-	public PortableStore makeStore(PlayerEntity player, Hand hand) {
-		return new PortableStore(storeFactory.get(), () -> player.getStackInHand(hand), s -> player.setStackInHand(hand, s));
+	public PortableStore makeStore(Player player, InteractionHand hand) {
+		return new PortableStore(storeFactory.get(), () -> player.getItemInHand(hand), s -> player.setItemInHand(hand, s));
 	}
 
 	@Override
-	public void appendStacks(ItemGroup itemGroup, DefaultedList<ItemStack> defaultedList) {
+	public void fillItemCategory(CreativeModeTab itemGroup, NonNullList<ItemStack> defaultedList) {
 		// NOOP
 	}
 
 	@Override
-	public ActionResult useOnBlock(ItemUsageContext ctx) {
-		if(!ctx.getPlayer().isSneaking()) {
-			if(use(ctx.getWorld(), ctx.getPlayer(), ctx.getHand()).getResult().isAccepted()) {
-				return ActionResult.SUCCESS;
+	public InteractionResult useOn(UseOnContext ctx) {
+		if(!ctx.getPlayer().isShiftKeyDown()) {
+			if(use(ctx.getLevel(), ctx.getPlayer(), ctx.getHand()).getResult().consumesAction()) {
+				return InteractionResult.SUCCESS;
 			}
 		}
 
-		return super.useOnBlock(ctx);
+		return super.useOn(ctx);
 	}
 
 	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
-		final ItemStack itemStack = playerEntity.getStackInHand(hand);
+	public InteractionResultHolder<ItemStack> use(Level world, Player playerEntity, InteractionHand hand) {
+		final ItemStack itemStack = playerEntity.getItemInHand(hand);
 
 		if(itemStack.getItem() != this) {
-			return TypedActionResult.pass(itemStack);
+			return InteractionResultHolder.pass(itemStack);
 		}
 
-		if(itemStack.hasNbt()) {
-			if (!world.isClient) {
+		if(itemStack.hasTag()) {
+			if (!world.isClientSide) {
 				// TODO: get the label from BE tags, not currently displayed
 				final String label = "todo";
-				((ServerPlayerEntity) playerEntity).openHandledScreen(ScreenHandlers.crateItemFactory(label, hand));
+				((ServerPlayer) playerEntity).openMenu(ScreenHandlers.crateItemFactory(label, hand));
 			}
 
-			return TypedActionResult.success(itemStack);
+			return InteractionResultHolder.success(itemStack);
 		}
 
-		return TypedActionResult.pass(itemStack);
+		return InteractionResultHolder.pass(itemStack);
 	}
 
 	@Override
-	public void appendTooltip(ItemStack itemStack, World world, List<Text> list, TooltipContext tooltipContext) {
-		super.appendTooltip(itemStack, world, list, tooltipContext);
+	public void appendHoverText(ItemStack itemStack, Level world, List<Component> list, TooltipFlag tooltipContext) {
+		super.appendHoverText(itemStack, world, list, tooltipContext);
 		// TODO: localize
 		displayCrate.readFromStack(itemStack);
 
 		if(displayCrate.isEmpty()) {
-			list.add(new LiteralText("Empty"));
+			list.add(new TextComponent("Empty"));
 		} else {
-			list.add(new LiteralText(Long.toString(displayCrate.count()) + " of " + displayCrate.capacity()));
+			list.add(new TextComponent(Long.toString(displayCrate.count()) + " of " + displayCrate.capacity()));
 		}
 	}
 }

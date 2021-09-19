@@ -16,17 +16,14 @@
 package grondag.facility.block;
 
 import java.util.Arrays;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockPos.MutableBlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.Mutable;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
-
 import grondag.facility.storage.TrackedBlockEntity;
 import grondag.fermion.world.WorldTaskManager;
 
@@ -40,8 +37,8 @@ public abstract class NeighboredBlockEntity<T> extends TrackedBlockEntity {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void refreshNeighbor(Mutable searchPos, Direction side) {
-		final BlockEntity be = world.isChunkLoaded(searchPos) ? world.getBlockEntity(searchPos) : null;
+	private void refreshNeighbor(MutableBlockPos searchPos, Direction side) {
+		final BlockEntity be = level.hasChunkAt(searchPos) ? level.getBlockEntity(searchPos) : null;
 		final int i = side.ordinal();
 		final T existing = (T) neighbors[6 + i];
 
@@ -73,33 +70,33 @@ public abstract class NeighboredBlockEntity<T> extends TrackedBlockEntity {
 	protected abstract void onClose(T existing);
 
 	@Override
-	public void setWorld(World world) {
-		super.setWorld(world);
+	public void setLevel(Level world) {
+		super.setLevel(world);
 		enqueUpdate();
 	}
 
 	protected void enqueUpdate() {
-		if(!isEnqued && !world.isClient) {
+		if(!isEnqued && !level.isClientSide) {
 			isEnqued = true;
 			WorldTaskManager.enqueueImmediate(this::updateNeighbors);
 		}
 	}
 
 	@Override
-	public void markRemoved() {
-		super.markRemoved();
+	public void setRemoved() {
+		super.setRemoved();
 		enqueUpdate();
 	}
 
 	@Override
-	public void cancelRemoval() {
-		super.cancelRemoval();
+	public void clearRemoved() {
+		super.clearRemoved();
 		enqueUpdate();
 	}
 
 	@Override
-	public void markDirty() {
-		super.markDirty();
+	public void setChanged() {
+		super.setChanged();
 		enqueUpdate();
 	}
 
@@ -118,7 +115,7 @@ public abstract class NeighboredBlockEntity<T> extends TrackedBlockEntity {
 	}
 
 	public void updateNeighbors() {
-		if(world == null || world.isClient) {
+		if(level == null || level.isClientSide) {
 			return;
 		}
 
@@ -129,10 +126,10 @@ public abstract class NeighboredBlockEntity<T> extends TrackedBlockEntity {
 			return;
 		}
 
-		final long myPos = pos.asLong();
+		final long myPos = worldPosition.asLong();
 		neighborCount = 0;
 
-		final BlockPos.Mutable p = SEARCH_POS.get();
+		final BlockPos.MutableBlockPos p = SEARCH_POS.get();
 		refreshNeighbor(p.set(myPos).move(Direction.EAST), Direction.WEST);
 		refreshNeighbor(p.set(myPos).move(Direction.WEST), Direction.EAST);
 		refreshNeighbor(p.set(myPos).move(Direction.NORTH), Direction.SOUTH);
@@ -144,5 +141,5 @@ public abstract class NeighboredBlockEntity<T> extends TrackedBlockEntity {
 		Arrays.fill(neighbors, neighborCount, 6, null);
 	}
 
-	private static final ThreadLocal<BlockPos.Mutable> SEARCH_POS = ThreadLocal.withInitial(BlockPos.Mutable::new);
+	private static final ThreadLocal<BlockPos.MutableBlockPos> SEARCH_POS = ThreadLocal.withInitial(BlockPos.MutableBlockPos::new);
 }

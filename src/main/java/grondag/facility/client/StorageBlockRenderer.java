@@ -15,29 +15,27 @@
  ******************************************************************************/
 package grondag.facility.client;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import com.mojang.blaze3d.vertex.PoseStack;
 import grondag.facility.storage.StorageBlockEntity;
 
 @Environment(EnvType.CLIENT)
 public class StorageBlockRenderer<T extends StorageBlockEntity<?, ?>> implements BlockEntityRenderer<T> {
-	protected final MinecraftClient mc = MinecraftClient.getInstance();
+	protected final Minecraft mc = Minecraft.getInstance();
 	protected final ItemRenderer ir = mc.getItemRenderer();
 
-	public StorageBlockRenderer(BlockEntityRendererFactory.Context ctx) {
+	public StorageBlockRenderer(BlockEntityRendererProvider.Context ctx) {
 		// NOOP
 	}
 
 	@Override
-	public void render(T blockEntity, float f, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, int j) {
+	public void render(T blockEntity, float f, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int i, int j) {
 
 	}
 }

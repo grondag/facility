@@ -1,9 +1,5 @@
 package grondag.facility.transport.model;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.Direction;
-
 import grondag.facility.storage.StorageBlock;
 import grondag.facility.transport.PipeBlock;
 import grondag.xm.api.block.XmProperties;
@@ -11,6 +7,9 @@ import grondag.xm.api.connect.state.SimpleJoinState;
 import grondag.xm.api.connect.world.BlockNeighbors;
 import grondag.xm.api.modelstate.primitive.MutablePrimitiveState;
 import grondag.xm.api.modelstate.primitive.PrimitiveStateMutator;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public abstract class PipeModifiers {
 	private PipeModifiers() {}
@@ -45,7 +44,7 @@ public abstract class PipeModifiers {
 		if(refreshFromWorld) {
 			int bits = connectorBits(modelState, neighbors);
 			// movers always connect on target face
-			bits |= 1 << blockState.get(XmProperties.FACE).ordinal();
+			bits |= 1 << blockState.getValue(XmProperties.FACE).ordinal();
 			modelState.alternateJoinBits(bits);
 			modelState.primitiveBits(glowBits(blockState));
 		}

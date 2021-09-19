@@ -15,17 +15,15 @@
  ******************************************************************************/
 package grondag.facility.client;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-
 import net.fabricmc.loader.api.FabricLoader;
-
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.Slot;
+import com.mojang.blaze3d.vertex.PoseStack;
 import grondag.facility.FacilityConfig;
 import grondag.facility.storage.FactilityStorageScreenHandler;
 import grondag.fermion.gui.AbstractSimpleContainerScreen;
@@ -52,9 +50,9 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 	protected int itemPickerTop;
 	protected int inventoryLeft;
 
-	public ItemStorageScreen(FactilityStorageScreenHandler<DiscreteStorageServerDelegate> container, PlayerInventory inventory, Text title) {
+	public ItemStorageScreen(FactilityStorageScreenHandler<DiscreteStorageServerDelegate> container, Inventory inventory, Component title) {
 		// TODO: something something localization
-		super(container, inventory, new TranslatableText("Facility Storage"));
+		super(container, inventory, new TranslatableComponent("Facility Storage"));
 	}
 
 	@Override
@@ -62,82 +60,82 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 		DELEGATE.setFilter("");
 		// FIXME: put back when TTF font rendering works again - may be a Vanilla issue?
 		//textRenderer = FacilityConfig.useVanillaFonts ? client.textRenderer : FontHackClient.getTextRenderer(FontHackClient.READING_FONT);
-		textRenderer = client.textRenderer;
+		font = minecraft.font;
 		preInitLayout();
 		super.init();
 	}
 
 	protected void preInitLayout() {
 
-		backgroundWidth = theme.externalMargin + theme.capacityBarWidth + theme.internalMargin + ItemStackPicker.idealWidth(theme, 9) + theme.externalMargin ;
+		imageWidth = theme.externalMargin + theme.capacityBarWidth + theme.internalMargin + ItemStackPicker.idealWidth(theme, 9) + theme.externalMargin ;
 
 		headerHeight = theme.singleLineWidgetHeight + theme.externalMargin + theme.internalMargin;
 		final int fixedHeight = headerHeight + theme.itemSlotSpacing * 4 + theme.itemSpacing + theme.externalMargin;
-		final int availableHeight = MinecraftClient.getInstance().getWindow().getScaledHeight() - 30 - fixedHeight;
+		final int availableHeight = Minecraft.getInstance().getWindow().getGuiScaledHeight() - 30 - fixedHeight;
 		final int storageRows = Math.min(8, availableHeight / theme.itemRowHeightWithCaption);
 
 		storageHeight = storageRows * theme.itemRowHeightWithCaption;
-		backgroundHeight = fixedHeight + storageHeight;
+		imageHeight = fixedHeight + storageHeight;
 
 		/** distance from edge of dialog to start of player inventory area */
 		inventoryLeft = theme.externalMargin + theme.capacityBarWidth + theme.internalMargin;
 
 		/** distance from top of dialog to start of player inventory area */
-		final int playerInventoryTop = backgroundHeight - theme.externalMargin - theme.itemSlotSpacing * 4 - theme.itemSpacing;
+		final int playerInventoryTop = imageHeight - theme.externalMargin - theme.itemSlotSpacing * 4 - theme.itemSpacing;
 
 		int i = 0;
 
 		for(int p = 0; p < 3; ++p) {
 			for(int o = 0; o < 9; ++o) {
-				final Slot oldSlot = handler.getSlot(i);
-				final Slot newSlot = new Slot(oldSlot.inventory, o + p * 9 + 9, inventoryLeft + o * theme.itemSlotSpacing, playerInventoryTop + p * theme.itemSlotSpacing);
-				newSlot.id = oldSlot.id;
-				handler.slots.set(i++, newSlot);
+				final Slot oldSlot = menu.getSlot(i);
+				final Slot newSlot = new Slot(oldSlot.container, o + p * 9 + 9, inventoryLeft + o * theme.itemSlotSpacing, playerInventoryTop + p * theme.itemSlotSpacing);
+				newSlot.index = oldSlot.index;
+				menu.slots.set(i++, newSlot);
 			}
 		}
 
 		final int rowTop = playerInventoryTop + theme.itemSlotSpacing * 3 + theme.itemSpacing;
 
 		for(int p = 0; p < 9; ++p) {
-			final Slot oldSlot = handler.getSlot(i);
-			final Slot newSlot = new Slot(oldSlot.inventory, p, inventoryLeft + p * theme.itemSlotSpacing, rowTop);
-			newSlot.id = oldSlot.id;
-			handler.slots.set(i++, newSlot);
+			final Slot oldSlot = menu.getSlot(i);
+			final Slot newSlot = new Slot(oldSlot.container, p, inventoryLeft + p * theme.itemSlotSpacing, rowTop);
+			newSlot.index = oldSlot.index;
+			menu.slots.set(i++, newSlot);
 		}
 	}
 
 	@Override
 	protected void computeScreenBounds() {
-		y = (height - backgroundHeight) / 2;
+		topPos = (height - imageHeight) / 2;
 
 		// if using REI, center on left 2/3 of screen to allow more room for REI
 		if(FacilityConfig.shiftScreensLeftIfReiPresent &&  FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {
-			x = ((width * 2 / 3) - backgroundWidth) / 2;
+			leftPos = ((width * 2 / 3) - imageWidth) / 2;
 		} else {
-			x = (width - backgroundWidth) / 2;
+			leftPos = (width - imageWidth) / 2;
 		}
 
 		// leave room for REI at bottom if vertical margins are tight
-		if(y <= 30) {
-			y = 10;
+		if(topPos <= 30) {
+			topPos = 10;
 		}
 	}
 
 	@Override
 	public void addControls() {
-		capacityBarLeft = x + theme.externalMargin;
-		itemPickerTop = y + headerHeight;
+		capacityBarLeft = leftPos + theme.externalMargin;
+		itemPickerTop = topPos + headerHeight;
 		stackPicker = new ItemStackPicker<>(this, DELEGATE.LIST, ItemStorageAction::selectAndSend, d -> d.article().toStack(), DiscreteDisplayDelegate::getCount);
 		stackPicker.setItemsPerRow(9);
 
-		stackPicker.setLeft(x + inventoryLeft);
+		stackPicker.setLeft(leftPos + inventoryLeft);
 		stackPicker.setWidth(ItemStackPicker.idealWidth(theme, 9));
 		stackPicker.setTop(itemPickerTop);
 		stackPicker.setHeight(storageHeight);
-		addSelectableChild(stackPicker);
+		addWidget(stackPicker);
 
 		final Button butt = new Button(this,
-				x + backgroundWidth - 40 - theme.externalMargin, y + theme.externalMargin,
+				leftPos + imageWidth - 40 - theme.externalMargin, topPos + theme.externalMargin,
 				40, theme.singleLineWidgetHeight,
 				DisplayDelegate.getSortText(DELEGATE.getSortIndex())) {
 
@@ -151,49 +149,49 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 			}
 		};
 
-		addDrawableChild(butt);
+		addRenderableWidget(butt);
 
 		filterField = new TextField(this,
-				x + inventoryLeft, y + theme.externalMargin,
-				80, theme.singleLineWidgetHeight, new LiteralText(""));
+				leftPos + inventoryLeft, topPos + theme.externalMargin,
+				80, theme.singleLineWidgetHeight, new TextComponent(""));
 		filterField.setMaxLength(32);
 		filterField.setSelected(true);
 		filterField.setChangedListener(s -> DELEGATE.setFilter(s));
 
-		this.addSelectableChild(filterField);
+		this.addWidget(filterField);
 
 		setInitialFocus(filterField);
 	}
 
 	@Override
-	protected void drawControls(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+	protected void drawControls(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
 		//PERF: do less frequently
 		DELEGATE.refreshListIfNeeded();
 		stackPicker.render(matrixStack, mouseX, mouseY, partialTicks);
 		filterField.render(matrixStack, mouseX, mouseY, partialTicks);
 
-		final int barHeight = backgroundHeight - theme.externalMargin * 2;
+		final int barHeight = imageHeight - theme.externalMargin * 2;
 		final int fillHeight = DELEGATE.capacity() == 0 ? 0 : (int) (barHeight * DELEGATE.usedCapacity() / DELEGATE.capacity());
 
 		// capacity bar
-		final int barBottom = y + theme.externalMargin + barHeight;
-		GuiUtil.drawRect(matrixStack.peek().getModel(), capacityBarLeft, y + theme.externalMargin,
+		final int barBottom = topPos + theme.externalMargin + barHeight;
+		GuiUtil.drawRect(matrixStack.last().pose(), capacityBarLeft, topPos + theme.externalMargin,
 				capacityBarLeft + theme.capacityBarWidth, barBottom, theme.capacityEmptyColor);
 
-		GuiUtil.drawRect(matrixStack.peek().getModel(), capacityBarLeft, barBottom - fillHeight,
+		GuiUtil.drawRect(matrixStack.last().pose(), capacityBarLeft, barBottom - fillHeight,
 				capacityBarLeft + theme.capacityBarWidth, barBottom, theme.capacityFillColor);
 
 		// Draw here because drawforeground currently happens after this
-		if(DELEGATE.capacity() > 0 && mouseX >= x + theme.externalMargin && mouseX <= x + theme.externalMargin + theme.capacityBarWidth
-				&& mouseY >= y + theme.externalMargin && mouseY <= y + backgroundHeight - theme.externalMargin) {
+		if(DELEGATE.capacity() > 0 && mouseX >= leftPos + theme.externalMargin && mouseX <= leftPos + theme.externalMargin + theme.capacityBarWidth
+				&& mouseY >= topPos + theme.externalMargin && mouseY <= topPos + imageHeight - theme.externalMargin) {
 
 			//UGLY: standardize how tooltip coordinates work - wants screen relative but getting window relative as inputs here
-			this.renderTooltip(matrixStack, new LiteralText(DELEGATE.usedCapacity() + " / " + DELEGATE.capacity()), mouseX - x, mouseY - y);
+			this.renderTooltip(matrixStack, new TextComponent(DELEGATE.usedCapacity() + " / " + DELEGATE.capacity()), mouseX - leftPos, mouseY - topPos);
 		}
 	}
 
 	@Override
-	protected void drawForeground(MatrixStack matrices, int mouseX, int mouseY) {
+	protected void renderLabels(PoseStack matrices, int mouseX, int mouseY) {
 		// don't draw text
 		// NOOP
 	}
@@ -205,10 +203,10 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 
 	@Override
 	public boolean mouseDragged(double onX, double onY, int mouseButton, double fromX, double fromY) {
-		final Slot slot = getSlotAt(onX, onY);
+		final Slot slot = findSlot(onX, onY);
 
-		if (!client.options.touchscreen && !cursorDragging && slot != null && slot.hasStack() && hasShiftDown() && client.player.currentScreenHandler.getCursorStack().isEmpty()) {
-			onMouseClick(slot, slot.id, mouseButton, SlotActionType.QUICK_MOVE);
+		if (!minecraft.options.touchscreen && !isQuickCrafting && slot != null && slot.hasItem() && hasShiftDown() && minecraft.player.containerMenu.getCarried().isEmpty()) {
+			slotClicked(slot, slot.index, mouseButton, ClickType.QUICK_MOVE);
 			return true;
 		}
 
@@ -221,8 +219,8 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 	}
 
 	@Override
-	protected void onMouseClick(Slot slot, int slotId, int mouseButton, SlotActionType slotActionType) {
-		super.onMouseClick(slot, slotId, mouseButton, slotActionType);
+	protected void slotClicked(Slot slot, int slotId, int mouseButton, ClickType slotActionType) {
+		super.slotClicked(slot, slotId, mouseButton, slotActionType);
 	}
 
 	@Override

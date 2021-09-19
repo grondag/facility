@@ -46,11 +46,11 @@ public class TankMultiBlock extends AbstractStorageMultiBlock<TankMultiBlock.Mem
 		}
 
 		protected int species() {
-			return blockEntity.getCachedState().get(SpeciesProperty.SPECIES);
+			return blockEntity.getBlockState().getValue(SpeciesProperty.SPECIES);
 		}
 
 		protected boolean canConnect(Member other) {
-			return other != null && blockEntity.hasWorld() && other.blockEntity.hasWorld() && species() == other.species();
+			return other != null && blockEntity.hasLevel() && other.blockEntity.hasLevel() && species() == other.species();
 		}
 	}
 

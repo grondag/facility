@@ -1,14 +1,11 @@
 package grondag.facility.transport.model;
 
-import static net.minecraft.util.math.Direction.DOWN;
-import static net.minecraft.util.math.Direction.EAST;
-import static net.minecraft.util.math.Direction.NORTH;
-import static net.minecraft.util.math.Direction.SOUTH;
-import static net.minecraft.util.math.Direction.UP;
-import static net.minecraft.util.math.Direction.WEST;
-
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Direction.Axis;
+import static net.minecraft.core.Direction.DOWN;
+import static net.minecraft.core.Direction.EAST;
+import static net.minecraft.core.Direction.NORTH;
+import static net.minecraft.core.Direction.SOUTH;
+import static net.minecraft.core.Direction.UP;
+import static net.minecraft.core.Direction.WEST;
 
 import grondag.xm.api.connect.state.SimpleJoinState;
 import grondag.xm.api.mesh.Csg;
@@ -23,6 +20,8 @@ import grondag.xm.api.modelstate.primitive.PrimitiveState;
 import grondag.xm.api.paint.SurfaceTopology;
 import grondag.xm.api.primitive.surface.XmSurface;
 import grondag.xm.api.primitive.surface.XmSurfaceList;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
 
 public class BasePipeModel {
 	protected static final XmSurfaceList SURFACES = XmSurfaceList.builder()

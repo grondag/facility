@@ -16,31 +16,29 @@
 package grondag.facility.storage.item;
 
 import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-
 import grondag.facility.Facility;
 import grondag.facility.storage.FactilityStorageScreenHandler;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
 public class CrateItemScreenHandler extends FactilityStorageScreenHandler<DiscreteStorageServerDelegate> {
-	public static Identifier ID = Facility.REG.id("crate_item");
+	public static ResourceLocation ID = Facility.REG.id("crate_item");
 	protected final Slot storeSlot;
 	protected final ItemStack storeStack;
 
-	public CrateItemScreenHandler(ScreenHandlerType<?> type, PlayerEntity player, int synchId, @Nullable Store storage, String label, ItemStack storeStack) {
+	public CrateItemScreenHandler(MenuType<?> type, Player player, int synchId, @Nullable Store storage, String label, ItemStack storeStack) {
 		super(type, player, synchId, storage, label);
 		Slot slot = null;
 
 		for(final Slot s : slots) {
-			if(s.getStack() == storeStack) {
+			if(s.getItem() == storeStack) {
 				slot = s;
 				break;
 			}
@@ -51,27 +49,27 @@ public class CrateItemScreenHandler extends FactilityStorageScreenHandler<Discre
 	}
 
 	@Override
-	protected DiscreteStorageServerDelegate createDelegate(ServerPlayerEntity player, Store storage) {
+	protected DiscreteStorageServerDelegate createDelegate(ServerPlayer player, Store storage) {
 		return new DiscreteStorageServerDelegate(player, storage);
 	}
 
 	@Override
-	public ItemStack transferSlot(PlayerEntity playerEntity, int slotId) {
+	public ItemStack quickMoveStack(Player playerEntity, int slotId) {
 		// prevent moving stack-based stores
-		if(slotId >= 0 && ((storeSlot != null && slotId == storeSlot.id) || (storeStack != null && slots.get(slotId).getStack() == storeStack))) {
+		if(slotId >= 0 && ((storeSlot != null && slotId == storeSlot.index) || (storeStack != null && slots.get(slotId).getItem() == storeStack))) {
 			return ItemStack.EMPTY;
 		}
 
-		return super.transferSlot(playerEntity, slotId);
+		return super.quickMoveStack(playerEntity, slotId);
 	}
 
 	@Override
-	public void onSlotClick(int slotId, int mouseButton, SlotActionType slotActionType, PlayerEntity playerEntity) {
+	public void clicked(int slotId, int mouseButton, ClickType slotActionType, Player playerEntity) {
 		// prevent moving stack-based stores
-		if(slotId >= 0 && ((storeSlot != null && slotId == storeSlot.id) || (storeStack != null && slots.get(slotId).getStack() == storeStack))) {
+		if(slotId >= 0 && ((storeSlot != null && slotId == storeSlot.index) || (storeStack != null && slots.get(slotId).getItem() == storeStack))) {
 			return;
 		}
 
-		super.onSlotClick(slotId, mouseButton, slotActionType, playerEntity);
+		super.clicked(slotId, mouseButton, slotActionType, playerEntity);
 	}
 }

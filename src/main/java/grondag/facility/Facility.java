@@ -37,16 +37,13 @@ package grondag.facility;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import net.minecraft.block.MapColor;
-import net.minecraft.block.Material;
-import net.minecraft.item.Item;
-import net.minecraft.tag.Tag;
-
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.material.MaterialColor;
 import grondag.facility.init.BinBlocks;
 import grondag.facility.init.CrateBlocks;
 import grondag.facility.init.PipeBlocks;
@@ -84,7 +81,7 @@ public class Facility implements ModInitializer {
 		});
 	}
 
-	public static final Material CRATE_MATERIAL = (new Material.Builder(MapColor.OAK_TAN)).build();
+	public static final Material CRATE_MATERIAL = (new Material.Builder(MaterialColor.WOOD)).build();
 	public static Tag<Item> STORAGE_BLACKLIST_WITH_CONTENT = REG.itemTag("storage_blacklist_with_content");
 	public static Tag<Item> STORAGE_BLACKLIST_ALWAYS = REG.itemTag("storage_blacklist_always");
 }

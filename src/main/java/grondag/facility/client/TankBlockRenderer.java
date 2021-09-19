@@ -15,41 +15,39 @@
  ******************************************************************************/
 package grondag.facility.client;
 
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.WorldRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Matrix3f;
-import net.minecraft.util.math.Matrix4f;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
 import grondag.facility.storage.bulk.TankBlockEntity;
 import grondag.facility.storage.bulk.TankClientState;
 
 @Environment(EnvType.CLIENT)
 public class TankBlockRenderer extends StorageBlockRenderer<TankBlockEntity> {
-	public TankBlockRenderer(BlockEntityRendererFactory.Context ctx) {
+	public TankBlockRenderer(BlockEntityRendererProvider.Context ctx) {
 		super(ctx);
 	}
 
 	@Override
-	public void render(TankBlockEntity bin, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int lightmap, int overlay) {
+	public void render(TankBlockEntity bin, float tickDelta, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int lightmap, int overlay) {
 		super.render(bin, tickDelta, matrixStack, vertexConsumerProvider, lightmap, overlay);
 		renderInner(bin, tickDelta, matrixStack, RendererHooks.wrap(vertexConsumerProvider), lightmap, overlay);
 	}
 
-	protected void renderInner(TankBlockEntity be, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int lightmap, int overlay) {
+	protected void renderInner(TankBlockEntity be, float tickDelta, PoseStack matrixStack, MultiBufferSource vertexConsumerProvider, int lightmap, int overlay) {
 		final TankClientState renderState = be.clientState();
 
 		if(renderState.displayAlpha() == 0) {
 			return;
 		}
 
-		final Sprite sprite = renderState.fluidSprite;
+		final TextureAtlasSprite sprite = renderState.fluidSprite;
 
 		if(sprite == null) {
 			return;
@@ -65,8 +63,8 @@ public class TankBlockRenderer extends StorageBlockRenderer<TankBlockEntity> {
 		//			return;
 		//		}
 
-		final Matrix4f mat = matrixStack.peek().getModel();
-		final Matrix3f nMat = matrixStack.peek().getNormal();
+		final Matrix4f mat = matrixStack.last().pose();
+		final Matrix3f nMat = matrixStack.last().normal();
 
 		final VertexConsumer vc = vertexConsumerProvider.getBuffer(RendererHooks.FLUID);
 
@@ -75,30 +73,30 @@ public class TankBlockRenderer extends StorageBlockRenderer<TankBlockEntity> {
 		final int g = (color >> 8) & 0xFF;
 		final int b = color & 0xFF;
 		final float yMax = 0.1f + renderState.level * 0.8f;
-		final float vMax = sprite.getMinV() + (sprite.getMaxV() - sprite.getMinV()) * renderState.level;
+		final float vMax = sprite.getV0() + (sprite.getV1() - sprite.getV0()) * renderState.level;
 
-		int light = renderState.glowing ? 0xF000F0 : WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().north());
-		vc.vertex(mat, 0.9f, 0.1f, 0).color(r, g, b, 255).texture(sprite.getMinU(), sprite.getMinV()).light(light).normal(nMat, 0, 0, -1).next();
-		vc.vertex(mat, 0.1f, 0.1f, 0).color(r, g, b, 255).texture(sprite.getMaxU(), sprite.getMinV()).light(light).normal(nMat, 0, 0, -1).next();
-		vc.vertex(mat, 0.1f, yMax, 0).color(r, g, b, 255).texture(sprite.getMaxU(), vMax).light(light).normal(nMat, 0, 0, -1).next();
-		vc.vertex(mat, 0.9f, yMax, 0).color(r, g, b, 255).texture(sprite.getMinU(), vMax).light(light).normal(nMat, 0, 0, -1).next();
+		int light = renderState.glowing ? 0xF000F0 : LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().north());
+		vc.vertex(mat, 0.9f, 0.1f, 0).color(r, g, b, 255).uv(sprite.getU0(), sprite.getV0()).uv2(light).normal(nMat, 0, 0, -1).endVertex();
+		vc.vertex(mat, 0.1f, 0.1f, 0).color(r, g, b, 255).uv(sprite.getU1(), sprite.getV0()).uv2(light).normal(nMat, 0, 0, -1).endVertex();
+		vc.vertex(mat, 0.1f, yMax, 0).color(r, g, b, 255).uv(sprite.getU1(), vMax).uv2(light).normal(nMat, 0, 0, -1).endVertex();
+		vc.vertex(mat, 0.9f, yMax, 0).color(r, g, b, 255).uv(sprite.getU0(), vMax).uv2(light).normal(nMat, 0, 0, -1).endVertex();
 
-		light = renderState.glowing ? 0xF000F0 : WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().south());
-		vc.vertex(mat, 0.1f, 0.1f, 1).color(r, g, b, 255).texture(sprite.getMinU(), sprite.getMinV()).light(light).normal(nMat, 0, 0, 1).next();
-		vc.vertex(mat, 0.9f, 0.1f, 1).color(r, g, b, 255).texture(sprite.getMaxU(), sprite.getMinV()).light(light).normal(nMat, 0, 0, 1).next();
-		vc.vertex(mat, 0.9f, yMax, 1).color(r, g, b, 255).texture(sprite.getMaxU(), vMax).light(light).normal(nMat, 0, 0, 1).next();
-		vc.vertex(mat, 0.1f, yMax, 1).color(r, g, b, 255).texture(sprite.getMinU(), vMax).light(light).normal(nMat, 0, 0, 1).next();
+		light = renderState.glowing ? 0xF000F0 : LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().south());
+		vc.vertex(mat, 0.1f, 0.1f, 1).color(r, g, b, 255).uv(sprite.getU0(), sprite.getV0()).uv2(light).normal(nMat, 0, 0, 1).endVertex();
+		vc.vertex(mat, 0.9f, 0.1f, 1).color(r, g, b, 255).uv(sprite.getU1(), sprite.getV0()).uv2(light).normal(nMat, 0, 0, 1).endVertex();
+		vc.vertex(mat, 0.9f, yMax, 1).color(r, g, b, 255).uv(sprite.getU1(), vMax).uv2(light).normal(nMat, 0, 0, 1).endVertex();
+		vc.vertex(mat, 0.1f, yMax, 1).color(r, g, b, 255).uv(sprite.getU0(), vMax).uv2(light).normal(nMat, 0, 0, 1).endVertex();
 
-		light = renderState.glowing ? 0xF000F0 : WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().west());
-		vc.vertex(mat, 0, 0.1f, 0.1f).color(r, g, b, 255).texture(sprite.getMinU(), sprite.getMinV()).light(light).normal(nMat, -1, 0, 0).next();
-		vc.vertex(mat, 0, 0.1f, 0.9f).color(r, g, b, 255).texture(sprite.getMaxU(), sprite.getMinV()).light(light).normal(nMat, -1, 0, 0).next();
-		vc.vertex(mat, 0, yMax, 0.9f).color(r, g, b, 255).texture(sprite.getMaxU(), vMax).light(light).normal(nMat, -1, 0, 0).next();
-		vc.vertex(mat, 0, yMax, 0.1f).color(r, g, b, 255).texture(sprite.getMinU(), vMax).light(light).normal(nMat, -1, 0, 0).next();
+		light = renderState.glowing ? 0xF000F0 : LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().west());
+		vc.vertex(mat, 0, 0.1f, 0.1f).color(r, g, b, 255).uv(sprite.getU0(), sprite.getV0()).uv2(light).normal(nMat, -1, 0, 0).endVertex();
+		vc.vertex(mat, 0, 0.1f, 0.9f).color(r, g, b, 255).uv(sprite.getU1(), sprite.getV0()).uv2(light).normal(nMat, -1, 0, 0).endVertex();
+		vc.vertex(mat, 0, yMax, 0.9f).color(r, g, b, 255).uv(sprite.getU1(), vMax).uv2(light).normal(nMat, -1, 0, 0).endVertex();
+		vc.vertex(mat, 0, yMax, 0.1f).color(r, g, b, 255).uv(sprite.getU0(), vMax).uv2(light).normal(nMat, -1, 0, 0).endVertex();
 
-		light = renderState.glowing ? 0xF000F0 : WorldRenderer.getLightmapCoordinates(be.getWorld(), be.getPos().east());
-		vc.vertex(mat, 1, 0.1f, 0.9f).color(r, g, b, 255).texture(sprite.getMinU(), sprite.getMinV()).light(light).normal(nMat, 1, 0, 0).next();
-		vc.vertex(mat, 1, 0.1f, 0.1f).color(r, g, b, 255).texture(sprite.getMaxU(), sprite.getMinV()).light(light).normal(nMat, 1, 0, 0).next();
-		vc.vertex(mat, 1, yMax, 0.1f).color(r, g, b, 255).texture(sprite.getMaxU(), vMax).light(light).normal(nMat, 1, 0, 0).next();
-		vc.vertex(mat, 1, yMax, 0.9f).color(r, g, b, 255).texture(sprite.getMinU(), vMax).light(light).normal(nMat, 1, 0, 0).next();
+		light = renderState.glowing ? 0xF000F0 : LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().east());
+		vc.vertex(mat, 1, 0.1f, 0.9f).color(r, g, b, 255).uv(sprite.getU0(), sprite.getV0()).uv2(light).normal(nMat, 1, 0, 0).endVertex();
+		vc.vertex(mat, 1, 0.1f, 0.1f).color(r, g, b, 255).uv(sprite.getU1(), sprite.getV0()).uv2(light).normal(nMat, 1, 0, 0).endVertex();
+		vc.vertex(mat, 1, yMax, 0.1f).color(r, g, b, 255).uv(sprite.getU1(), vMax).uv2(light).normal(nMat, 1, 0, 0).endVertex();
+		vc.vertex(mat, 1, yMax, 0.9f).color(r, g, b, 255).uv(sprite.getU0(), vMax).uv2(light).normal(nMat, 1, 0, 0).endVertex();
 	}
 }

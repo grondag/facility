@@ -18,51 +18,49 @@ package grondag.facility.block;
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.PushReaction;
 
-public class FacilityBlock extends Block implements BlockEntityProvider {
+public class FacilityBlock extends Block implements EntityBlock {
 	protected final FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory;
 
-	public FacilityBlock(Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory) {
+	public FacilityBlock(Properties settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory) {
 		super(settings);
 		this.beFactory = beFactory;
 	}
 
 	@Override
-	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		return beFactory.create(pos, state);
 	}
 
 	@Override
-	public PistonBehavior getPistonBehavior(BlockState blockState) {
-		return PistonBehavior.DESTROY;
+	public PushReaction getPistonPushReaction(BlockState blockState) {
+		return PushReaction.DESTROY;
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void appendTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
-		super.appendTooltip(itemStack, blockView, list, tooltipContext);
-		final String[] lines = I18n.translate(getTranslationKey() + ".desc").split(";");
+	public void appendHoverText(ItemStack itemStack, @Nullable BlockGetter blockView, List<Component> list, TooltipFlag tooltipContext) {
+		super.appendHoverText(itemStack, blockView, list, tooltipContext);
+		final String[] lines = I18n.get(getDescriptionId() + ".desc").split(";");
 
 		for(final String line : lines) {
-			list.add(new LiteralText(line).formatted(Formatting.GREEN));
+			list.add(new TextComponent(line).withStyle(ChatFormatting.GREEN));
 		}
 	}
 }

@@ -1,18 +1,16 @@
 package grondag.facility.transport;
 
 import java.util.function.BiFunction;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
-
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import grondag.facility.transport.model.BasePipeModel;
 import grondag.xm.api.block.XmBlockState;
 import grondag.xm.api.modelstate.MutableModelState;
@@ -24,31 +22,31 @@ public class PipeBlockItem extends BlockItem {
 
 	private static final String SPECIES = "species";
 
-	public PipeBlockItem(Block block, Settings settings) {
+	public PipeBlockItem(Block block, Properties settings) {
 		super(block, settings);
 	}
 
 	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity playerEntity, Hand hand) {
-		if (world.isClient) {
+	public InteractionResultHolder<ItemStack> use(Level world, Player playerEntity, InteractionHand hand) {
+		if (world.isClientSide) {
 			return super.use(world, playerEntity, hand);
 		} else {
-			final ItemStack itemStack = playerEntity.getStackInHand(hand);
-			itemStack.setNbt(cycleTag(itemStack, playerEntity.isSneaking()));
-			playerEntity.setStackInHand(hand, itemStack);
+			final ItemStack itemStack = playerEntity.getItemInHand(hand);
+			itemStack.setTag(cycleTag(itemStack, playerEntity.isShiftKeyDown()));
+			playerEntity.setItemInHand(hand, itemStack);
 
 			final int spec = species(itemStack);
-			final Text msg = spec == AUTO_SELECT_SPECIES ? new TranslatableText("transport.facility.circuit.auto") : new TranslatableText("transport.facility.circuit.num", spec);
-			playerEntity.sendMessage(msg, true);
-			return TypedActionResult.success(itemStack);
+			final Component msg = spec == AUTO_SELECT_SPECIES ? new TranslatableComponent("transport.facility.circuit.auto") : new TranslatableComponent("transport.facility.circuit.num", spec);
+			playerEntity.displayClientMessage(msg, true);
+			return InteractionResultHolder.success(itemStack);
 		}
 	}
 
-	private static NbtCompound cycleTag(ItemStack itemStack, boolean reverse) {
-		NbtCompound tag = itemStack.getNbt();
+	private static CompoundTag cycleTag(ItemStack itemStack, boolean reverse) {
+		CompoundTag tag = itemStack.getTag();
 
 		if (tag == null) {
-			tag = new NbtCompound();
+			tag = new CompoundTag();
 			tag.putInt(SPECIES, 0);
 		} else if (tag.contains(SPECIES)) {
 			// has species, so increment
@@ -73,7 +71,7 @@ public class PipeBlockItem extends BlockItem {
 	}
 
 	public static int species(ItemStack itemStack) {
-		final NbtCompound tag = itemStack.getNbt();
+		final CompoundTag tag = itemStack.getTag();
 
 		if (tag == null || !tag.contains(SPECIES)) {
 			return AUTO_SELECT_SPECIES;
@@ -82,7 +80,7 @@ public class PipeBlockItem extends BlockItem {
 		}
 	}
 
-	public static final BiFunction<ItemStack, World, MutableModelState> PIPE_ITEM_MODEL_FUNCTION  = (stack, world) -> {
+	public static final BiFunction<ItemStack, Level, MutableModelState> PIPE_ITEM_MODEL_FUNCTION  = (stack, world) -> {
 		MutablePrimitiveState result = null;
 
 		if (stack.getItem() instanceof PipeBlockItem) {

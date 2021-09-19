@@ -18,13 +18,11 @@ package grondag.facility.storage.item;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Supplier;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.StoredArticleView;
 import grondag.fluidity.api.storage.Store;
@@ -42,7 +40,7 @@ public class BinBlockEntity extends CrateBlockEntity {
 	}
 
 	@Override
-	public void fromClientTag(NbtCompound tag) {
+	public void fromClientTag(CompoundTag tag) {
 		label = tag.getString(TAG_LABEL);
 
 		boolean hasAny = false;
@@ -69,7 +67,7 @@ public class BinBlockEntity extends CrateBlockEntity {
 	}
 
 	@Override
-	public NbtCompound toClientTag(NbtCompound tag) {
+	public CompoundTag toClientTag(CompoundTag tag) {
 		tag.putString(TAG_LABEL, label);
 
 		for(int i = 0; i < divisionLevel; i++) {
@@ -83,7 +81,7 @@ public class BinBlockEntity extends CrateBlockEntity {
 	public void updateNeighbors() {
 		super.updateNeighbors();
 
-		if(!world.isClient) {
+		if(!level.isClientSide) {
 			refreshClient();
 		}
 	}
@@ -92,7 +90,7 @@ public class BinBlockEntity extends CrateBlockEntity {
 	protected void markForSave() {
 		super.markForSave();
 
-		if(world != null && pos != null) {
+		if(level != null && worldPosition != null) {
 			refreshClient();
 		}
 	}

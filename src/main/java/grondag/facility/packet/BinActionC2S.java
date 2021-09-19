@@ -16,20 +16,18 @@
 package grondag.facility.packet;
 
 import io.netty.buffer.Unpooled;
-
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -44,35 +42,35 @@ import grondag.fluidity.api.storage.FixedStore;
 public enum BinActionC2S {
 	;
 
-	public static final Identifier ID = Facility.REG.id("bini");
+	public static final ResourceLocation ID = Facility.REG.id("bini");
 
 	@Environment(EnvType.CLIENT)
 	public static void send(BlockPos pos, int slot, boolean isAttack) {
-		if (MinecraftClient.getInstance().getNetworkHandler() != null) {
-			final PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		if (Minecraft.getInstance().getConnection() != null) {
+			final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
 			buf.writeBlockPos(pos);
 			buf.writeByte(isAttack ? -slot - 1: slot);
 			ClientPlayNetworking.send(ID, buf);
 		}
 	}
 
-	public static void accept(MinecraftServer server, ServerPlayerEntity player, ServerPlayNetworkHandler handler, PacketByteBuf buf, PacketSender responseSender) {
+	public static void accept(MinecraftServer server, ServerPlayer player, ServerGamePacketListenerImpl handler, FriendlyByteBuf buf, PacketSender responseSender) {
 		final BlockPos pos = buf.readBlockPos();
 		final int rawHandle = buf.readByte();
 
 
-		if (server.isOnThread()) {
+		if (server.isSameThread()) {
 			acceptInner(pos, rawHandle, player);
 		} else {
 			server.execute(() -> acceptInner(pos, rawHandle, player));
 		}
 	}
 
-	private static void acceptInner(BlockPos pos, int rawHandle, ServerPlayerEntity player) {
+	private static void acceptInner(BlockPos pos, int rawHandle, ServerPlayer player) {
 		final boolean isAttack = rawHandle < 0;
 		final int handle = isAttack ? -rawHandle - 1: rawHandle;
 
-		final World world = player.world;
+		final Level world = player.level;
 
 		if(world == null) {
 			return;
@@ -94,29 +92,29 @@ public enum BinActionC2S {
 		if(isAttack) {
 			if(!view.isEmpty()) {
 				final Article hitResource = view.article();
-				final int requested = player.isSneaking() ? 1 : hitResource.toItem().getMaxCount();
+				final int requested = player.isShiftKeyDown() ? 1 : hitResource.toItem().getMaxStackSize();
 				final int q = (int) storage.getSupplier().apply(handle, hitResource, requested, false);
 
 				if(q > 0) {
-					player.getInventory().offerOrDrop(hitResource.toStack(q));
-					player.getInventory().markDirty();
+					player.getInventory().placeItemBackInInventory(hitResource.toStack(q));
+					player.getInventory().setChanged();
 				}
 			}
 		} else {
 			final Article hitResource = view.article();
-			final ItemStack stack =  player.getMainHandStack();
+			final ItemStack stack =  player.getMainHandItem();
 
 			if(stack != null && !stack.isEmpty() && (view.isEmpty() || hitResource.matches(stack))) {
 				final int q = (int) storage.getConsumer().apply(handle, stack, false);
 
 				if(q != 0) {
-					stack.decrement(q);
-					player.setStackInHand(Hand.MAIN_HAND, stack.isEmpty() ? ItemStack.EMPTY : stack);
-					player.getInventory().markDirty();
+					stack.shrink(q);
+					player.setItemInHand(InteractionHand.MAIN_HAND, stack.isEmpty() ? ItemStack.EMPTY : stack);
+					player.getInventory().setChanged();
 				}
 			} else if(!view.isEmpty()) {
 				boolean didSucceed = false;
-				final DefaultedList<ItemStack> main = player.getInventory().main;
+				final NonNullList<ItemStack> main = player.getInventory().items;
 				final int limit = main.size();
 
 				for(int i = 0; i < limit; i++) {
@@ -129,7 +127,7 @@ public enum BinActionC2S {
 							break;
 						} else {
 							didSucceed = true;
-							mainStack.decrement(q);
+							mainStack.shrink(q);
 
 							if(mainStack.isEmpty()) {
 								main.set(i, ItemStack.EMPTY);
@@ -138,22 +136,22 @@ public enum BinActionC2S {
 					}
 				}
 
-				final ItemStack offStack = player.getOffHandStack();
+				final ItemStack offStack = player.getOffhandItem();
 
 				if(!offStack.isEmpty() && hitResource.matches(offStack)) {
 					final int q = (int) storage.getConsumer().apply(handle, offStack, false);
 
 					if(q != 0) {
 						didSucceed = true;
-						offStack.decrement(q);
+						offStack.shrink(q);
 						if(offStack.isEmpty()) {
-							player.setStackInHand(Hand.OFF_HAND, ItemStack.EMPTY);
+							player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
 						}
 					}
 				}
 
 				if(didSucceed) {
-					player.getInventory().markDirty();
+					player.getInventory().setChanged();
 				}
 			}
 		}

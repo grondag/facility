@@ -16,12 +16,11 @@
 package grondag.facility.storage.bulk;
 
 import grondag.facility.storage.StorageClientState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.client.texture.Sprite;
-
 public class TankClientState extends StorageClientState<TankBlockEntity> {
-	public @Nullable Sprite fluidSprite;
+	public @Nullable TextureAtlasSprite fluidSprite;
 	public int fluidColor = -1;
 	public float level;
 	public boolean glowing;

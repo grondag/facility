@@ -1,20 +1,19 @@
 package grondag.facility.transport.storage;
 
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-
 import grondag.fluidity.api.article.Article;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 
 public abstract class InventoryHelper {
 	private InventoryHelper() {}
 
-	public static boolean isFull(Inventory inv) {
-		final int limit = inv.size();
+	public static boolean isFull(Container inv) {
+		final int limit = inv.getContainerSize();
 
 		for (int i = 0; i < limit; ++i) {
-			final ItemStack itemStack = inv.getStack(i);
+			final ItemStack itemStack = inv.getItem(i);
 
-			if (itemStack.isEmpty() || itemStack.getCount() < itemStack.getMaxCount()) {
+			if (itemStack.isEmpty() || itemStack.getCount() < itemStack.getMaxStackSize()) {
 				return false;
 			}
 		}
@@ -22,28 +21,28 @@ public abstract class InventoryHelper {
 		return true;
 	}
 
-	public static boolean canPlaceInSlot(Article article, Inventory inv, int slot) {
-		final ItemStack targetStack = inv.getStack(slot);
+	public static boolean canPlaceInSlot(Article article, Container inv, int slot) {
+		final ItemStack targetStack = inv.getItem(slot);
 
 		if(targetStack.isEmpty()) {
-			return (inv.isValid(slot, article.toStack()));
+			return (inv.canPlaceItem(slot, article.toStack()));
 		}
 
-		if (article.matches(targetStack) && targetStack.getCount() < targetStack.getMaxCount() && inv.isValid(slot, targetStack)) {
+		if (article.matches(targetStack) && targetStack.getCount() < targetStack.getMaxStackSize() && inv.canPlaceItem(slot, targetStack)) {
 			return true;
 		}
 
 		return false;
 	}
 
-	public static boolean canPlaceInSlot(ItemStack stack, Inventory inv, int slot) {
-		final ItemStack targetStack = inv.getStack(slot);
+	public static boolean canPlaceInSlot(ItemStack stack, Container inv, int slot) {
+		final ItemStack targetStack = inv.getItem(slot);
 
 		if(targetStack.isEmpty()) {
-			return inv.isValid(slot, stack);
+			return inv.canPlaceItem(slot, stack);
 		}
 
-		if (canStacksCombine(targetStack, stack) && inv.isValid(slot, targetStack)) {
+		if (canStacksCombine(targetStack, stack) && inv.canPlaceItem(slot, targetStack)) {
 			return true;
 		}
 
@@ -52,7 +51,7 @@ public abstract class InventoryHelper {
 
 	public static boolean canStacksCombine(ItemStack targetStack, ItemStack sourceStack) {
 		return targetStack.getItem() == sourceStack.getItem()
-				&&  targetStack.getCount() < targetStack.getMaxCount()
-				&& ItemStack.areNbtEqual(targetStack, sourceStack);
+				&&  targetStack.getCount() < targetStack.getMaxStackSize()
+				&& ItemStack.tagMatches(targetStack, sourceStack);
 	}
 }

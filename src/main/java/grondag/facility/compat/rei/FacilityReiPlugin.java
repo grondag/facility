@@ -19,7 +19,7 @@ import grondag.facility.storage.item.PortableCrateItem;
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.entry.EntryRegistry;
 import me.shedaniel.rei.api.common.entry.type.VanillaEntryTypes;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 public class FacilityReiPlugin implements REIClientPlugin {
 	@Override

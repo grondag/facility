@@ -1,11 +1,10 @@
 package grondag.facility.storage;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-
 import grondag.fluidity.api.device.ItemComponentContext;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.storage.AbstractPortableStore;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 
 public class PortableStore extends AbstractPortableStore {
 	public PortableStore(Store wrapped) {
@@ -21,22 +20,22 @@ public class PortableStore extends AbstractPortableStore {
 	}
 
 	@Override
-	protected NbtCompound readTagFromStack(ItemStack stack) {
-		return stack.getOrCreateSubNbt("BlockEntityTag").getCompound(StorageBlockEntity.TAG_STORAGE);
+	protected CompoundTag readTagFromStack(ItemStack stack) {
+		return stack.getOrCreateTagElement("BlockEntityTag").getCompound(StorageBlockEntity.TAG_STORAGE);
 	}
 
 	@Override
-	protected void writeTagToStack(ItemStack stack, NbtCompound tag) {
+	protected void writeTagToStack(ItemStack stack, CompoundTag tag) {
 		if(isEmpty()) {
-			stack.setNbt(null);
+			stack.setTag(null);
 		} else {
-			stack.getOrCreateSubNbt("BlockEntityTag").put(StorageBlockEntity.TAG_STORAGE, tag);
+			stack.getOrCreateTagElement("BlockEntityTag").put(StorageBlockEntity.TAG_STORAGE, tag);
 			writeDamage(stack, this);
 		}
 	}
 
 	public static void writeDamage(ItemStack stack, Store store) {
 		final int max = stack.getMaxDamage();
-		stack.setDamage(store.isEmpty() ? 0 : (max - (int) (store.usage() * (max - 1))));
+		stack.setDamageValue(store.isEmpty() ? 0 : (max - (int) (store.usage() * (max - 1))));
 	}
 }

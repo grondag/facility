@@ -15,16 +15,15 @@
  ******************************************************************************/
 package grondag.facility.transport;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.util.math.BlockPos;
-
 import grondag.facility.storage.TrackedBlockEntity;
 import grondag.fermion.world.WorldTaskManager;
 import grondag.fluidity.api.device.BlockComponentContext;
 import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.base.transport.SingleCarrierProvider;
 import grondag.fluidity.wip.base.transport.SubCarrier;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class PipeBlockEntity extends TrackedBlockEntity {
 	protected final SubCarrier<UtbCostFunction> carrier = new UtbSubCarrier(UniversalTransportBus.BASIC);
@@ -45,7 +44,7 @@ public class PipeBlockEntity extends TrackedBlockEntity {
 	}
 
 	protected final void enqueUpdate() {
-		if(!isEnqued && !world.isClient) {
+		if(!isEnqued && !level.isClientSide) {
 			isEnqued = true;
 			WorldTaskManager.enqueueImmediate(this::enquedUpdate);
 		}
@@ -56,7 +55,7 @@ public class PipeBlockEntity extends TrackedBlockEntity {
 	}
 
 	public final void enquedUpdate() {
-		if(world == null || world.isClient) {
+		if(level == null || level.isClientSide) {
 			return;
 		}
 
@@ -66,7 +65,7 @@ public class PipeBlockEntity extends TrackedBlockEntity {
 
 	@Override
 	public final void onLoaded() {
-		if(!isRegistered && hasWorld() && !world.isClient) {
+		if(!isRegistered && hasLevel() && !level.isClientSide) {
 			PipeMultiBlock.DEVICE_MANAGER.connect(member);
 			isRegistered = true;
 			enqueUpdate();
@@ -77,7 +76,7 @@ public class PipeBlockEntity extends TrackedBlockEntity {
 
 	@Override
 	public final void onUnloaded() {
-		if(isRegistered && hasWorld() && !world.isClient) {
+		if(isRegistered && hasLevel() && !level.isClientSide) {
 			PipeMultiBlock.DEVICE_MANAGER.disconnect(member);
 			isRegistered = false;
 		} else {

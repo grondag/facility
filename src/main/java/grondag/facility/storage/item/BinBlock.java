@@ -17,18 +17,18 @@ package grondag.facility.storage.item;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import net.fabricmc.fabric.api.block.BlockAttackInteractionAware;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -44,36 +44,36 @@ public class BinBlock extends CrateBlock implements BlockAttackInteractionAware 
 	public final int divisionLevel;
 	public final boolean isCreative;
 
-	public BinBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, int divisionLevel, boolean isCreative) {
+	public BinBlock(Block.Properties settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, int divisionLevel, boolean isCreative) {
 		super(settings, beFactory);
 		this.divisionLevel = divisionLevel;
 		this.isCreative = isCreative;
 	}
 
 	@Override
-	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-		if (state.getBlock() == this && hit.getSide() == state.get(XmProperties.FACE).getOpposite() && hand == Hand.MAIN_HAND) {
-			if(world.isClient) {
-				BinActionC2S.send(pos, getHitHandle(hit, hit.getSide()), false);
+	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		if (state.getBlock() == this && hit.getDirection() == state.getValue(XmProperties.FACE).getOpposite() && hand == InteractionHand.MAIN_HAND) {
+			if(world.isClientSide) {
+				BinActionC2S.send(pos, getHitHandle(hit, hit.getDirection()), false);
 			}
 
-			return ActionResult.SUCCESS;
+			return InteractionResult.SUCCESS;
 		}
 
-		return super.onUse(state, world, pos, player, hand, hit);
+		return super.use(state, world, pos, player, hand, hit);
 	}
 
 
 	protected static long lastClickMs = 0;
 
 	@Override
-	public boolean onAttackInteraction(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, Direction face) {
-		if(world.isClient && state.getBlock() == this) {
+	public boolean onAttackInteraction(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, Direction face) {
+		if(world.isClientSide && state.getBlock() == this) {
 			final long t = System.currentTimeMillis();
 			final long d = t - lastClickMs;
 			lastClickMs = t;
 
-			if(d > 100 && face.getOpposite() == state.get(XmProperties.FACE)) {
+			if(d > 100 && face.getOpposite() == state.getValue(XmProperties.FACE)) {
 				BinActionC2S.send(pos, getHitHandle(world, player, face), true);
 			}
 		}
@@ -81,14 +81,14 @@ public class BinBlock extends CrateBlock implements BlockAttackInteractionAware 
 		return false;
 	}
 
-	protected int getHitHandle(World world, PlayerEntity player, Direction face) {
+	protected int getHitHandle(Level world, Player player, Direction face) {
 		return divisionLevel > 1 ? getHitHandle(TracerAccess.trace(world, player), face) : 0;
 	}
 
 	protected int getHitHandle(HitResult hit, Direction face) {
 		if(divisionLevel > 1) {
 			if(hit != null && hit.getType() == HitResult.Type.BLOCK)  {
-				final Vec3d vec = hit.getPos();
+				final Vec3 vec = hit.getLocation();
 				final Pair<Direction, Direction> faces = WorldHelper.closestAdjacentFaces(face, vec.x, vec.y, vec.z);
 				final FaceEdge e1 = FaceEdge.fromWorld(faces.getLeft(), face);
 				final FaceEdge e2 = FaceEdge.fromWorld(faces.getRight(), face);

@@ -15,16 +15,14 @@
  ******************************************************************************/
 package grondag.facility.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager.Builder;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import grondag.fermion.modkeys.api.ModKeys;
 import grondag.xm.api.connect.species.Species;
 import grondag.xm.api.connect.species.SpeciesFunction;
@@ -34,23 +32,23 @@ import grondag.xm.api.connect.species.SpeciesProperty;
 public class FacilitySpeciesBlock extends FacilityBlock {
 	protected final SpeciesFunction speciesFunc;
 
-	public FacilitySpeciesBlock(Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, SpeciesFunction speciesFunc) {
+	public FacilitySpeciesBlock(Properties settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, SpeciesFunction speciesFunc) {
 		super(settings, beFactory);
 		this.speciesFunc = speciesFunc;
 	}
 
 	@Override
-	protected void appendProperties(Builder<Block, BlockState> builder) {
-		super.appendProperties(builder);
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+		super.createBlockStateDefinition(builder);
 		builder.add(SpeciesProperty.SPECIES);
 	}
 
 	@Override
-	public BlockState getPlacementState(ItemPlacementContext context) {
-		final Direction face = context.getPlayerLookDirection();
-		final BlockPos onPos = context.getBlockPos().offset(context.getSide().getOpposite());
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		final Direction face = context.getNearestLookingDirection();
+		final BlockPos onPos = context.getClickedPos().relative(context.getClickedFace().getOpposite());
 		final SpeciesMode mode = ModKeys.isPrimaryPressed(context.getPlayer()) ? SpeciesMode.COUNTER_MOST : SpeciesMode.MATCH_MOST;
-		final int species = Species.speciesForPlacement(context.getWorld(), onPos, face.getOpposite(), mode, speciesFunc);
-		return getDefaultState().with(SpeciesProperty.SPECIES, species);
+		final int species = Species.speciesForPlacement(context.getLevel(), onPos, face.getOpposite(), mode, speciesFunc);
+		return defaultBlockState().setValue(SpeciesProperty.SPECIES, species);
 	}
 }

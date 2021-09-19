@@ -19,22 +19,21 @@ import grondag.facility.Facility;
 import grondag.facility.storage.FactilityStorageScreenHandler;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.BulkStorageServerDelegate;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-
 public class TankContainer extends FactilityStorageScreenHandler<BulkStorageServerDelegate> {
-	public static Identifier ID = Facility.REG.id("tank");
+	public static ResourceLocation ID = Facility.REG.id("tank");
 
-	public TankContainer(ScreenHandlerType<?> type, PlayerEntity player, int synchId, @Nullable Store storage, String label) {
+	public TankContainer(MenuType<?> type, Player player, int synchId, @Nullable Store storage, String label) {
 		super(type, player, synchId, storage, label);
 	}
 
 	@Override
-	protected BulkStorageServerDelegate createDelegate(ServerPlayerEntity player, Store storage) {
+	protected BulkStorageServerDelegate createDelegate(ServerPlayer player, Store storage) {
 		return new BulkStorageServerDelegate(player, storage);
 	}
 }

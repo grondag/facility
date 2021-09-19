@@ -20,30 +20,29 @@ import grondag.facility.storage.FactilityStorageScreenHandler;
 import grondag.facility.storage.StorageBlockEntity;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-
 public class CrateScreenHandler extends FactilityStorageScreenHandler<DiscreteStorageServerDelegate> {
-	public static Identifier ID = Facility.REG.id("crate");
+	public static ResourceLocation ID = Facility.REG.id("crate");
 	protected final  StorageBlockEntity<?, ?> storageBe;
 
 	/** BlockEntity is null on client */
-	public CrateScreenHandler(ScreenHandlerType<?> type, PlayerEntity player, int synchId, @Nullable StorageBlockEntity<?, ?> storageBe, String label) {
+	public CrateScreenHandler(MenuType<?> type, Player player, int synchId, @Nullable StorageBlockEntity<?, ?> storageBe, String label) {
 		super(type, player, synchId, storageBe == null ? null : storageBe.getEffectiveStorage(), label);
 		this.storageBe = storageBe;
 	}
 
 	@Override
-	public boolean canUse(PlayerEntity playerEntity) {
+	public boolean stillValid(Player playerEntity) {
 		return storageBe == null || !storageBe.isRemoved();
 	}
 
 	@Override
-	protected DiscreteStorageServerDelegate createDelegate(ServerPlayerEntity player, Store storage) {
+	protected DiscreteStorageServerDelegate createDelegate(ServerPlayer player, Store storage) {
 		return new DiscreteStorageServerDelegate(player, storage);
 	}
 }

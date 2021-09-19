@@ -16,38 +16,37 @@
 package grondag.facility.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderStateShard;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.RenderPhase;
-import net.minecraft.client.render.TexturedRenderLayers;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.texture.SpriteAtlasTexture;
 
 // TODO: remove and use AW instead
 public class RendererHooks {
-	public static final RenderLayer TRANSLUCENT = makeTranslucent();
-	public static final RenderLayer CUTOUT = makeCutout();
-	public static final RenderLayer FLUID = makeFluid();
+	public static final RenderType TRANSLUCENT = makeTranslucent();
+	public static final RenderType CUTOUT = makeCutout();
+	public static final RenderType FLUID = makeFluid();
 
-	static class RenderSecrets extends RenderPhase {
+	static class RenderSecrets extends RenderStateShard {
 		public RenderSecrets(String string, Runnable runnable, Runnable runnable2) {
 			super(string, runnable, runnable2);
 		}
 
-		static final Transparency _NO_TRANSPARENCY = NO_TRANSPARENCY;
-		static final Transparency _TRANSLUCENT_TRANSPARENCY = TRANSLUCENT_TRANSPARENCY;
+		static final TransparencyStateShard _NO_TRANSPARENCY = NO_TRANSPARENCY;
+		static final TransparencyStateShard _TRANSLUCENT_TRANSPARENCY = TRANSLUCENT_TRANSPARENCY;
 		//static final DiffuseLighting _ENABLE_DIFFUSE_LIGHTING = ENABLE_DIFFUSE_LIGHTING;
 		//static final Alpha _ONE_TENTH_ALPHA = ONE_TENTH_ALPHA;
 		//static final Alpha _ZERO_ALPHA = ZERO_ALPHA;
-		static final Lightmap _ENABLE_LIGHTMAP = ENABLE_LIGHTMAP;
-		static final Overlay _ENABLE_OVERLAY_COLOR = ENABLE_OVERLAY_COLOR;
-		static final Overlay _DISABLE_OVERLAY_COLOR = DISABLE_OVERLAY_COLOR;
-		static final Layering ITEM_OFFSET_LAYERING = new RenderPhase.Layering("item_offset_layering", () -> {
+		static final LightmapStateShard _ENABLE_LIGHTMAP = LIGHTMAP;
+		static final OverlayStateShard _ENABLE_OVERLAY_COLOR = OVERLAY;
+		static final OverlayStateShard _DISABLE_OVERLAY_COLOR = NO_OVERLAY;
+		static final LayeringStateShard ITEM_OFFSET_LAYERING = new RenderStateShard.LayeringStateShard("item_offset_layering", () -> {
 			RenderSystem.polygonOffset(-1.0F, -1.0F);
 			RenderSystem.enablePolygonOffset();
 			//RenderSystem.disableRescaleNormal();
@@ -58,48 +57,48 @@ public class RendererHooks {
 		});
 	}
 
-	private static RenderLayer makeCutout() {
-		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
-		.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
-		.shader(new RenderPhase.Shader(GameRenderer::getRenderTypeEntityCutoutShader))
-		.transparency(RenderSecrets._NO_TRANSPARENCY)
-		.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
-		.overlay(RenderSecrets._ENABLE_OVERLAY_COLOR)
-		.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
-		.build(true);
-		return RenderLayer.of("entity_cutout", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, VertexFormat.DrawMode.QUADS, 256, true, false, multiPhaseParameters);
+	private static RenderType makeCutout() {
+		final RenderType.CompositeState multiPhaseParameters = RenderType.CompositeState.builder()
+		.setTextureState(new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false))
+		.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeEntityCutoutShader))
+		.setTransparencyState(RenderSecrets._NO_TRANSPARENCY)
+		.setLightmapState(RenderSecrets._ENABLE_LIGHTMAP)
+		.setOverlayState(RenderSecrets._ENABLE_OVERLAY_COLOR)
+		.setLayeringState(RenderSecrets.ITEM_OFFSET_LAYERING)
+		.createCompositeState(true);
+		return RenderType.create("entity_cutout", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, false, multiPhaseParameters);
 	}
 
-	private static RenderLayer makeTranslucent() {
-		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
-		.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
-		.shader(new RenderPhase.Shader(GameRenderer::getRenderTypeEntityTranslucentShader))
-		.transparency(RenderSecrets._TRANSLUCENT_TRANSPARENCY)
-		.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
-		.overlay(RenderSecrets._ENABLE_OVERLAY_COLOR)
-		.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
-		.build(true);
-		return RenderLayer.of("entity_translucent_cull", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, VertexFormat.DrawMode.QUADS, 256, true, true, multiPhaseParameters);
+	private static RenderType makeTranslucent() {
+		final RenderType.CompositeState multiPhaseParameters = RenderType.CompositeState.builder()
+		.setTextureState(new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false))
+		.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeEntityTranslucentShader))
+		.setTransparencyState(RenderSecrets._TRANSLUCENT_TRANSPARENCY)
+		.setLightmapState(RenderSecrets._ENABLE_LIGHTMAP)
+		.setOverlayState(RenderSecrets._ENABLE_OVERLAY_COLOR)
+		.setLayeringState(RenderSecrets.ITEM_OFFSET_LAYERING)
+		.createCompositeState(true);
+		return RenderType.create("entity_translucent_cull", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, multiPhaseParameters);
 	}
 
-	public static RenderLayer makeFluid() {
-		final RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder()
-		.texture(new RenderPhase.Texture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, false, false))
-		.shader(new RenderPhase.Shader(GameRenderer::getRenderTypeSolidShader))
-		.transparency(RenderSecrets._NO_TRANSPARENCY)
-		.lightmap(RenderSecrets._ENABLE_LIGHTMAP)
-		.overlay(RenderSecrets._DISABLE_OVERLAY_COLOR)
-		.layering(RenderSecrets.ITEM_OFFSET_LAYERING)
-		.build(true);
-		return RenderLayer.of("fluid_overlay", VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL, VertexFormat.DrawMode.QUADS, 256, false, false, multiPhaseParameters);
+	public static RenderType makeFluid() {
+		final RenderType.CompositeState multiPhaseParameters = RenderType.CompositeState.builder()
+		.setTextureState(new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false))
+		.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeSolidShader))
+		.setTransparencyState(RenderSecrets._NO_TRANSPARENCY)
+		.setLightmapState(RenderSecrets._ENABLE_LIGHTMAP)
+		.setOverlayState(RenderSecrets._DISABLE_OVERLAY_COLOR)
+		.setLayeringState(RenderSecrets.ITEM_OFFSET_LAYERING)
+		.createCompositeState(true);
+		return RenderType.create("fluid_overlay", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, false, multiPhaseParameters);
 	}
 
-	public static @Nullable RenderLayer hook(RenderLayer renderLayer) {
-		return enabled ? renderLayer == TexturedRenderLayers.getEntityTranslucentCull() ? TRANSLUCENT : CUTOUT : null;
+	public static @Nullable RenderType hook(RenderType renderLayer) {
+		return enabled ? renderLayer == Sheets.translucentCullBlockSheet() ? TRANSLUCENT : CUTOUT : null;
 		//return enabled ? alpha < 255 || renderLayer == TexturedRenderLayers.getEntityTranslucent() ? TRANSLUCENT : CUTOUT : null;
 	}
 
-	public static VertexConsumerProvider wrap(VertexConsumerProvider wrapped) {
+	public static MultiBufferSource wrap(MultiBufferSource wrapped) {
 		//		if(alpha < 255) {
 		//			wrappedProvider = wrapped;
 		//			return FADE_PROVIDER;
@@ -120,16 +119,16 @@ public class RendererHooks {
 		enabled = false;
 	}
 
-	private static VertexConsumerProvider wrappedProvider;
+	private static MultiBufferSource wrappedProvider;
 	private static VertexConsumer wrappedConsumer;
 
 	private static final FadingVertexConsumer FADER = new FadingVertexConsumer();
 
 	// Effect isn't great, so disabled for now
 	@SuppressWarnings("unused")
-	private static final VertexConsumerProvider FADE_PROVIDER = new VertexConsumerProvider() {
+	private static final MultiBufferSource FADE_PROVIDER = new MultiBufferSource() {
 		@Override
-		public VertexConsumer getBuffer(RenderLayer renderLayer) {
+		public VertexConsumer getBuffer(RenderType renderLayer) {
 			if(renderLayer == TRANSLUCENT && alpha < 255) {
 				wrappedConsumer = wrappedProvider.getBuffer(TRANSLUCENT);
 				//System.out.println(alpha);
@@ -154,20 +153,20 @@ public class RendererHooks {
 		}
 
 		@Override
-		public VertexConsumer texture(float f, float g) {
-			wrappedConsumer.texture(f, g);
+		public VertexConsumer uv(float f, float g) {
+			wrappedConsumer.uv(f, g);
 			return this;
 		}
 
 		@Override
-		public VertexConsumer overlay(int i, int j) {
-			wrappedConsumer.overlay(i, j);
+		public VertexConsumer overlayCoords(int i, int j) {
+			wrappedConsumer.overlayCoords(i, j);
 			return this;
 		}
 
 		@Override
-		public VertexConsumer light(int i, int j) {
-			wrappedConsumer.light(i, j);
+		public VertexConsumer uv2(int i, int j) {
+			wrappedConsumer.uv2(i, j);
 			return this;
 		}
 
@@ -178,18 +177,18 @@ public class RendererHooks {
 		}
 
 		@Override
-		public void next() {
-			wrappedConsumer.next();
+		public void endVertex() {
+			wrappedConsumer.endVertex();
 		}
 
 		@Override
-		public void fixedColor(int i, int j, int k, int l) {
-			wrappedConsumer.fixedColor(i, j, k, l);
+		public void defaultColor(int i, int j, int k, int l) {
+			wrappedConsumer.defaultColor(i, j, k, l);
 		}
 
 		@Override
-		public void unfixColor() {
-			wrappedConsumer.unfixColor();
+		public void unsetDefaultColor() {
+			wrappedConsumer.unsetDefaultColor();
 		}
 	}
 }

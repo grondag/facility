@@ -4,10 +4,10 @@ import java.util.function.Supplier;
 
 import io.netty.util.internal.ThreadLocalRandom;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
 import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
@@ -46,8 +46,8 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	protected abstract MultiBlockManager deviceManager();
 
 	protected void markForSave() {
-		if(world != null && pos != null) {
-			world.markDirty(pos);
+		if(level != null && worldPosition != null) {
+			level.blockEntityChanged(worldPosition);
 		}
 	}
 
@@ -56,7 +56,7 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	@Override
 	@SuppressWarnings("unchecked")
 	public void onLoaded() {
-		if(!isRegistered && hasWorld() && !world.isClient) {
+		if(!isRegistered && hasLevel() && !level.isClientSide) {
 			deviceManager().connect(member);
 			isRegistered = true;
 		} else {
@@ -67,7 +67,7 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	@Override
 	@SuppressWarnings("unchecked")
 	public void onUnloaded() {
-		if(isRegistered && hasWorld() && !world.isClient) {
+		if(isRegistered && hasLevel() && !level.isClientSide) {
 			// device manager happens later, so remove from aggregate right away to avoid possibility of duping
 			if (wrapper.getWrapped().isAggregate()) {
 				((AbstractAggregateStore) wrapper.getWrapped()).removeStore(storage);
@@ -100,40 +100,40 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 
 	public void setLabel(String label) {
 		this.label = label;
-		markDirty();
+		setChanged();
 		sync();
 	}
 
 	@Override
-	public NbtCompound writeNbt(NbtCompound tag) {
-		super.writeNbt(tag);
+	public CompoundTag save(CompoundTag tag) {
+		super.save(tag);
 		return toContainerTag(tag);
 	}
 
 	@Override
-	public void readNbt(NbtCompound tag) {
-		super.readNbt(tag);
+	public void load(CompoundTag tag) {
+		super.load(tag);
 		fromContainerTag(tag);
 	}
 
-	public NbtCompound toContainerTag(NbtCompound tag) {
+	public CompoundTag toContainerTag(CompoundTag tag) {
 		tag.put(TAG_STORAGE, getInternalStorage().writeTag());
 		tag.putString(TAG_LABEL, label);
 		return tag;
 	}
 
-	public void fromContainerTag(NbtCompound tag) {
+	public void fromContainerTag(CompoundTag tag) {
 		label = tag.getString(TAG_LABEL);
 		getInternalStorage().readTag(tag.getCompound(TAG_STORAGE));
 	}
 
 	@Override
-	public void fromClientTag(NbtCompound tag) {
+	public void fromClientTag(CompoundTag tag) {
 		label = tag.getString(TAG_LABEL);
 	}
 
 	@Override
-	public NbtCompound toClientTag(NbtCompound tag) {
+	public CompoundTag toClientTag(CompoundTag tag) {
 		tag.putString(TAG_LABEL, label);
 		return tag;
 	}

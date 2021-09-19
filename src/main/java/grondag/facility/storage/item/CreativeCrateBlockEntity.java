@@ -16,20 +16,17 @@
 package grondag.facility.storage.item;
 
 import java.util.Random;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import io.netty.util.internal.ThreadLocalRandom;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
-
 import grondag.facility.block.CarrierSessionBlockEntity;
 import grondag.facility.storage.TickableBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
@@ -48,21 +45,21 @@ public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implemen
 	public void tick() {
 		final int limit = neighborCount();
 
-		if(limit == 0 || !getCachedState().get(Properties.POWERED)) {
+		if(limit == 0 || !getBlockState().getValue(BlockStateProperties.POWERED)) {
 			return;
 		}
 
 		final Random random =  ThreadLocalRandom.current();
 		final Item item = Registry.ITEM.getRandom(random);
 		ItemStack stack = new ItemStack(item);
-		stack.setCount(item.getMaxCount());
+		stack.setCount(item.getMaxStackSize());
 
-		if(item.isDamageable() && item.getMaxDamage() > 0) {
-			stack.setDamage(random.nextInt(item.getMaxDamage()));
+		if(item.canBeDepleted() && item.getMaxDamage() > 0) {
+			stack.setDamageValue(random.nextInt(item.getMaxDamage()));
 		}
 
 		if(stack.isEnchantable() && random.nextBoolean()) {
-			stack = EnchantmentHelper.enchant(random, stack, 30, true);
+			stack = EnchantmentHelper.enchantItem(random, stack, 30, true);
 		}
 
 		if(isOutput) {

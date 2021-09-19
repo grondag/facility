@@ -15,22 +15,20 @@
  ******************************************************************************/
 package grondag.facility.init;
 
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import grondag.facility.storage.item.CrateBlockEntity;
 import grondag.facility.storage.item.CrateItemScreenHandler;
 import grondag.facility.storage.item.CrateScreenHandler;
@@ -41,10 +39,10 @@ public enum ScreenHandlers {
 
 	////CRATE BLOCK
 
-	public static final ScreenHandlerType<CrateScreenHandler> CRATE_BLOCK_TYPE = ScreenHandlerRegistry.registerExtended(CrateScreenHandler.ID, ScreenHandlers::clientCrateBlockFactory);
+	public static final MenuType<CrateScreenHandler> CRATE_BLOCK_TYPE = ScreenHandlerRegistry.registerExtended(CrateScreenHandler.ID, ScreenHandlers::clientCrateBlockFactory);
 
-	private static CrateScreenHandler clientCrateBlockFactory(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
-		final String label = buf.readString();
+	private static CrateScreenHandler clientCrateBlockFactory(int syncId, Inventory inventory, FriendlyByteBuf buf) {
+		final String label = buf.readUtf();
 		return new CrateScreenHandler(CRATE_BLOCK_TYPE, inventory.player, syncId, null, label);
 	}
 
@@ -58,8 +56,8 @@ public enum ScreenHandlers {
 		}
 
 		@Override
-		public CrateScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-			final World world = player.getEntityWorld();
+		public CrateScreenHandler createMenu(int syncId, Inventory inv, Player player) {
+			final Level world = player.getCommandSenderWorld();
 			final BlockEntity be = world.getBlockEntity(pos);
 
 			if (be instanceof CrateBlockEntity) {
@@ -71,13 +69,13 @@ public enum ScreenHandlers {
 		}
 
 		@Override
-		public Text getDisplayName() {
-			return new LiteralText(label);
+		public Component getDisplayName() {
+			return new TextComponent(label);
 		}
 
 		@Override
-		public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-			buf.writeString(label);
+		public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
+			buf.writeUtf(label);
 		}
 	}
 
@@ -87,32 +85,32 @@ public enum ScreenHandlers {
 
 	////  CRATE ITEM
 
-	public static final ScreenHandlerType<CrateItemScreenHandler> CRATE_ITEM_TYPE = ScreenHandlerRegistry.registerExtended(CrateItemScreenHandler.ID, ScreenHandlers::clientCrateItemFactory);
+	public static final MenuType<CrateItemScreenHandler> CRATE_ITEM_TYPE = ScreenHandlerRegistry.registerExtended(CrateItemScreenHandler.ID, ScreenHandlers::clientCrateItemFactory);
 
-	private static CrateItemScreenHandler clientCrateItemFactory(int syncId, PlayerInventory inventory, PacketByteBuf buf) {
-		final Hand hand = Hand.values()[buf.readVarInt()];
-		final String label = buf.readString();
+	private static CrateItemScreenHandler clientCrateItemFactory(int syncId, Inventory inventory, FriendlyByteBuf buf) {
+		final InteractionHand hand = InteractionHand.values()[buf.readVarInt()];
+		final String label = buf.readUtf();
 		return new CrateItemScreenHandler(
 				CRATE_ITEM_TYPE,
 				inventory.player,
 				syncId,
 				null,
 				label,
-				inventory.player.getStackInHand(hand));
+				inventory.player.getItemInHand(hand));
 	}
 
 	private static class CrateItemScreenHandlerFactory implements ExtendedScreenHandlerFactory  {
 		String label;
-		final Hand hand;
+		final InteractionHand hand;
 
-		public CrateItemScreenHandlerFactory(String label, Hand hand) {
+		public CrateItemScreenHandlerFactory(String label, InteractionHand hand) {
 			this.label = label;
 			this.hand = hand;
 		}
 
 		@Override
-		public CrateItemScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-			final ItemStack stack  = player.getStackInHand(hand);
+		public CrateItemScreenHandler createMenu(int syncId, Inventory inv, Player player) {
+			final ItemStack stack  = player.getItemInHand(hand);
 			final boolean isPortableItem = stack.getItem() instanceof PortableCrateItem;
 			return new CrateItemScreenHandler(
 					CRATE_ITEM_TYPE,
@@ -120,22 +118,22 @@ public enum ScreenHandlers {
 					syncId,
 					!isPortableItem ? null : ((PortableCrateItem) stack.getItem()).makeStore(player, hand),
 							label,
-							player.getStackInHand(hand));
+							player.getItemInHand(hand));
 		}
 
 		@Override
-		public Text getDisplayName() {
-			return new LiteralText(label);
+		public Component getDisplayName() {
+			return new TextComponent(label);
 		}
 
 		@Override
-		public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
+		public void writeScreenOpeningData(ServerPlayer player, FriendlyByteBuf buf) {
 			buf.writeVarInt(hand.ordinal());
-			buf.writeString(label);
+			buf.writeUtf(label);
 		}
 	}
 
-	public static ExtendedScreenHandlerFactory crateItemFactory(String label, Hand hand) {
+	public static ExtendedScreenHandlerFactory crateItemFactory(String label, InteractionHand hand) {
 		return new CrateItemScreenHandlerFactory(label, hand);
 	}
 

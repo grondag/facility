@@ -1,10 +1,8 @@
 package grondag.facility.transport.buffer;
 
 import java.util.function.Consumer;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 import grondag.facility.transport.UtbHelper;
 import grondag.facility.transport.handler.TransportCarrierContext;
 import grondag.facility.transport.storage.TransportStorageContext;
@@ -28,8 +26,8 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 		Article fluidArticle = Article.NOTHING;
 		MutableFraction fluidAmount = new MutableFraction();
 
-		public NbtCompound toTag() {
-			final NbtCompound tag = new NbtCompound();
+		public CompoundTag toTag() {
+			final CompoundTag tag = new CompoundTag();
 
 			if (itemQuantity != 0 && !itemArticle.isNothing()) {
 				tag.put("itm", itemArticle.toTag());
@@ -44,7 +42,7 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 			return tag;
 		}
 
-		public void fromTag(NbtCompound tag) {
+		public void fromTag(CompoundTag tag) {
 			reset();
 
 			if (tag.contains("itm")) {
@@ -322,7 +320,7 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 				return 0;
 			}
 
-			final long maxCount = article.toItem().getMaxCount();
+			final long maxCount = article.toItem().getMaxStackSize();
 
 			if (state.itemQuantity != 0 && !state.itemArticle.equals(article)) {
 				return 0;

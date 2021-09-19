@@ -1,20 +1,5 @@
 package grondag.facility.transport.item;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.FluidBlock;
-import net.minecraft.block.FluidDrainable;
-import net.minecraft.block.FluidFillable;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.block.entity.HopperBlockEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SidedInventory;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
-
 import grondag.facility.storage.TickableBlockEntity;
 import grondag.facility.transport.PipeBlockEntity;
 import grondag.facility.transport.UtbCostFunction;
@@ -36,6 +21,20 @@ import grondag.fluidity.wip.api.transport.CarrierProvider;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 import grondag.fluidity.wip.base.transport.SubCarrier;
 import grondag.xm.api.block.XmProperties;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Container;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BucketPickup;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.LiquidBlockContainer;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements TickableBlockEntity {
 	public static final String TAG_BUFFER = "buffer";
@@ -48,14 +47,14 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 	protected final TransportStorageContext fluidityStorage = new FluidityStorageContext() {
 		@Override
 		protected Store store() {
-			return Store.STORAGE_COMPONENT.getAccess(world, targetPos).get();
+			return Store.STORAGE_COMPONENT.getAccess(level, targetPos).get();
 		}
 	};
 
 	protected final TransportStorageContext worldStorage = new WorldStorageContext() {
 		@Override
-		protected World world() {
-			return getWorld();
+		protected Level world() {
+			return getLevel();
 		}
 
 		@Override
@@ -132,53 +131,53 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 	// does not provide carrier to the attached block
 	@Override
 	public final CarrierProvider getCarrierProvider(BlockComponentContext ctx) {
-		return ctx.side() == ctx.blockState().get(XmProperties.FACE) ? CarrierProvider.CARRIER_PROVIDER_COMPONENT.absent() : carrierProvider;
+		return ctx.side() == ctx.blockState().getValue(XmProperties.FACE) ? CarrierProvider.CARRIER_PROVIDER_COMPONENT.absent() : carrierProvider;
 	}
 
 	protected final void selectHandler() {
-		if(getWorld() == null || getPos() == null) {
+		if(getLevel() == null || getBlockPos() == null) {
 			return;
 		}
 
 		resetTickHandler = false;
 
-		final Direction face = getCachedState().get(XmProperties.FACE);
-		targetPos = getPos().offset(face);
+		final Direction face = getBlockState().getValue(XmProperties.FACE);
+		targetPos = getBlockPos().relative(face);
 		targetFace = face.getOpposite();
 
-		final Store storage =  Store.STORAGE_COMPONENT.getAccess(world, targetPos).get();
+		final Store storage =  Store.STORAGE_COMPONENT.getAccess(level, targetPos).get();
 
 		if(storage != Store.STORAGE_COMPONENT.absent()) {
 			fluidStorage = storage.allowsType(ArticleType.FLUID).mayBeTrue ? fluidityStorage : MissingStorageContext.INSTANCE;
 			itemStorage = storage.allowsType(ArticleType.ITEM).mayBeTrue ? fluidityStorage : MissingStorageContext.INSTANCE;
 		} else {
-			final Inventory inv = HopperBlockEntity.getInventoryAt(world, targetPos);
+			final Container inv = HopperBlockEntity.getContainerAt(level, targetPos);
 
 			if(inv != null) {
 				fluidStorage = MissingStorageContext.INSTANCE;
 
-				if (inv instanceof SidedInventory) {
+				if (inv instanceof WorldlyContainer) {
 					itemStorage = new SidedInventoryStorageContext(targetFace) {
 						@Override
-						protected SidedInventory inventory() {
-							return (SidedInventory) HopperBlockEntity.getInventoryAt(world, targetPos);
+						protected WorldlyContainer inventory() {
+							return (WorldlyContainer) HopperBlockEntity.getContainerAt(level, targetPos);
 						}
 					};
 				} else {
-					itemStorage = new InventoryStorageContext<Inventory>() {
+					itemStorage = new InventoryStorageContext<Container>() {
 						@Override
-						protected Inventory inventory() {
-							return HopperBlockEntity.getInventoryAt(world, targetPos);
+						protected Container inventory() {
+							return HopperBlockEntity.getContainerAt(level, targetPos);
 						}
 					};
 				}
 			}  else {
-				final BlockState state = getWorld().getBlockState(targetPos);
+				final BlockState state = getLevel().getBlockState(targetPos);
 				final Block block = state.getBlock();
-				itemStorage = state.isFullCube(world, targetPos) ? MissingStorageContext.INSTANCE : worldStorage;
+				itemStorage = state.isCollisionShapeFullBlock(level, targetPos) ? MissingStorageContext.INSTANCE : worldStorage;
 
-				if (state.isAir() || (state.getBlock() instanceof FluidBlock && state.getFluidState().isStill())
-						|| block instanceof FluidDrainable || block instanceof FluidFillable) {
+				if (state.isAir() || (state.getBlock() instanceof LiquidBlock && state.getFluidState().isSource())
+						|| block instanceof BucketPickup || block instanceof LiquidBlockContainer) {
 					fluidStorage = worldStorage;
 				} else {
 					fluidStorage = MissingStorageContext.INSTANCE;
@@ -198,7 +197,7 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 	@Override
 	public final void tick() {
 		// TODO: allow inversion or disable of redstone control
-		if(getCachedState().get(Properties.POWERED)) {
+		if(getBlockState().getValue(BlockStateProperties.POWERED)) {
 			return;
 		}
 
@@ -220,8 +219,8 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 	protected abstract void tickBuffer();
 
 	@Override
-	public NbtCompound writeNbt(NbtCompound tag) {
-		super.writeNbt(tag);
+	public CompoundTag save(CompoundTag tag) {
+		super.save(tag);
 
 		if (!transportBuffer.state().shouldSave()) {
 			tag.put(TAG_BUFFER, transportBuffer.state().toTag());
@@ -231,8 +230,8 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 	}
 
 	@Override
-	public void readNbt(NbtCompound tag) {
-		super.readNbt(tag);
+	public void load(CompoundTag tag) {
+		super.load(tag);
 
 		if (tag.contains(TAG_BUFFER)) {
 			transportBuffer.state().fromTag(tag.getCompound(TAG_BUFFER));

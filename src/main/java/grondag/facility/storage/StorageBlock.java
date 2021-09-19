@@ -18,24 +18,24 @@ package grondag.facility.storage;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShulkerBoxBlock;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.state.StateManager.Builder;
-import net.minecraft.text.LiteralText;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ShulkerBoxBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 
@@ -48,25 +48,25 @@ import grondag.xm.api.block.XmProperties;
 import grondag.xm.api.connect.species.SpeciesProperty;
 
 public abstract class StorageBlock extends FacilitySpeciesBlock {
-	public static final Identifier CONTENTS  = ShulkerBoxBlock.CONTENTS;
+	public static final ResourceLocation CONTENTS  = ShulkerBoxBlock.CONTENTS;
 
-	public StorageBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory) {
+	public StorageBlock(Block.Properties settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory) {
 		super(settings, beFactory, SpeciesProperty.speciesForBlockType(StorageBlock.class));
 	}
 
 	@Override
-	protected void appendProperties(Builder<Block, BlockState> builder) {
-		super.appendProperties(builder);
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+		super.createBlockStateDefinition(builder);
 		builder.add(XmProperties.FACE);
 	}
 
 	@Override
-	public boolean hasComparatorOutput(BlockState blockState) {
+	public boolean hasAnalogOutputSignal(BlockState blockState) {
 		return true;
 	}
 
 	@Override
-	public int getComparatorOutput(BlockState blockState, World world, BlockPos blockPos) {
+	public int getAnalogOutputSignal(BlockState blockState, Level world, BlockPos blockPos) {
 		final BlockEntity blockEntity = world.getBlockEntity(blockPos);
 
 		if (blockEntity instanceof StorageBlockEntity) {
@@ -83,27 +83,27 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 
 
 	@Override
-	public void onBreak(World world, BlockPos blockPos, BlockState blockState, PlayerEntity playerEntity) {
+	public void playerWillDestroy(Level world, BlockPos blockPos, BlockState blockState, Player playerEntity) {
 		// Drop in creative mode
 		if (playerEntity.isCreative()) {
 			final BlockEntity blockEntity = world.getBlockEntity(blockPos);
 
 			if (blockEntity instanceof StorageBlockEntity) {
-				if (!world.isClient) {
+				if (!world.isClientSide) {
 					final ItemStack stack = getDropStack((StorageBlockEntity<?, ?>) blockEntity);
 					final ItemEntity itemEntity = new ItemEntity(world, blockPos.getX(), blockPos.getY(), blockPos.getZ(), stack);
-					itemEntity.setToDefaultPickupDelay();
-					world.spawnEntity(itemEntity);
+					itemEntity.setDefaultPickUpDelay();
+					world.addFreshEntity(itemEntity);
 				}
 			}
 		}
 
-		super.onBreak(world, blockPos, blockState, playerEntity);
+		super.playerWillDestroy(world, blockPos, blockState, playerEntity);
 	}
 
 	@Override
-	public List<ItemStack> getDroppedStacks(BlockState state, LootContext.Builder builder) {
-		final BlockEntity blockEntity = builder.getNullable(LootContextParameters.BLOCK_ENTITY);
+	public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+		final BlockEntity blockEntity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
 
 		if (blockEntity == null || !(blockEntity instanceof StorageBlockEntity)) {
 			Facility.LOG.error("Call to getDroppedStacks unable to retrieve block entity. Crashing to avoid loss of storage contents. This is usually a bug in another mod.");
@@ -120,13 +120,13 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 		final ItemStack stack = getStack(isEmpty);
 
 		if(!isEmpty) {
-			final NbtCompound tag = myBlockEntity.toContainerTag(new NbtCompound());
+			final CompoundTag tag = myBlockEntity.toContainerTag(new CompoundTag());
 
 			if (!tag.isEmpty()) {
-				stack.setSubNbt("BlockEntityTag", tag);
+				stack.addTagElement("BlockEntityTag", tag);
 			}
 
-			stack.setCustomName(new LiteralText(myBlockEntity.getLabel()));
+			stack.setHoverName(new TextComponent(myBlockEntity.getLabel()));
 			writeCustomStackData(stack, myBlockEntity.getInternalStorage());
 		}
 
@@ -138,25 +138,25 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 	}
 
 	@Override
-	public BlockState getPlacementState(ItemPlacementContext context) {
-		return super.getPlacementState(context).with(XmProperties.FACE,
-				ModKeys.isSecondaryPressed(context.getPlayer()) && context.getSide() != null ? context.getSide().getOpposite() : context.getPlayerLookDirection());
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return super.getStateForPlacement(context).setValue(XmProperties.FACE,
+				ModKeys.isSecondaryPressed(context.getPlayer()) && context.getClickedFace() != null ? context.getClickedFace().getOpposite() : context.getNearestLookingDirection());
 	}
 
 	@Override
-	public BlockState getStateForNeighborUpdate(BlockState blockState, Direction direction, BlockState blockState2, WorldAccess iWorld, BlockPos blockPos, BlockPos blockPos2) {
+	public BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState2, LevelAccessor iWorld, BlockPos blockPos, BlockPos blockPos2) {
 		updateBe(iWorld, blockPos);
 		return blockState;
 	}
 
 	@Override
-	public void onBlockAdded(BlockState blockState, World world, BlockPos blockPos, BlockState blockState2, boolean bl) {
+	public void onPlace(BlockState blockState, Level world, BlockPos blockPos, BlockState blockState2, boolean bl) {
 		updateBe(world, blockPos);
-		super.onBlockAdded(blockState, world, blockPos, blockState2, bl);
+		super.onPlace(blockState, world, blockPos, blockState2, bl);
 	}
 
 	@SuppressWarnings("rawtypes")
-	protected void updateBe(WorldAccess world, BlockPos pos) {
+	protected void updateBe(LevelAccessor world, BlockPos pos) {
 		final BlockEntity be = world.getBlockEntity(pos);
 
 		if(be instanceof NeighboredBlockEntity) {

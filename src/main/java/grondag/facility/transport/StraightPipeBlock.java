@@ -15,11 +15,11 @@
  ******************************************************************************/
 package grondag.facility.transport;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager.Builder;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 
@@ -27,19 +27,19 @@ import grondag.fermion.modkeys.api.ModKeys;
 import grondag.xm.api.block.XmProperties;
 
 public class StraightPipeBlock extends PipeBlock {
-	public StraightPipeBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, boolean hasGlow) {
+	public StraightPipeBlock(Block.Properties settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, boolean hasGlow) {
 		super(settings, beFactory, hasGlow);
 	}
 
 	@Override
-	protected void appendProperties(Builder<Block, BlockState> builder) {
-		super.appendProperties(builder);
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+		super.createBlockStateDefinition(builder);
 		builder.add(XmProperties.AXIS);
 	}
 
 	@Override
-	public BlockState getPlacementState(ItemPlacementContext context) {
-		return super.getPlacementState(context).with(XmProperties.AXIS,
-				ModKeys.isSecondaryPressed(context.getPlayer()) || context.getSide() == null ? context.getPlayerLookDirection().getAxis() : context.getSide().getAxis());
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return super.getStateForPlacement(context).setValue(XmProperties.AXIS,
+				ModKeys.isSecondaryPressed(context.getPlayer()) || context.getClickedFace() == null ? context.getNearestLookingDirection().getAxis() : context.getClickedFace().getAxis());
 	}
 }

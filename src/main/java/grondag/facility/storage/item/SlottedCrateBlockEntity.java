@@ -16,19 +16,17 @@ package grondag.facility.storage.item;
  * the License.
  ******************************************************************************/
 import java.util.function.Supplier;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import grondag.fluidity.base.storage.AbstractStore;
 import grondag.fluidity.base.storage.discrete.SlottedInventoryStore;
 
-public class SlottedCrateBlockEntity extends CrateBlockEntity implements Inventory {
+public class SlottedCrateBlockEntity extends CrateBlockEntity implements Container {
 	protected final SlottedInventoryStore slottedStore;
 
 	public SlottedCrateBlockEntity(BlockEntityType<? extends CrateBlockEntity> type, BlockPos pos, BlockState state, @SuppressWarnings("rawtypes") Supplier<AbstractStore> storageSupplier, String labelRoot) {
@@ -37,13 +35,13 @@ public class SlottedCrateBlockEntity extends CrateBlockEntity implements Invento
 	}
 
 	@Override
-	public void clear() {
-		slottedStore.clear();
+	public void clearContent() {
+		slottedStore.clearContent();
 	}
 
 	@Override
-	public int size() {
-		return slottedStore.size();
+	public int getContainerSize() {
+		return slottedStore.getContainerSize();
 	}
 
 	@Override
@@ -52,38 +50,38 @@ public class SlottedCrateBlockEntity extends CrateBlockEntity implements Invento
 	}
 
 	@Override
-	public ItemStack getStack(int slot) {
-		return slottedStore.getStack(slot);
+	public ItemStack getItem(int slot) {
+		return slottedStore.getItem(slot);
 	}
 
 	@Override
-	public ItemStack removeStack(int slot, int count) {
-		return slottedStore.removeStack(slot, count);
+	public ItemStack removeItem(int slot, int count) {
+		return slottedStore.removeItem(slot, count);
 	}
 
 	@Override
-	public ItemStack removeStack(int slot) {
-		return slottedStore.removeStack(slot);
+	public ItemStack removeItemNoUpdate(int slot) {
+		return slottedStore.removeItemNoUpdate(slot);
 	}
 
 	@Override
-	public void setStack(int slot, ItemStack itemStack) {
-		slottedStore.setStack(slot, itemStack);
+	public void setItem(int slot, ItemStack itemStack) {
+		slottedStore.setItem(slot, itemStack);
 	}
 
 	@Override
-	public boolean canPlayerUse(PlayerEntity playerEntity) {
-		return slottedStore.canPlayerUse(playerEntity);
+	public boolean stillValid(Player playerEntity) {
+		return slottedStore.stillValid(playerEntity);
 	}
 
 	@Override
-	public void markDirty() {
-		slottedStore.markDirty();
-		super.markDirty();
+	public void setChanged() {
+		slottedStore.setChanged();
+		super.setChanged();
 	}
 
 	@Override
-	public boolean isValid(int slot, ItemStack stack) {
-		return !stack.hasNbt() || Block.getBlockFromItem(stack.getItem()).getClass() != CrateBlock.class;
+	public boolean canPlaceItem(int slot, ItemStack stack) {
+		return !stack.hasTag() || Block.byItem(stack.getItem()).getClass() != CrateBlock.class;
 	}
 }

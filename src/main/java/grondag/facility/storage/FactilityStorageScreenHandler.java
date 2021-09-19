@@ -16,35 +16,32 @@
 package grondag.facility.storage;
 
 import java.util.List;
-
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.slot.Slot;
-import net.minecraft.screen.slot.SlotActionType;
-import net.minecraft.server.network.ServerPlayerEntity;
-
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.AbstractStorageServerDelegate;
 import grondag.fluidity.base.synch.StorageContainer;
 
-public abstract class FactilityStorageScreenHandler<T extends AbstractStorageServerDelegate<?>> extends ScreenHandler implements StorageContainer {
+public abstract class FactilityStorageScreenHandler<T extends AbstractStorageServerDelegate<?>> extends AbstractContainerMenu implements StorageContainer {
 	protected final @Nullable Store storage;
 	protected String label;
 	protected T delegate;
 
-	public FactilityStorageScreenHandler(ScreenHandlerType<?> type, PlayerEntity player, int synchId, @Nullable Store storage, String label) {
+	public FactilityStorageScreenHandler(MenuType<?> type, Player player, int synchId, @Nullable Store storage, String label) {
 		super(type, synchId);
 		this.storage = storage;
 		this.label = label;
-		final Inventory inv = player.getInventory();
+		final Container inv = player.getInventory();
 
-		if(player instanceof ServerPlayerEntity) {
-			delegate = createDelegate((ServerPlayerEntity) player, storage);
+		if(player instanceof ServerPlayer) {
+			delegate = createDelegate((ServerPlayer) player, storage);
 		}
 
 		for(int p = 0; p < 3; ++p) {
@@ -58,10 +55,10 @@ public abstract class FactilityStorageScreenHandler<T extends AbstractStorageSer
 		}
 	}
 
-	protected abstract T createDelegate(ServerPlayerEntity player, Store storage);
+	protected abstract T createDelegate(ServerPlayer player, Store storage);
 
 	@Override
-	public boolean canUse(PlayerEntity playerEntity) {
+	public boolean stillValid(Player playerEntity) {
 		return storage.isValid();
 	}
 
@@ -71,8 +68,8 @@ public abstract class FactilityStorageScreenHandler<T extends AbstractStorageSer
 	}
 
 	@Override
-	public void sendContentUpdates() {
-		super.sendContentUpdates();
+	public void broadcastChanges() {
+		super.broadcastChanges();
 
 		if(delegate != null) {
 			delegate.sendUpdates();
@@ -80,8 +77,8 @@ public abstract class FactilityStorageScreenHandler<T extends AbstractStorageSer
 	}
 
 	@Override
-	public void close(PlayerEntity playerEntity) {
-		super.close(playerEntity);
+	public void removed(Player playerEntity) {
+		super.removed(playerEntity);
 
 		if(delegate != null) {
 			delegate.close(playerEntity);
@@ -89,27 +86,27 @@ public abstract class FactilityStorageScreenHandler<T extends AbstractStorageSer
 	}
 
 	@Override
-	public boolean onButtonClick(PlayerEntity playerEntity, int i) {
-		return super.onButtonClick(playerEntity, i);
+	public boolean clickMenuButton(Player playerEntity, int i) {
+		return super.clickMenuButton(playerEntity, i);
 	}
 
 	@Override
-	public ItemStack transferSlot(PlayerEntity playerEntity, int slotId) {
+	public ItemStack quickMoveStack(Player playerEntity, int slotId) {
 		final Slot slot = slots.get(slotId);
 
-		if (slot != null && slot.hasStack()) {
-			final ItemStack sourceStack = slot.getStack();
+		if (slot != null && slot.hasItem()) {
+			final ItemStack sourceStack = slot.getItem();
 
-			slot.setStack(ItemStack.EMPTY);
-			slot.markDirty();
+			slot.set(ItemStack.EMPTY);
+			slot.setChanged();
 
-			if(playerEntity instanceof ServerPlayerEntity) {
+			if(playerEntity instanceof ServerPlayer) {
 				final int qty = (int) storage.getConsumer().apply(sourceStack, false);
 
 				if(qty < sourceStack.getCount()) {
 					final ItemStack giveBack = sourceStack.copy();
-					giveBack.decrement(qty);
-					playerEntity.getInventory().offerOrDrop(giveBack);
+					giveBack.shrink(qty);
+					playerEntity.getInventory().placeItemBackInInventory(giveBack);
 				}
 			}
 		}
@@ -118,27 +115,27 @@ public abstract class FactilityStorageScreenHandler<T extends AbstractStorageSer
 	}
 
 	@Override
-	public void onSlotClick(int slotId, int mouseButton, SlotActionType slotActionType, PlayerEntity playerEntity) {
-		super.onSlotClick(slotId, mouseButton, slotActionType, playerEntity);
+	public void clicked(int slotId, int mouseButton, ClickType slotActionType, Player playerEntity) {
+		super.clicked(slotId, mouseButton, slotActionType, playerEntity);
 	}
 
 	@Override
-	public void onContentChanged(Inventory inventory) {
-		super.onContentChanged(inventory);
+	public void slotsChanged(Container inventory) {
+		super.slotsChanged(inventory);
 	}
 
 	@Override
-	public void setStackInSlot(int i, int j, ItemStack itemStack) {
-		super.setStackInSlot(i, j, itemStack);
+	public void setItem(int i, int j, ItemStack itemStack) {
+		super.setItem(i, j, itemStack);
 	}
 
 	@Override
-	public void updateSlotStacks(int i, List<ItemStack> list, ItemStack itemStack) {
-		super.updateSlotStacks(i, list, itemStack);
+	public void initializeContents(int i, List<ItemStack> list, ItemStack itemStack) {
+		super.initializeContents(i, list, itemStack);
 	}
 
 	@Override
-	protected boolean insertItem(ItemStack itemStack, int i, int j, boolean bl) {
-		return super.insertItem(itemStack, i, j, bl);
+	protected boolean moveItemStackTo(ItemStack itemStack, int i, int j, boolean bl) {
+		return super.moveItemStackTo(itemStack, i, j, bl);
 	}
 }

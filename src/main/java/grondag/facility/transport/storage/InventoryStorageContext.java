@@ -1,12 +1,11 @@
 package grondag.facility.transport.storage;
 
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.ArticleType;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 
-public abstract class InventoryStorageContext<T extends Inventory> implements TransportStorageContext {
+public abstract class InventoryStorageContext<T extends Container> implements TransportStorageContext {
 	protected int supplySlotIndex = 0;
 	protected Article lastSupplyArticle = Article.NOTHING;
 
@@ -30,7 +29,7 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 	}
 
 	protected void setupSlots() {
-		final int limit = inventory == null ? 0 : inventory.size();
+		final int limit = inventory == null ? 0 : inventory.getContainerSize();
 
 		if (slots.length != limit) {
 			slots = new int[limit];
@@ -96,11 +95,11 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 			return 0;
 		}
 
-		final ItemStack stack = inventory.getStack(slots[acceptSlotIndex]);
+		final ItemStack stack = inventory.getItem(slots[acceptSlotIndex]);
 
 		assert article.matches(stack) || stack.isEmpty();
 
-		return stack.getMaxCount() - stack.getCount();
+		return stack.getMaxStackSize() - stack.getCount();
 	}
 
 	@Override
@@ -109,7 +108,7 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 			return null;
 		}
 
-		final Inventory inv = inventory;
+		final Container inv = inventory;
 
 		if (inv == null) {
 			return null;
@@ -127,17 +126,17 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 			proposalSlotIndex = 0;
 		}
 
-		ItemStack stack = inv.getStack(slots[proposalSlotIndex]);
+		ItemStack stack = inv.getItem(slots[proposalSlotIndex]);
 
-		if (!stack.isEmpty() && stack.getCount() >= stack.getMaxCount() && !canPlaceInSlot(stack, proposalSlotIndex)) {
+		if (!stack.isEmpty() && stack.getCount() >= stack.getMaxStackSize() && !canPlaceInSlot(stack, proposalSlotIndex)) {
 			if (++proposalSlotIndex < limit) {
-				stack = inv.getStack(slots[proposalSlotIndex]);
+				stack = inv.getItem(slots[proposalSlotIndex]);
 			} else {
 				return null;
 			}
 		}
 
-		if (stack.isEmpty() || stack.getCount() < stack.getMaxCount()) {
+		if (stack.isEmpty() || stack.getCount() < stack.getMaxStackSize()) {
 			if (!lastProposalArticle.matches(stack)) {
 				lastProposalArticle = Article.of(stack);
 			}
@@ -159,21 +158,21 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 			return 0;
 		}
 
-		final Inventory inv = inventory;
-		final ItemStack stack = inv.getStack(slots[acceptSlotIndex]);
+		final Container inv = inventory;
+		final ItemStack stack = inv.getItem(slots[acceptSlotIndex]);
 
 		assert article.matches(stack) || stack.isEmpty();
 
-		final long count = Math.min(numerator, stack.getMaxCount() - stack.getCount());
+		final long count = Math.min(numerator, stack.getMaxStackSize() - stack.getCount());
 
 		if (count > 0) {
 			if(stack.isEmpty()) {
-				inv.setStack(slots[acceptSlotIndex], article.toStack(count));
+				inv.setItem(slots[acceptSlotIndex], article.toStack(count));
 			} else {
-				stack.increment((int) count);
+				stack.grow((int) count);
 			}
 
-			inv.markDirty();
+			inv.setChanged();
 		}
 
 		return count;
@@ -185,7 +184,7 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 			return Article.NOTHING;
 		}
 
-		final Inventory inv = inventory;
+		final Container inv = inventory;
 
 		if (inv == null) {
 			return Article.NOTHING;
@@ -203,11 +202,11 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 			supplySlotIndex = 0;
 		}
 
-		ItemStack stack = inv.getStack(slots[supplySlotIndex]);
+		ItemStack stack = inv.getItem(slots[supplySlotIndex]);
 
 		if ((stack.isEmpty() || !canExtract(stack, slots[supplySlotIndex]))) {
 			if (++supplySlotIndex < limit) {
-				stack = inv.getStack(slots[supplySlotIndex]);
+				stack = inv.getItem(slots[supplySlotIndex]);
 			} else {
 				return Article.NOTHING;
 			}
@@ -227,7 +226,7 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 	}
 
 	protected boolean positionToSupply(Article article) {
-		final Inventory inv = inventory;
+		final Container inv = inventory;
 
 		if (inv == null) {
 			return false;
@@ -238,7 +237,7 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 
 		// restart position search from beginning if different article
 		if (supplySlotIndex < limit && article.equals(lastSupplyArticle)) {
-			final ItemStack stack = inv.getStack(slots[supplySlotIndex]);
+			final ItemStack stack = inv.getItem(slots[supplySlotIndex]);
 
 			if (!stack.isEmpty() && article.matches(stack)) {
 				return true;
@@ -246,7 +245,7 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 		}
 
 		for (int i = 0; i < limit; ++i) {
-			final ItemStack stack = inv.getStack(slots[i]);
+			final ItemStack stack = inv.getItem(slots[i]);
 
 			if (!stack.isEmpty() && article.matches(stack)) {
 				supplySlotIndex = i;
@@ -270,8 +269,8 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 			return 0;
 		}
 
-		final Inventory inv = inventory;
-		final ItemStack stack = inv.getStack(slots[supplySlotIndex]);
+		final Container inv = inventory;
+		final ItemStack stack = inv.getItem(slots[supplySlotIndex]);
 
 		assert !stack.isEmpty() && article.matches(stack);
 
@@ -284,20 +283,20 @@ public abstract class InventoryStorageContext<T extends Inventory> implements Tr
 			return 0;
 		}
 
-		final Inventory inv = inventory;
-		final ItemStack stack = inv.getStack(slots[supplySlotIndex]);
+		final Container inv = inventory;
+		final ItemStack stack = inv.getItem(slots[supplySlotIndex]);
 
 		assert !stack.isEmpty() && article.matches(stack);
 
 		final long count = Math.min(numerator, stack.getCount());
 
-		stack.decrement((int) count);
+		stack.shrink((int) count);
 
 		if (stack.isEmpty()) {
-			inv.setStack(slots[supplySlotIndex], ItemStack.EMPTY);
+			inv.setItem(slots[supplySlotIndex], ItemStack.EMPTY);
 		}
 
-		inv.markDirty();
+		inv.setChanged();
 
 		return count;
 	}

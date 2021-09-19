@@ -1,12 +1,11 @@
 package grondag.facility.transport.storage;
 
-import net.minecraft.inventory.SidedInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Direction;
-
 import grondag.fluidity.api.article.Article;
+import net.minecraft.core.Direction;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.item.ItemStack;
 
-public abstract class SidedInventoryStorageContext extends InventoryStorageContext<SidedInventory> {
+public abstract class SidedInventoryStorageContext extends InventoryStorageContext<WorldlyContainer> {
 	protected final Direction targetFace;
 
 	public SidedInventoryStorageContext(Direction targetFace) {
@@ -15,8 +14,8 @@ public abstract class SidedInventoryStorageContext extends InventoryStorageConte
 
 	@Override
 	public boolean prepareForTick() {
-		if (super.prepareForTick() && inventory instanceof SidedInventory) {
-			slots = inventory.getAvailableSlots(targetFace);
+		if (super.prepareForTick() && inventory instanceof WorldlyContainer) {
+			slots = inventory.getSlotsForFace(targetFace);
 			return true;
 		} else {
 			return false;
@@ -25,16 +24,16 @@ public abstract class SidedInventoryStorageContext extends InventoryStorageConte
 
 	@Override
 	protected boolean canExtract(ItemStack stack, int slot) {
-		return inventory.canExtract(slot, stack, targetFace);
+		return inventory.canTakeItemThroughFace(slot, stack, targetFace);
 	}
 
 	@Override
 	protected boolean canPlaceInSlot(Article article, int slot) {
-		return inventory.canInsert(slot, article.toStack(), targetFace);
+		return inventory.canPlaceItemThroughFace(slot, article.toStack(), targetFace);
 	}
 
 	@Override
 	protected boolean canPlaceInSlot(ItemStack stack, int slot) {
-		return inventory.canInsert(slot, stack, targetFace);
+		return inventory.canPlaceItemThroughFace(slot, stack, targetFace);
 	}
 }

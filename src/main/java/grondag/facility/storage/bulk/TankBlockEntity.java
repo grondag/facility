@@ -16,19 +16,16 @@
 package grondag.facility.storage.bulk;
 
 import java.util.function.Supplier;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
-
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandler;
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import grondag.facility.storage.StorageBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
 import grondag.fluidity.api.multiblock.MultiBlockManager;
@@ -64,7 +61,7 @@ public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMul
 	}
 
 	@Override
-	public void fromClientTag(NbtCompound tag) {
+	public void fromClientTag(CompoundTag tag) {
 		label = tag.getString(TAG_LABEL);
 
 		final TankClientState clientState = clientState();
@@ -73,27 +70,27 @@ public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMul
 		if(clientState.level == 0) {
 			clientState.fluidSprite = null;
 		} else {
-			final Fluid fluid = Registry.FLUID.get(tag.getInt("fluid"));
+			final Fluid fluid = Registry.FLUID.byId(tag.getInt("fluid"));
 			final FluidRenderHandler handler = FluidRenderHandlerRegistry.INSTANCE.get(fluid);
 
 			if (handler == null) {
 				clientState.fluidSprite = null;
 			} else {
-				clientState.fluidColor = handler.getFluidColor(getWorld(), getPos(), fluid.getDefaultState());
-				clientState.fluidSprite = handler.getFluidSprites(getWorld(), getPos(), fluid.getDefaultState())[0];
-				clientState.glowing = fluid.getDefaultState().getBlockState().getLuminance() > 0;
+				clientState.fluidColor = handler.getFluidColor(getLevel(), getBlockPos(), fluid.defaultFluidState());
+				clientState.fluidSprite = handler.getFluidSprites(getLevel(), getBlockPos(), fluid.defaultFluidState())[0];
+				clientState.glowing = fluid.defaultFluidState().createLegacyBlock().getLightEmission() > 0;
 			}
 		}
 	}
 
 	@Override
-	public NbtCompound toClientTag(NbtCompound tag) {
+	public CompoundTag toClientTag(CompoundTag tag) {
 		tag.putString(TAG_LABEL, label);
 		final float usage = (float) storage.usage();
 		tag.putFloat("usage", usage);
 
 		if(usage != 0 && !storage.isEmpty()) {
-			tag.putInt("fluid", Registry.FLUID.getRawId(storage.view(0).article().toFluid()));
+			tag.putInt("fluid", Registry.FLUID.getId(storage.view(0).article().toFluid()));
 		}
 
 		return tag;
@@ -103,7 +100,7 @@ public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMul
 	protected void markForSave() {
 		super.markForSave();
 
-		if(world != null && pos != null) {
+		if(level != null && worldPosition != null) {
 			// PERF: gate this somehow?
 			sync();
 		}

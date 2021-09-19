@@ -17,14 +17,12 @@ package grondag.facility.init;
 
 import static grondag.facility.Facility.REG;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.item.Item;
-import net.minecraft.util.math.BlockPos;
-
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 import grondag.facility.storage.PortableStore;
 import grondag.facility.storage.bulk.PortableTankItem;
 import grondag.facility.storage.bulk.TankBlock;
@@ -53,10 +51,10 @@ public enum TankBlocks {
 		return new TankBlockEntity(TANK_BLOCK_ENTITY_TYPE, pos, state, () -> new SimpleTank(Fraction.of(32)).filter(ArticleType.FLUID), "TANK ");
 	}
 
-	public static final PortableTankItem PORTABLE_TANK_ITEM = REG.item("tank", new PortableTankItem(TANK, REG.itemSettings().maxCount(1).maxDamage(32768)));
+	public static final PortableTankItem PORTABLE_TANK_ITEM = REG.item("tank", new PortableTankItem(TANK, REG.itemSettings().stacksTo(1).durability(32768)));
 
 	static {
-		PORTABLE_TANK_ITEM.appendBlocks(Item.BLOCK_ITEMS, PORTABLE_TANK_ITEM);
+		PORTABLE_TANK_ITEM.registerBlocks(Item.BY_BLOCK, PORTABLE_TANK_ITEM);
 
 		//CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(TANK);
 		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage(), TANK);

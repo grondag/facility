@@ -18,16 +18,13 @@ package grondag.facility.init;
 import static grondag.facility.Facility.REG;
 
 import java.util.function.Predicate;
-
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Material;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.util.math.BlockPos;
-
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 import grondag.facility.Facility;
 import grondag.facility.storage.item.CrateBlock;
 import grondag.facility.storage.item.CrateBlockEntity;
@@ -71,7 +68,7 @@ public enum CrateBlocks {
 	static CrateBlockEntity crateBe(BlockPos pos, BlockState state) {
 		return new CrateBlockEntity(CRATE_BLOCK_ENTITY_TYPE, pos, state, () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "CRATE ");
 	}
-	public static final PortableCrateItem PORTABLE_CRATE_ITEM = REG.item("crate_item", new PortableCrateItem(CRATE, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
+	public static final PortableCrateItem PORTABLE_CRATE_ITEM = REG.item("crate_item", new PortableCrateItem(CRATE, REG.itemSettings().stacksTo(1).durability(2048), () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
 	public static final Item CRATE_ITEM = REG.item("crate", new BlockItem(CRATE, REG.itemSettings()));
 
 
@@ -80,7 +77,7 @@ public enum CrateBlocks {
 	static SlottedCrateBlockEntity slottedBe(BlockPos pos, BlockState state) {
 		return new SlottedCrateBlockEntity(SLOTTED_CRATE_BLOCK_ENTITY_TYPE, pos, state, () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "SLOTTED CRATE ");
 	}
-	public static final PortableCrateItem PORTABLE_SLOTTED_CRATE_ITEM = REG.item("slotted_crate_item", new PortableCrateItem(SLOTTED_CRATE, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
+	public static final PortableCrateItem PORTABLE_SLOTTED_CRATE_ITEM = REG.item("slotted_crate_item", new PortableCrateItem(SLOTTED_CRATE, REG.itemSettings().stacksTo(1).durability(2048), () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
 	public static final Item SLOTTED_CRATE_ITEM = REG.item("slotted_crate", new BlockItem(SLOTTED_CRATE, REG.itemSettings()));
 
 
@@ -96,7 +93,7 @@ public enum CrateBlocks {
 	static CrateBlockEntity hyperCrateBe(BlockPos pos, BlockState state) {
 		return new CrateBlockEntity(HYPER_CRATE_BLOCK_ENTITY_TYPE, pos, state, () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "HYPERCRATE ");
 	}
-	public static final PortableCrateItem PORTABLE_HYPER_CRATE_ITEM = REG.item("hyper_crate_item", new PortableCrateItem(HYPER_CRATE, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
+	public static final PortableCrateItem PORTABLE_HYPER_CRATE_ITEM = REG.item("hyper_crate_item", new PortableCrateItem(HYPER_CRATE, REG.itemSettings().stacksTo(1).durability(2048), () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
 	public static final Item HYPER_CRATE_ITEM = REG.item("hyper_crate", new BlockItem(HYPER_CRATE, REG.itemSettings()));
 
 	static {

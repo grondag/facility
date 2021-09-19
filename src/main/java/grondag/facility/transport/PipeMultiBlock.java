@@ -16,9 +16,7 @@
 package grondag.facility.transport;
 
 import java.util.function.Function;
-
-import net.minecraft.block.entity.BlockEntity;
-
+import net.minecraft.world.level.block.entity.BlockEntity;
 import grondag.fluidity.api.multiblock.MultiBlockManager;
 import grondag.fluidity.base.multiblock.AbstractBlockEntityMember;
 import grondag.fluidity.wip.api.transport.CarrierType;
@@ -57,8 +55,8 @@ public class PipeMultiBlock extends AbstractCarrierMultiBlock<PipeMultiBlock.Mem
 			final BlockEntity myBe = blockEntity;
 			final BlockEntity otherBe = other.blockEntity;
 
-			return myBe.hasWorld() && otherBe.hasWorld()
-					&&  PipeBlock.canConnectSelf(myBe.getCachedState(), myBe.getPos(), otherBe.getCachedState(), otherBe.getPos());
+			return myBe.hasLevel() && otherBe.hasLevel()
+					&&  PipeBlock.canConnectSelf(myBe.getBlockState(), myBe.getBlockPos(), otherBe.getBlockState(), otherBe.getBlockPos());
 		}
 	}
 

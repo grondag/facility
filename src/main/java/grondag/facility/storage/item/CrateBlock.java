@@ -19,24 +19,24 @@ import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -55,7 +55,7 @@ public class CrateBlock extends StorageBlock {
 	// ugly but works
 	public PortableCrateItem portableItem;
 
-	public CrateBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory) {
+	public CrateBlock(Block.Properties settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory) {
 		super(settings, beFactory);
 	}
 
@@ -65,40 +65,40 @@ public class CrateBlock extends StorageBlock {
 	public static boolean canConnect(BlockState fromState, BlockState toState) {
 		return fromState.getBlock() instanceof CrateBlock
 		&& toState.getBlock() instanceof CrateBlock
-		&& fromState.get(SpeciesProperty.SPECIES) == toState.get(SpeciesProperty.SPECIES);
+		&& fromState.getValue(SpeciesProperty.SPECIES) == toState.getValue(SpeciesProperty.SPECIES);
 	}
 
 	public static boolean canConnect(CrateBlockEntity fromEntity, CrateBlockEntity toEntity) {
-		final World fromWorld = fromEntity.getWorld();
-		return fromWorld == null || fromWorld != toEntity.getWorld() ? false : canConnect(fromEntity.getCachedState(), toEntity.getCachedState());
+		final Level fromWorld = fromEntity.getLevel();
+		return fromWorld == null || fromWorld != toEntity.getLevel() ? false : canConnect(fromEntity.getBlockState(), toEntity.getBlockState());
 	}
 
 	@Override
-	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-		if(Block.getBlockFromItem(player.getStackInHand(hand).getItem()) instanceof CrateBlock) {
-			return ActionResult.PASS;
+	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		if(Block.byItem(player.getItemInHand(hand).getItem()) instanceof CrateBlock) {
+			return InteractionResult.PASS;
 		}
 
-		if (!world.isClient) {
+		if (!world.isClientSide) {
 			final BlockEntity be = world.getBlockEntity(pos);
 
 			if(be instanceof CrateBlockEntity) {
 				final String label = ((CrateBlockEntity) be).getLabel();
-				((ServerPlayerEntity) player).openHandledScreen(ScreenHandlers.crateBlockFactory(label, pos));
+				((ServerPlayer) player).openMenu(ScreenHandlers.crateBlockFactory(label, pos));
 			}
 		}
 
-		return ActionResult.SUCCESS;
+		return InteractionResult.SUCCESS;
 	}
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public void appendTooltip(ItemStack itemStack, @Nullable BlockView blockView, List<Text> list, TooltipContext tooltipContext) {
-		super.appendTooltip(itemStack, blockView, list, tooltipContext);
-		final NbtCompound beTag = itemStack.getSubNbt("BlockEntityTag");
+	public void appendHoverText(ItemStack itemStack, @Nullable BlockGetter blockView, List<Component> list, TooltipFlag tooltipContext) {
+		super.appendHoverText(itemStack, blockView, list, tooltipContext);
+		final CompoundTag beTag = itemStack.getTagElement("BlockEntityTag");
 
 		if (beTag != null && beTag.contains(CrateBlockEntity.TAG_STORAGE)) {
-			final NbtList tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStore.TAG_ITEMS, 10);
+			final ListTag tagList = beTag.getCompound(CrateBlockEntity.TAG_STORAGE).getList(AbstractDiscreteStore.TAG_ITEMS, 10);
 			final int limit = Math.min(9,tagList.size());
 			final StoredDiscreteArticle lookup = new StoredDiscreteArticle();
 
@@ -106,14 +106,14 @@ public class CrateBlock extends StorageBlock {
 				lookup.readTag(tagList.getCompound(i));
 
 				if(!lookup.isEmpty()) {
-					final MutableText text = lookup.article().toStack().getName().copy();
+					final MutableComponent text = lookup.article().toStack().getHoverName().plainCopy();
 					text.append(" x").append(String.valueOf(lookup.count()));
 					list.add(text);
 				}
 			}
 
 			if(limit < tagList.size()) {
-				list.add(new LiteralText("..."));
+				list.add(new TextComponent("..."));
 			}
 		}
 	}

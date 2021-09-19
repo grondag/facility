@@ -1,43 +1,40 @@
 package grondag.facility.transport.storage;
 
 import java.util.Random;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BucketPickup;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.block.LiquidBlockContainer;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
 import com.google.common.base.Predicates;
 import io.netty.util.internal.ThreadLocalRandom;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FluidBlock;
-import net.minecraft.block.FluidDrainable;
-import net.minecraft.block.FluidFillable;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.tag.FluidTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.world.World;
-
 import grondag.facility.FacilityConfig;
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.article.ArticleType;
 
 public abstract class WorldStorageContext implements TransportStorageContext {
-	protected abstract World world();
+	protected abstract Level world();
 
 	protected static final int FLUID_COOLDOWN_TICKS = 64 / FacilityConfig.utb1ItemsPerTick;
 
 	protected abstract BlockPos pos();
 
-	protected World world;
+	protected Level world;
 	protected BlockPos pos;
 	protected BlockState blockState;
 	protected Block block;
@@ -47,7 +44,7 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 	ItemEntity entity = null;
 	boolean canDropItems = false;
 	boolean canPlaceFluid = false;
-	Box bounds = null;
+	AABB bounds = null;
 	final ObjectArrayList<Entity> entityList = new ObjectArrayList<>();
 	protected boolean drainable = false;
 	protected boolean fillable = false;
@@ -71,7 +68,7 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 		}
 
 		if (pos != oldPos) {
-			bounds = new Box(pos);
+			bounds = new AABB(pos);
 		}
 
 		final BlockState state = world.getBlockState(pos);
@@ -81,35 +78,35 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 
 		if (--fluidCooldownTicks <= 0) {
 			final FluidState fluidState = state.getFluidState();
-			final Fluid worldFluid = fluidState.getFluid();
+			final Fluid worldFluid = fluidState.getType();
 			fluid = null;
 
 
 			if (worldFluid == Fluids.EMPTY) {
 				if (state.isAir() && state.getMaterial().isReplaceable()) {
 					canPlaceFluid = true;
-				} else if (block instanceof FluidFillable) {
+				} else if (block instanceof LiquidBlockContainer) {
 					canPlaceFluid = true;
 					fillable = true;
 				}
-			} else if (worldFluid.isStill(fluidState)) {
-				if (block instanceof FluidBlock) {
+			} else if (worldFluid.isSource(fluidState)) {
+				if (block instanceof LiquidBlock) {
 					fluid = worldFluid;
 					drainable = false;
-				} else if (block instanceof FluidDrainable) {
+				} else if (block instanceof BucketPickup) {
 					fluid = worldFluid;
 					drainable = true;
 				}
 			}
 		}
 
-		canDropItems = !state.isFullCube(world, pos);
+		canDropItems = !state.isCollisionShapeFullBlock(world, pos);
 
 		entityList.clear();
 		// PERF: avoid letting vanilla allocate new list each time
-		entityList.addAll(world.getEntitiesByClass(ItemEntity.class, bounds, Predicates.alwaysTrue()));
+		entityList.addAll(world.getEntitiesOfClass(ItemEntity.class, bounds, Predicates.alwaysTrue()));
 		entity = entityList.isEmpty() ? null : (ItemEntity) entityList.get(0);
-		stack = entity == null ? null : entity.getStack();
+		stack = entity == null ? null : entity.getItem();
 
 		return true;
 	}
@@ -164,7 +161,7 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 		if (article.isFluid()) {
 			if (canPlaceFluid) {
 				if (fillable) {
-					return ((FluidFillable) block).canFillWithFluid(world, pos, blockState, article.toFluid()) ? 1 : 0;
+					return ((LiquidBlockContainer) block).canPlaceLiquid(world, pos, blockState, article.toFluid()) ? 1 : 0;
 				} else {
 					return 1;
 				}
@@ -185,12 +182,12 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 		}
 
 		if (article.isFluid()) {
-			if(canPlaceFluid && (!fillable || ((FluidFillable) block).canFillWithFluid(world, pos, blockState, article.toFluid()))) {
-				if (world.getDimension().isUltrawarm() && article.toFluid().isIn(FluidTags.WATER)) {
+			if(canPlaceFluid && (!fillable || ((LiquidBlockContainer) block).canPlaceLiquid(world, pos, blockState, article.toFluid()))) {
+				if (world.dimensionType().ultraWarm() && article.toFluid().is(FluidTags.WATER)) {
 					final int i = pos.getX();
 					final int j = pos.getY();
 					final int k = pos.getZ();
-					world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
+					world.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
 
 					for(int l = 0; l < 8; ++l) {
 						world.addParticle(ParticleTypes.LARGE_SMOKE, i + Math.random(), j + Math.random(), k + Math.random(), 0.0D, 0.0D, 0.0D);
@@ -200,14 +197,14 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 					return 1;
 				} else {
 					if (fillable) {
-						if (((FluidFillable) block).tryFillWithFluid(world, pos, blockState, article.toFluid().getDefaultState())) {
+						if (((LiquidBlockContainer) block).placeLiquid(world, pos, blockState, article.toFluid().defaultFluidState())) {
 							fluidCooldownTicks = FLUID_COOLDOWN_TICKS;
 							return 1;
 						} else {
 							return 0;
 						}
 					}  else  {
-						world.setBlockState(pos, article.toFluid().getDefaultState().getBlockState());
+						world.setBlockAndUpdate(pos, article.toFluid().defaultFluidState().createLegacyBlock());
 						fluidCooldownTicks = FLUID_COOLDOWN_TICKS;
 						return 1;
 					}
@@ -225,12 +222,12 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 
 					for (int i  = 0; i < limit; ++i)  {
 						final ItemEntity e  = (ItemEntity) entityList.get(i);
-						final ItemStack  entityStack =  e.getStack();
+						final ItemStack  entityStack =  e.getItem();
 
-						if (article.matches(entityStack) && entityStack.getCount() < entityStack.getMaxCount()) {
-							final int qty = Math.min(remaining, entityStack.getMaxCount() - entityStack.getCount());
-							entityStack.increment(qty);
-							e.setStack(entityStack);
+						if (article.matches(entityStack) && entityStack.getCount() < entityStack.getMaxStackSize()) {
+							final int qty = Math.min(remaining, entityStack.getMaxStackSize() - entityStack.getCount());
+							entityStack.grow(qty);
+							e.setItem(entityStack);
 							remaining -=  qty;
 
 							if (remaining == 0) {
@@ -250,8 +247,8 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 							pos.getZ() + 0.25 + 0.5 * r.nextDouble(),
 							stack);
 
-					itemEntity.setVelocity(0, 0, 0);
-					world.spawnEntity(itemEntity);
+					itemEntity.setDeltaMovement(0, 0, 0);
+					world.addFreshEntity(itemEntity);
 				}
 
 				return howMany;
@@ -300,7 +297,7 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 		if (article.isFluid()) {
 			if(fluid != null && article.toFluid().equals(fluid)) {
 				if (drainable) {
-					final ItemStack result = ((FluidDrainable) block).tryDrainFluid(world, pos, blockState);
+					final ItemStack result = ((BucketPickup) block).pickupBlock(world, pos, blockState);
 
 					if (!result.isEmpty()) {
 						fluidCooldownTicks = FLUID_COOLDOWN_TICKS;
@@ -309,7 +306,7 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 						return 0;
 					}
 				} else  {
-					world.setBlockState(pos, Blocks.AIR.getDefaultState());
+					world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 					fluidCooldownTicks = FLUID_COOLDOWN_TICKS;
 					return 1;
 				}
@@ -319,12 +316,12 @@ public abstract class WorldStorageContext implements TransportStorageContext {
 		} else if (article.isItem()) {
 			if (stack != null && article.matches(stack)) {
 				final int result = (int) Math.min(stack.getCount(), howMany);
-				stack.decrement(result);
+				stack.shrink(result);
 
 				if (stack.isEmpty()) {
 					entity.kill();
 				} else {
-					entity.setStack(stack);
+					entity.setItem(stack);
 				}
 
 				return result;

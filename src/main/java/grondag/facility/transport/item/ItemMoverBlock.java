@@ -17,25 +17,25 @@ package grondag.facility.transport.item;
 
 import org.apache.commons.lang3.ObjectUtils;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.StateManager.Builder;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 
@@ -50,43 +50,43 @@ public class ItemMoverBlock extends PipeBlock {
 	public static final BlockTest ITEM_MOVER_JOIN_TEST = ctx -> {
 		final BlockState fromState = ctx.fromBlockState();
 		assert fromState.getBlock() instanceof ItemMoverBlock : "Mismatched  block in ItemMoverBlock join test";
-		return fromState.get(XmProperties.FACE) == ctx.toFace() || canConnect(ctx);
+		return fromState.getValue(XmProperties.FACE) == ctx.toFace() || canConnect(ctx);
 	};
 
-	public ItemMoverBlock(Block.Settings settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, boolean hasGlow) {
+	public ItemMoverBlock(Block.Properties settings, FabricBlockEntityTypeBuilder.Factory<? extends BlockEntity> beFactory, boolean hasGlow) {
 		super(settings, beFactory, hasGlow);
 	}
 
 	@Override
-	protected void appendProperties(Builder<Block, BlockState> builder) {
-		super.appendProperties(builder);
-		builder.add(Properties.POWERED);
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+		super.createBlockStateDefinition(builder);
+		builder.add(BlockStateProperties.POWERED);
 		builder.add(XmProperties.FACE);
 	}
 
 	@Override
-	public void neighborUpdate(BlockState blockState, World world, BlockPos blockPos, Block block, BlockPos blockPos2, boolean bl) {
-		final boolean hasPower = world.isReceivingRedstonePower(blockPos);
+	public void neighborChanged(BlockState blockState, Level world, BlockPos blockPos, Block block, BlockPos blockPos2, boolean bl) {
+		final boolean hasPower = world.hasNeighborSignal(blockPos);
 
-		if (hasPower != blockState.get(Properties.POWERED)) {
-			world.setBlockState(blockPos, blockState.with(Properties.POWERED, hasPower), 3);
+		if (hasPower != blockState.getValue(BlockStateProperties.POWERED)) {
+			world.setBlock(blockPos, blockState.setValue(BlockStateProperties.POWERED, hasPower), 3);
 		}
 
-		if(!world.isClient && BlockPos.offset(blockPos.asLong(), blockState.get(XmProperties.FACE)) == blockPos2.asLong()) {
+		if(!world.isClientSide && BlockPos.offset(blockPos.asLong(), blockState.getValue(XmProperties.FACE)) == blockPos2.asLong()) {
 			((ItemMoverBlockEntity) world.getBlockEntity(blockPos)).resetTickHandler = true;
 		}
 	}
 
 	@Override
-	public BlockState getPlacementState(ItemPlacementContext context) {
-		return super.getPlacementState(context)
-				.with(XmProperties.FACE, ObjectUtils.defaultIfNull(context.getSide(), context.getPlayerLookDirection().getOpposite()).getOpposite())
-				.with(Properties.POWERED, context.getWorld().isReceivingRedstonePower(context.getBlockPos()));
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return super.getStateForPlacement(context)
+				.setValue(XmProperties.FACE, ObjectUtils.defaultIfNull(context.getClickedFace(), context.getNearestLookingDirection().getOpposite()).getOpposite())
+				.setValue(BlockStateProperties.POWERED, context.getLevel().hasNeighborSignal(context.getClickedPos()));
 	}
 
 	@Override
-	public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-		if (!world.isClient) {
+	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+		if (!world.isClientSide) {
 			final BlockEntity be = world.getBlockEntity(pos);
 
 			if(be instanceof ItemMoverBlockEntity) {
@@ -94,25 +94,25 @@ public class ItemMoverBlock extends PipeBlock {
 				final ItemStack stack = buffer.flushItemToWorld();
 
 				if (!stack.isEmpty()) {
-					if (player.giveItemStack(stack)) {
-						player.world.playSound((PlayerEntity)null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
+					if (player.addItem(stack)) {
+						player.level.playSound((Player)null, player.getX(), player.getY(), player.getZ(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.7F + 1.0F) * 2.0F);
 					} else {
-						final ItemEntity itemEntity = player.dropItem(stack, false);
+						final ItemEntity itemEntity = player.drop(stack, false);
 						if (itemEntity != null) {
-							itemEntity.resetPickupDelay();
-							itemEntity.setOwner(player.getUuid());
+							itemEntity.setNoPickUpDelay();
+							itemEntity.setOwner(player.getUUID());
 						}
 					}
 				}
 			}
 		}
 
-		return ActionResult.SUCCESS;
+		return InteractionResult.SUCCESS;
 	}
 
 	@Override
-	public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-		if (!world.isClient && !state.isOf(newState.getBlock())) {
+	public void onRemove(BlockState state, Level world, BlockPos pos, BlockState newState, boolean moved) {
+		if (!world.isClientSide && !state.is(newState.getBlock())) {
 			final BlockEntity be = world.getBlockEntity(pos);
 
 			if(be instanceof ItemMoverBlockEntity) {
@@ -120,18 +120,18 @@ public class ItemMoverBlock extends PipeBlock {
 				final ItemStack stack = buffer.flushItemToWorld();
 
 				if (!stack.isEmpty()) {
-					ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), stack);
+					Containers.dropItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
 				}
 			}
 
-			world.updateComparators(pos, this);
+			world.updateNeighbourForOutputSignal(pos, this);
 		}
 
-		super.onStateReplaced(state, world, pos, newState, moved);
+		super.onRemove(state, world, pos, newState, moved);
 	}
 
 	@Override
-	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-		return world.isClient ? null : TickableBlockEntity::tick;
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+		return world.isClientSide ? null : TickableBlockEntity::tick;
 	}
 }

@@ -17,14 +17,12 @@ package grondag.facility.init;
 
 import static grondag.facility.Facility.REG;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.util.math.BlockPos;
-
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 import grondag.facility.Facility;
 import grondag.facility.storage.item.BinBlock;
 import grondag.facility.storage.item.BinBlockEntity;
@@ -53,7 +51,7 @@ public enum BinBlocks {
 	private static BinBlockEntity binX1Be(BlockPos pos, BlockState state) {
 		return new BinBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, pos, state, () -> new DividedDiscreteStore(1, 2048).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "BIN 1x ", 1);
 	}
-	public static final PortableCrateItem PORTABLE_BIN_ITEM_X1 = REG.item("bin_1x_item", new PortableCrateItem(BIN_X1, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new DividedDiscreteStore(1, 2048).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
+	public static final PortableCrateItem PORTABLE_BIN_ITEM_X1 = REG.item("bin_1x_item", new PortableCrateItem(BIN_X1, REG.itemSettings().stacksTo(1).durability(2048), () -> new DividedDiscreteStore(1, 2048).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
 	public static final Item BIN_ITEM_X1 = REG.item("bin_1x", new BlockItem(BIN_X1, REG.itemSettings()));
 
 
@@ -62,7 +60,7 @@ public enum BinBlocks {
 	private static BinBlockEntity binX2Be(BlockPos pos, BlockState state) {
 		return new BinBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, pos, state, () -> new DividedDiscreteStore(2, 1024).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "BIN 2x ", 2);
 	}
-	public static final PortableCrateItem PORTABLE_BIN_ITEM_X2 = REG.item("bin_2x_item", new PortableCrateItem(BIN_X2, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new DividedDiscreteStore(2, 1024).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
+	public static final PortableCrateItem PORTABLE_BIN_ITEM_X2 = REG.item("bin_2x_item", new PortableCrateItem(BIN_X2, REG.itemSettings().stacksTo(1).durability(2048), () -> new DividedDiscreteStore(2, 1024).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
 	public static final Item BIN_ITEM_X2 = REG.item("bin_2x", new BlockItem(BIN_X2, REG.itemSettings()));
 
 
@@ -71,7 +69,7 @@ public enum BinBlocks {
 	private static BinBlockEntity binX4Be(BlockPos pos, BlockState state) {
 		return new BinBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, pos, state, () -> new DividedDiscreteStore(4, 512).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "BIN 4x ", 4);
 	}
-	public static final PortableCrateItem PORTABLE_BIN_ITEM_X4 = REG.item("bin_4x_item", new PortableCrateItem(BIN_X4, REG.itemSettings().maxCount(1).maxDamage(2048), () -> new DividedDiscreteStore(4, 512).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
+	public static final PortableCrateItem PORTABLE_BIN_ITEM_X4 = REG.item("bin_4x_item", new PortableCrateItem(BIN_X4, REG.itemSettings().stacksTo(1).durability(2048), () -> new DividedDiscreteStore(4, 512).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
 	public static final Item BIN_ITEM_X4 = REG.item("bin_4x", new BlockItem(BIN_X4, REG.itemSettings()));
 
 

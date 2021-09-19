@@ -16,10 +16,6 @@
 package grondag.facility.storage.item;
 
 import com.google.common.base.Preconditions;
-
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.storage.FixedArticleFunction;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
@@ -27,6 +23,8 @@ import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
 import grondag.fluidity.base.storage.discrete.DividedDiscreteStore;
 import grondag.fluidity.base.storage.discrete.FixedDiscreteStore;
 import grondag.fluidity.base.storage.helper.FixedArticleManager;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 
 public class CreativeBinStorage extends AbstractDiscreteStore<CreativeBinStorage> implements FixedDiscreteStore {
 	protected final int divisionCount;
@@ -135,18 +133,18 @@ public class CreativeBinStorage extends AbstractDiscreteStore<CreativeBinStorage
 	}
 
 	@Override
-	public NbtCompound writeTag() {
-		final NbtCompound result = new NbtCompound();
+	public CompoundTag writeTag() {
+		final CompoundTag result = new CompoundTag();
 
 		if(!isEmpty()) {
-			final NbtList list = new NbtList();
+			final ListTag list = new ListTag();
 			final int limit = articles.handleCount();
 
 			for (int i = 0; i < limit; i++) {
 				final StoredDiscreteArticle a = articles.get(i);
 
 				if(!a.isEmpty()) {
-					final NbtCompound aTag = a.toTag();
+					final CompoundTag aTag = a.toTag();
 					aTag.putInt("handle", i);
 					list.add(aTag);
 				}
@@ -159,16 +157,16 @@ public class CreativeBinStorage extends AbstractDiscreteStore<CreativeBinStorage
 	}
 
 	@Override
-	public void readTag(NbtCompound tag) {
+	public void readTag(CompoundTag tag) {
 		clear();
 
 		if(tag.contains(AbstractDiscreteStore.TAG_ITEMS)) {
-			final NbtList list = tag.getList(AbstractDiscreteStore.TAG_ITEMS, 10);
+			final ListTag list = tag.getList(AbstractDiscreteStore.TAG_ITEMS, 10);
 			final int limit = list.size();
 			final StoredDiscreteArticle lookup = new StoredDiscreteArticle();
 
 			for(int i = 0; i < limit; i++) {
-				final NbtCompound aTag = list.getCompound(i);
+				final CompoundTag aTag = list.getCompound(i);
 				lookup.readTag(aTag);
 
 				if(!lookup.isEmpty()) {
