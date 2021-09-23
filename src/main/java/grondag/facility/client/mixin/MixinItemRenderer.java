@@ -16,22 +16,25 @@
 package grondag.facility.client.mixin;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import grondag.facility.client.RendererHooks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import grondag.facility.client.RendererHooks;
+
 @Environment(EnvType.CLIENT)
 @Mixin(ItemRenderer.class)
 public abstract class MixinItemRenderer {
-	@Inject(at = @At("HEAD"), method = "getArmorGlintConsumer", cancellable = true)
-	private static void onGetArmorGlintConsumer(MultiBufferSource vertexConsumerProvider, RenderType renderLayer, boolean isWorld, boolean hasGlint, CallbackInfoReturnable<VertexConsumer> ci) {
+	@Inject(at = @At("HEAD"), method = "getArmorFoilBuffer", cancellable = true)
+	private static void onGetArmorFoilBuffer(MultiBufferSource vertexConsumerProvider, RenderType renderLayer, boolean isWorld, boolean hasGlint, CallbackInfoReturnable<VertexConsumer> ci) {
 		final RenderType newLayer = RendererHooks.hook(renderLayer);
 
 		// FIXME: Glint causes problems so disable for now
