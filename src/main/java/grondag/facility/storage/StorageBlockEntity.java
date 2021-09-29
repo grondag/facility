@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.fabric.api.block.entity.BlockEntityClientSerializable;
-import net.fabricmc.fabric.api.rendering.data.v1.RenderAttachmentBlockEntity;
 
 import grondag.facility.block.CarrierSessionBlockEntity;
 import grondag.fermion.varia.Base32Namer;
@@ -22,7 +21,7 @@ import grondag.fluidity.base.storage.AbstractStore;
 import grondag.fluidity.base.storage.ForwardingStore;
 
 @SuppressWarnings("rawtypes")
-public abstract class StorageBlockEntity<T extends StorageClientState, U extends MultiBlockMember> extends CarrierSessionBlockEntity implements RenderAttachmentBlockEntity, BlockEntityClientSerializable  {
+public abstract class StorageBlockEntity<T extends StorageClientState, U extends MultiBlockMember> extends CarrierSessionBlockEntity implements BlockEntityClientSerializable  {
 	public static final String TAG_STORAGE = "storage";
 	public static final String TAG_LABEL = "label";
 
@@ -136,11 +135,6 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	public CompoundTag toClientTag(CompoundTag tag) {
 		tag.putString(TAG_LABEL, label);
 		return tag;
-	}
-
-	@Override
-	public Object getRenderAttachmentData() {
-		return this;
 	}
 
 	public T clientState() {

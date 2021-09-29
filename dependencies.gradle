@@ -74,6 +74,7 @@ dependencies {
     
     if (!(gradle.startParameter.taskNames.contains("publish") || gradle.startParameter.taskNames.contains("publishToMavenLocal"))) {
 	    //include "io.github.cottonmc:LibCD:${project.libcd_version}"
+	    include "grondag:frex-${project.mc_tag}:${project.frex_version}.+"
 		include "grondag:fonthack-${project.mc_tag}:${project.fonthack_version}.+"
 		include "grondag:fluidity-${project.mc_tag}:${project.fluidity_version}.+"
 		include "grondag:exotic-matter-${project.mc_tag}:${project.exotic_matter_version}.+"
