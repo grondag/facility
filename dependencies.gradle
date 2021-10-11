@@ -8,8 +8,7 @@ repositories {
 	}
  	maven {
 		name = "vram"
-		url = "http://maven.vram.io"
-		allowInsecureProtocol = true
+		url = "https://maven.vram.io"
 	}
     maven {
       name = "Cotton"
@@ -43,7 +42,8 @@ dependencies {
 	modImplementation ("grondag:fermion-gui-${project.mc_tag}:${project.fermion_gui_version}.+") { transitive = false; changing = true; }
     modImplementation ("grondag:fermion-varia-${project.mc_tag}:${project.fermion_varia_version}.+") { transitive = false; changing = true; }
     modImplementation ("grondag:fermion-orientation-${project.mc_tag}:${project.fermion_orientation_version}.+") { transitive = false; changing = true; }
-    modImplementation ("grondag:special-circumstances-${project.mc_tag}:${project.special_circumstances_version}.+") { transitive = false; changing = true; }
+    modImplementation ("io.vram:special-circumstances:${project.special_circumstances_version}.+") { transitive = false; changing = true; }
+    modImplementation ("io.vram:bitkit:${bitkit_version}.+") { changing = true; }
     modImplementation ("grondag:fonthack-${project.mc_tag}:${project.fonthack_version}.+") { transitive = false; changing = true; }
 	modImplementation ("grondag:fluidity-${project.mc_tag}:${project.fluidity_version}.+") { transitive = false; changing = true; }
     
@@ -85,7 +85,8 @@ dependencies {
 		include "grondag:fermion-gui-${project.mc_tag}:${project.fermion_gui_version}.+"
 	    include "grondag:fermion-varia-${project.mc_tag}:${project.fermion_varia_version}.+"
 	    include "grondag:fermion-orientation-${project.mc_tag}:${project.fermion_orientation_version}.+"
-	    include "grondag:special-circumstances-${project.mc_tag}:${project.special_circumstances_version}.+"
+	    include "io.vram:special-circumstances:${project.special_circumstances_version}.+"
+	    include "io.vram:bitkit:${bitkit_version}.+"
 		include "io.github.cottonmc:Jankson-Fabric:${jankson_version}"
 		include "me.shedaniel.cloth:cloth-config-fabric:${clothconfig_version}"
 	}
