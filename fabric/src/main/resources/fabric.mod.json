@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "id": "facility",
+  "version": "${version}",
+  "name": "Facility",
+  "description": "Intermodal storage and transport, with extras.",
+  "authors": [
+    "Grondag"
+  ],
+  "contact": {
+    "homepage": "https://minecraft.curseforge.com/projects/facility",
+    "sources": "https://github.com/grondag/facility"
+  },
+  "license": "LGPL-3.0",
+  "icon": "assets/facility/facility_icon.png",
+  
+  "environment": "*",
+  "entrypoints": {
+    "main": [ "grondag.facility.FacilityFabric" ],
+    "client": [ "grondag.facility.client.FacilityFabricClient" ],
+    "rei_plugins_v0": [ "grondag.facility.compat.rei.FacilityReiPlugin" ],
+    "modmenu": [ "grondag.facility.client.ModMenuHelper" ]
+  },
+  "mixins": [
+    {
+      "config": "facility.client.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.12.11",
+    "minecraft": "1.18.1",
+    "java": ">=16",
+    "fabric": "*",
+    "fluidity": "*",
+    "exotic-matter": "*"
+  },
+  "accessWidener": "facility.accesswidener"
+}
