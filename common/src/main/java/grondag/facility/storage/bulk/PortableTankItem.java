@@ -1,3 +1,23 @@
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.storage.bulk;
 
 import java.util.List;
@@ -47,7 +67,7 @@ import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.storage.bulk.SimpleTank;
 
 public class PortableTankItem extends BlockItem {
-	public static final PortableStore DISPLAY_TANK = new  PortableStore(new SimpleTank(Fraction.of(32)).filter(ArticleType.FLUID));
+	public static final PortableStore DISPLAY_TANK = new PortableStore(new SimpleTank(Fraction.of(32)).filter(ArticleType.FLUID));
 
 	public PortableTankItem(Block block, Properties settings) {
 		super(block, settings);
@@ -55,8 +75,8 @@ public class PortableTankItem extends BlockItem {
 
 	@Override
 	public InteractionResult useOn(UseOnContext ctx) {
-		if(!ctx.getPlayer().isShiftKeyDown()) {
-			if(use(ctx.getLevel(), ctx.getPlayer(), ctx.getHand()).getResult().consumesAction()) {
+		if (!ctx.getPlayer().isShiftKeyDown()) {
+			if (use(ctx.getLevel(), ctx.getPlayer(), ctx.getHand()).getResult().consumesAction()) {
 				return InteractionResult.SUCCESS;
 			}
 		}
@@ -68,7 +88,7 @@ public class PortableTankItem extends BlockItem {
 	public InteractionResultHolder<ItemStack> use(Level world, Player playerEntity, InteractionHand hand) {
 		final ItemStack itemStack = playerEntity.getItemInHand(hand);
 
-		if(itemStack.getItem() != TankBlocks.PORTABLE_TANK_ITEM()) {
+		if (itemStack.getItem() != TankBlocks.PORTABLE_TANK_ITEM()) {
 			return InteractionResultHolder.pass(itemStack);
 		}
 
@@ -81,7 +101,7 @@ public class PortableTankItem extends BlockItem {
 		} else if (hitResult.getType() != HitResult.Type.BLOCK) {
 			return InteractionResultHolder.pass(itemStack);
 		} else {
-			final BlockHitResult blockHitResult = (BlockHitResult)hitResult;
+			final BlockHitResult blockHitResult = (BlockHitResult) hitResult;
 			final BlockPos onPos = blockHitResult.getBlockPos();
 			final Fluid tankFluid = store.view(0).article().toFluid();
 			final BlockState blockState = world.getBlockState(onPos);
@@ -126,10 +146,10 @@ public class PortableTankItem extends BlockItem {
 
 			if (world.mayInteract(playerEntity, onPos)) {
 				if (blockState.getBlock() instanceof BucketPickup && worldFluid != Fluids.EMPTY && store.getConsumer().apply(Article.of(worldFluid), 1, true) == 1) {
-					final ItemStack stack = ((BucketPickup)blockState.getBlock()).pickupBlock(world, onPos, blockState);
+					final ItemStack stack = ((BucketPickup) blockState.getBlock()).pickupBlock(world, onPos, blockState);
 
 					if (!stack.isEmpty()) {
-						if(store.getConsumer().apply(Article.of(worldFluid), 1, false) != 1) {
+						if (store.getConsumer().apply(Article.of(worldFluid), 1, false) != 1) {
 							Facility.LOG.warn("Tank item did not accept fluid when expected. Fluid drained from world has been lost. This is a bug.");
 						}
 
@@ -140,17 +160,17 @@ public class PortableTankItem extends BlockItem {
 					}
 				}
 
-				if(store.getSupplier().apply(Article.of(tankFluid), 1, true) == 1) {
-					if(worldFluid == Fluids.EMPTY) {
+				if (store.getSupplier().apply(Article.of(tankFluid), 1, true) == 1) {
+					if (worldFluid == Fluids.EMPTY) {
 						final BlockPos placePos = blockState.getBlock() instanceof LiquidBlockContainer && tankFluid == Fluids.WATER ? onPos : onPos.relative(blockHitResult.getDirection());
 
 						if (placeFluid(tankFluid, playerEntity, world, placePos, blockHitResult)) {
-							if(store.getSupplier().apply(Article.of(tankFluid), 1, false) != 1) {
+							if (store.getSupplier().apply(Article.of(tankFluid), 1, false) != 1) {
 								Facility.LOG.warn("Tank item did not supply fluid when expected. Fluid added to world without draining tank. This is a bug.");
 							}
 
 							if (playerEntity instanceof ServerPlayer) {
-								CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer)playerEntity, placePos, itemStack);
+								CriteriaTriggers.PLACED_BLOCK.trigger((ServerPlayer) playerEntity, placePos, itemStack);
 							}
 
 							playerEntity.awardStat(Stats.ITEM_USED.get(this));
@@ -174,7 +194,7 @@ public class PortableTankItem extends BlockItem {
 			final Material material = blockState.getMaterial();
 			final boolean canPlace = blockState.canBeReplaced(fluid);
 
-			if (!blockState.isAir() && !canPlace && (!(blockState.getBlock() instanceof LiquidBlockContainer) || !((LiquidBlockContainer)blockState.getBlock()).canPlaceLiquid(world, blockPos, blockState, fluid))) {
+			if (!blockState.isAir() && !canPlace && (!(blockState.getBlock() instanceof LiquidBlockContainer) || !((LiquidBlockContainer) blockState.getBlock()).canPlaceLiquid(world, blockPos, blockState, fluid))) {
 				return blockHitResult == null ? false : placeFluid(fluid, playerEntity, world, blockHitResult.getBlockPos().relative(blockHitResult.getDirection()), null);
 			} else {
 				if (world.dimensionType().ultraWarm() && fluid.is(FluidTags.WATER)) {
@@ -183,11 +203,11 @@ public class PortableTankItem extends BlockItem {
 					final int k = blockPos.getZ();
 					world.playSound(playerEntity, blockPos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
 
-					for(int l = 0; l < 8; ++l) {
+					for (int l = 0; l < 8; ++l) {
 						world.addParticle(ParticleTypes.LARGE_SMOKE, i + Math.random(), j + Math.random(), k + Math.random(), 0.0D, 0.0D, 0.0D);
 					}
 				} else if (blockState.getBlock() instanceof LiquidBlockContainer && fluid == Fluids.WATER) {
-					if (((LiquidBlockContainer)blockState.getBlock()).placeLiquid(world, blockPos, blockState, ((FlowingFluid)fluid).getSource(false))) {
+					if (((LiquidBlockContainer) blockState.getBlock()).placeLiquid(world, blockPos, blockState, ((FlowingFluid) fluid).getSource(false))) {
 						playEmptyingSound(fluid, playerEntity, world, blockPos);
 					}
 				} else {
@@ -215,7 +235,7 @@ public class PortableTankItem extends BlockItem {
 		// TODO: localize
 		DISPLAY_TANK.readFromStack(itemStack);
 
-		if(DISPLAY_TANK.isEmpty()) {
+		if (DISPLAY_TANK.isEmpty()) {
 			list.add(new TextComponent("Empty"));
 		} else {
 			list.add(new TextComponent("Fluid: " + Registry.FLUID.getKey(DISPLAY_TANK.view(0).article().toFluid()).toString()));

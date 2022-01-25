@@ -1,18 +1,23 @@
-/*******************************************************************************
- * Copyright 2019, 2020 grondag
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.init;
 
 import dev.architectury.registry.menu.ExtendedMenuProvider;
@@ -53,37 +58,37 @@ public abstract class ScreenHandlers {
 		return new CrateScreenHandler(CRATE_BLOCK_TYPE, inventory.player, syncId, null, label);
 	}
 
-	private static class CrateBlockScreenHandlerFactory implements ExtendedMenuProvider  {
-	final String label;
-	final BlockPos pos;
+	private static class CrateBlockScreenHandlerFactory implements ExtendedMenuProvider {
+		final String label;
+		final BlockPos pos;
 
-	public CrateBlockScreenHandlerFactory(String label, BlockPos pos) {
-		this.label = label;
-		this.pos = pos;
-	}
-
-	@Override
-	public CrateScreenHandler createMenu(int syncId, Inventory inv, Player player) {
-		final Level world = player.getCommandSenderWorld();
-		final BlockEntity be = world.getBlockEntity(pos);
-
-		if (be instanceof final CrateBlockEntity myBe) {
-			return new CrateScreenHandler(CRATE_BLOCK_TYPE, player, syncId, myBe, label);
+		CrateBlockScreenHandlerFactory(String label, BlockPos pos) {
+			this.label = label;
+			this.pos = pos;
 		}
 
-		return null;
-	}
+		@Override
+		public CrateScreenHandler createMenu(int syncId, Inventory inv, Player player) {
+			final Level world = player.getCommandSenderWorld();
+			final BlockEntity be = world.getBlockEntity(pos);
 
-	@Override
-	public Component getDisplayName() {
-		return new TextComponent(label);
-	}
+			if (be instanceof final CrateBlockEntity myBe) {
+				return new CrateScreenHandler(CRATE_BLOCK_TYPE, player, syncId, myBe, label);
+			}
 
-	@Override
-	public void saveExtraData(FriendlyByteBuf buf) {
-		buf.writeUtf(label);
+			return null;
+		}
+
+		@Override
+		public Component getDisplayName() {
+			return new TextComponent(label);
+		}
+
+		@Override
+		public void saveExtraData(FriendlyByteBuf buf) {
+			buf.writeUtf(label);
+		}
 	}
-}
 
 	public static ExtendedMenuProvider crateBlockFactory(String label, BlockPos pos) {
 		return new CrateBlockScreenHandlerFactory(label, pos);
@@ -110,18 +115,18 @@ public abstract class ScreenHandlers {
 				inventory.player.getItemInHand(hand));
 	}
 
-	private static class CrateItemScreenHandlerFactory implements ExtendedMenuProvider  {
+	private static class CrateItemScreenHandlerFactory implements ExtendedMenuProvider {
 		String label;
 		final InteractionHand hand;
 
-		public CrateItemScreenHandlerFactory(String label, InteractionHand hand) {
+		CrateItemScreenHandlerFactory(String label, InteractionHand hand) {
 			this.label = label;
 			this.hand = hand;
 		}
 
 		@Override
 		public CrateItemScreenHandler createMenu(int syncId, Inventory inv, Player player) {
-			final ItemStack stack  = player.getItemInHand(hand);
+			final ItemStack stack = player.getItemInHand(hand);
 			final boolean isPortableItem = stack.getItem() instanceof PortableCrateItem;
 			return new CrateItemScreenHandler(
 					CRATE_ITEM_TYPE,
@@ -165,6 +170,6 @@ public abstract class ScreenHandlers {
 
 	public static void initialize() {
 		CRATE_BLOCK_TYPE = Facility.menuType(CrateScreenHandler.ID, MenuRegistry.ofExtended(ScreenHandlers::clientCrateBlockFactory));
-		CRATE_ITEM_TYPE =  Facility.menuType(CrateItemScreenHandler.ID, MenuRegistry.ofExtended(ScreenHandlers::clientCrateItemFactory));
+		CRATE_ITEM_TYPE = Facility.menuType(CrateItemScreenHandler.ID, MenuRegistry.ofExtended(ScreenHandlers::clientCrateItemFactory));
 	}
 }

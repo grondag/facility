@@ -1,18 +1,23 @@
-/*******************************************************************************
- * Copyright 2019, 2020 grondag
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.init;
 
 import java.util.function.Predicate;
@@ -73,6 +78,7 @@ public abstract class CrateBlocks {
 	private static CrateBlockEntity crateBe(BlockPos pos, BlockState state) {
 		return new CrateBlockEntity(CRATE_BLOCK_ENTITY_TYPE, pos, state, () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "CRATE ");
 	}
+
 	private static PortableCrateItem PORTABLE_CRATE_ITEM;
 	private static Item CRATE_ITEM;
 
@@ -86,6 +92,7 @@ public abstract class CrateBlocks {
 	private static SlottedCrateBlockEntity slottedBe(BlockPos pos, BlockState state) {
 		return new SlottedCrateBlockEntity(SLOTTED_CRATE_BLOCK_ENTITY_TYPE, pos, state, () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "SLOTTED CRATE ");
 	}
+
 	private static PortableCrateItem PORTABLE_SLOTTED_CRATE_ITEM;
 	private static Item SLOTTED_CRATE_ITEM;
 
@@ -102,6 +109,7 @@ public abstract class CrateBlocks {
 	private static CrateBlockEntity hyperCrateBe(BlockPos pos, BlockState state) {
 		return new CrateBlockEntity(HYPER_CRATE_BLOCK_ENTITY_TYPE, pos, state, () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "HYPERCRATE ");
 	}
+
 	private static PortableCrateItem PORTABLE_HYPER_CRATE_ITEM;
 	private static Item HYPER_CRATE_ITEM;
 

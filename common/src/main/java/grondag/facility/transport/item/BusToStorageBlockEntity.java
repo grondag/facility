@@ -1,26 +1,32 @@
-/*******************************************************************************
- * Copyright 2019, 2020 grondag
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.transport.item;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
 
 import grondag.facility.transport.handler.Bus2StorageTickHandler;
 import grondag.facility.transport.handler.TransportTickHandler;
 import grondag.fluidity.api.storage.ArticleFunction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
 
 public class BusToStorageBlockEntity extends ItemMoverBlockEntity {
 	public BusToStorageBlockEntity(BlockEntityType<BusToStorageBlockEntity> type, BlockPos pos, BlockState state) {
@@ -47,5 +53,4 @@ public class BusToStorageBlockEntity extends ItemMoverBlockEntity {
 		transportBuffer.flushItemToStorage(itemStorage);
 		transportBuffer.flushFluidToStorage(fluidStorage);
 	}
-
 }

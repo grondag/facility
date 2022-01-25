@@ -1,18 +1,23 @@
-/*******************************************************************************
- * Copyright 2019 grondag
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.varia;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -23,12 +28,11 @@ import java.util.function.BooleanSupplier;
  * Maintains a queue of tasks that require world access and executes them in
  * FIFO order.
  *
- * Ensures that all world access is synchronized, in-order, and does not exceed
+ * <p>Ensures that all world access is synchronized, in-order, and does not exceed
  * the configured threshold for points per tick.
  *
- * Tasks are not serialized or persisted - queue must be rebuilt by task
+ * <p>Tasks are not serialized or persisted - queue must be rebuilt by task
  * providers on world reload.
- *
  */
 public class WorldTaskManager {
 	private static int tickCounter = 0;
@@ -68,6 +72,7 @@ public class WorldTaskManager {
 		int operations = 64; //XmConfig.EXECUTION.maxQueuedWorldOperationsPerTick;
 
 		BooleanSupplier task = tasks.peek();
+
 		while (operations > 0 && task != null) {
 			// check for canceled tasks and move to next if checked
 			if (task.getAsBoolean()) {

@@ -1,18 +1,23 @@
-/*******************************************************************************
- * Copyright 2019, 2020 grondag
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.transport;
 
 import java.util.List;
@@ -75,11 +80,11 @@ public class PipeBlock extends FacilitySpeciesBlock {
 
 		final BlockState toState = ctx.toBlockState();
 
-		if(toState.isAir()) {
+		if (toState.isAir()) {
 			return false;
 		}
 
-		if(toState.getBlock() instanceof PipeBlock) {
+		if (toState.getBlock() instanceof PipeBlock) {
 			return canConnectSelf(fromState, ctx.fromPos(), toState, ctx.toPos());
 		} else {
 			return toState.getBlock() instanceof StorageBlock;
@@ -87,15 +92,15 @@ public class PipeBlock extends FacilitySpeciesBlock {
 	}
 
 	public static boolean canConnectSelf(BlockState fromState, BlockPos fromPos, BlockState toState, BlockPos toPos) {
-		if(fromState.getValue(SpeciesProperty.SPECIES) != toState.getValue(SpeciesProperty.SPECIES)) {
+		if (fromState.getValue(SpeciesProperty.SPECIES) != toState.getValue(SpeciesProperty.SPECIES)) {
 			return false;
 		}
 
 		final Comparable<?> fromAxis = fromState.getValues().get(XmProperties.AXIS);
 		final Comparable<?> toAxis = toState.getValues().get(XmProperties.AXIS);
 
-		if(fromAxis == null) {
-			if(toAxis == null) {
+		if (fromAxis == null) {
+			if (toAxis == null) {
 				// both are flexible
 				return true;
 			} else {
@@ -103,7 +108,7 @@ public class PipeBlock extends FacilitySpeciesBlock {
 				return toAxis == Direction.fromNormal(toPos.getX() - fromPos.getX(), toPos.getY() - fromPos.getY(), toPos.getZ() - fromPos.getZ()).getAxis();
 			}
 		} else { // have from axis
-			if(toAxis == null) {
+			if (toAxis == null) {
 				// require from-axis point to the flexible one
 				return fromAxis == Direction.fromNormal(toPos.getX() - fromPos.getX(), toPos.getY() - fromPos.getY(), toPos.getZ() - fromPos.getZ()).getAxis();
 			} else {

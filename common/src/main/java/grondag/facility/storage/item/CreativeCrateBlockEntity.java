@@ -1,21 +1,29 @@
-/*******************************************************************************
- * Copyright 2019, 2020 grondag
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.storage.item;
 
 import java.util.Random;
+
+import io.netty.util.internal.ThreadLocalRandom;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
@@ -26,7 +34,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import io.netty.util.internal.ThreadLocalRandom;
+
 import grondag.facility.block.CarrierSessionBlockEntity;
 import grondag.facility.storage.TickableBlockEntity;
 import grondag.fluidity.api.article.ArticleType;
@@ -45,25 +53,25 @@ public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implemen
 	public void tick() {
 		final int limit = neighborCount();
 
-		if(limit == 0 || !getBlockState().getValue(BlockStateProperties.POWERED)) {
+		if (limit == 0 || !getBlockState().getValue(BlockStateProperties.POWERED)) {
 			return;
 		}
 
-		final Random random =  ThreadLocalRandom.current();
+		final Random random = ThreadLocalRandom.current();
 		final Item item = Registry.ITEM.getRandom(random);
 		ItemStack stack = new ItemStack(item);
 		stack.setCount(item.getMaxStackSize());
 
-		if(item.canBeDepleted() && item.getMaxDamage() > 0) {
+		if (item.canBeDepleted() && item.getMaxDamage() > 0) {
 			stack.setDamageValue(random.nextInt(item.getMaxDamage()));
 		}
 
-		if(stack.isEnchantable() && random.nextBoolean()) {
+		if (stack.isEnchantable() && random.nextBoolean()) {
 			stack = EnchantmentHelper.enchantItem(random, stack, 30, true);
 		}
 
-		if(isOutput) {
-			for(int i = 0; i < limit; i++) {
+		if (isOutput) {
+			for (int i = 0; i < limit; i++) {
 				final CarrierSession s = getNeighbor(i);
 				s.broadcastConsumer().apply(stack, false);
 			}

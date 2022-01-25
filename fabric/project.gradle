@@ -12,7 +12,7 @@ dependencies {
 	modIncludeImplementation("grondag:exotic-matter-fabric-mc118:3.0.431:fat")
   modIncludeImplementation("io.vram:dtklib:1.0.3")
   modIncludeImplementation("io.vram:modkeys-fabric-mc118:1.0.8")
-	modIncludeImplementation("grondag:fluidity-fabric-mc118:0.0.13")
+	modIncludeImplementation("io.vram:fluidity-fabric-mc118:2.0.229")
 
   modApi "dev.architectury:architectury-fabric:3.2.60"
 	modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:7.1.357"

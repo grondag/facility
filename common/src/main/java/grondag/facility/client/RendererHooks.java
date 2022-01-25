@@ -1,31 +1,38 @@
-/*******************************************************************************
- * Copyright 2019, 2020 grondag
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.client;
+
+import org.jetbrains.annotations.Nullable;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import org.jetbrains.annotations.Nullable;
 
 // TODO: remove and use AW instead
 public class RendererHooks {
@@ -34,7 +41,7 @@ public class RendererHooks {
 	public static final RenderType FLUID = makeFluid();
 
 	static class RenderSecrets extends RenderStateShard {
-		public RenderSecrets(String string, Runnable runnable, Runnable runnable2) {
+		RenderSecrets(String string, Runnable runnable, Runnable runnable2) {
 			super(string, runnable, runnable2);
 		}
 
@@ -59,37 +66,37 @@ public class RendererHooks {
 
 	private static RenderType makeCutout() {
 		final RenderType.CompositeState multiPhaseParameters = RenderType.CompositeState.builder()
-		.setTextureState(new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false))
-		.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeEntityCutoutShader))
-		.setTransparencyState(RenderSecrets._NO_TRANSPARENCY)
-		.setLightmapState(RenderSecrets._ENABLE_LIGHTMAP)
-		.setOverlayState(RenderSecrets._ENABLE_OVERLAY_COLOR)
-		.setLayeringState(RenderSecrets.ITEM_OFFSET_LAYERING)
-		.createCompositeState(true);
+			.setTextureState(new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false))
+			.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeEntityCutoutShader))
+			.setTransparencyState(RenderSecrets._NO_TRANSPARENCY)
+			.setLightmapState(RenderSecrets._ENABLE_LIGHTMAP)
+			.setOverlayState(RenderSecrets._ENABLE_OVERLAY_COLOR)
+			.setLayeringState(RenderSecrets.ITEM_OFFSET_LAYERING)
+			.createCompositeState(true);
 		return RenderType.create("entity_cutout", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, false, multiPhaseParameters);
 	}
 
 	private static RenderType makeTranslucent() {
 		final RenderType.CompositeState multiPhaseParameters = RenderType.CompositeState.builder()
-		.setTextureState(new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false))
-		.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeEntityTranslucentShader))
-		.setTransparencyState(RenderSecrets._TRANSLUCENT_TRANSPARENCY)
-		.setLightmapState(RenderSecrets._ENABLE_LIGHTMAP)
-		.setOverlayState(RenderSecrets._ENABLE_OVERLAY_COLOR)
-		.setLayeringState(RenderSecrets.ITEM_OFFSET_LAYERING)
-		.createCompositeState(true);
+			.setTextureState(new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false))
+			.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeEntityTranslucentShader))
+			.setTransparencyState(RenderSecrets._TRANSLUCENT_TRANSPARENCY)
+			.setLightmapState(RenderSecrets._ENABLE_LIGHTMAP)
+			.setOverlayState(RenderSecrets._ENABLE_OVERLAY_COLOR)
+			.setLayeringState(RenderSecrets.ITEM_OFFSET_LAYERING)
+			.createCompositeState(true);
 		return RenderType.create("entity_translucent_cull", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, multiPhaseParameters);
 	}
 
 	public static RenderType makeFluid() {
 		final RenderType.CompositeState multiPhaseParameters = RenderType.CompositeState.builder()
-		.setTextureState(new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false))
-		.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeSolidShader))
-		.setTransparencyState(RenderSecrets._NO_TRANSPARENCY)
-		.setLightmapState(RenderSecrets._ENABLE_LIGHTMAP)
-		.setOverlayState(RenderSecrets._DISABLE_OVERLAY_COLOR)
-		.setLayeringState(RenderSecrets.ITEM_OFFSET_LAYERING)
-		.createCompositeState(true);
+			.setTextureState(new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false))
+			.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeSolidShader))
+			.setTransparencyState(RenderSecrets._NO_TRANSPARENCY)
+			.setLightmapState(RenderSecrets._ENABLE_LIGHTMAP)
+			.setOverlayState(RenderSecrets._DISABLE_OVERLAY_COLOR)
+			.setLayeringState(RenderSecrets.ITEM_OFFSET_LAYERING)
+			.createCompositeState(true);
 		return RenderType.create("fluid_overlay", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, false, multiPhaseParameters);
 	}
 
@@ -129,7 +136,7 @@ public class RendererHooks {
 	private static final MultiBufferSource FADE_PROVIDER = new MultiBufferSource() {
 		@Override
 		public VertexConsumer getBuffer(RenderType renderLayer) {
-			if(renderLayer == TRANSLUCENT && alpha < 255) {
+			if (renderLayer == TRANSLUCENT && alpha < 255) {
 				wrappedConsumer = wrappedProvider.getBuffer(TRANSLUCENT);
 				//System.out.println(alpha);
 				return FADER;

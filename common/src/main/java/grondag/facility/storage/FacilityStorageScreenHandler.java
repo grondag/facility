@@ -1,21 +1,29 @@
-/*******************************************************************************
- * Copyright 2019, 2020 grondag
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.storage;
 
 import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -24,33 +32,33 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.AbstractStorageServerDelegate;
 import grondag.fluidity.base.synch.StorageContainer;
 
-public abstract class FactilityStorageScreenHandler<T extends AbstractStorageServerDelegate<?>> extends AbstractContainerMenu implements StorageContainer {
+public abstract class FacilityStorageScreenHandler<T extends AbstractStorageServerDelegate<?>> extends AbstractContainerMenu implements StorageContainer {
 	protected final @Nullable Store storage;
 	protected String label;
 	protected T delegate;
 
-	public FactilityStorageScreenHandler(MenuType<?> type, Player player, int synchId, @Nullable Store storage, String label) {
+	public FacilityStorageScreenHandler(MenuType<?> type, Player player, int synchId, @Nullable Store storage, String label) {
 		super(type, synchId);
 		this.storage = storage;
 		this.label = label;
 		final Container inv = player.getInventory();
 
-		if(player instanceof ServerPlayer) {
+		if (player instanceof ServerPlayer) {
 			delegate = createDelegate((ServerPlayer) player, storage);
 		}
 
-		for(int p = 0; p < 3; ++p) {
-			for(int o = 0; o < 9; ++o) {
+		for (int p = 0; p < 3; ++p) {
+			for (int o = 0; o < 9; ++o) {
 				addSlot(new Slot(inv, o + p * 9 + 9, o * 18, p * 18));
 			}
 		}
 
-		for(int p = 0; p < 9; ++p) {
+		for (int p = 0; p < 9; ++p) {
 			addSlot(new Slot(inv, p, p * 18, 58));
 		}
 	}
@@ -71,7 +79,7 @@ public abstract class FactilityStorageScreenHandler<T extends AbstractStorageSer
 	public void broadcastChanges() {
 		super.broadcastChanges();
 
-		if(delegate != null) {
+		if (delegate != null) {
 			delegate.sendUpdates();
 		}
 	}
@@ -80,7 +88,7 @@ public abstract class FactilityStorageScreenHandler<T extends AbstractStorageSer
 	public void removed(Player playerEntity) {
 		super.removed(playerEntity);
 
-		if(delegate != null) {
+		if (delegate != null) {
 			delegate.close(playerEntity);
 		}
 	}
@@ -100,10 +108,10 @@ public abstract class FactilityStorageScreenHandler<T extends AbstractStorageSer
 			slot.set(ItemStack.EMPTY);
 			slot.setChanged();
 
-			if(playerEntity instanceof ServerPlayer) {
+			if (playerEntity instanceof ServerPlayer) {
 				final int qty = (int) storage.getConsumer().apply(sourceStack, false);
 
-				if(qty < sourceStack.getCount()) {
+				if (qty < sourceStack.getCount()) {
 					final ItemStack giveBack = sourceStack.copy();
 					giveBack.shrink(qty);
 					playerEntity.getInventory().placeItemBackInInventory(giveBack);

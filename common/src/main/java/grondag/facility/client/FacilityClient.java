@@ -1,3 +1,23 @@
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.client;
 
 import dev.architectury.registry.client.keymappings.KeyMappingRegistry;
@@ -20,7 +40,7 @@ import grondag.facility.init.BinBlocks;
 import grondag.facility.init.CrateBlocks;
 import grondag.facility.init.ScreenHandlers;
 import grondag.facility.init.TankBlocks;
-import grondag.facility.storage.FactilityStorageScreenHandler;
+import grondag.facility.storage.FacilityStorageScreenHandler;
 import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
 
 public abstract class FacilityClient {
@@ -38,7 +58,7 @@ public abstract class FacilityClient {
 		registerBeType(TankBlocks.TANK_BLOCK_ENTITY_TYPE(), d -> new TankBlockRenderer(d));
 
 		// Generic inference gets confused without
-		final ScreenFactory<FactilityStorageScreenHandler<DiscreteStorageServerDelegate>, ItemStorageScreen> ITEM_SCREEN_FACTORY = (h, i, t) -> new ItemStorageScreen(h, i, t);
+		final ScreenFactory<FacilityStorageScreenHandler<DiscreteStorageServerDelegate>, ItemStorageScreen> ITEM_SCREEN_FACTORY = (h, i, t) -> new ItemStorageScreen(h, i, t);
 		MenuRegistry.registerScreenFactory(ScreenHandlers.CRATE_BLOCK_TYPE(), ITEM_SCREEN_FACTORY);
 		MenuRegistry.registerScreenFactory(ScreenHandlers.CRATE_ITEM_TYPE(), ITEM_SCREEN_FACTORY);
 

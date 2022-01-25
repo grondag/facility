@@ -1,18 +1,23 @@
-/*******************************************************************************
- * Copyright 2019, 2020 grondag
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility;
 
 import java.io.File;
@@ -27,7 +32,6 @@ import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 
 public class FacilityConfig {
-
 	@SuppressWarnings("hiding")
 	public static class ConfigData {
 		@Comment("Gives more space for REI item display.")
@@ -48,16 +52,17 @@ public class FacilityConfig {
 	private static final Jankson JANKSON = Jankson.builder().build();
 	private static File configFile;
 
-	public static int maxRenderDistance =  32;
+	public static int maxRenderDistance = 32;
 	public static long maxRenderDistanceSq = maxRenderDistance * maxRenderDistance;
 	public static long keepaliveIntervalMilliseconds = 10000;
-	public static boolean  shiftScreensLeftIfReiPresent = DEFAULTS.shiftScreensLeftIfReiPresent;
+	public static boolean shiftScreensLeftIfReiPresent = DEFAULTS.shiftScreensLeftIfReiPresent;
 	public static boolean useVanillaFonts = DEFAULTS.useVanillaFonts;
 	public static int utb1ItemsPerTick = DEFAULTS.utb1ItemsPerTick;
 	public static int utb1ImporterCooldownTicks = DEFAULTS.utb1ImporterCooldownTicks;
 
 	public static void initialize() {
-		configFile = new File(FabricLoader.getInstance().getConfigDirectory(), "facility.json5");
+		configFile = new File(FabricLoader.getInstance().getConfigDir().toFile(), "facility.json5");
+
 		if (configFile.exists()) {
 			loadConfig();
 		} else {
@@ -67,6 +72,7 @@ public class FacilityConfig {
 
 	private static void loadConfig() {
 		ConfigData config = new ConfigData();
+
 		try {
 			final JsonObject configJson = JANKSON.load(configFile);
 			final String regularized = configJson.toJson(false, false, 0);
@@ -76,7 +82,7 @@ public class FacilityConfig {
 			Facility.LOG.error("Unable to load config. Using default values.");
 		}
 
-		shiftScreensLeftIfReiPresent =  config.shiftScreensLeftIfReiPresent;
+		shiftScreensLeftIfReiPresent = config.shiftScreensLeftIfReiPresent;
 		useVanillaFonts = config.useVanillaFonts;
 		utb1ItemsPerTick = config.utb1ItemsPerTick;
 		utb1ImporterCooldownTicks = config.utb1ImporterCooldownTicks;
@@ -90,9 +96,9 @@ public class FacilityConfig {
 		config.utb1ItemsPerTick = utb1ItemsPerTick;
 		config.utb1ImporterCooldownTicks = utb1ImporterCooldownTicks;
 
-
 		try {
 			final String result = JANKSON.toJson(config).toJson(true, true, 0);
+
 			if (!configFile.exists()) {
 				configFile.createNewFile();
 			}

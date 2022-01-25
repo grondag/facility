@@ -1,3 +1,23 @@
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.varia;
 
 import java.io.InputStreamReader;
@@ -31,7 +51,7 @@ public class Base32Namer {
 		try {
 			final var res = resourceManager.getResource(id);
 			final Gson g = new Gson();
-			final JsonObject json = g.fromJson((Reader)new InputStreamReader(res.getInputStream(), StandardCharsets.UTF_8), JsonObject.class);
+			final JsonObject json = g.fromJson((Reader) new InputStreamReader(res.getInputStream(), StandardCharsets.UTF_8), JsonObject.class);
 			final var badNames = json.getAsJsonArray("offensive_names");
 			LOWER_CASE_BAD_NAMES.clear();
 
@@ -62,13 +82,13 @@ public class Base32Namer {
 		digits[2] = GLYPHS[num >> 5 & 31];
 		digits[3] = GLYPHS[num & 31];
 
-		if (num < 0)
+		if (num < 0) {
 			num = -num;
+		}
 
 		if (num > 32767) {
 			// common 4-digit name
 			return new String(digits, 0, 4);
-
 		} else if (num > 1023) {
 			// uncommon 3-digit name
 			return new String(digits, 1, 3);
@@ -84,12 +104,16 @@ public class Base32Namer {
 	public static String makeFilteredName(long num) {
 		for (int i = 0; i < 3; i++) {
 			final int n = (int) ((num >> (20 * i)) & NAME_BIT_MASK);
+
 			if (n != 0) {
 				final String s = makeRawName(n);
-				if (!isBadName(s))
+
+				if (!isBadName(s)) {
 					return s;
+				}
 			}
 		}
+
 		return "N1CE";
 	}
 

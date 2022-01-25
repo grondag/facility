@@ -1,18 +1,23 @@
-/*******************************************************************************
- * Copyright 2019, 2020 grondag
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.packet;
 
 import dev.architectury.networking.NetworkManager.PacketContext;
@@ -49,7 +54,7 @@ public abstract class BinActionC2S {
 		if (Minecraft.getInstance().getConnection() != null) {
 			final FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
 			buf.writeBlockPos(pos);
-			buf.writeByte(isAttack ? -slot - 1: slot);
+			buf.writeByte(isAttack ? -slot - 1 : slot);
 			ClientPlayNetworking.send(ID, buf);
 		}
 	}
@@ -62,68 +67,68 @@ public abstract class BinActionC2S {
 
 	private static void acceptInner(BlockPos pos, int rawHandle, ServerPlayer player) {
 		final boolean isAttack = rawHandle < 0;
-		final int handle = isAttack ? -rawHandle - 1: rawHandle;
+		final int handle = isAttack ? -rawHandle - 1 : rawHandle;
 
 		final Level world = player.level;
 
-		if(world == null) {
+		if (world == null) {
 			return;
 		}
 
 		final BlockEntity be = world.getBlockEntity(pos);
 
-		if(be == null || !(be instanceof BinBlockEntity)) {
+		if (be == null || !(be instanceof BinBlockEntity)) {
 			return;
 		}
 
 		final FixedStore storage = (FixedStore) ((BinBlockEntity) be).getInternalStorage();
 		final StoredArticleView view = storage.view(handle);
 
-		if(view == null) {
+		if (view == null) {
 			return;
 		}
 
-		if(isAttack) {
-			if(!view.isEmpty()) {
+		if (isAttack) {
+			if (!view.isEmpty()) {
 				final Article hitResource = view.article();
 				final int requested = player.isShiftKeyDown() ? 1 : hitResource.toItem().getMaxStackSize();
 				final int q = (int) storage.getSupplier().apply(handle, hitResource, requested, false);
 
-				if(q > 0) {
+				if (q > 0) {
 					player.getInventory().placeItemBackInInventory(hitResource.toStack(q));
 					player.getInventory().setChanged();
 				}
 			}
 		} else {
 			final Article hitResource = view.article();
-			final ItemStack stack =  player.getMainHandItem();
+			final ItemStack stack = player.getMainHandItem();
 
-			if(stack != null && !stack.isEmpty() && (view.isEmpty() || hitResource.matches(stack))) {
+			if (stack != null && !stack.isEmpty() && (view.isEmpty() || hitResource.matches(stack))) {
 				final int q = (int) storage.getConsumer().apply(handle, stack, false);
 
-				if(q != 0) {
+				if (q != 0) {
 					stack.shrink(q);
 					player.setItemInHand(InteractionHand.MAIN_HAND, stack.isEmpty() ? ItemStack.EMPTY : stack);
 					player.getInventory().setChanged();
 				}
-			} else if(!view.isEmpty()) {
+			} else if (!view.isEmpty()) {
 				boolean didSucceed = false;
 				final NonNullList<ItemStack> main = player.getInventory().items;
 				final int limit = main.size();
 
-				for(int i = 0; i < limit; i++) {
+				for (int i = 0; i < limit; i++) {
 					final ItemStack mainStack = main.get(i);
 
-					if(!mainStack.isEmpty() && hitResource.matches(mainStack)) {
+					if (!mainStack.isEmpty() && hitResource.matches(mainStack)) {
 						final int q = (int) storage.getConsumer().apply(handle, mainStack, false);
 
-						if(q == 0) {
+						if (q == 0) {
 							break;
 						} else {
 							didSucceed = true;
 							mainStack.shrink(q);
 
-							if(mainStack.isEmpty()) {
+							if (mainStack.isEmpty()) {
 								main.set(i, ItemStack.EMPTY);
 							}
 						}
@@ -132,19 +137,20 @@ public abstract class BinActionC2S {
 
 				final ItemStack offStack = player.getOffhandItem();
 
-				if(!offStack.isEmpty() && hitResource.matches(offStack)) {
+				if (!offStack.isEmpty() && hitResource.matches(offStack)) {
 					final int q = (int) storage.getConsumer().apply(handle, offStack, false);
 
-					if(q != 0) {
+					if (q != 0) {
 						didSucceed = true;
 						offStack.shrink(q);
-						if(offStack.isEmpty()) {
+
+						if (offStack.isEmpty()) {
 							player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
 						}
 					}
 				}
 
-				if(didSucceed) {
+				if (didSucceed) {
 					player.getInventory().setChanged();
 				}
 			}

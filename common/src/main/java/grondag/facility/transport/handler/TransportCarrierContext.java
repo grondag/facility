@@ -1,4 +1,27 @@
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.transport.handler;
+
+import io.netty.util.internal.ThreadLocalRandom;
+import org.jetbrains.annotations.Nullable;
 
 import grondag.facility.FacilityConfig;
 import grondag.facility.transport.UtbCostFunction;
@@ -9,8 +32,6 @@ import grondag.fluidity.wip.api.transport.CarrierNode;
 import grondag.fluidity.wip.api.transport.CarrierSession;
 import grondag.fluidity.wip.base.transport.AssignedNumbersAuthority;
 import grondag.fluidity.wip.base.transport.SubCarrier;
-import io.netty.util.internal.ThreadLocalRandom;
-import org.jetbrains.annotations.Nullable;
 
 public abstract class TransportCarrierContext {
 	private long consumerAddress = AssignedNumbersAuthority.INVALID_ADDRESS;
@@ -21,9 +42,9 @@ public abstract class TransportCarrierContext {
 	protected int cooldownTicks = ThreadLocalRandom.current().nextInt(FacilityConfig.utb1ImporterCooldownTicks);
 	protected final ArticleType<?> articleType;
 
-	abstract public CarrierSession session();
+	public abstract CarrierSession session();
 
-	abstract public SubCarrier<UtbCostFunction> carrier();
+	public abstract SubCarrier<UtbCostFunction> carrier();
 
 	protected TransportCarrierContext(ArticleType<?> articleType) {
 		this.articleType = articleType;
@@ -56,7 +77,7 @@ public abstract class TransportCarrierContext {
 			if (node.isValid()) {
 				result = node.getComponent(ArticleFunction.SUPPLIER_COMPONENT).get();
 
-				if(result.canApply(article)) {
+				if (result.canApply(article)) {
 					// save for next tick
 					supplierAddress = node.nodeAddress();
 				} else {
@@ -69,7 +90,7 @@ public abstract class TransportCarrierContext {
 		return result;
 	}
 
-	public long throttle(Article article, long numerator, long denominator, boolean simulate)  {
+	public long throttle(Article article, long numerator, long denominator, boolean simulate) {
 		return carrier().costFunction().apply(session(), article, numerator, denominator, simulate);
 	}
 
@@ -92,7 +113,7 @@ public abstract class TransportCarrierContext {
 		if (node.isValid()) {
 			result = node.getComponent(ArticleFunction.CONSUMER_COMPONENT).get();
 
-			if(!result.canApply(article)) {
+			if (!result.canApply(article)) {
 				consumerAddress = AssignedNumbersAuthority.INVALID_ADDRESS;
 				result = null;
 			}
@@ -104,7 +125,7 @@ public abstract class TransportCarrierContext {
 			if (node.isValid()) {
 				result = node.getComponent(ArticleFunction.CONSUMER_COMPONENT).get();
 
-				if(result.canApply(article)) {
+				if (result.canApply(article)) {
 					// save for next tick
 					consumerAddress = node.nodeAddress();
 				} else {

@@ -1,8 +1,30 @@
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.transport.buffer;
 
 import java.util.function.Consumer;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+
 import grondag.facility.transport.UtbHelper;
 import grondag.facility.transport.handler.TransportCarrierContext;
 import grondag.facility.transport.storage.TransportStorageContext;
@@ -18,7 +40,7 @@ import grondag.fluidity.api.transact.TransactionParticipant.TransactionDelegate;
 
 public class TransportBuffer implements TransactionDelegate, TransactionParticipant {
 	public class BufferState {
-		private BufferState()  {}
+		private BufferState() { }
 
 		long itemQuantity = 0;
 		Article itemArticle = Article.NOTHING;
@@ -159,7 +181,7 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 	}
 
 	public void flushItemToCarrier(TransportCarrierContext carrierContext) {
-		if(!carrierContext.isReady()) {
+		if (!carrierContext.isReady()) {
 			return;
 		}
 
@@ -196,7 +218,7 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 	}
 
 	public void flushFluidToCarrier(TransportCarrierContext carrierContext) {
-		if(!carrierContext.isReady()) {
+		if (!carrierContext.isReady()) {
 			return;
 		}
 
@@ -316,7 +338,7 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 
 		@Override
 		protected long applyItem(Article article, long qty, boolean simulate) {
-			if (qty  == 0) {
+			if (qty == 0) {
 				return 0;
 			}
 
@@ -370,7 +392,7 @@ public class TransportBuffer implements TransactionDelegate, TransactionParticip
 
 		@Override
 		protected long applyItem(Article article, long qty, boolean simulate) {
-			if (qty  == 0 || state.itemQuantity == 0 || state.itemArticle.isNothing() || !state.itemArticle.equals(article)) {
+			if (qty == 0 || state.itemQuantity == 0 || state.itemArticle.isNothing() || !state.itemArticle.equals(article)) {
 				return 0;
 			}
 

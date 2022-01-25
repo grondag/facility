@@ -1,3 +1,23 @@
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.varia;
 
 import grondag.fermion.color.ColorUtil;
@@ -28,16 +48,16 @@ public class FacilityColors {
 
 		for (int i = 0; i < 7; ++i) {
 			final float hueA = aStartHue + arc * i;
-			final int a = i  + 1;
+			final int a = i + 1;
 			HIGHLIGHT[a] = ColorUtil.hclToSrgb(hueA, 20, 50);
 			BASE[a] = 0x80000000 | (ColorUtil.hclToSrgb(hueA + 2, 10, 35) & 0xFFFFFF);
-			GLOW[a] =ColorUtil.hcToSrgbGlow(hueA, 20);
+			GLOW[a] = ColorUtil.hcToSrgbGlow(hueA, 20);
 
 			final float hueB = bStartHue + arc * i;
-			final int b = i  + 9;
+			final int b = i + 9;
 			HIGHLIGHT[b] = ColorUtil.hclToSrgb(hueB, 35, 60);
 			BASE[b] = 0x80000000 | (ColorUtil.hclToSrgb(hueB + 2, 15, 35) & 0xFFFFFF);
-			GLOW[b] =ColorUtil.hcToSrgbGlow(hueB, 35);
+			GLOW[b] = ColorUtil.hcToSrgbGlow(hueB, 35);
 		}
 	}
 }

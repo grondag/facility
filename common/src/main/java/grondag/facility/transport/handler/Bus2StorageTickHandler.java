@@ -1,3 +1,23 @@
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.transport.handler;
 
 import grondag.facility.transport.storage.TransportStorageContext;
@@ -9,16 +29,16 @@ public class Bus2StorageTickHandler implements TransportTickHandler {
 	public static final Bus2StorageTickHandler INSTANCE = new Bus2StorageTickHandler();
 
 	@Override
-	public boolean tick(TransportContext context)  {
+	public boolean tick(TransportContext context) {
 		final TransportStorageContext storageContext = context.storageContext();
 
-		if (!storageContext.prepareForTick())  {
+		if (!storageContext.prepareForTick()) {
 			return false;
 		}
 
 		final TransportCarrierContext carrierContext = context.carrierContext();
 
-		if(!carrierContext.isReady()) {
+		if (!carrierContext.isReady()) {
 			return true;
 		}
 
@@ -57,11 +77,12 @@ public class Bus2StorageTickHandler implements TransportTickHandler {
 			if (didStoragePropose) {
 				storageContext.advanceAcceptProposal(carrierContext.articleType);
 			}
+
 			return true;
 		}
 
 		final ArticleFunction bufferConsumer = context.buffer().consumer();
-		final long units  = storageContext.unitsFor(targetArticle);
+		final long units = storageContext.unitsFor(targetArticle);
 		long howMany = storageContext.capacityFor(targetArticle, units);
 		howMany = bufferConsumer.apply(targetArticle, howMany, units, true);
 		howMany = carrierContext.throttle(targetArticle, howMany, units, true);
@@ -75,7 +96,7 @@ public class Bus2StorageTickHandler implements TransportTickHandler {
 				howMany = carrierContext.throttle(targetArticle, howMany, units, false);
 				howMany = supplier.apply(targetArticle, howMany, units, false);
 
-				if (howMany > 0  && bufferConsumer.apply(targetArticle, howMany, units, false) == howMany) {
+				if (howMany > 0 && bufferConsumer.apply(targetArticle, howMany, units, false) == howMany) {
 					tx.commit();
 					carrierContext.resetCooldown();
 				}

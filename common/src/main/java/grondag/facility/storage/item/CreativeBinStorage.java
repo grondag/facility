@@ -1,21 +1,30 @@
-/*******************************************************************************
- * Copyright 2019, 2020 grondag
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.storage.item;
 
 import com.google.common.base.Preconditions;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+
 import grondag.fluidity.api.article.Article;
 import grondag.fluidity.api.storage.FixedArticleFunction;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
@@ -23,8 +32,6 @@ import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
 import grondag.fluidity.base.storage.discrete.DividedDiscreteStore;
 import grondag.fluidity.base.storage.discrete.FixedDiscreteStore;
 import grondag.fluidity.base.storage.helper.FixedArticleManager;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 
 public class CreativeBinStorage extends AbstractDiscreteStore<CreativeBinStorage> implements FixedDiscreteStore {
 	protected final int divisionCount;
@@ -79,8 +86,8 @@ public class CreativeBinStorage extends AbstractDiscreteStore<CreativeBinStorage
 
 			final StoredDiscreteArticle a = articles.get(handle);
 
-			if(a.isEmpty()) {
-				if(!simulate) {
+			if (a.isEmpty()) {
+				if (!simulate) {
 					a.setArticle(item);
 					a.setCount(capacityPerDivision);
 					notifier.notifyAccept(a, capacityPerDivision);
@@ -88,7 +95,6 @@ public class CreativeBinStorage extends AbstractDiscreteStore<CreativeBinStorage
 				}
 
 				return count;
-
 			} else if (a.article().equals(item)) {
 				return count;
 			} else {
@@ -114,7 +120,7 @@ public class CreativeBinStorage extends AbstractDiscreteStore<CreativeBinStorage
 
 			final StoredDiscreteArticle article = articles.get(item);
 
-			return(article == null || article.isEmpty()) ? 0 : count;
+			return (article == null || article.isEmpty()) ? 0 : count;
 		}
 
 		@Override
@@ -136,14 +142,14 @@ public class CreativeBinStorage extends AbstractDiscreteStore<CreativeBinStorage
 	public CompoundTag writeTag() {
 		final CompoundTag result = new CompoundTag();
 
-		if(!isEmpty()) {
+		if (!isEmpty()) {
 			final ListTag list = new ListTag();
 			final int limit = articles.handleCount();
 
 			for (int i = 0; i < limit; i++) {
 				final StoredDiscreteArticle a = articles.get(i);
 
-				if(!a.isEmpty()) {
+				if (!a.isEmpty()) {
 					final CompoundTag aTag = a.toTag();
 					aTag.putInt("handle", i);
 					list.add(aTag);
@@ -160,16 +166,16 @@ public class CreativeBinStorage extends AbstractDiscreteStore<CreativeBinStorage
 	public void readTag(CompoundTag tag) {
 		clear();
 
-		if(tag.contains(AbstractDiscreteStore.TAG_ITEMS)) {
+		if (tag.contains(AbstractDiscreteStore.TAG_ITEMS)) {
 			final ListTag list = tag.getList(AbstractDiscreteStore.TAG_ITEMS, 10);
 			final int limit = list.size();
 			final StoredDiscreteArticle lookup = new StoredDiscreteArticle();
 
-			for(int i = 0; i < limit; i++) {
+			for (int i = 0; i < limit; i++) {
 				final CompoundTag aTag = list.getCompound(i);
 				lookup.readTag(aTag);
 
-				if(!lookup.isEmpty()) {
+				if (!lookup.isEmpty()) {
 					consumer.apply(aTag.getInt("handle"), lookup.article(), lookup.count(), false);
 				}
 			}

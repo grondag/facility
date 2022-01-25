@@ -1,3 +1,23 @@
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.storage;
 
 import java.util.function.Supplier;
@@ -45,7 +65,7 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	protected abstract MultiBlockManager deviceManager();
 
 	protected void markForSave() {
-		if(level != null && worldPosition != null) {
+		if (level != null && worldPosition != null) {
 			level.blockEntityChanged(worldPosition);
 		}
 	}
@@ -55,7 +75,7 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void onLoaded() {
-		if(!isRegistered && hasLevel() && !level.isClientSide) {
+		if (!isRegistered && hasLevel() && !level.isClientSide) {
 			deviceManager().connect(member);
 			isRegistered = true;
 		} else {
@@ -66,7 +86,7 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 	@Override
 	@SuppressWarnings("unchecked")
 	protected void onUnloaded() {
-		if(isRegistered && hasLevel() && !level.isClientSide) {
+		if (isRegistered && hasLevel() && !level.isClientSide) {
 			// device manager happens later, so remove from aggregate right away to avoid possibility of duping
 			if (wrapper.getWrapped().isAggregate()) {
 				((AbstractAggregateStore) wrapper.getWrapped()).removeStore(storage);
@@ -84,7 +104,7 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 		}
 	}
 
-	/** Do not call on client - will not crash but wastes memory */
+	/** Do not call on client - will not crash but wastes memory. */
 	public Store getInternalStorage() {
 		return storage;
 	}
@@ -102,7 +122,6 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 		setChanged();
 		((ServerLevel) level).getChunkSource().blockChanged(worldPosition);
 	}
-
 
 	@Override
 	protected void saveAdditional(CompoundTag compoundTag) {
@@ -126,24 +145,24 @@ public abstract class StorageBlockEntity<T extends StorageClientState, U extends
 		}
 	}
 
-    @Override
+	@Override
 	public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
 
-    @Override
-    public CompoundTag getUpdateTag() {
-    	final CompoundTag result = new CompoundTag();
-    	result.putString(TAG_LABEL, label);
-        return result;
-    }
+	@Override
+	public CompoundTag getUpdateTag() {
+		final CompoundTag result = new CompoundTag();
+		result.putString(TAG_LABEL, label);
+		return result;
+	}
 
 	public T clientState() {
 		T result = clientState;
 
 		if (result == null) {
 			result = createClientState();
-			clientState =  result;
+			clientState = result;
 		}
 
 		return result;

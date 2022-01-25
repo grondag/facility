@@ -1,3 +1,23 @@
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.transport.item;
 
 import net.minecraft.core.BlockPos;
@@ -44,7 +64,7 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 	CarrierSession internalSession;
 	protected boolean resetTickHandler = true;
 
-	/** may be used for fluid and/or item or not used at all */
+	/** May be used for fluid and/or item or not used at all. */
 	protected final TransportStorageContext fluidityStorage = new FluidityStorageContext() {
 		@Override
 		protected Store store() {
@@ -136,7 +156,7 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 	}
 
 	protected final void selectHandler() {
-		if(getLevel() == null || getBlockPos() == null) {
+		if (getLevel() == null || getBlockPos() == null) {
 			return;
 		}
 
@@ -146,15 +166,15 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 		targetPos = getBlockPos().relative(face);
 		targetFace = face.getOpposite();
 
-		final Store storage =  Store.STORAGE_COMPONENT.getAccess(level, targetPos).get();
+		final Store storage = Store.STORAGE_COMPONENT.getAccess(level, targetPos).get();
 
-		if(storage != Store.STORAGE_COMPONENT.absent()) {
+		if (storage != Store.STORAGE_COMPONENT.absent()) {
 			fluidStorage = storage.allowsType(ArticleType.FLUID).mayBeTrue ? fluidityStorage : MissingStorageContext.INSTANCE;
 			itemStorage = storage.allowsType(ArticleType.ITEM).mayBeTrue ? fluidityStorage : MissingStorageContext.INSTANCE;
 		} else {
 			final Container inv = HopperBlockEntity.getContainerAt(level, targetPos);
 
-			if(inv != null) {
+			if (inv != null) {
 				fluidStorage = MissingStorageContext.INSTANCE;
 
 				if (inv instanceof WorldlyContainer) {
@@ -172,7 +192,7 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 						}
 					};
 				}
-			}  else {
+			} else {
 				final BlockState state = getLevel().getBlockState(targetPos);
 				final Block block = state.getBlock();
 				itemStorage = state.isCollisionShapeFullBlock(level, targetPos) ? MissingStorageContext.INSTANCE : worldStorage;
@@ -198,7 +218,7 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 	@Override
 	public final void tick() {
 		// TODO: allow inversion or disable of redstone control
-		if(getBlockState().getValue(BlockStateProperties.POWERED)) {
+		if (getBlockState().getValue(BlockStateProperties.POWERED)) {
 			return;
 		}
 
@@ -234,7 +254,7 @@ public abstract class ItemMoverBlockEntity extends PipeBlockEntity implements Ti
 
 		if (tag.contains(TAG_BUFFER)) {
 			transportBuffer.state().fromTag(tag.getCompound(TAG_BUFFER));
-		} else if (!this.level.isClientSide){
+		} else if (!this.level.isClientSide) {
 			transportBuffer.state().reset();
 		}
 	}

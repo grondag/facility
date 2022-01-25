@@ -1,18 +1,23 @@
-/*******************************************************************************
- * Copyright 2019, 2020 grondag
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.init;
 
 import net.minecraft.core.BlockPos;
@@ -55,9 +60,9 @@ public abstract class BinBlocks {
 	private static BinBlockEntity binX1Be(BlockPos pos, BlockState state) {
 		return new BinBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, pos, state, () -> new DividedDiscreteStore(1, 2048).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "BIN 1x ", 1);
 	}
+
 	private static PortableCrateItem PORTABLE_BIN_ITEM_X1;
 	private static Item BIN_ITEM_X1;
-
 
 	private static BinBlock BIN_X2;
 	private static BlockEntityType<BinBlockEntity> BIN_X2_BLOCK_ENTITY_TYPE;
@@ -69,9 +74,9 @@ public abstract class BinBlocks {
 	private static BinBlockEntity binX2Be(BlockPos pos, BlockState state) {
 		return new BinBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, pos, state, () -> new DividedDiscreteStore(2, 1024).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "BIN 2x ", 2);
 	}
+
 	private static PortableCrateItem PORTABLE_BIN_ITEM_X2;
 	private static Item BIN_ITEM_X2;
-
 
 	private static BinBlock BIN_X4;
 	private static BlockEntityType<BinBlockEntity> BIN_X4_BLOCK_ENTITY_TYPE;
@@ -83,9 +88,9 @@ public abstract class BinBlocks {
 	private static BinBlockEntity binX4Be(BlockPos pos, BlockState state) {
 		return new BinBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, pos, state, () -> new DividedDiscreteStore(4, 512).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "BIN 4x ", 4);
 	}
+
 	private static PortableCrateItem PORTABLE_BIN_ITEM_X4;
 	private static Item BIN_ITEM_X4;
-
 
 	private static BinBlock CREATIVE_BIN_X1;
 	private static BlockEntityType<BinBlockEntity> CREATIVE_BIN_X1_BLOCK_ENTITY_TYPE;
@@ -185,7 +190,6 @@ public abstract class BinBlocks {
 						.paintAll(basePaint)
 						.paint(CubeWithFace.SURFACE_TOP, Textures.cratePaintWithDecal(Textures.QUARTER_DIVIDER, 0xFFFFFFFF)), bs), bs))
 				.build());
-
 
 		final XmPaint creativePaint = Textures.crateBaseFinder(2).textureColor(0, 0xFF00FFFF).find();
 

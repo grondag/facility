@@ -1,3 +1,23 @@
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.transport.model;
 
 import static net.minecraft.core.Direction.DOWN;
@@ -57,7 +77,7 @@ public class ItemMoverModel extends BasePipeModel {
 
 	@Override
 	protected void emitConnector(PrimitiveState modelState, Direction face, WritableMesh mesh) {
-		if(modelState.orientationIndex() == face.ordinal()) {
+		if (modelState.orientationIndex() == face.ordinal()) {
 			emitFatConnector(modelState, face, mesh);
 		} else {
 			super.emitConnector(modelState, face, mesh);
@@ -67,8 +87,9 @@ public class ItemMoverModel extends BasePipeModel {
 	protected void emitFatConnector(PrimitiveState modelState, Direction face, WritableMesh mesh) {
 		final MutablePolygon writer = mesh.writer();
 		final PolyTransform transform = PolyTransform.get(face);
-		writer.lockUV(0, true)
-		.surface(SURFACE_MOVER_SIDE);
+		writer
+			.lockUV(0, true)
+			.surface(SURFACE_MOVER_SIDE);
 		writer.saveDefaults();
 
 		writer.setupFaceQuad(EAST, FAT_CONNECTOR_MIN, 0, FAT_CONNECTOR_MAX, FAT_CONNECTOR_DEPTH, FAT_CONNECTOR_MIN, UP);

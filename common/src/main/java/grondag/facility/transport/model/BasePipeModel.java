@@ -1,3 +1,23 @@
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.transport.model;
 
 import static net.minecraft.core.Direction.DOWN;
@@ -6,6 +26,9 @@ import static net.minecraft.core.Direction.NORTH;
 import static net.minecraft.core.Direction.SOUTH;
 import static net.minecraft.core.Direction.UP;
 import static net.minecraft.core.Direction.WEST;
+
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
 
 import grondag.xm.api.connect.state.SimpleJoinState;
 import grondag.xm.api.mesh.Csg;
@@ -20,8 +43,6 @@ import grondag.xm.api.modelstate.primitive.PrimitiveState;
 import grondag.xm.api.paint.SurfaceTopology;
 import grondag.xm.api.primitive.surface.XmSurface;
 import grondag.xm.api.primitive.surface.XmSurfaceList;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Direction.Axis;
 
 public class BasePipeModel {
 	protected static final XmSurfaceList SURFACES = XmSurfaceList.builder()
@@ -54,7 +75,7 @@ public class BasePipeModel {
 
 	public static final int GLOW_BIT = 1;
 
-	public static boolean hasGlow(BaseModelState<?,?> modelState) {
+	public static boolean hasGlow(BaseModelState<?, ?> modelState) {
 		return (modelState.primitiveBits() & GLOW_BIT) == GLOW_BIT;
 	}
 
@@ -120,8 +141,9 @@ public class BasePipeModel {
 	protected void emitConnector(PrimitiveState modelState, Direction face, WritableMesh mesh) {
 		final MutablePolygon writer = mesh.writer();
 		final PolyTransform transform = PolyTransform.get(face);
-		writer.lockUV(0, true)
-		.surface(SURFACE_CONNECTOR_SIDE);
+		writer
+			.lockUV(0, true)
+			.surface(SURFACE_CONNECTOR_SIDE);
 		writer.saveDefaults();
 
 		writer.setupFaceQuad(EAST, CONNECTOR_MIN, 0, CONNECTOR_MAX, CONNECTOR_DEPTH, CONNECTOR_MIN, UP);
@@ -166,7 +188,7 @@ public class BasePipeModel {
 	protected XmMesh polyFactory(PrimitiveState modelState) {
 		final SimpleJoinState joinState = modelState.simpleJoin();
 
-		if(joinState == SimpleJoinState.NO_JOINS) {
+		if (joinState == SimpleJoinState.NO_JOINS) {
 			final WritableMesh output = XmMeshes.claimWritable();
 			emitStub(modelState, output);
 			return output.releaseToReader();
@@ -179,22 +201,22 @@ public class BasePipeModel {
 		final boolean hasX = hasJoins(modelState, joinState, Axis.X);
 		final boolean hasY = hasJoins(modelState, joinState, Axis.Y);
 		final boolean hasZ = hasJoins(modelState, joinState, Axis.Z);
-		final boolean hasMultiple = (hasX ? 1 : 0) + (hasY ? 1 : 0) + (hasZ ? 1 : 0)  > 1;
+		final boolean hasMultiple = (hasX ? 1 : 0) + (hasY ? 1 : 0) + (hasZ ? 1 : 0) > 1;
 
-		if(hasX) {
+		if (hasX) {
 			output = XmMeshes.claimCsg();
 			final float top = isJoined(modelState, joinState, WEST) ? 1 : (hasMultiple ? CABLE_MAX : END_MAX);
 			final float bottom = isJoined(modelState, joinState, EAST) ? 0 : (hasMultiple ? CABLE_MIN : END_MIN);
 			emitSection(bottom, top, Axis.X, output);
 		}
 
-		if(hasY) {
+		if (hasY) {
 			quadsA = XmMeshes.claimCsg();
 			final float top = isJoined(modelState, joinState, UP) ? 1 : (hasMultiple ? CABLE_MAX : END_MAX);
 			final float bottom = isJoined(modelState, joinState, DOWN) ? 0 : (hasMultiple ? CABLE_MIN : END_MIN);
 			emitSection(bottom, top, Axis.Y, quadsA);
 
-			if(output == null) {
+			if (output == null) {
 				output = quadsA;
 				quadsA = null;
 			} else {
@@ -207,15 +229,16 @@ public class BasePipeModel {
 			}
 		}
 
-		if(hasZ) {
-			if(quadsA == null) {
+		if (hasZ) {
+			if (quadsA == null) {
 				quadsA = XmMeshes.claimCsg();
 			}
+
 			final float top = isJoined(modelState, joinState, SOUTH) ? 1 : (hasMultiple ? CABLE_MAX : END_MAX);
 			final float bottom = isJoined(modelState, joinState, NORTH) ? 0 : (hasMultiple ? CABLE_MIN : END_MIN);
 			emitSection(bottom, top, Axis.Z, quadsA);
 
-			if(output == null) {
+			if (output == null) {
 				output = quadsA;
 				quadsA = null;
 			} else {
@@ -230,26 +253,27 @@ public class BasePipeModel {
 
 		final int connectorBits = modelState.alternateJoinBits();
 
-		if(connectorBits != 0) {
-			if(quadsA == null) {
+		if (connectorBits != 0) {
+			if (quadsA == null) {
 				quadsA = XmMeshes.claimCsg();
 			}
 
-			for(final Direction face : FACES) {
-				if(needsConnector(modelState, connectorBits, face)) {
+			for (final Direction face : FACES) {
+				if (needsConnector(modelState, connectorBits, face)) {
 					emitConnector(modelState, face, quadsA);
 				}
 			}
+
 			quadsB = output;
 			output = XmMeshes.claimCsg();
 			Csg.union(quadsA, quadsB, output);
 		}
 
-		if(quadsA != null) {
+		if (quadsA != null) {
 			quadsA.release();
 		}
 
-		if(quadsB != null) {
+		if (quadsB != null) {
 			quadsB.release();
 		}
 

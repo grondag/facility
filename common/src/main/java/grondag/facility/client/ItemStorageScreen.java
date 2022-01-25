@@ -1,18 +1,23 @@
-/*******************************************************************************
- * Copyright 2019, 2020 grondag
+/*
+ * This file is part of Facility and is licensed to the project under
+ * terms that are compatible with the GNU Lesser General Public License.
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership and licensing.
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License.  You may obtain a copy
- * of the License at
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
- * License for the specific language governing permissions and limitations under
- * the License.
- ******************************************************************************/
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package grondag.facility.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -28,7 +33,7 @@ import net.minecraft.world.inventory.Slot;
 import net.fabricmc.loader.api.FabricLoader;
 
 import grondag.facility.FacilityConfig;
-import grondag.facility.storage.FactilityStorageScreenHandler;
+import grondag.facility.storage.FacilityStorageScreenHandler;
 import grondag.fermion.gui.AbstractSimpleContainerScreen;
 import grondag.fermion.gui.GuiUtil;
 import grondag.fermion.gui.ScreenRenderContext;
@@ -42,7 +47,7 @@ import grondag.fluidity.base.synch.DisplayDelegate;
 import grondag.fluidity.base.synch.ItemStorageActionClientHelper;
 import grondag.fluidity.impl.DiscreteDisplayDelegateImpl;
 
-public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilityStorageScreenHandler<DiscreteStorageServerDelegate>> implements ScreenRenderContext {
+public class ItemStorageScreen extends AbstractSimpleContainerScreen<FacilityStorageScreenHandler<DiscreteStorageServerDelegate>> implements ScreenRenderContext {
 	private static DiscreteStorageClientDelegate DELEGATE = DiscreteStorageClientDelegate.INSTANCE;
 
 	protected int headerHeight;
@@ -54,7 +59,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 	protected int itemPickerTop;
 	protected int inventoryLeft;
 
-	public ItemStorageScreen(FactilityStorageScreenHandler<DiscreteStorageServerDelegate> container, Inventory inventory, Component title) {
+	public ItemStorageScreen(FacilityStorageScreenHandler<DiscreteStorageServerDelegate> container, Inventory inventory, Component title) {
 		// TODO: something something localization
 		super(container, inventory, new TranslatableComponent("Facility Storage"));
 	}
@@ -70,8 +75,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 	}
 
 	protected void preInitLayout() {
-
-		imageWidth = theme.externalMargin + theme.capacityBarWidth + theme.internalMargin + ItemStackPicker.idealWidth(theme, 9) + theme.externalMargin ;
+		imageWidth = theme.externalMargin + theme.capacityBarWidth + theme.internalMargin + ItemStackPicker.idealWidth(theme, 9) + theme.externalMargin;
 
 		headerHeight = theme.singleLineWidgetHeight + theme.externalMargin + theme.internalMargin;
 		final int fixedHeight = headerHeight + theme.itemSlotSpacing * 4 + theme.itemSpacing + theme.externalMargin;
@@ -89,8 +93,8 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 
 		int i = 0;
 
-		for(int p = 0; p < 3; ++p) {
-			for(int o = 0; o < 9; ++o) {
+		for (int p = 0; p < 3; ++p) {
+			for (int o = 0; o < 9; ++o) {
 				final Slot oldSlot = menu.getSlot(i);
 				final Slot newSlot = new Slot(oldSlot.container, o + p * 9 + 9, inventoryLeft + o * theme.itemSlotSpacing, playerInventoryTop + p * theme.itemSlotSpacing);
 				newSlot.index = oldSlot.index;
@@ -100,7 +104,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 
 		final int rowTop = playerInventoryTop + theme.itemSlotSpacing * 3 + theme.itemSpacing;
 
-		for(int p = 0; p < 9; ++p) {
+		for (int p = 0; p < 9; ++p) {
 			final Slot oldSlot = menu.getSlot(i);
 			final Slot newSlot = new Slot(oldSlot.container, p, inventoryLeft + p * theme.itemSlotSpacing, rowTop);
 			newSlot.index = oldSlot.index;
@@ -113,14 +117,14 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 		topPos = (height - imageHeight) / 2;
 
 		// if using REI, center on left 2/3 of screen to allow more room for REI
-		if(FacilityConfig.shiftScreensLeftIfReiPresent &&  FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {
+		if (FacilityConfig.shiftScreensLeftIfReiPresent && FabricLoader.getInstance().isModLoaded("roughlyenoughitems")) {
 			leftPos = ((width * 2 / 3) - imageWidth) / 2;
 		} else {
 			leftPos = (width - imageWidth) / 2;
 		}
 
 		// leave room for REI at bottom if vertical margins are tight
-		if(topPos <= 30) {
+		if (topPos <= 30) {
 			topPos = 10;
 		}
 	}
@@ -141,8 +145,8 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 		final Button butt = new Button(this,
 				leftPos + imageWidth - 40 - theme.externalMargin, topPos + theme.externalMargin,
 				40, theme.singleLineWidgetHeight,
-				DisplayDelegate.getSortText(DELEGATE.getSortIndex())) {
-
+				DisplayDelegate.getSortText(DELEGATE.getSortIndex())
+		) {
 			@Override
 			public void onPress() {
 				final int oldSort = DELEGATE.getSortIndex();
@@ -186,9 +190,9 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FactilitySt
 				capacityBarLeft + theme.capacityBarWidth, barBottom, theme.capacityFillColor);
 
 		// Draw here because drawforeground currently happens after this
-		if(DELEGATE.capacity() > 0 && mouseX >= leftPos + theme.externalMargin && mouseX <= leftPos + theme.externalMargin + theme.capacityBarWidth
-				&& mouseY >= topPos + theme.externalMargin && mouseY <= topPos + imageHeight - theme.externalMargin) {
-
+		if (DELEGATE.capacity() > 0 && mouseX >= leftPos + theme.externalMargin && mouseX <= leftPos + theme.externalMargin + theme.capacityBarWidth
+				&& mouseY >= topPos + theme.externalMargin && mouseY <= topPos + imageHeight - theme.externalMargin
+		) {
 			//UGLY: standardize how tooltip coordinates work - wants screen relative but getting window relative as inputs here
 			this.renderTooltip(matrixStack, new TextComponent(DELEGATE.usedCapacity() + " / " + DELEGATE.capacity()), mouseX - leftPos, mouseY - topPos);
 		}
