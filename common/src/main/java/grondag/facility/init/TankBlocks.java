@@ -50,38 +50,37 @@ import grondag.xm.api.texture.core.CoreTextures;
 public abstract class TankBlocks {
 	private TankBlocks() { }
 
-	private static TankBlock TANK;
-	private static BlockEntityType<TankBlockEntity> TANK_BLOCK_ENTITY_TYPE;
+	private static BlockEntityType<TankBlockEntity> tankBlockEntityType;
 
-	public static BlockEntityType<TankBlockEntity> TANK_BLOCK_ENTITY_TYPE() {
-		return TANK_BLOCK_ENTITY_TYPE;
+	public static BlockEntityType<TankBlockEntity> tankBlockEntityType() {
+		return tankBlockEntityType;
 	}
 
 	private static TankBlockEntity tankBe(BlockPos pos, BlockState state) {
-		return new TankBlockEntity(TANK_BLOCK_ENTITY_TYPE, pos, state, () -> new SimpleTank(Fraction.of(32)).filter(ArticleType.FLUID), "TANK ");
+		return new TankBlockEntity(tankBlockEntityType, pos, state, () -> new SimpleTank(Fraction.of(32)).filter(ArticleType.FLUID), "TANK ");
 	}
 
-	private static PortableTankItem PORTABLE_TANK_ITEM;
+	private static PortableTankItem portableTankItem;
 
-	public static PortableTankItem PORTABLE_TANK_ITEM() {
-		assert PORTABLE_TANK_ITEM != null;
-		return PORTABLE_TANK_ITEM;
+	public static PortableTankItem portableTankItem() {
+		assert portableTankItem != null;
+		return portableTankItem;
 	}
 
 	public static void initialize() {
-		TANK = Facility.blockNoItem("tank", new TankBlock(Block.Properties.of(Material.METAL).strength(1, 1), TankBlocks::tankBe, false));
-		TANK_BLOCK_ENTITY_TYPE = Facility.blockEntityType("tank", TankBlocks::tankBe, TANK);
-		PORTABLE_TANK_ITEM = Facility.item("tank", new PortableTankItem(TANK, Facility.itemSettings().stacksTo(1).durability(32768)));
+		final var tankBlock = Facility.blockNoItem("tank", new TankBlock(Block.Properties.of(Material.METAL).strength(1, 1), TankBlocks::tankBe, false));
+		tankBlockEntityType = Facility.blockEntityType("tank", TankBlocks::tankBe, tankBlock);
+		portableTankItem = Facility.item("tank", new PortableTankItem(tankBlock, Facility.itemSettings().stacksTo(1).durability(32768)));
 
-		PORTABLE_TANK_ITEM.registerBlocks(Item.BY_BLOCK, PORTABLE_TANK_ITEM);
+		portableTankItem.registerBlocks(Item.BY_BLOCK, portableTankItem);
 
 		//CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(TANK);
-		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage(), TANK);
-		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getInternalStorage(), TANK);
-		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage().getConsumer(), TANK);
-		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage().getSupplier(), TANK);
+		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage(), tankBlock);
+		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getInternalStorage(), tankBlock);
+		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage().getConsumer(), tankBlock);
+		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage().getSupplier(), tankBlock);
 
-		Store.STORAGE_COMPONENT.registerProvider(ctx -> new PortableStore(new SimpleTank(Fraction.of(32)), ctx), PORTABLE_TANK_ITEM);
+		Store.STORAGE_COMPONENT.registerProvider(ctx -> new PortableStore(new SimpleTank(Fraction.of(32)), ctx), portableTankItem);
 
 		final XmPaint basePaint = XmPaint.finder()
 				.textureDepth(2)
@@ -91,7 +90,7 @@ public abstract class TankBlocks {
 				.textureColor(1, 0xA0000000)
 				.find();
 
-		XmBlockRegistry.addBlockStates(TANK, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(tankBlock, bs -> PrimitiveStateFunction.builder()
 				.withJoin(TankBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)

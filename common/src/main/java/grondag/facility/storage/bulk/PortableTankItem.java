@@ -88,7 +88,7 @@ public class PortableTankItem extends BlockItem {
 	public InteractionResultHolder<ItemStack> use(Level world, Player playerEntity, InteractionHand hand) {
 		final ItemStack itemStack = playerEntity.getItemInHand(hand);
 
-		if (itemStack.getItem() != TankBlocks.PORTABLE_TANK_ITEM()) {
+		if (itemStack.getItem() != TankBlocks.portableTankItem()) {
 			return InteractionResultHolder.pass(itemStack);
 		}
 

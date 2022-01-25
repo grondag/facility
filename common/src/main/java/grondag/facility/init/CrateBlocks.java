@@ -68,89 +68,75 @@ public abstract class CrateBlocks {
 		return true;
 	};
 
-	private static CrateBlock CRATE;
-	private static BlockEntityType<CrateBlockEntity> CRATE_BLOCK_ENTITY_TYPE;
+	private static BlockEntityType<CrateBlockEntity> crateBlockEntityType;
 
-	public static BlockEntityType<CrateBlockEntity> CRATE_BLOCK_ENTITY_TYPE() {
-		return CRATE_BLOCK_ENTITY_TYPE;
+	public static BlockEntityType<CrateBlockEntity> crateBlockEntityType() {
+		return crateBlockEntityType;
 	}
 
 	private static CrateBlockEntity crateBe(BlockPos pos, BlockState state) {
-		return new CrateBlockEntity(CRATE_BLOCK_ENTITY_TYPE, pos, state, () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "CRATE ");
+		return new CrateBlockEntity(crateBlockEntityType, pos, state, () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "CRATE ");
 	}
 
-	private static PortableCrateItem PORTABLE_CRATE_ITEM;
-	private static Item CRATE_ITEM;
+	private static BlockEntityType<SlottedCrateBlockEntity> slottedCrateBlockEntityType;
 
-	private static CrateBlock SLOTTED_CRATE;
-	private static BlockEntityType<SlottedCrateBlockEntity> SLOTTED_CRATE_BLOCK_ENTITY_TYPE;
-
-	public static BlockEntityType<SlottedCrateBlockEntity> SLOTTED_CRATE_BLOCK_ENTITY_TYPE() {
-		return SLOTTED_CRATE_BLOCK_ENTITY_TYPE;
+	public static BlockEntityType<SlottedCrateBlockEntity> slottedCrateBlockEntityType() {
+		return slottedCrateBlockEntityType;
 	}
 
 	private static SlottedCrateBlockEntity slottedBe(BlockPos pos, BlockState state) {
-		return new SlottedCrateBlockEntity(SLOTTED_CRATE_BLOCK_ENTITY_TYPE, pos, state, () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "SLOTTED CRATE ");
+		return new SlottedCrateBlockEntity(slottedCrateBlockEntityType, pos, state, () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "SLOTTED CRATE ");
 	}
 
-	private static PortableCrateItem PORTABLE_SLOTTED_CRATE_ITEM;
-	private static Item SLOTTED_CRATE_ITEM;
-
-	private static CreativeCrateBlock CREATIVE_CRATE;
-	private static BlockEntityType<CreativeCrateBlockEntity> CREATIVE_CRATE_BLOCK_ENTITY_TYPE;
+	private static BlockEntityType<CreativeCrateBlockEntity> creativeCrateBlockEntityType;
 
 	private static CreativeCrateBlockEntity itemSupplier(BlockPos pos, BlockState state) {
-		return new CreativeCrateBlockEntity(CREATIVE_CRATE_BLOCK_ENTITY_TYPE, pos, state, true);
+		return new CreativeCrateBlockEntity(creativeCrateBlockEntityType, pos, state, true);
 	}
 
-	private static CrateBlock HYPER_CRATE;
-	private static BlockEntityType<CrateBlockEntity> HYPER_CRATE_BLOCK_ENTITY_TYPE;
+	private static BlockEntityType<CrateBlockEntity> hyperCrateBlockEntityType;
 
 	private static CrateBlockEntity hyperCrateBe(BlockPos pos, BlockState state) {
-		return new CrateBlockEntity(HYPER_CRATE_BLOCK_ENTITY_TYPE, pos, state, () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "HYPERCRATE ");
+		return new CrateBlockEntity(hyperCrateBlockEntityType, pos, state, () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "HYPERCRATE ");
 	}
 
-	private static PortableCrateItem PORTABLE_HYPER_CRATE_ITEM;
-	private static Item HYPER_CRATE_ITEM;
-
 	public static void initialize() {
-		CRATE = Facility.blockNoItem("crate", new CrateBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::crateBe));
-		CRATE_BLOCK_ENTITY_TYPE = Facility.blockEntityType("crate", CrateBlocks::crateBe, CRATE);
-		PORTABLE_CRATE_ITEM = Facility.item("crate_item", new PortableCrateItem(CRATE, Facility.itemSettings().stacksTo(1).durability(2048), () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
-		CRATE_ITEM = Facility.item("crate", new BlockItem(CRATE, Facility.itemSettings()));
+		final var crateBlock = Facility.blockNoItem("crate", new CrateBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::crateBe));
+		crateBlockEntityType = Facility.blockEntityType("crate", CrateBlocks::crateBe, crateBlock);
+		final var portableCrateItem = Facility.item("crate_item", new PortableCrateItem(crateBlock, Facility.itemSettings().stacksTo(1).durability(2048), () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
+		Facility.item("crate", new BlockItem(crateBlock, Facility.itemSettings()));
+		crateBlock.portableItem = portableCrateItem;
 
-		SLOTTED_CRATE = Facility.blockNoItem("slotted_crate", new CrateBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::slottedBe));
-		SLOTTED_CRATE_BLOCK_ENTITY_TYPE = Facility.blockEntityType("slotted_crate", CrateBlocks::slottedBe, SLOTTED_CRATE);
-		PORTABLE_SLOTTED_CRATE_ITEM = Facility.item("slotted_crate_item", new PortableCrateItem(SLOTTED_CRATE, Facility.itemSettings().stacksTo(1).durability(2048), () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
-		SLOTTED_CRATE_ITEM = Facility.item("slotted_crate", new BlockItem(SLOTTED_CRATE, Facility.itemSettings()));
+		final var slottedCrateBlock = Facility.blockNoItem("slotted_crate", new CrateBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::slottedBe));
+		slottedCrateBlockEntityType = Facility.blockEntityType("slotted_crate", CrateBlocks::slottedBe, slottedCrateBlock);
+		final var portableSlottedCrateItem = Facility.item("slotted_crate_item", new PortableCrateItem(slottedCrateBlock, Facility.itemSettings().stacksTo(1).durability(2048), () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
+		Facility.item("slotted_crate", new BlockItem(slottedCrateBlock, Facility.itemSettings()));
+		slottedCrateBlock.portableItem = portableSlottedCrateItem;
 
-		CREATIVE_CRATE = Facility.block("creative_crate", new CreativeCrateBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::itemSupplier));
-		CREATIVE_CRATE_BLOCK_ENTITY_TYPE = Facility.blockEntityType("creative_crate", CrateBlocks::itemSupplier, CREATIVE_CRATE);
+		final var creativeCrateBlock = Facility.block("creative_crate", new CreativeCrateBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::itemSupplier));
+		creativeCrateBlockEntityType = Facility.blockEntityType("creative_crate", CrateBlocks::itemSupplier, creativeCrateBlock);
 
-		HYPER_CRATE = Facility.blockNoItem("hyper_crate", new CrateBlock(Block.Properties.of(Material.METAL).strength(1, 1), CrateBlocks::hyperCrateBe));
-		HYPER_CRATE_BLOCK_ENTITY_TYPE = Facility.blockEntityType("hyper_crate", CrateBlocks::hyperCrateBe, HYPER_CRATE);
-		PORTABLE_HYPER_CRATE_ITEM = Facility.item("hyper_crate_item", new PortableCrateItem(HYPER_CRATE, Facility.itemSettings().stacksTo(1).durability(2048), () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
-		HYPER_CRATE_ITEM = Facility.item("hyper_crate", new BlockItem(HYPER_CRATE, Facility.itemSettings()));
-
-		CRATE.portableItem = PORTABLE_CRATE_ITEM;
-		SLOTTED_CRATE.portableItem = PORTABLE_SLOTTED_CRATE_ITEM;
-		HYPER_CRATE.portableItem = PORTABLE_HYPER_CRATE_ITEM;
+		final var hyperCrateBlock = Facility.blockNoItem("hyper_crate", new CrateBlock(Block.Properties.of(Material.METAL).strength(1, 1), CrateBlocks::hyperCrateBe));
+		hyperCrateBlockEntityType = Facility.blockEntityType("hyper_crate", CrateBlocks::hyperCrateBe, hyperCrateBlock);
+		final var portableHyperCrateItem = Facility.item("hyper_crate_item", new PortableCrateItem(hyperCrateBlock, Facility.itemSettings().stacksTo(1).durability(2048), () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
+		Facility.item("hyper_crate", new BlockItem(hyperCrateBlock, Facility.itemSettings()));
+		hyperCrateBlock.portableItem = portableHyperCrateItem;
 
 		//CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(CRATE, SLOTTED_CRATE, CREATIVE_CRATE, HYPER_CRATE);
 
-		Store.STORAGE_COMPONENT.registerProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
-		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> Store.CREATIVE, CREATIVE_CRATE);
-		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> Store.CREATIVE.getConsumer(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
-		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> Store.CREATIVE.getSupplier(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
+		Store.STORAGE_COMPONENT.registerProvider(ctx -> Store.CREATIVE, creativeCrateBlock);
+		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> Store.CREATIVE, creativeCrateBlock);
+		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> Store.CREATIVE.getConsumer(), crateBlock, slottedCrateBlock, hyperCrateBlock);
+		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> Store.CREATIVE.getSupplier(), crateBlock, slottedCrateBlock, hyperCrateBlock);
 
-		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
-		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
-		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage().getConsumer(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
-		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage().getSupplier(), CRATE, SLOTTED_CRATE, HYPER_CRATE);
+		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), crateBlock, slottedCrateBlock, hyperCrateBlock);
+		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), crateBlock, slottedCrateBlock, hyperCrateBlock);
+		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage().getConsumer(), crateBlock, slottedCrateBlock, hyperCrateBlock);
+		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage().getSupplier(), crateBlock, slottedCrateBlock, hyperCrateBlock);
 
 		final XmPaint basePaint = Textures.crateBaseFinder(2).find();
 
-		XmBlockRegistry.addBlockStates(SLOTTED_CRATE, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(slottedCrateBlock, bs -> PrimitiveStateFunction.builder()
 				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
@@ -158,7 +144,7 @@ public abstract class CrateBlocks {
 						CubeWithFace.INSTANCE.newState().paintAll(Textures.cratePaintWithDecal(Textures.OPEN_BOX, 0xA0402918)), bs), bs))
 				.build());
 
-		XmBlockRegistry.addBlockStates(CRATE, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(crateBlock, bs -> PrimitiveStateFunction.builder()
 				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
@@ -166,11 +152,11 @@ public abstract class CrateBlocks {
 						CubeWithFace.INSTANCE.newState().paintAll(basePaint), bs), bs))
 				.build());
 
-		XmBlockRegistry.addBlockStates(CREATIVE_CRATE, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(creativeCrateBlock, bs -> PrimitiveStateFunction.builder()
 				.withDefaultState(Cube.INSTANCE.newState().paintAll(Textures.crateBaseFinder(2).textureColor(0, 0xFF00FFFF).find()))
 				.build());
 
-		XmBlockRegistry.addBlockStates(HYPER_CRATE, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(hyperCrateBlock, bs -> PrimitiveStateFunction.builder()
 				.withDefaultState(Cube.INSTANCE.newState().paintAll(
 						Textures.crateBaseFinder(3)
 						.texture(2, Textures.FILLED_BOX)
@@ -181,8 +167,8 @@ public abstract class CrateBlocks {
 						.find()))
 				.build());
 
-		XmItemRegistry.addItem(PORTABLE_CRATE_ITEM, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION);
-		XmItemRegistry.addItem(PORTABLE_SLOTTED_CRATE_ITEM, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION);
-		XmItemRegistry.addItem(PORTABLE_HYPER_CRATE_ITEM, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION);
+		XmItemRegistry.addItem(portableCrateItem, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION_V2);
+		XmItemRegistry.addItem(portableSlottedCrateItem, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION_V2);
+		XmItemRegistry.addItem(portableHyperCrateItem, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION_V2);
 	}
 }

@@ -47,15 +47,15 @@ public abstract class ScreenHandlers {
 	// TODO: move to own class
 	////CRATE BLOCK
 
-	private static MenuType<CrateScreenHandler> CRATE_BLOCK_TYPE;
+	private static MenuType<CrateScreenHandler> crateBlockMenuType;
 
-	public static MenuType<CrateScreenHandler> CRATE_BLOCK_TYPE() {
-		return CRATE_BLOCK_TYPE;
+	public static MenuType<CrateScreenHandler> crateBlockMenuType() {
+		return crateBlockMenuType;
 	}
 
 	private static CrateScreenHandler clientCrateBlockFactory(int syncId, Inventory inventory, FriendlyByteBuf buf) {
 		final String label = buf.readUtf();
-		return new CrateScreenHandler(CRATE_BLOCK_TYPE, inventory.player, syncId, null, label);
+		return new CrateScreenHandler(crateBlockMenuType, inventory.player, syncId, null, label);
 	}
 
 	private static class CrateBlockScreenHandlerFactory implements ExtendedMenuProvider {
@@ -73,7 +73,7 @@ public abstract class ScreenHandlers {
 			final BlockEntity be = world.getBlockEntity(pos);
 
 			if (be instanceof final CrateBlockEntity myBe) {
-				return new CrateScreenHandler(CRATE_BLOCK_TYPE, player, syncId, myBe, label);
+				return new CrateScreenHandler(crateBlockMenuType, player, syncId, myBe, label);
 			}
 
 			return null;
@@ -97,17 +97,17 @@ public abstract class ScreenHandlers {
 	// TODO: move to own class
 	////  CRATE ITEM
 
-	private static MenuType<CrateItemScreenHandler> CRATE_ITEM_TYPE;
+	private static MenuType<CrateItemScreenHandler> crateItemMenuType;
 
-	public static MenuType<CrateItemScreenHandler> CRATE_ITEM_TYPE() {
-		return CRATE_ITEM_TYPE;
+	public static MenuType<CrateItemScreenHandler> crateItemMenuType() {
+		return crateItemMenuType;
 	}
 
 	private static CrateItemScreenHandler clientCrateItemFactory(int syncId, Inventory inventory, FriendlyByteBuf buf) {
 		final InteractionHand hand = InteractionHand.values()[buf.readVarInt()];
 		final String label = buf.readUtf();
 		return new CrateItemScreenHandler(
-				CRATE_ITEM_TYPE,
+				crateItemMenuType,
 				inventory.player,
 				syncId,
 				null,
@@ -129,7 +129,7 @@ public abstract class ScreenHandlers {
 			final ItemStack stack = player.getItemInHand(hand);
 			final boolean isPortableItem = stack.getItem() instanceof PortableCrateItem;
 			return new CrateItemScreenHandler(
-					CRATE_ITEM_TYPE,
+					crateItemMenuType,
 					player,
 					syncId,
 					!isPortableItem ? null : ((PortableCrateItem) stack.getItem()).makeStore(player, hand),
@@ -169,7 +169,7 @@ public abstract class ScreenHandlers {
 	//		});
 
 	public static void initialize() {
-		CRATE_BLOCK_TYPE = Facility.menuType(CrateScreenHandler.ID, MenuRegistry.ofExtended(ScreenHandlers::clientCrateBlockFactory));
-		CRATE_ITEM_TYPE = Facility.menuType(CrateItemScreenHandler.ID, MenuRegistry.ofExtended(ScreenHandlers::clientCrateItemFactory));
+		crateBlockMenuType = Facility.menuType(CrateScreenHandler.ID, MenuRegistry.ofExtended(ScreenHandlers::clientCrateBlockFactory));
+		crateItemMenuType = Facility.menuType(CrateItemScreenHandler.ID, MenuRegistry.ofExtended(ScreenHandlers::clientCrateItemFactory));
 	}
 }

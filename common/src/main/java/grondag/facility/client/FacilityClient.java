@@ -47,20 +47,20 @@ public abstract class FacilityClient {
 	private FacilityClient() { }
 
 	public static void initialize() {
-		registerBeType(CrateBlocks.SLOTTED_CRATE_BLOCK_ENTITY_TYPE(), d -> new StorageBlockRenderer<>(d));
-		registerBeType(CrateBlocks.CRATE_BLOCK_ENTITY_TYPE(), d -> new StorageBlockRenderer<>(d));
-		registerBeType(BinBlocks.BIN_X1_BLOCK_ENTITY_TYPE(), d -> new BinBlockRenderer(d, 1));
-		registerBeType(BinBlocks.BIN_X2_BLOCK_ENTITY_TYPE(), d -> new BinBlockRenderer(d, 2));
-		registerBeType(BinBlocks.BIN_X4_BLOCK_ENTITY_TYPE(), d -> new BinBlockRenderer(d, 4));
-		registerBeType(BinBlocks.CREATIVE_BIN_X1_BLOCK_ENTITY_TYPE(), d -> new BinBlockRenderer(d, 1));
-		registerBeType(BinBlocks.CREATIVE_BIN_X2_BLOCK_ENTITY_TYPE(), d -> new BinBlockRenderer(d, 2));
-		registerBeType(BinBlocks.CREATIVE_BIN_X4_BLOCK_ENTITY_TYPE(), d -> new BinBlockRenderer(d, 4));
-		registerBeType(TankBlocks.TANK_BLOCK_ENTITY_TYPE(), d -> new TankBlockRenderer(d));
+		registerBeType(CrateBlocks.slottedCrateBlockEntityType(), d -> new StorageBlockRenderer<>(d));
+		registerBeType(CrateBlocks.crateBlockEntityType(), d -> new StorageBlockRenderer<>(d));
+		registerBeType(BinBlocks.binBlockEntityTypeX1(), d -> new BinBlockRenderer(d, 1));
+		registerBeType(BinBlocks.binBlockEntityTypeX2(), d -> new BinBlockRenderer(d, 2));
+		registerBeType(BinBlocks.binBlockEntityTypeX4(), d -> new BinBlockRenderer(d, 4));
+		registerBeType(BinBlocks.creativeBinBlockEntityTypeX1(), d -> new BinBlockRenderer(d, 1));
+		registerBeType(BinBlocks.creativeBinBlockEntityTypeX2(), d -> new BinBlockRenderer(d, 2));
+		registerBeType(BinBlocks.creativeBinBlockEntityTypeX4(), d -> new BinBlockRenderer(d, 4));
+		registerBeType(TankBlocks.tankBlockEntityType(), d -> new TankBlockRenderer(d));
 
 		// Generic inference gets confused without
-		final ScreenFactory<FacilityStorageScreenHandler<DiscreteStorageServerDelegate>, ItemStorageScreen> ITEM_SCREEN_FACTORY = (h, i, t) -> new ItemStorageScreen(h, i, t);
-		MenuRegistry.registerScreenFactory(ScreenHandlers.CRATE_BLOCK_TYPE(), ITEM_SCREEN_FACTORY);
-		MenuRegistry.registerScreenFactory(ScreenHandlers.CRATE_ITEM_TYPE(), ITEM_SCREEN_FACTORY);
+		final ScreenFactory<FacilityStorageScreenHandler<DiscreteStorageServerDelegate>, ItemStorageScreen> itemScreenFactory = (h, i, t) -> new ItemStorageScreen(h, i, t);
+		MenuRegistry.registerScreenFactory(ScreenHandlers.crateBlockMenuType(), itemScreenFactory);
+		MenuRegistry.registerScreenFactory(ScreenHandlers.crateItemMenuType(), itemScreenFactory);
 
 		final var forceKey = new KeyMapping("key.facility.force", GLFW.GLFW_KEY_LEFT_CONTROL, "key.facility.category");
 		KeyMappingRegistry.register(forceKey);

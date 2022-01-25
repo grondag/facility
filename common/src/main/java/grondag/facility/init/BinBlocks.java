@@ -22,7 +22,6 @@ package grondag.facility.init;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -50,118 +49,101 @@ import grondag.xm.api.primitive.simple.CubeWithFace;
 public abstract class BinBlocks {
 	private BinBlocks() { }
 
-	private static BinBlock BIN_X1;
-	private static BlockEntityType<BinBlockEntity> BIN_X1_BLOCK_ENTITY_TYPE;
+	private static BlockEntityType<BinBlockEntity> binBlockEntityTypeX1;
 
-	public static BlockEntityType<BinBlockEntity> BIN_X1_BLOCK_ENTITY_TYPE() {
-		return BIN_X1_BLOCK_ENTITY_TYPE;
+	public static BlockEntityType<BinBlockEntity> binBlockEntityTypeX1() {
+		return binBlockEntityTypeX1;
 	}
 
 	private static BinBlockEntity binX1Be(BlockPos pos, BlockState state) {
-		return new BinBlockEntity(BIN_X1_BLOCK_ENTITY_TYPE, pos, state, () -> new DividedDiscreteStore(1, 2048).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "BIN 1x ", 1);
+		return new BinBlockEntity(binBlockEntityTypeX1, pos, state, () -> new DividedDiscreteStore(1, 2048).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "BIN 1x ", 1);
 	}
 
-	private static PortableCrateItem PORTABLE_BIN_ITEM_X1;
-	private static Item BIN_ITEM_X1;
+	private static BlockEntityType<BinBlockEntity> binBlockEntityTypeX2;
 
-	private static BinBlock BIN_X2;
-	private static BlockEntityType<BinBlockEntity> BIN_X2_BLOCK_ENTITY_TYPE;
-
-	public static BlockEntityType<BinBlockEntity> BIN_X2_BLOCK_ENTITY_TYPE() {
-		return BIN_X2_BLOCK_ENTITY_TYPE;
+	public static BlockEntityType<BinBlockEntity> binBlockEntityTypeX2() {
+		return binBlockEntityTypeX2;
 	}
 
 	private static BinBlockEntity binX2Be(BlockPos pos, BlockState state) {
-		return new BinBlockEntity(BIN_X2_BLOCK_ENTITY_TYPE, pos, state, () -> new DividedDiscreteStore(2, 1024).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "BIN 2x ", 2);
+		return new BinBlockEntity(binBlockEntityTypeX2, pos, state, () -> new DividedDiscreteStore(2, 1024).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "BIN 2x ", 2);
 	}
 
-	private static PortableCrateItem PORTABLE_BIN_ITEM_X2;
-	private static Item BIN_ITEM_X2;
+	private static BlockEntityType<BinBlockEntity> binBlockEntityTypeX4;
 
-	private static BinBlock BIN_X4;
-	private static BlockEntityType<BinBlockEntity> BIN_X4_BLOCK_ENTITY_TYPE;
-
-	public static BlockEntityType<BinBlockEntity> BIN_X4_BLOCK_ENTITY_TYPE() {
-		return BIN_X4_BLOCK_ENTITY_TYPE;
+	public static BlockEntityType<BinBlockEntity> binBlockEntityTypeX4() {
+		return binBlockEntityTypeX4;
 	}
 
 	private static BinBlockEntity binX4Be(BlockPos pos, BlockState state) {
-		return new BinBlockEntity(BIN_X4_BLOCK_ENTITY_TYPE, pos, state, () -> new DividedDiscreteStore(4, 512).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "BIN 4x ", 4);
+		return new BinBlockEntity(binBlockEntityTypeX4, pos, state, () -> new DividedDiscreteStore(4, 512).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "BIN 4x ", 4);
 	}
 
-	private static PortableCrateItem PORTABLE_BIN_ITEM_X4;
-	private static Item BIN_ITEM_X4;
+	private static BlockEntityType<BinBlockEntity> creativeBinBlockEntityTypeX1;
 
-	private static BinBlock CREATIVE_BIN_X1;
-	private static BlockEntityType<BinBlockEntity> CREATIVE_BIN_X1_BLOCK_ENTITY_TYPE;
-
-	public static BlockEntityType<BinBlockEntity> CREATIVE_BIN_X1_BLOCK_ENTITY_TYPE() {
-		return CREATIVE_BIN_X1_BLOCK_ENTITY_TYPE;
+	public static BlockEntityType<BinBlockEntity> creativeBinBlockEntityTypeX1() {
+		return creativeBinBlockEntityTypeX1;
 	}
 
 	private static BinBlockEntity creativeBinX1Be(BlockPos pos, BlockState state) {
-		return new BinBlockEntity(CREATIVE_BIN_X1_BLOCK_ENTITY_TYPE, pos, state, () -> new CreativeBinStorage(1, 2048).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "CREATIVE BIN 1x ", 1);
+		return new BinBlockEntity(creativeBinBlockEntityTypeX1, pos, state, () -> new CreativeBinStorage(1, 2048).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "CREATIVE BIN 1x ", 1);
 	}
 
-	private static BinBlock CREATIVE_BIN_X2;
-	private static BlockEntityType<BinBlockEntity> CREATIVE_BIN_X2_BLOCK_ENTITY_TYPE;
+	private static BlockEntityType<BinBlockEntity> creativeBinBlockEntityTypeX2;
 
-	public static BlockEntityType<BinBlockEntity> CREATIVE_BIN_X2_BLOCK_ENTITY_TYPE() {
-		return CREATIVE_BIN_X2_BLOCK_ENTITY_TYPE;
+	public static BlockEntityType<BinBlockEntity> creativeBinBlockEntityTypeX2() {
+		return creativeBinBlockEntityTypeX2;
 	}
 
 	private static BinBlockEntity creativeBinX2Be(BlockPos pos, BlockState state) {
-		return new BinBlockEntity(CREATIVE_BIN_X2_BLOCK_ENTITY_TYPE, pos, state, () -> new CreativeBinStorage(2, 1024).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "CREATIVE BIN 2x ", 2);
+		return new BinBlockEntity(creativeBinBlockEntityTypeX2, pos, state, () -> new CreativeBinStorage(2, 1024).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "CREATIVE BIN 2x ", 2);
 	}
 
-	private static BinBlock CREATIVE_BIN_X4;
-	private static BlockEntityType<BinBlockEntity> CREATIVE_BIN_X4_BLOCK_ENTITY_TYPE;
+	private static BlockEntityType<BinBlockEntity> creativeBinBlockEntityTypeX4;
 
-	public static BlockEntityType<BinBlockEntity> CREATIVE_BIN_X4_BLOCK_ENTITY_TYPE() {
-		return CREATIVE_BIN_X4_BLOCK_ENTITY_TYPE;
+	public static BlockEntityType<BinBlockEntity> creativeBinBlockEntityTypeX4() {
+		return creativeBinBlockEntityTypeX4;
 	}
 
 	private static BinBlockEntity creativeBinX4Be(BlockPos pos, BlockState state) {
-		return new BinBlockEntity(CREATIVE_BIN_X4_BLOCK_ENTITY_TYPE, pos, state, () -> new CreativeBinStorage(4, 512).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "CREATIVE BIN 4x ", 4);
+		return new BinBlockEntity(creativeBinBlockEntityTypeX4, pos, state, () -> new CreativeBinStorage(4, 512).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate()), "CREATIVE BIN 4x ", 4);
 	}
 
 	public static void initialize() {
-		BIN_X1 = Facility.blockNoItem("bin_1x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::binX1Be, 1, false));
-		BIN_X1_BLOCK_ENTITY_TYPE = Facility.blockEntityType("bin_x1", BinBlocks::binX1Be, BIN_X1);
-		PORTABLE_BIN_ITEM_X1 = Facility.item("bin_1x_item", new PortableCrateItem(BIN_X1, Facility.itemSettings().stacksTo(1).durability(2048), () -> new DividedDiscreteStore(1, 2048).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
-		BIN_ITEM_X1 = Facility.item("bin_1x", new BlockItem(BIN_X1, Facility.itemSettings()));
+		final var binX1 = Facility.blockNoItem("bin_1x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::binX1Be, 1, false));
+		binBlockEntityTypeX1 = Facility.blockEntityType("bin_x1", BinBlocks::binX1Be, binX1);
+		final var portableBinItemX1 = Facility.item("bin_1x_item", new PortableCrateItem(binX1, Facility.itemSettings().stacksTo(1).durability(2048), () -> new DividedDiscreteStore(1, 2048).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
+		Facility.item("bin_1x", new BlockItem(binX1, Facility.itemSettings()));
+		binX1.portableItem = portableBinItemX1;
 
-		BIN_X2 = Facility.blockNoItem("bin_2x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::binX2Be, 2, false));
-		BIN_X2_BLOCK_ENTITY_TYPE = Facility.blockEntityType("bin_x2", BinBlocks::binX2Be, BIN_X2);
-		PORTABLE_BIN_ITEM_X2 = Facility.item("bin_2x_item", new PortableCrateItem(BIN_X2, Facility.itemSettings().stacksTo(1).durability(2048), () -> new DividedDiscreteStore(2, 1024).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
-		BIN_ITEM_X2 = Facility.item("bin_2x", new BlockItem(BIN_X2, Facility.itemSettings()));
+		final var binX2 = Facility.blockNoItem("bin_2x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::binX2Be, 2, false));
+		binBlockEntityTypeX2 = Facility.blockEntityType("bin_x2", BinBlocks::binX2Be, binX2);
+		final var portableBinItemX2 = Facility.item("bin_2x_item", new PortableCrateItem(binX2, Facility.itemSettings().stacksTo(1).durability(2048), () -> new DividedDiscreteStore(2, 1024).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
+		Facility.item("bin_2x", new BlockItem(binX2, Facility.itemSettings()));
+		binX2.portableItem = portableBinItemX2;
 
-		BIN_X4 = Facility.blockNoItem("bin_4x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::binX4Be, 4, false));
-		BIN_X4_BLOCK_ENTITY_TYPE = Facility.blockEntityType("bin_x4", BinBlocks::binX4Be, BIN_X4);
-		PORTABLE_BIN_ITEM_X4 = Facility.item("bin_4x_item", new PortableCrateItem(BIN_X4, Facility.itemSettings().stacksTo(1).durability(2048), () -> new DividedDiscreteStore(4, 512).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
-		BIN_ITEM_X4 = Facility.item("bin_4x", new BlockItem(BIN_X4, Facility.itemSettings()));
+		final var binX4 = Facility.blockNoItem("bin_4x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::binX4Be, 4, false));
+		binBlockEntityTypeX4 = Facility.blockEntityType("bin_x4", BinBlocks::binX4Be, binX4);
+		final var portableBinItemX4 = Facility.item("bin_4x_item", new PortableCrateItem(binX4, Facility.itemSettings().stacksTo(1).durability(2048), () -> new DividedDiscreteStore(4, 512).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
+		binX4.portableItem = portableBinItemX4;
+		Facility.item("bin_4x", new BlockItem(binX4, Facility.itemSettings()));
 
-		CREATIVE_BIN_X1 = Facility.block("creative_bin_1x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::creativeBinX1Be, 1, true));
-		CREATIVE_BIN_X1_BLOCK_ENTITY_TYPE = Facility.blockEntityType("creative_bin_x1", BinBlocks::creativeBinX1Be, CREATIVE_BIN_X1);
-		CREATIVE_BIN_X2 = Facility.block("creative_bin_2x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::creativeBinX2Be, 2, true));
-		CREATIVE_BIN_X2_BLOCK_ENTITY_TYPE = Facility.blockEntityType("creative_bin_x2", BinBlocks::creativeBinX2Be, CREATIVE_BIN_X2);
-
-		CREATIVE_BIN_X4 = Facility.block("creative_bin_4x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::creativeBinX4Be, 4, true));
-		CREATIVE_BIN_X4_BLOCK_ENTITY_TYPE = Facility.blockEntityType("creative_bin_x4", BinBlocks::creativeBinX4Be, CREATIVE_BIN_X4);
-
-		BIN_X1.portableItem = PORTABLE_BIN_ITEM_X1;
-		BIN_X2.portableItem = PORTABLE_BIN_ITEM_X2;
-		BIN_X4.portableItem = PORTABLE_BIN_ITEM_X4;
+		final var creativeBinX1 = Facility.block("creative_bin_1x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::creativeBinX1Be, 1, true));
+		creativeBinBlockEntityTypeX1 = Facility.blockEntityType("creative_bin_x1", BinBlocks::creativeBinX1Be, creativeBinX1);
+		final var creativeBinX2 = Facility.block("creative_bin_2x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::creativeBinX2Be, 2, true));
+		creativeBinBlockEntityTypeX2 = Facility.blockEntityType("creative_bin_x2", BinBlocks::creativeBinX2Be, creativeBinX2);
+		final var creativeBinX4 = Facility.block("creative_bin_4x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::creativeBinX4Be, 4, true));
+		creativeBinBlockEntityTypeX4 = Facility.blockEntityType("creative_bin_x4", BinBlocks::creativeBinX4Be, creativeBinX4);
 
 		//CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(BIN_X1, BIN_X2, BIN_X4, CREATIVE_BIN_X1, CREATIVE_BIN_X2, CREATIVE_BIN_X4);
-		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), BIN_X1, BIN_X2, BIN_X4, CREATIVE_BIN_X1, CREATIVE_BIN_X2, CREATIVE_BIN_X4);
-		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), BIN_X1, BIN_X2, BIN_X4, CREATIVE_BIN_X1, CREATIVE_BIN_X2, CREATIVE_BIN_X4);
-		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage().getConsumer(), BIN_X1, BIN_X2, BIN_X4, CREATIVE_BIN_X1, CREATIVE_BIN_X2, CREATIVE_BIN_X4);
-		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage().getSupplier(), BIN_X1, BIN_X2, BIN_X4, CREATIVE_BIN_X1, CREATIVE_BIN_X2, CREATIVE_BIN_X4);
+		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage(), binX1, binX2, binX4, creativeBinX1, creativeBinX2, creativeBinX4);
+		Store.INTERNAL_STORAGE_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getInternalStorage(), binX1, binX2, binX4, creativeBinX1, creativeBinX2, creativeBinX4);
+		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage().getConsumer(), binX1, binX2, binX4, creativeBinX1, creativeBinX2, creativeBinX4);
+		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> ((CrateBlockEntity) ctx.blockEntity()).getEffectiveStorage().getSupplier(), binX1, binX2, binX4, creativeBinX1, creativeBinX2, creativeBinX4);
 
 		final XmPaint basePaint = Textures.crateBaseFinder(2).find();
 
-		XmBlockRegistry.addBlockStates(BinBlocks.BIN_X1, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(binX1, bs -> PrimitiveStateFunction.builder()
 				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
@@ -171,7 +153,7 @@ public abstract class BinBlocks {
 						.paint(CubeWithFace.SURFACE_TOP, Textures.cratePaintWithDecal(Textures.BIN_FACE, 0xFFFFFFFF)), bs), bs))
 				.build());
 
-		XmBlockRegistry.addBlockStates(BIN_X2, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(binX2, bs -> PrimitiveStateFunction.builder()
 				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
@@ -181,7 +163,7 @@ public abstract class BinBlocks {
 						.paint(CubeWithFace.SURFACE_TOP, Textures.cratePaintWithDecal(Textures.HALF_DIVIDER, 0xFFFFFFFF)), bs), bs))
 				.build());
 
-		XmBlockRegistry.addBlockStates(BIN_X4, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(binX4, bs -> PrimitiveStateFunction.builder()
 				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
@@ -193,7 +175,7 @@ public abstract class BinBlocks {
 
 		final XmPaint creativePaint = Textures.crateBaseFinder(2).textureColor(0, 0xFF00FFFF).find();
 
-		XmBlockRegistry.addBlockStates(BinBlocks.CREATIVE_BIN_X1, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(creativeBinX1, bs -> PrimitiveStateFunction.builder()
 				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
@@ -203,7 +185,7 @@ public abstract class BinBlocks {
 						.paint(CubeWithFace.SURFACE_TOP, Textures.cratePaintWithDecal(Textures.BIN_FACE, 0xFFE0FFFF)), bs), bs))
 				.build());
 
-		XmBlockRegistry.addBlockStates(CREATIVE_BIN_X2, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(creativeBinX2, bs -> PrimitiveStateFunction.builder()
 				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
@@ -213,7 +195,7 @@ public abstract class BinBlocks {
 						.paint(CubeWithFace.SURFACE_TOP, Textures.cratePaintWithDecal(Textures.HALF_DIVIDER, 0xFFE0FFFF)), bs), bs))
 				.build());
 
-		XmBlockRegistry.addBlockStates(CREATIVE_BIN_X4, bs -> PrimitiveStateFunction.builder()
+		XmBlockRegistry.addBlockStates(creativeBinX4, bs -> PrimitiveStateFunction.builder()
 				.withJoin(CrateBlock.JOIN_TEST)
 				.withUpdate(SpeciesProperty.SPECIES_MODIFIER)
 				.withUpdate(XmProperties.FACE_MODIFIER)
@@ -223,8 +205,8 @@ public abstract class BinBlocks {
 						.paint(CubeWithFace.SURFACE_TOP, Textures.cratePaintWithDecal(Textures.QUARTER_DIVIDER, 0xFFE0FFFF)), bs), bs))
 				.build());
 
-		XmItemRegistry.addItem(PORTABLE_BIN_ITEM_X1, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION);
-		XmItemRegistry.addItem(PORTABLE_BIN_ITEM_X2, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION);
-		XmItemRegistry.addItem(PORTABLE_BIN_ITEM_X4, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION);
+		XmItemRegistry.addItem(portableBinItemX1, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION_V2);
+		XmItemRegistry.addItem(portableBinItemX2, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION_V2);
+		XmItemRegistry.addItem(portableBinItemX4, XmBlockRegistry.DEFAULT_ITEM_MODEL_FUNCTION_V2);
 	}
 }

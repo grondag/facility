@@ -56,47 +56,42 @@ import grondag.xm.orientation.api.DirectionHelper;
 public abstract class PipeBlocks {
 	private PipeBlocks() { }
 
-	private static PipeBlock UTB1_PIPE;
-	private static PipeBlock UTB1_PIPE_GLOW;
-	private static PipeBlock UTB1_STRAIGHT_PIPE;
-	private static PipeBlock UTB1_STRAIGHT_PIPE_GLOW;
-	private static BlockEntityType<PipeBlockEntity> UTB1_BLOCK_ENTITY_TYPE;
+	private static BlockEntityType<PipeBlockEntity> pipeBET_UTB1;
+
 	private static PipeBlockEntity pipeSupplier(BlockPos pos, BlockState state) {
-		return new PipeBlockEntity(UTB1_BLOCK_ENTITY_TYPE, pos, state);
+		return new PipeBlockEntity(pipeBET_UTB1, pos, state);
 	}
 
-	private static ItemMoverBlock UTB1_S2B;
-	private static ItemMoverBlock UTB1_S2B_GLOW;
-	private static BlockEntityType<StorageToBusBlockEntity> UTB1_S2B_BLOCK_ENTITY_TYPE;
+	private static BlockEntityType<StorageToBusBlockEntity> pipeBET_UTB1_S2B;
+
 	private static StorageToBusBlockEntity intakeSupplier(BlockPos pos, BlockState state) {
-		return new StorageToBusBlockEntity(UTB1_S2B_BLOCK_ENTITY_TYPE, pos, state);
+		return new StorageToBusBlockEntity(pipeBET_UTB1_S2B, pos, state);
 	}
 
-	private static ItemMoverBlock UTB1_B2S;
-	private static ItemMoverBlock UTB1_B2S_GLOW;
-	private static BlockEntityType<BusToStorageBlockEntity> UTB1_B2S_BLOCK_ENTITY_TYPE;
+	private static BlockEntityType<BusToStorageBlockEntity> pipeBET_UTB1_B2S;
+
 	private static BusToStorageBlockEntity exportSupplier(BlockPos pos, BlockState state) {
-		return new BusToStorageBlockEntity(UTB1_B2S_BLOCK_ENTITY_TYPE, pos, state);
+		return new BusToStorageBlockEntity(pipeBET_UTB1_B2S, pos, state);
 	}
 
 	public static void initialize() {
-		UTB1_PIPE = Facility.block("utb1_flex", new PipeBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::pipeSupplier, false), PipeBlockItem::new);
-		UTB1_PIPE_GLOW = Facility.block("utb1_flex_g", new PipeBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::pipeSupplier, true), PipeBlockItem::new);
-		UTB1_STRAIGHT_PIPE = Facility.block("utb1_straight", new StraightPipeBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::pipeSupplier, false), PipeBlockItem::new);
-		UTB1_STRAIGHT_PIPE_GLOW = Facility.block("utb1_straight_g", new StraightPipeBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::pipeSupplier, true), PipeBlockItem::new);
-		UTB1_BLOCK_ENTITY_TYPE = Facility.blockEntityType("utb1", PipeBlocks::pipeSupplier, UTB1_PIPE, UTB1_STRAIGHT_PIPE, UTB1_PIPE_GLOW, UTB1_STRAIGHT_PIPE_GLOW);
+		final var pipeBlockUTB1 = Facility.block("utb1_flex", new PipeBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::pipeSupplier, false), PipeBlockItem::new);
+		final var pipeBlockGlowUTB1 = Facility.block("utb1_flex_g", new PipeBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::pipeSupplier, true), PipeBlockItem::new);
+		final var pipeBlockStraightUTB1 = Facility.block("utb1_straight", new StraightPipeBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::pipeSupplier, false), PipeBlockItem::new);
+		final var pipeBlockStraightGlowUTB1 = Facility.block("utb1_straight_g", new StraightPipeBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::pipeSupplier, true), PipeBlockItem::new);
+		pipeBET_UTB1 = Facility.blockEntityType("utb1", PipeBlocks::pipeSupplier, pipeBlockUTB1, pipeBlockStraightUTB1, pipeBlockGlowUTB1, pipeBlockStraightGlowUTB1);
 
-		UTB1_S2B = Facility.block("utb1_intake", new ItemMoverBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::intakeSupplier, false), PipeBlockItem::new);
-		UTB1_S2B_GLOW = Facility.block("utb1_intake_g", new ItemMoverBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::intakeSupplier, true), PipeBlockItem::new);
-		UTB1_S2B_BLOCK_ENTITY_TYPE = Facility.blockEntityType("utb1_intake", PipeBlocks::intakeSupplier, UTB1_S2B, UTB1_S2B_GLOW);
+		final var storage2BusBlockUTB1 = Facility.block("utb1_intake", new ItemMoverBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::intakeSupplier, false), PipeBlockItem::new);
+		final var storage2BusBlockGlowUTB1 = Facility.block("utb1_intake_g", new ItemMoverBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::intakeSupplier, true), PipeBlockItem::new);
+		pipeBET_UTB1_S2B = Facility.blockEntityType("utb1_intake", PipeBlocks::intakeSupplier, storage2BusBlockUTB1, storage2BusBlockGlowUTB1);
 
-		UTB1_B2S = Facility.block("utb1_export", new ItemMoverBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::exportSupplier, false), PipeBlockItem::new);
-		UTB1_B2S_GLOW = Facility.block("utb1_export_g", new ItemMoverBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::exportSupplier, true), PipeBlockItem::new);
-		UTB1_B2S_BLOCK_ENTITY_TYPE = Facility.blockEntityType("utb1_export", PipeBlocks::exportSupplier, UTB1_B2S, UTB1_B2S_GLOW);
+		final var bus2StorageBlockUTB1 = Facility.block("utb1_export", new ItemMoverBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::exportSupplier, false), PipeBlockItem::new);
+		final var bus2StorageBlockGlowUTB1 = Facility.block("utb1_export_g", new ItemMoverBlock(Block.Properties.of(Material.METAL).dynamicShape().strength(1, 1), PipeBlocks::exportSupplier, true), PipeBlockItem::new);
+		pipeBET_UTB1_B2S = Facility.blockEntityType("utb1_export", PipeBlocks::exportSupplier, bus2StorageBlockUTB1, bus2StorageBlockGlowUTB1);
 
-		CarrierProvider.CARRIER_PROVIDER_COMPONENT.registerProvider(ctx -> ((PipeBlockEntity) ctx.blockEntity()).getCarrierProvider(ctx), UTB1_PIPE, UTB1_STRAIGHT_PIPE, UTB1_S2B, UTB1_B2S, UTB1_PIPE_GLOW, UTB1_STRAIGHT_PIPE_GLOW, UTB1_S2B_GLOW, UTB1_B2S_GLOW);
-		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((ItemMoverBlockEntity) ctx.blockEntity()).getConsumer(), UTB1_S2B, UTB1_B2S, UTB1_S2B_GLOW, UTB1_B2S_GLOW);
-		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> ((ItemMoverBlockEntity) ctx.blockEntity()).getSupplier(), UTB1_S2B, UTB1_B2S, UTB1_S2B_GLOW, UTB1_B2S_GLOW);
+		CarrierProvider.CARRIER_PROVIDER_COMPONENT.registerProvider(ctx -> ((PipeBlockEntity) ctx.blockEntity()).getCarrierProvider(ctx), pipeBlockUTB1, pipeBlockStraightUTB1, storage2BusBlockUTB1, bus2StorageBlockUTB1, pipeBlockGlowUTB1, pipeBlockStraightGlowUTB1, storage2BusBlockGlowUTB1, bus2StorageBlockGlowUTB1);
+		ArticleFunction.CONSUMER_COMPONENT.registerProvider(ctx -> ((ItemMoverBlockEntity) ctx.blockEntity()).getConsumer(), storage2BusBlockUTB1, bus2StorageBlockUTB1, storage2BusBlockGlowUTB1, bus2StorageBlockGlowUTB1);
+		ArticleFunction.SUPPLIER_COMPONENT.registerProvider(ctx -> ((ItemMoverBlockEntity) ctx.blockEntity()).getSupplier(), storage2BusBlockUTB1, bus2StorageBlockUTB1, storage2BusBlockGlowUTB1, bus2StorageBlockGlowUTB1);
 
 		final Function<BlockState, PrimitiveStateFunction> utb1FlexFunc = bs -> PrimitiveStateFunction.builder()
 				.withJoin(PipeBlock.JOIN_TEST)
@@ -112,8 +107,8 @@ public abstract class PipeBlocks {
 						.simpleJoin(SimpleJoinState.ALL_JOINS), bs)))
 				.build();
 
-		XmBlockRegistry.addBlockStates(UTB1_PIPE, utb1FlexFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
-		XmBlockRegistry.addBlockStates(UTB1_PIPE_GLOW, utb1FlexFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
+		XmBlockRegistry.addBlockStates(pipeBlockUTB1, utb1FlexFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
+		XmBlockRegistry.addBlockStates(pipeBlockGlowUTB1, utb1FlexFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
 
 		final Function<BlockState, PrimitiveStateFunction> utb1StraightFunc = bs -> PrimitiveStateFunction.builder()
 				.withJoin(PipeBlock.JOIN_TEST_WITH_AXIS)
@@ -129,8 +124,8 @@ public abstract class PipeBlocks {
 						.simpleJoin(SimpleJoinState.Z_JOINS), bs)))
 				.build();
 
-		XmBlockRegistry.addBlockStates(UTB1_STRAIGHT_PIPE, utb1StraightFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
-		XmBlockRegistry.addBlockStates(UTB1_STRAIGHT_PIPE_GLOW, utb1StraightFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
+		XmBlockRegistry.addBlockStates(pipeBlockStraightUTB1, utb1StraightFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
+		XmBlockRegistry.addBlockStates(pipeBlockStraightGlowUTB1, utb1StraightFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
 
 		final Function<BlockState, PrimitiveStateFunction> utb1S2bFunc = bs -> PrimitiveStateFunction.builder()
 				.withJoin(ItemMoverBlock.ITEM_MOVER_JOIN_TEST)
@@ -151,8 +146,8 @@ public abstract class PipeBlocks {
 						.simpleJoin(SimpleJoinState.Y_JOINS), bs)))
 				.build();
 
-		XmBlockRegistry.addBlockStates(UTB1_S2B, utb1S2bFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
-		XmBlockRegistry.addBlockStates(UTB1_S2B_GLOW, utb1S2bFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
+		XmBlockRegistry.addBlockStates(storage2BusBlockUTB1, utb1S2bFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
+		XmBlockRegistry.addBlockStates(storage2BusBlockGlowUTB1, utb1S2bFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
 
 		final Function<BlockState, PrimitiveStateFunction> utb1B2sFunc = bs -> PrimitiveStateFunction.builder()
 				.withJoin(ItemMoverBlock.ITEM_MOVER_JOIN_TEST)
@@ -173,7 +168,7 @@ public abstract class PipeBlocks {
 						.simpleJoin(SimpleJoinState.Y_JOINS), bs)))
 				.build();
 
-		XmBlockRegistry.addBlockStates(UTB1_B2S, utb1B2sFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
-		XmBlockRegistry.addBlockStates(UTB1_B2S_GLOW, utb1B2sFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
+		XmBlockRegistry.addBlockStates(bus2StorageBlockUTB1, utb1B2sFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
+		XmBlockRegistry.addBlockStates(bus2StorageBlockGlowUTB1, utb1B2sFunc, PipeBlockItem.PIPE_ITEM_MODEL_FUNCTION);
 	}
 }
