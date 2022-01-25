@@ -33,7 +33,7 @@ import net.minecraft.world.inventory.Slot;
 import net.fabricmc.loader.api.FabricLoader;
 
 import grondag.facility.FacilityConfig;
-import grondag.facility.storage.FacilityStorageScreenHandler;
+import grondag.facility.ux.FacilityBaseContainerMenu;
 import grondag.fermion.gui.AbstractSimpleContainerScreen;
 import grondag.fermion.gui.GuiUtil;
 import grondag.fermion.gui.ScreenRenderContext;
@@ -47,7 +47,7 @@ import grondag.fluidity.base.synch.DisplayDelegate;
 import grondag.fluidity.base.synch.ItemStorageActionClientHelper;
 import grondag.fluidity.impl.DiscreteDisplayDelegateImpl;
 
-public class ItemStorageScreen extends AbstractSimpleContainerScreen<FacilityStorageScreenHandler<DiscreteStorageServerDelegate>> implements ScreenRenderContext {
+public class ItemStorageScreen extends AbstractSimpleContainerScreen<FacilityBaseContainerMenu<DiscreteStorageServerDelegate>> implements ScreenRenderContext {
 	private static DiscreteStorageClientDelegate DELEGATE = DiscreteStorageClientDelegate.INSTANCE;
 
 	protected int headerHeight;
@@ -59,7 +59,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FacilitySto
 	protected int itemPickerTop;
 	protected int inventoryLeft;
 
-	public ItemStorageScreen(FacilityStorageScreenHandler<DiscreteStorageServerDelegate> container, Inventory inventory, Component title) {
+	public ItemStorageScreen(FacilityBaseContainerMenu<DiscreteStorageServerDelegate> container, Inventory inventory, Component title) {
 		// TODO: something something localization
 		super(container, inventory, new TranslatableComponent("Facility Storage"));
 	}

@@ -18,29 +18,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package grondag.facility.storage.bulk;
+package grondag.facility.init;
 
-import org.jetbrains.annotations.Nullable;
+import dev.architectury.registry.menu.MenuRegistry;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 
 import grondag.facility.Facility;
-import grondag.facility.storage.FacilityStorageScreenHandler;
-import grondag.fluidity.api.storage.Store;
-import grondag.fluidity.base.synch.BulkStorageServerDelegate;
+import grondag.facility.ux.CrateContainerMenu;
+import grondag.facility.ux.CrateItemContainerMenu;
 
-public class TankContainer extends FacilityStorageScreenHandler<BulkStorageServerDelegate> {
-	public static ResourceLocation ID = Facility.id("tank");
+public abstract class MenuTypes {
+	private MenuTypes() { }
 
-	public TankContainer(MenuType<?> type, Player player, int synchId, @Nullable Store storage, String label) {
-		super(type, player, synchId, storage, label);
+	private static MenuType<CrateContainerMenu> crateBlockMenuType;
+
+	public static MenuType<CrateContainerMenu> crateBlockMenuType() {
+		return crateBlockMenuType;
 	}
 
-	@Override
-	protected BulkStorageServerDelegate createDelegate(ServerPlayer player, Store storage) {
-		return new BulkStorageServerDelegate(player, storage);
+	private static MenuType<CrateItemContainerMenu> crateItemMenuType;
+
+	public static MenuType<CrateItemContainerMenu> crateItemMenuType() {
+		return crateItemMenuType;
+	}
+
+	public static void initialize() {
+		crateBlockMenuType = Facility.menuType(CrateContainerMenu.ID, MenuRegistry.ofExtended(CrateContainerMenu::createFromPacket));
+		crateItemMenuType = Facility.menuType(CrateItemContainerMenu.ID, MenuRegistry.ofExtended(CrateItemContainerMenu::createFromPacket));
 	}
 }

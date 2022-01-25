@@ -48,9 +48,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 
-import grondag.facility.init.ScreenHandlers;
 import grondag.facility.storage.PortableStore;
 import grondag.facility.storage.StorageBlock;
+import grondag.facility.ux.CrateContainerMenu;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.article.StoredDiscreteArticle;
 import grondag.fluidity.base.storage.discrete.AbstractDiscreteStore;
@@ -90,7 +90,7 @@ public class CrateBlock extends StorageBlock {
 
 			if (be instanceof CrateBlockEntity) {
 				final String label = ((CrateBlockEntity) be).getLabel();
-				MenuRegistry.openExtendedMenu((ServerPlayer) player, ScreenHandlers.crateBlockFactory(label, pos));
+				MenuRegistry.openExtendedMenu((ServerPlayer) player, new CrateContainerMenu.MenuProvider(label, pos));
 			}
 		}
 

@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package grondag.facility.storage;
+package grondag.facility.ux;
 
 import java.util.List;
 
@@ -37,12 +37,12 @@ import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.AbstractStorageServerDelegate;
 import grondag.fluidity.base.synch.StorageContainer;
 
-public abstract class FacilityStorageScreenHandler<T extends AbstractStorageServerDelegate<?>> extends AbstractContainerMenu implements StorageContainer {
+public abstract class FacilityBaseContainerMenu<T extends AbstractStorageServerDelegate<?>> extends AbstractContainerMenu implements StorageContainer {
 	protected final @Nullable Store storage;
 	protected String label;
 	protected T delegate;
 
-	public FacilityStorageScreenHandler(MenuType<?> type, Player player, int synchId, @Nullable Store storage, String label) {
+	public FacilityBaseContainerMenu(MenuType<?> type, Player player, int synchId, @Nullable Store storage, String label) {
 		super(type, synchId);
 		this.storage = storage;
 		this.label = label;

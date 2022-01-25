@@ -53,7 +53,7 @@ import io.vram.modkeys.api.ModKey;
 import grondag.facility.init.BinBlocks;
 import grondag.facility.init.CrateBlocks;
 import grondag.facility.init.PipeBlocks;
-import grondag.facility.init.ScreenHandlers;
+import grondag.facility.init.MenuTypes;
 import grondag.facility.init.TankBlocks;
 import grondag.facility.init.Textures;
 import grondag.facility.packet.BinActionC2S;
@@ -88,7 +88,7 @@ public abstract class Facility {
 		modifyKey = ModKey.getOrCreate(MODIFY_KEY_NAME);
 
 		FacilityConfig.initialize();
-		ScreenHandlers.initialize();
+		MenuTypes.initialize();
 		Textures.initialize();
 		CrateBlocks.initialize();
 		BinBlocks.initialize();

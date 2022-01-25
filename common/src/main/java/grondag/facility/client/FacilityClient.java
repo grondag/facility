@@ -38,9 +38,9 @@ import io.vram.modkeys.api.client.ModKeyBinding;
 import grondag.facility.Facility;
 import grondag.facility.init.BinBlocks;
 import grondag.facility.init.CrateBlocks;
-import grondag.facility.init.ScreenHandlers;
+import grondag.facility.init.MenuTypes;
 import grondag.facility.init.TankBlocks;
-import grondag.facility.storage.FacilityStorageScreenHandler;
+import grondag.facility.ux.FacilityBaseContainerMenu;
 import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
 
 public abstract class FacilityClient {
@@ -58,9 +58,9 @@ public abstract class FacilityClient {
 		registerBeType(TankBlocks.tankBlockEntityType(), d -> new TankBlockRenderer(d));
 
 		// Generic inference gets confused without
-		final ScreenFactory<FacilityStorageScreenHandler<DiscreteStorageServerDelegate>, ItemStorageScreen> itemScreenFactory = (h, i, t) -> new ItemStorageScreen(h, i, t);
-		MenuRegistry.registerScreenFactory(ScreenHandlers.crateBlockMenuType(), itemScreenFactory);
-		MenuRegistry.registerScreenFactory(ScreenHandlers.crateItemMenuType(), itemScreenFactory);
+		final ScreenFactory<FacilityBaseContainerMenu<DiscreteStorageServerDelegate>, ItemStorageScreen> itemScreenFactory = (h, i, t) -> new ItemStorageScreen(h, i, t);
+		MenuRegistry.registerScreenFactory(MenuTypes.crateBlockMenuType(), itemScreenFactory);
+		MenuRegistry.registerScreenFactory(MenuTypes.crateItemMenuType(), itemScreenFactory);
 
 		final var forceKey = new KeyMapping("key.facility.force", GLFW.GLFW_KEY_LEFT_CONTROL, "key.facility.category");
 		KeyMappingRegistry.register(forceKey);

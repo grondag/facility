@@ -18,12 +18,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package grondag.facility.storage.item;
+package grondag.facility.ux;
 
+import dev.architectury.registry.menu.ExtendedMenuProvider;
 import org.jetbrains.annotations.Nullable;
 
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
@@ -31,16 +37,17 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 import grondag.facility.Facility;
-import grondag.facility.storage.FacilityStorageScreenHandler;
+import grondag.facility.init.MenuTypes;
+import grondag.facility.storage.item.PortableCrateItem;
 import grondag.fluidity.api.storage.Store;
 import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;
 
-public class CrateItemScreenHandler extends FacilityStorageScreenHandler<DiscreteStorageServerDelegate> {
+public class CrateItemContainerMenu extends FacilityBaseContainerMenu<DiscreteStorageServerDelegate> {
 	public static ResourceLocation ID = Facility.id("crate_item");
 	protected final Slot storeSlot;
 	protected final ItemStack storeStack;
 
-	public CrateItemScreenHandler(MenuType<?> type, Player player, int synchId, @Nullable Store storage, String label, ItemStack storeStack) {
+	public CrateItemContainerMenu(MenuType<?> type, Player player, int synchId, @Nullable Store storage, String label, ItemStack storeStack) {
 		super(type, player, synchId, storage, label);
 		Slot slot = null;
 
@@ -78,5 +85,51 @@ public class CrateItemScreenHandler extends FacilityStorageScreenHandler<Discret
 		}
 
 		super.clicked(slotId, mouseButton, slotActionType, playerEntity);
+	}
+
+	public static CrateItemContainerMenu createFromPacket(int syncId, Inventory inventory, FriendlyByteBuf buf) {
+		final InteractionHand hand = InteractionHand.values()[buf.readVarInt()];
+		final String label = buf.readUtf();
+		return new CrateItemContainerMenu(
+				MenuTypes.crateItemMenuType(),
+				inventory.player,
+				syncId,
+				null,
+				label,
+				inventory.player.getItemInHand(hand));
+	}
+
+	public static class MenuProvider implements ExtendedMenuProvider {
+		String label;
+		final InteractionHand hand;
+
+		public MenuProvider(String label, InteractionHand hand) {
+			this.label = label;
+			this.hand = hand;
+		}
+
+		@Override
+		public CrateItemContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+			final ItemStack stack = player.getItemInHand(hand);
+			final boolean isPortableItem = stack.getItem() instanceof PortableCrateItem;
+			return new CrateItemContainerMenu(
+					MenuTypes.crateItemMenuType(),
+					player,
+					syncId,
+					!isPortableItem ? null : ((PortableCrateItem) stack.getItem()).makeStore(player, hand),
+							label,
+							player.getItemInHand(hand));
+		}
+
+		@Override
+		public Component getDisplayName() {
+			return new TextComponent(label);
+		}
+
+		@Override
+		public void saveExtraData(FriendlyByteBuf buf) {
+			buf.writeVarInt(hand.ordinal());
+			buf.writeUtf(label);
+		}
 	}
 }

@@ -34,7 +34,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 
-// TODO: remove and use AW instead
+// TODO: remove and use FREX API instead
 public class RendererHooks {
 	public static final RenderType TRANSLUCENT = makeTranslucent();
 	public static final RenderType CUTOUT = makeCutout();

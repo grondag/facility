@@ -41,8 +41,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
-import grondag.facility.init.ScreenHandlers;
 import grondag.facility.storage.PortableStore;
+import grondag.facility.ux.CrateItemContainerMenu;
 import grondag.fluidity.api.storage.Store;
 
 public class PortableCrateItem extends BlockItem {
@@ -87,7 +87,7 @@ public class PortableCrateItem extends BlockItem {
 			if (!world.isClientSide) {
 				// TODO: get the label from BE tags, not currently displayed
 				final String label = "todo";
-				MenuRegistry.openExtendedMenu((ServerPlayer) playerEntity, ScreenHandlers.crateItemFactory(label, hand));
+				MenuRegistry.openExtendedMenu((ServerPlayer) playerEntity, new CrateItemContainerMenu.MenuProvider(label, hand));
 			}
 
 			return InteractionResultHolder.success(itemStack);
