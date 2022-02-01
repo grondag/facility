@@ -21,7 +21,6 @@
 package grondag.facility.init;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -70,9 +69,7 @@ public abstract class TankBlocks {
 	public static void initialize() {
 		final var tankBlock = Facility.blockNoItem("tank", new TankBlock(Block.Properties.of(Material.METAL).strength(1, 1), TankBlocks::tankBe, false));
 		tankBlockEntityType = Facility.blockEntityType("tank", TankBlocks::tankBe, tankBlock);
-		portableTankItem = Facility.item("tank", new PortableTankItem(tankBlock, Facility.itemSettings().stacksTo(1).durability(32768)));
-
-		portableTankItem.registerBlocks(Item.BY_BLOCK, portableTankItem);
+		portableTankItem = Facility.blockItem("tank", new PortableTankItem(tankBlock, Facility.itemSettings().stacksTo(1).durability(32768)));
 
 		//CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(TANK);
 		Store.STORAGE_COMPONENT.registerProvider(ctx -> ((TankBlockEntity) ctx.blockEntity()).getEffectiveStorage(), tankBlock);

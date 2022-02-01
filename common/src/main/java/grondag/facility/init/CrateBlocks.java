@@ -104,13 +104,14 @@ public abstract class CrateBlocks {
 		final var crateBlock = Facility.blockNoItem("crate", new CrateBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::crateBe));
 		crateBlockEntityType = Facility.blockEntityType("crate", CrateBlocks::crateBe, crateBlock);
 		final var portableCrateItem = Facility.item("crate_item", new PortableCrateItem(crateBlock, Facility.itemSettings().stacksTo(1).durability(2048), () -> new FlexibleDiscreteStore(2048).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
-		Facility.item("crate", new BlockItem(crateBlock, Facility.itemSettings()));
+		Facility.blockItem("crate", new BlockItem(crateBlock, Facility.itemSettings()));
+
 		crateBlock.portableItem = portableCrateItem;
 
 		final var slottedCrateBlock = Facility.blockNoItem("slotted_crate", new CrateBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::slottedBe));
 		slottedCrateBlockEntityType = Facility.blockEntityType("slotted_crate", CrateBlocks::slottedBe, slottedCrateBlock);
 		final var portableSlottedCrateItem = Facility.item("slotted_crate_item", new PortableCrateItem(slottedCrateBlock, Facility.itemSettings().stacksTo(1).durability(2048), () -> new SlottedInventoryStore(32).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
-		Facility.item("slotted_crate", new BlockItem(slottedCrateBlock, Facility.itemSettings()));
+		Facility.blockItem("slotted_crate", new BlockItem(slottedCrateBlock, Facility.itemSettings()));
 		slottedCrateBlock.portableItem = portableSlottedCrateItem;
 
 		final var creativeCrateBlock = Facility.block("creative_crate", new CreativeCrateBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), CrateBlocks::itemSupplier));
@@ -119,7 +120,7 @@ public abstract class CrateBlocks {
 		final var hyperCrateBlock = Facility.blockNoItem("hyper_crate", new CrateBlock(Block.Properties.of(Material.METAL).strength(1, 1), CrateBlocks::hyperCrateBe));
 		hyperCrateBlockEntityType = Facility.blockEntityType("hyper_crate", CrateBlocks::hyperCrateBe, hyperCrateBlock);
 		final var portableHyperCrateItem = Facility.item("hyper_crate_item", new PortableCrateItem(hyperCrateBlock, Facility.itemSettings().stacksTo(1).durability(2048), () -> new FlexibleDiscreteStore(Long.MAX_VALUE).filter(FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
-		Facility.item("hyper_crate", new BlockItem(hyperCrateBlock, Facility.itemSettings()));
+		Facility.blockItem("hyper_crate", new BlockItem(hyperCrateBlock, Facility.itemSettings()));
 		hyperCrateBlock.portableItem = portableHyperCrateItem;
 
 		//CarrierConnector.CARRIER_CONNECTOR_COMPONENT.addProvider(CRATE, SLOTTED_CRATE, CREATIVE_CRATE, HYPER_CRATE);

@@ -113,20 +113,20 @@ public abstract class BinBlocks {
 		final var binX1 = Facility.blockNoItem("bin_1x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::binX1Be, 1, false));
 		binBlockEntityTypeX1 = Facility.blockEntityType("bin_x1", BinBlocks::binX1Be, binX1);
 		final var portableBinItemX1 = Facility.item("bin_1x_item", new PortableCrateItem(binX1, Facility.itemSettings().stacksTo(1).durability(2048), () -> new DividedDiscreteStore(1, 2048).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
-		Facility.item("bin_1x", new BlockItem(binX1, Facility.itemSettings()));
+		Facility.blockItem("bin_1x", new BlockItem(binX1, Facility.itemSettings()));
 		binX1.portableItem = portableBinItemX1;
 
 		final var binX2 = Facility.blockNoItem("bin_2x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::binX2Be, 2, false));
 		binBlockEntityTypeX2 = Facility.blockEntityType("bin_x2", BinBlocks::binX2Be, binX2);
 		final var portableBinItemX2 = Facility.item("bin_2x_item", new PortableCrateItem(binX2, Facility.itemSettings().stacksTo(1).durability(2048), () -> new DividedDiscreteStore(2, 1024).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
-		Facility.item("bin_2x", new BlockItem(binX2, Facility.itemSettings()));
+		Facility.blockItem("bin_2x", new BlockItem(binX2, Facility.itemSettings()));
 		binX2.portableItem = portableBinItemX2;
 
 		final var binX4 = Facility.blockNoItem("bin_4x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::binX4Be, 4, false));
 		binBlockEntityTypeX4 = Facility.blockEntityType("bin_x4", BinBlocks::binX4Be, binX4);
 		final var portableBinItemX4 = Facility.item("bin_4x_item", new PortableCrateItem(binX4, Facility.itemSettings().stacksTo(1).durability(2048), () -> new DividedDiscreteStore(4, 512).filter(CrateBlocks.FILTER_TYPE_AND_NESTING).typeFilter(ArticleType.ITEM.typePredicate())));
 		binX4.portableItem = portableBinItemX4;
-		Facility.item("bin_4x", new BlockItem(binX4, Facility.itemSettings()));
+		Facility.blockItem("bin_4x", new BlockItem(binX4, Facility.itemSettings()));
 
 		final var creativeBinX1 = Facility.block("creative_bin_1x", new BinBlock(Block.Properties.of(Facility.CRATE_MATERIAL).strength(1, 1), BinBlocks::creativeBinX1Be, 1, true));
 		creativeBinBlockEntityTypeX1 = Facility.blockEntityType("creative_bin_x1", BinBlocks::creativeBinX1Be, creativeBinX1);
