@@ -74,7 +74,7 @@ public class TankBlockEntity extends StorageBlockEntity<TankClientState, TankMul
 	public void load(CompoundTag tag) {
 		super.load(tag);
 
-		if (level.isClientSide && tag.contains("usage")) {
+		if (level != null && level.isClientSide && tag.contains("usage")) {
 			final TankClientState clientState = clientState();
 			clientState.level = tag.getFloat("usage");
 
