@@ -34,12 +34,12 @@ import net.fabricmc.loader.api.FabricLoader;
 
 import grondag.facility.FacilityConfig;
 import grondag.facility.ux.FacilityBaseContainerMenu;
-import grondag.fermion.gui.AbstractSimpleContainerScreen;
-import grondag.fermion.gui.GuiUtil;
-import grondag.fermion.gui.ScreenRenderContext;
-import grondag.fermion.gui.control.Button;
-import grondag.fermion.gui.control.ItemStackPicker;
-import grondag.fermion.gui.control.TextField;
+import grondag.facility.ux.client.AbstractSimpleContainerScreen;
+import grondag.facility.ux.client.GuiUtil;
+import grondag.facility.ux.client.ScreenRenderContext;
+import grondag.facility.ux.client.control.Button;
+import grondag.facility.ux.client.control.ItemStackPicker;
+import grondag.facility.ux.client.control.TextField;
 import grondag.fluidity.base.synch.DiscreteDisplayDelegate;
 import grondag.fluidity.base.synch.DiscreteStorageClientDelegate;
 import grondag.fluidity.base.synch.DiscreteStorageServerDelegate;

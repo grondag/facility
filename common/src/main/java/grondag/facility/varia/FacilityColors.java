@@ -20,7 +20,7 @@
 
 package grondag.facility.varia;
 
-import grondag.fermion.color.ColorUtil;
+import grondag.facility.ux.client.color.ColorUtil;
 
 public class FacilityColors {
 	public static final int[] BASE = new int[16];
