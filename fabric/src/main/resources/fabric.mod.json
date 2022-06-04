@@ -28,12 +28,10 @@
     }
   ],
   "depends": {
-    "fabricloader": ">=0.12.11",
-    "minecraft": "1.18.1",
-    "java": ">=16",
-    "fabric": "*",
-    "fluidity": "*",
-    "exotic-matter": "*"
+    "fabricloader": ">=0.14.6",
+    "minecraft": ">=1.18.2",
+    "java": ">=17",
+    "architectury": ">=4.4.56"
   },
   "accessWidener": "facility.accesswidener"
 }

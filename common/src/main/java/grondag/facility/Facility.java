@@ -26,7 +26,6 @@ import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.TickEvent;
 import dev.architectury.hooks.block.BlockEntityHooks;
 import dev.architectury.hooks.block.BlockEntityHooks.Constructor;
-import dev.architectury.hooks.tags.TagHooks;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
@@ -35,7 +34,7 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
@@ -79,8 +78,8 @@ public abstract class Facility {
 	private static final DeferredRegister<MenuType<?>> MENU_TYPES = DeferredRegister.create(MODID, Registry.MENU_REGISTRY);
 
 	public static final Material CRATE_MATERIAL = (new Material.Builder(MaterialColor.WOOD)).build();
-	public static Tag<Item> STORAGE_BLACKLIST_WITH_CONTENT = TagHooks.optionalItem(id("storage_blacklist_with_content"));
-	public static Tag<Item> STORAGE_BLACKLIST_ALWAYS = TagHooks.optionalItem(id("storage_blacklist_always"));
+	public static TagKey<Item> STORAGE_BLACKLIST_WITH_CONTENT = TagKey.create(Registry.ITEM_REGISTRY, id("storage_blacklist_with_content"));
+	public static TagKey<Item> STORAGE_BLACKLIST_ALWAYS = TagKey.create(Registry.ITEM_REGISTRY, id("storage_blacklist_always"));
 
 	public static void initialize() {
 		itemGroup = CreativeTabRegistry.create(id("group"), () -> new ItemStack(Registry.ITEM.get(id("hyper_crate"))));

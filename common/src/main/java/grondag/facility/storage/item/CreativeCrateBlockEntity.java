@@ -58,7 +58,7 @@ public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implemen
 		}
 
 		final Random random = ThreadLocalRandom.current();
-		final Item item = Registry.ITEM.getRandom(random);
+		final Item item = Registry.ITEM.getRandom(random).get().value();
 		ItemStack stack = new ItemStack(item);
 		stack.setCount(item.getMaxStackSize());
 

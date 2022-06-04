@@ -61,9 +61,9 @@ public abstract class CrateBlocks {
 
 		final Item item = d.toItem();
 
-		if (d.hasTag() && Facility.STORAGE_BLACKLIST_WITH_CONTENT.contains(item)) return false;
+		if (d.hasTag() && item.builtInRegistryHolder().is(Facility.STORAGE_BLACKLIST_WITH_CONTENT)) return false;
 
-		if (Facility.STORAGE_BLACKLIST_ALWAYS.contains(item)) return false;
+		if (item.builtInRegistryHolder().is(Facility.STORAGE_BLACKLIST_ALWAYS)) return false;
 
 		return true;
 	};
