@@ -26,7 +26,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -43,7 +42,7 @@ public class Toggle extends AbstractControl<Toggle> {
 	}
 
 	protected boolean isOn = false;
-	protected Component label = new TextComponent("yes?");
+	protected Component label = Component.literal("yes?");
 
 	protected int targetAreaTop;
 	protected int targetAreaBottom;

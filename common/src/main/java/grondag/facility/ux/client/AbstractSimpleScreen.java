@@ -31,7 +31,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 
 import grondag.facility.ux.client.control.AbstractControl;
@@ -46,7 +45,7 @@ public abstract class AbstractSimpleScreen extends Screen implements ScreenRende
 	protected int screenHeight;
 
 	public AbstractSimpleScreen() {
-		super(new TextComponent(""));
+		super(Component.empty());
 	}
 
 	public AbstractSimpleScreen(Component title) {

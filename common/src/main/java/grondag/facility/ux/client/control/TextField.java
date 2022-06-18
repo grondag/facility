@@ -39,7 +39,6 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.Mth;
 
 import net.fabricmc.api.EnvType;
@@ -98,7 +97,7 @@ public class TextField extends AbstractWidget implements Widget, GuiEventListene
 	@Override
 	protected MutableComponent createNarrationMessage() {
 		final Component text = getMessage();
-		return new TranslatableComponent("gui.narrate.editBox", new Object[]{text, this.text});
+		return Component.translatable("gui.narrate.editBox", new Object[]{text, this.text});
 	}
 
 	public void setText(String string) {

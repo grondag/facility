@@ -51,7 +51,7 @@ public class Base32Namer {
 		try {
 			final var res = resourceManager.getResource(id);
 			final Gson g = new Gson();
-			final JsonObject json = g.fromJson((Reader) new InputStreamReader(res.getInputStream(), StandardCharsets.UTF_8), JsonObject.class);
+			final JsonObject json = g.fromJson((Reader) new InputStreamReader(res.get().open(), StandardCharsets.UTF_8), JsonObject.class);
 			final var badNames = json.getAsJsonArray("offensive_names");
 			LOWER_CASE_BAD_NAMES.clear();
 

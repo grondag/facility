@@ -29,7 +29,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -236,10 +235,10 @@ public class PortableTankItem extends BlockItem {
 		DISPLAY_TANK.readFromStack(itemStack);
 
 		if (DISPLAY_TANK.isEmpty()) {
-			list.add(new TextComponent("Empty"));
+			list.add(Component.literal("Empty"));
 		} else {
-			list.add(new TextComponent("Fluid: " + Registry.FLUID.getKey(DISPLAY_TANK.view(0).article().toFluid()).toString()));
-			list.add(new TextComponent(DISPLAY_TANK.amount().toString()));
+			list.add(Component.literal("Fluid: " + Registry.FLUID.getKey(DISPLAY_TANK.view(0).article().toFluid()).toString()));
+			list.add(Component.literal(DISPLAY_TANK.amount().toString()));
 		}
 	}
 }

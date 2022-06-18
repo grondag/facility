@@ -27,7 +27,6 @@ import dev.architectury.registry.menu.MenuRegistry;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -103,9 +102,9 @@ public class PortableCrateItem extends BlockItem {
 		displayCrate.readFromStack(itemStack);
 
 		if (displayCrate.isEmpty()) {
-			list.add(new TextComponent("Empty"));
+			list.add(Component.empty());
 		} else {
-			list.add(new TextComponent(Long.toString(displayCrate.count()) + " of " + displayCrate.capacity()));
+			list.add(Component.literal(Long.toString(displayCrate.count()) + " of " + displayCrate.capacity()));
 		}
 	}
 }

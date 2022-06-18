@@ -20,13 +20,10 @@
 
 package grondag.facility.storage.item;
 
-import java.util.Random;
-
-import io.netty.util.internal.ThreadLocalRandom;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -43,6 +40,7 @@ import grondag.fluidity.wip.api.transport.CarrierSession;
 
 public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implements TickableBlockEntity {
 	protected final boolean isOutput;
+	private final RandomSource random = RandomSource.create();
 
 	public CreativeCrateBlockEntity(BlockEntityType<CreativeCrateBlockEntity> type, final BlockPos pos, final BlockState state, final boolean isOutput) {
 		super(type, pos, state);
@@ -57,7 +55,6 @@ public class CreativeCrateBlockEntity extends CarrierSessionBlockEntity implemen
 			return;
 		}
 
-		final Random random = ThreadLocalRandom.current();
 		final Item item = Registry.ITEM.getRandom(random).get().value();
 		ItemStack stack = new ItemStack(item);
 		stack.setCount(item.getMaxStackSize());

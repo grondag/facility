@@ -32,7 +32,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.world.inventory.InventoryMenu;
 
 // TODO: remove and use FREX API instead
 public class RendererHooks {
@@ -66,7 +66,7 @@ public class RendererHooks {
 
 	private static RenderType makeCutout() {
 		final RenderType.CompositeState multiPhaseParameters = RenderType.CompositeState.builder()
-			.setTextureState(new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false))
+			.setTextureState(new RenderStateShard.TextureStateShard(InventoryMenu.BLOCK_ATLAS, false, false))
 			.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeEntityCutoutShader))
 			.setTransparencyState(RenderSecrets._NO_TRANSPARENCY)
 			.setLightmapState(RenderSecrets._ENABLE_LIGHTMAP)
@@ -78,7 +78,7 @@ public class RendererHooks {
 
 	private static RenderType makeTranslucent() {
 		final RenderType.CompositeState multiPhaseParameters = RenderType.CompositeState.builder()
-			.setTextureState(new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false))
+			.setTextureState(new RenderStateShard.TextureStateShard(InventoryMenu.BLOCK_ATLAS, false, false))
 			.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeEntityTranslucentShader))
 			.setTransparencyState(RenderSecrets._TRANSLUCENT_TRANSPARENCY)
 			.setLightmapState(RenderSecrets._ENABLE_LIGHTMAP)
@@ -90,7 +90,7 @@ public class RendererHooks {
 
 	public static RenderType makeFluid() {
 		final RenderType.CompositeState multiPhaseParameters = RenderType.CompositeState.builder()
-			.setTextureState(new RenderStateShard.TextureStateShard(TextureAtlas.LOCATION_BLOCKS, false, false))
+			.setTextureState(new RenderStateShard.TextureStateShard(InventoryMenu.BLOCK_ATLAS, false, false))
 			.setShaderState(new RenderStateShard.ShaderStateShard(GameRenderer::getRendertypeSolidShader))
 			.setTransparencyState(RenderSecrets._NO_TRANSPARENCY)
 			.setLightmapState(RenderSecrets._ENABLE_LIGHTMAP)

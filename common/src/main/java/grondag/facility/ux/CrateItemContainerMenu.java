@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -123,7 +122,7 @@ public class CrateItemContainerMenu extends FacilityBaseContainerMenu<DiscreteSt
 
 		@Override
 		public Component getDisplayName() {
-			return new TextComponent(label);
+			return Component.literal(label);
 		}
 
 		@Override

@@ -28,7 +28,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
@@ -67,7 +66,7 @@ public class FacilityBlock extends Block implements EntityBlock {
 		final String[] lines = I18n.get(getDescriptionId() + ".desc").split(";");
 
 		for (final String line : lines) {
-			list.add(new TextComponent(line).withStyle(ChatFormatting.GREEN));
+			list.add(Component.literal(line).withStyle(ChatFormatting.GREEN));
 		}
 	}
 }

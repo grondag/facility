@@ -24,8 +24,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
@@ -61,7 +59,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FacilityBas
 
 	public ItemStorageScreen(FacilityBaseContainerMenu<DiscreteStorageServerDelegate> container, Inventory inventory, Component title) {
 		// TODO: something something localization
-		super(container, inventory, new TranslatableComponent("Facility Storage"));
+		super(container, inventory, Component.translatable("Facility Storage"));
 	}
 
 	@Override
@@ -161,7 +159,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FacilityBas
 
 		filterField = new TextField(this,
 				leftPos + inventoryLeft, topPos + theme.externalMargin,
-				80, theme.singleLineWidgetHeight, new TextComponent(""));
+				80, theme.singleLineWidgetHeight, Component.empty());
 		filterField.setMaxLength(32);
 		filterField.setSelected(true);
 		filterField.setChangedListener(s -> DELEGATE.setFilter(s));
@@ -194,7 +192,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FacilityBas
 				&& mouseY >= topPos + theme.externalMargin && mouseY <= topPos + imageHeight - theme.externalMargin
 		) {
 			//UGLY: standardize how tooltip coordinates work - wants screen relative but getting window relative as inputs here
-			this.renderTooltip(matrixStack, new TextComponent(DELEGATE.usedCapacity() + " / " + DELEGATE.capacity()), mouseX - leftPos, mouseY - topPos);
+			this.renderTooltip(matrixStack, Component.literal(DELEGATE.usedCapacity() + " / " + DELEGATE.capacity()), mouseX - leftPos, mouseY - topPos);
 		}
 	}
 
@@ -213,7 +211,7 @@ public class ItemStorageScreen extends AbstractSimpleContainerScreen<FacilityBas
 	public boolean mouseDragged(double onX, double onY, int mouseButton, double fromX, double fromY) {
 		final Slot slot = findHoveredSlot(onX, onY);
 
-		if (!minecraft.options.touchscreen && !isQuickCrafting && slot != null && slot.hasItem() && hasShiftDown() && minecraft.player.containerMenu.getCarried().isEmpty()) {
+		if (!minecraft.options.touchscreen().get() && !isQuickCrafting && slot != null && slot.hasItem() && hasShiftDown() && minecraft.player.containerMenu.getCarried().isEmpty()) {
 			slotClicked(slot, slot.index, mouseButton, ClickType.QUICK_MOVE);
 			return true;
 		}

@@ -29,7 +29,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 
 import grondag.facility.ux.client.control.AbstractControl;
@@ -54,7 +53,7 @@ public interface ScreenRenderContext {
 	}
 
 	default void drawLocalizedToolTip(PoseStack matrixStack, String lang_key, int mouseX, int mouseY) {
-		screen().renderTooltip(matrixStack, new TranslatableComponent(lang_key), mouseX, mouseY);
+		screen().renderTooltip(matrixStack, Component.translatable(lang_key), mouseX, mouseY);
 	}
 
 	default void drawLocalizedToolTip(PoseStack matrixStack, int mouseX, int mouseY, String... lang_keys) {
@@ -65,14 +64,14 @@ public interface ScreenRenderContext {
 		final ArrayList<Component> list = new ArrayList<>(lang_keys.length);
 
 		for (final String key : lang_keys) {
-			list.add(new TranslatableComponent(key));
+			list.add(Component.translatable(key));
 		}
 
 		screen().renderComponentTooltip(matrixStack, list, mouseX, mouseY);
 	}
 
 	default void drawLocalizedToolTipBoolean(PoseStack matrixStack, boolean bool, String true_key, String false_key, int mouseX, int mouseY) {
-		screen().renderTooltip(matrixStack, new TranslatableComponent(bool ? true_key : false_key), mouseX, mouseY);
+		screen().renderTooltip(matrixStack, Component.translatable(bool ? true_key : false_key), mouseX, mouseY);
 	}
 
 	int screenLeft();

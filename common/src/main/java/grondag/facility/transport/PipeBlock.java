@@ -28,7 +28,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -127,15 +126,15 @@ public class PipeBlock extends FacilitySpeciesBlock {
 	@Environment(EnvType.CLIENT)
 	public void appendHoverText(ItemStack itemStack, @Nullable BlockGetter blockView, List<Component> list, TooltipFlag tooltipContext) {
 		super.appendHoverText(itemStack, blockView, list, tooltipContext);
-		list.add(new TranslatableComponent("transport.facility.utb1").withStyle(ChatFormatting.GOLD));
-		list.add(new TranslatableComponent("transport.facility.utb1.desc").withStyle(ChatFormatting.GOLD));
+		list.add(Component.translatable("transport.facility.utb1").withStyle(ChatFormatting.GOLD));
+		list.add(Component.translatable("transport.facility.utb1.desc").withStyle(ChatFormatting.GOLD));
 
 		final int species = PipeBlockItem.species(itemStack);
 
 		if (species == PipeBlockItem.AUTO_SELECT_SPECIES) {
-			list.add(new TranslatableComponent("transport.facility.circuit.auto").withStyle(ChatFormatting.AQUA));
+			list.add(Component.translatable("transport.facility.circuit.auto").withStyle(ChatFormatting.AQUA));
 		} else {
-			list.add(new TranslatableComponent("transport.facility.circuit.num", species).withStyle(ChatFormatting.AQUA));
+			list.add(Component.translatable("transport.facility.circuit.num", species).withStyle(ChatFormatting.AQUA));
 		}
 	}
 

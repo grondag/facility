@@ -24,7 +24,6 @@ import java.util.function.BiFunction;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -57,7 +56,7 @@ public class PipeBlockItem extends BlockItem {
 			playerEntity.setItemInHand(hand, itemStack);
 
 			final int spec = species(itemStack);
-			final Component msg = spec == AUTO_SELECT_SPECIES ? new TranslatableComponent("transport.facility.circuit.auto") : new TranslatableComponent("transport.facility.circuit.num", spec);
+			final Component msg = spec == AUTO_SELECT_SPECIES ? Component.translatable("transport.facility.circuit.auto") : Component.translatable("transport.facility.circuit.num", spec);
 			playerEntity.displayClientMessage(msg, true);
 			return InteractionResultHolder.success(itemStack);
 		}

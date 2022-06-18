@@ -26,7 +26,7 @@ import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -129,7 +129,7 @@ public abstract class StorageBlock extends FacilitySpeciesBlock {
 				stack.addTagElement("BlockEntityTag", tag);
 			}
 
-			stack.setHoverName(new TextComponent(myBlockEntity.getLabel()));
+			stack.setHoverName(Component.literal(myBlockEntity.getLabel()));
 			writeCustomStackData(stack, myBlockEntity.getInternalStorage());
 		}
 

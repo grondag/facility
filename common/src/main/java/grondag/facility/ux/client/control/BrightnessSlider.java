@@ -25,7 +25,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -38,7 +37,7 @@ import grondag.facility.ux.client.VerticalAlignment;
 @Environment(EnvType.CLIENT)
 public class BrightnessSlider extends Slider {
 	// TODO: localize or remove this class
-	private static final Component LABEL = new TextComponent("Brightness");
+	private static final Component LABEL = Component.literal("Brightness");
 
 	public BrightnessSlider(ScreenRenderContext renderContext) {
 		super(renderContext, 16, LABEL, 0.22f);
@@ -63,7 +62,7 @@ public class BrightnessSlider extends Slider {
 
 		final int textColor = selectedTabIndex > 6 ? 0xFF000000 : 0xFFFFFFFF;
 
-		GuiUtil.drawAlignedStringNoShadow(matrixStack, mc.font, new TextComponent(Integer.toString(selectedTabIndex)), labelRight, top, choiceWidth, height,
+		GuiUtil.drawAlignedStringNoShadow(matrixStack, mc.font, Component.literal(Integer.toString(selectedTabIndex)), labelRight, top, choiceWidth, height,
 				textColor, HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
 	}
 }

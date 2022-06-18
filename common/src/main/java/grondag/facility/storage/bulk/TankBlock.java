@@ -30,7 +30,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -143,7 +142,7 @@ public class TankBlock extends StorageBlock implements BlockAttackInteractionAwa
 			}
 
 			if (limit < tagList.size()) {
-				list.add(new TextComponent("..."));
+				list.add(Component.literal("..."));
 			}
 		}
 	}
