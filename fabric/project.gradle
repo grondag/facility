@@ -9,7 +9,7 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modApi "dev.architectury:architectury-fabric:5.4.15"
 
-	modIncludeImplementation("grondag:exotic-matter-fabric-mc119:3.0.440:fat")
+	modIncludeImplementation("grondag:exotic-matter-fabric-mc119:3.0.442:fat")
 	modIncludeImplementation("io.vram:dtklib:1.0.6")
 	modIncludeImplementation("io.vram:modkeys-fabric-mc119:1.0.11")
 	modIncludeImplementation("io.vram:fluidity-fabric-mc119:2.0.233")
