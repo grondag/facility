@@ -24,8 +24,6 @@ import java.util.function.BiFunction;
 
 import dev.architectury.event.events.common.LifecycleEvent;
 import dev.architectury.event.events.common.TickEvent;
-import dev.architectury.hooks.block.BlockEntityHooks;
-import dev.architectury.hooks.block.BlockEntityHooks.Constructor;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.registry.CreativeTabRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
@@ -44,6 +42,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 
@@ -155,8 +154,8 @@ public abstract class Facility {
 		return item;
 	}
 
-	public static <T extends BlockEntity> BlockEntityType<T> blockEntityType(String id, Constructor<T> constructor, Block... blocks) {
-		final BlockEntityType<T> type = BlockEntityHooks.builder(constructor, blocks).build(null);
+	public static <T extends BlockEntity> BlockEntityType<T> blockEntityType(String id, BlockEntitySupplier<T> constructor, Block... blocks) {
+		final BlockEntityType<T> type = BlockEntityType.Builder.of(constructor, blocks).build(null);
 		BLOCK_ENTITY_TYPES.register(id(id), () -> type);
 		return type;
 	}
